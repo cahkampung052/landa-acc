@@ -90,6 +90,7 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
+        $scope.form.is_kas = 0;
         
     };
     /** update */
