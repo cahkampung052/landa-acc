@@ -40,11 +40,11 @@
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th style="text-align: left;">
+<!--                                <th style="text-align: left;">
                                     Kode
-                                </th>
+                                </th>-->
                                 <th style="text-align: left;">
-                                    Nama
+                                    Lokasi
                                 </th>
 
                                 <th>
@@ -54,9 +54,9 @@
 
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
-                                <td style="text-align: left;">
+<!--                                <td style="text-align: left;">
                                     {{row.kode}}
-                                </td>
+                                </td>-->
                                 <td style="text-align: left;">
                                     {{row.nama}}
                                 </td>
@@ -84,9 +84,27 @@
                         <div class="col-md-6">
                             <div class="col-md-12">
                                 <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label-sm">Induk</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control form-control-sm" id="parent" ng-disabled="is_view" ng-model="form.parent_id">
+                                        <option value="0" ng-selected="value.id == form.parent_id">
+                                            - Pilih Induk -
+                                        </option>
+                                        <option ng-repeat="value in parent" ng-selected="value.id == form.parent_id" ng-value="{{value.id}}">
+                                            {{value.kode}} - {{value.nama}}
+                                        </option>
+
+                                    </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                <div class="form-group row">
                                     <label class="col-sm-3 col-form-label-sm required">Kode</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control form-control-sm" ng-model="form.kode" ng-disabled="is_view" required/>
+                                        <input type="text" class="form-control form-control-sm" ng-model="form.kode" ng-disabled="is_view || is_update" required/>
                                     </div>
                                 </div>
                             </div>

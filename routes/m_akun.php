@@ -13,10 +13,24 @@ function validasi($data, $custom = array())
     return $cek;
 }
 
+function validasiSaldo($data, $custom = array())
+{
+    $validasi = array(
+        'tanggal' => 'required',
+        'm_lokasi_id'      => 'required',
+        // 'tipe' => 'required',
+    );
+    GUMP::set_field_name("m_lokasi_id", "Lokasi");
+    $cek = validate($data, $validasi, $custom);
+    return $cek;
+}
+
 $app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
     $params = $request->getParams();
 //    print_r($params['form']);die();
-    if (isset($params['form']['tanggal']) && !empty($params['form']['tanggal'])) {
+    $validasi = validasiSaldo($params['form']);
+//    print_r($validasi);die();
+    if ($validasi === true) {
         $tanggal   = date("Y-m-d", strtotime($params['form']['tanggal']));
         $m_lokasi_id = $params['form']['m_lokasi_id'];
 
@@ -52,9 +66,11 @@ $app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
         }
 
         return unprocessResponse($response, ['Silahkan buat akun terlebih dahulu']);
+    }else{
+        return unprocessResponse($response, $validasi);
     }
 
-    return unprocessResponse($response, ['Tanggal tidak boleh kosong']);
+    
 });
 
 $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
@@ -847,4 +863,17 @@ $app->get('/acc/m_akun/akunPiutang', function ($request, $response){
     return successResponse($response, [
       'list'        => $models
     ]);
+});
+
+$app->get('/acc/m_akun/getTanggalSetting', function ($request, $response){
+    $db = $this->db;
+    $models = $db->select("*")->from("acc_m_setting")
+//            ->customWhere("tipe IN('Piutang Usaha', 'Piutang Lain')")
+//            ->where("is_tipe", "=", 0)
+//            ->where("is_deleted", "=", 0)
+            ->orderBy("id DESC")
+            
+            ->find();
+    $models->tanggal = date('Y-m-d H:i:s', strtotime($models->tanggal . ' -1 day'));
+    return successResponse($response, $models);
 });

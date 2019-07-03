@@ -51,34 +51,6 @@ app.controller('saldoawalpiutangCtrl', function ($scope, Data, $rootScope, $uibM
         $scope.isLoading = false;
     };
 
-    /** create */
-    $scope.create = function () {
-        $scope.is_edit = true;
-        $scope.is_view = false;
-        $scope.is_create = true;
-        $scope.is_disable = false;
-        $scope.formtitle = master + " | Form Tambah Data";
-        $scope.form = {};
-        $scope.form.parent_id = '0';
-    };
-    /** update */
-    $scope.update = function (form) {
-        $scope.is_edit = true;
-        $scope.is_view = false;
-        $scope.is_update = true;
-        $scope.is_disable = true;
-        $scope.formtitle = master + " | Edit Data : " + form.nama;
-        $scope.form = form;
-    };
-    /** view */
-    $scope.view = function (form) {
-        $scope.is_edit = true;
-        $scope.is_view = true;
-        $scope.is_disable = true;
-        $scope.formtitle = master + " | Lihat Data : " + form.nama;
-        $scope.form = form;
-    };
-    
     $scope.getPiutang = function(form){
         console.log(form);
         if(form.tanggal != undefined && form.m_lokasi_id != undefined){

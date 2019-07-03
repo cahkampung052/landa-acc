@@ -397,7 +397,7 @@
                                             </div>
                                             <div class="col-md-2 m-b repeat-animation hide-fade" ng-repeat="slide in gambar">
                                                 <a href="" ng-click="gambarzoom(slide.img)">
-                                                    <img class="img-thumbnail" ng-src="api/acc/landa-acc/upload/bukti/{{slide.img}}"/>
+                                                    <img class="img-thumbnail" ng-src="{{urlgambar}}{{slide.img}}"/>
                                                 </a>
                                                 <p align="center" ng-show="!is_view" style="padding:10px;">
                                                     <!--<div class="list-group-item">-->

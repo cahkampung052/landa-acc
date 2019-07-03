@@ -195,7 +195,7 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
     };
     $scope.modalBudget = function (form) {
         var modalInstance = $uibModal.open({
-            templateUrl: "l/m_akun/modal.html",
+            templateUrl: "../acc-ukdc/api/acc/landaacc/tpl/m_akun/modal.html",
             controller: "budgetCtrl",
             size: "md",
             backdrop: "static",

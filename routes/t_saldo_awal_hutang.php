@@ -6,7 +6,7 @@ $app->get('/acc/t_saldo_awal_hutang/getHutangAwal', function ($request, $respons
     $params = $request->getParams();
 //    print_r($params);die();
     $db = $this->db;
-    $getsupplier = $db->select("*")->from("acc_m_supplier")->findAll();
+    $getsupplier = $db->select("*")->from("acc_m_supplier")->where("is_deleted", "=", 0)->findAll();
 
     foreach ($getsupplier as $key => $val) {
         $getsupplier[$key] = (array) $val;
@@ -25,7 +25,12 @@ $app->get('/acc/t_saldo_awal_hutang/getHutangAwal', function ($request, $respons
             $getsupplier[$key]['m_akun_id'] = ["id" => $models->m_akun_id, "kode" => $models->kodeAkun, "nama" => $models->namaAkun];
         } else {
             $getsupplier[$key]['total'] = 0;
-//            $getsupplier[$key]['m_akun_id'] = [];
+            $akun = $db->select("*")->from("acc_m_akun")
+                ->customWhere("tipe IN('Hutang Lancar', 'Hutang Tidak Lancar')")
+                ->where("is_tipe", "=", 0)
+                ->where("is_deleted", "=", 0)
+                ->find();
+            $getsupplier[$key]['m_akun_id'] = ["id" =>$akun->id, "kode"=>$akun->kode, "nama"=>$akun->nama];
         }
     }
 

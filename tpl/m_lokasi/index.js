@@ -8,9 +8,13 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     $scope.is_edit = false;
     $scope.is_view = false;
 
-//    Data.get(control_link + '/cabang').then(function(data) {
-//        $scope.cabang = data.data.data;
-//    });
+    $scope.listParent = function () {
+        Data.get(control_link + '/list').then(function (data) {
+
+            $scope.parent = data.data.list;
+            console.log($scope.parent);
+        });
+    }
 
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
@@ -41,9 +45,12 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = true;
+        $scope.is_update = false;
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
+        $scope.form.parent_id = "0";
+        $scope.listParent();
     };
     /** update */
     $scope.update = function (form) {
@@ -54,6 +61,7 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
         console.log(form);
+        $scope.listParent();
     };
     /** view */
     $scope.view = function (form) {
@@ -65,8 +73,8 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     };
     /** save action */
     $scope.save = function (form) {
-        var url = (form.id > 0) ? '/update' : '/create';
-        Data.post(control_link + url, form).then(function (result) {
+//        var url = (form.id > 0) ? '/update' : '/save';
+        Data.post(control_link + '/save', form).then(function (result) {
             if (result.status_code == 200) {
 
 

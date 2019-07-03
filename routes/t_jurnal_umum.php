@@ -10,9 +10,12 @@ $app->post('/acc/t_jurnal_umum/upload/{folder}', function ($request, $response) 
         $id_dokumen = $sql->find("select * from acc_dokumen_foto order by id desc");
         $gid = (isset($id_dokumen->id)) ? $id_dokumen->id + 1 : 1;
         $newName = $gid . "_" . urlParsing($_FILES['file']['name']);
-        $uploadPath = "acc/landaacc/upload/" . $folder . DIRECTORY_SEPARATOR . $newName;
-
-        move_uploaded_file($tempPath, $uploadPath);
+        $uploadPath = "file/jurnal-umum/" . date('Y') ."/".str_replace("0", "", date("m"));
+//        echo $uploadPath;die();
+        if(!is_dir($uploadPath)){
+            mkdir($uploadPath, 0777, true);
+        }
+        move_uploaded_file($tempPath, $uploadPath. DIRECTORY_SEPARATOR . $newName);
 
         if ($params['id'] == "undefined" || empty($params['id'])) {
             $pengeluaran_id = $sql->find("select * from acc_jurnal order by id desc");
@@ -49,7 +52,7 @@ $app->get('/acc/t_jurnal_umum/listgambar/{id}', function ($request, $response) {
     $id = $request->getAttribute('id');
     $sql = $this->db;
     $model = $sql->findAll("select * from acc_dokumen_foto where acc_jurnal_id={$id}");
-    return successResponse($response, $model);
+    return successResponse($response, ["model"=>$model, "url"=>"api/file/jurnal-umum/".date("Y")."/".str_replace("0", "", date("m"))."/"]);
 });
 
 $app->post('/acc/t_jurnal_umum/removegambar', function ($request, $response) {
@@ -57,7 +60,7 @@ $app->post('/acc/t_jurnal_umum/removegambar', function ($request, $response) {
     $sql = $this->db;
 
     $delete = $sql->delete('acc_dokumen_foto', array('id' => $params['id'], "img" => $params['img']));
-    unlink(__DIR__ . "/../upload/bukti/" . $params['img']);
+    unlink(__DIR__ . "/../../../file/jurnal-umum/" . date('Y') ."/". str_replace("0", "", date("m")) ."/". $params['img']);
 });
 
 

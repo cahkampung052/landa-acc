@@ -16,6 +16,14 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.akunDetail = data.data.list;
     });
     
+    Data.get('acc/m_customer/getCustomer').then(function (response) {
+        $scope.listCustomer = response.data.list;
+    });
+    
+    Data.get('acc/m_lokasi/getLokasi').then(function (response) {
+        $scope.listLokasi = response.data.list;
+    });
+    
     
     //============================GAMBAR===========================//
     var uploader = $scope.uploader = new FileUploader({
@@ -24,7 +32,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         removeAfterUpload: true,
     });
 
-    $scope.uploadGambar = function (form) {
+    $scope.uploadGambar = function () {
         $scope.uploader.uploadAll();
     };
 
@@ -55,7 +63,9 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
 
     uploader.onSuccessItem = function (fileItem, response) {
         if (response.answer == 'File transfer completed') {
+            var d = new Date();
             $scope.gambar.unshift({img: response.img, id: response.id});
+            $scope.urlgambar = "api/file/penerimaan/"+d.getFullYear()+"/"+(d.getMonth()+1)+"/";
         }
     };
 
@@ -81,7 +91,8 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.listgambar = function (id) {
         console.log(id)
         Data.get('acc/t_penerimaan/listgambar/' + id).then(function (data) {
-            $scope.gambar = data.data;
+            $scope.gambar = data.data.model;
+            $scope.url = data.data.url;
         });
     };
     /* sampe di sini*/
@@ -100,12 +111,22 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     
     $scope.addDetail = function (val) {
         var comArr = $(".tabletr").last().index() + 1
+        console.log($scope.akunDetail)
         var newDet = {
-            m_akun_id: '',
+            m_akun_id: {
+                id : $scope.akunDetail[0].id,
+                kode : $scope.akunDetail[0].kode,
+                nama : $scope.akunDetail[0].nama
+            },
+            m_lokasi_id: {
+                id : $scope.listLokasi[0].id,
+                nama : $scope.listLokasi[0].nama
+            },
             keterangan : '',
-            kredit : '',
+            kredit : 0,
             is_label: false,
         };
+        $scope.sumTotal();
         val.splice(comArr, 0, newDet);
     };
     $scope.removeDetail = function (val, paramindex) {
@@ -113,6 +134,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         var comArr = eval(val);
         if (comArr.length > 1) {
             val.splice(paramindex, 1);
+            $scope.sumTotal();
         } else {
             alert("Something gone wrong");
         }
@@ -126,12 +148,6 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.form.total = totalkredit;
     };
     
-    $scope.kode = function (lokasi) {
-        Data.get(control_link + '/kode/' + lokasi.kode).then(function (response) {
-            $scope.form.no_transaksi = response.data.kode;
-            $scope.form.no_urut = response.data.urutan;
-        });
-    };
 
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
@@ -170,7 +186,21 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
         $scope.form.tanggal = new Date();
-        $scope.listDetail = [{}];
+        $scope.listDetail = [{
+            m_akun_id: {
+                id : $scope.akunDetail[0].id,
+                kode : $scope.akunDetail[0].kode,
+                nama : $scope.akunDetail[0].nama
+            },
+            m_lokasi_id: {
+                id : $scope.listLokasi[0].id,
+                nama : $scope.listLokasi[0].nama
+            },
+            kredit : 0
+        }];
+        $scope.sumTotal();
+        $scope.gambar = {};
+        $scope.url = "";
     };
     /** update */
     $scope.update = function (form) {
@@ -180,8 +210,9 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.is_disable = true;
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
-//        $scope.form.tanggal = new Date(form.tanggal);
+        $scope.form.tanggal = new Date(form.tanggal);
         $scope.getDetail(form.id);
+//        $scope.sumTotal();
         $scope.listgambar(form.id);
         console.log($scope.form);
         
@@ -193,7 +224,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.is_disable = true;
         $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
-//        $scope.form.tanggal = new Date(form.tanggal);
+        $scope.form.tanggal = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
     };
@@ -205,9 +236,11 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         }
         
         console.log(data)
-        var url = (form.id > 0) ? '/update' : '/create';
-        Data.post(control_link + url, data).then(function (result) {
+//        var url = (form.id > 0) ? '/update' : '/create';
+        Data.post(control_link + '/save', data).then(function (result) {
             if (result.status_code == 200) {
+                $scope.form.id = result.data.id;
+                $scope.uploadGambar();
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.cancel();
             } else {

@@ -75,7 +75,7 @@ $app->get('/acc/m_klasifikasi/index', function ($request, $response) {
         $arr[$key]['parent_id']           = $arr[$key]['parent_id'] == 0 ? (string) $value->parent_id : (int) $value->parent_id;
         // $arr[$key]['kode']             = kodeAkun($value->kode);
         $arr[$key]['kode']                = $value->kode;
-        $arr[$key]['is_kasir']            = $value->is_kasir == 1 ? true : false;
+//        $arr[$key]['is_kasir']            = $value->is_kasir == 1 ? true : false;
         // $arr[$key]['is_pendapatan_usaha'] = (string) $value->is_pendapatan_usaha;
         //
         // if ($value->tipe == 'Payable' || $value->tipe == 'Hutang Lancar' || $value->tipe == 'Hutang Tidak Lancar') {

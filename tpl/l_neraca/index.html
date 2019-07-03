@@ -1,0 +1,296 @@
+<div class="animated fadeIn">
+    <div ng-controller="l_neracaCtrl">
+        <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
+            <div class="card-header">
+                <strong class="d-md-down-none">{{master}}</strong>
+
+            </div>
+            <div class="card-body p-0px">
+                <div class="pl-15px pr-15px">
+                    <div class="row mt-15px">
+                        <div class="col-md-12">
+                            <div class="alert alert-secondary">
+                                <form name="landaform" novalidate="">
+                                    <div class="form-group row">
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                    <input type="text" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" ng-disabled="is_view"/>
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                        <!--                                        <div class="col-sm-3">
+                                                                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                                                        <ui-select-match placeholder="Pilih Lokasi">
+                                                                                            {{ $select.selected.kode + " - " + $select.selected.nama}}
+                                                                                        </ui-select-match>
+                                                                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
+                                                                                    </ui-select>
+                                                                                </div>-->
+                                        <div class="col-sm-6"></div>
+                                        <div class="col-sm-3">
+                                            <button class="btn btn-success btn-sm pull-right" ng-click="exportExcel(form)">Export Excel</button>
+                                            <button class="btn btn-default btn-sm pull-right" ng-click="view(form)">Tampilkan</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body" id="print" ng-show="tampilkan">
+                    <style type="text/css">
+                        @media print {
+                            .table-print{
+                                border-collapse: collapse;
+                                width: 100%;
+                            }
+                            td, th{
+                                font-size: 10px;
+                            }
+                            tr {
+                                page-break-inside: avoid;
+                            }
+                            .table-print td, .table-print th{
+                                border: 1px solid #000 !important;
+                                padding: 2px !important;
+                            }
+                            table.table-print tr td, table.table-print tr th {
+                                page-break-inside: avoid;
+                                page-break-after: avoid;
+                                page-break-before: avoid;
+                            }
+                            img{
+                                position: absolute;
+                            }
+                        }
+                    </style>
+                    <div align="left">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img src="img/{{setting.logo}}" style="width: 100px; "/>
+                            </div>
+                            <div class="col-md-6">
+                                <br/>
+                                <center>
+                                    <h2 style="margin: 0px; font-size: 18px; font-weight: bold;">
+                                        LAPORAN NERACA
+                                    </h2>
+                                    <!--Lokasi : {{data.lokasi}}-->
+                                    <br>
+                                    Periode : {{data.tanggal| date:'dd MMMM yyyy'}}
+                                    <br/>
+                                    Disiapkan Tanggal : {{data.disiapkan| date:'dd MMMM yyyy, H:i'}}
+                                    <br/>
+                                    </br>
+                                </center>
+                                <br/>
+                            </div>
+                            <div class="col-md-3">
+                            </div>
+                        </div>
+                        <br/>
+                        <div>
+
+                            <div class="table-responsive">
+                                <table border="1" class="table table-striped table-hover table-bordered table-print" style="border-collapse: collapse;">
+
+
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="3">
+                                                <span class="text-blue-neraca">
+                                                    Harta
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody ng-repeat="val in data.modelHarta.list">
+                                        <tr>
+                                            <td colspan="3" style="padding-left: 25px!important;">
+                                                <span style="color: #0055ef;">
+                                                    {{val.nama}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr ng-repeat="row in val.detail">
+                                            <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important; width: 195px;">
+                                                {{row.kode}}
+                                            </td>
+                                            <td ng-if="row.is_tipe == 0" style="text-align: left;">
+                                                {{row.nama}}
+                                            </td>
+                                            <td ng-if="row.is_tipe == 0" style="text-align: right;">
+                                                {{row.saldo_rp| number}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="padding-left: 25px!important;">
+                                                <span style="color: #0055ef;padding-left: 20px!important">
+                                                    Total {{val.nama}}
+                                                </span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span style="color: #0055ef;">
+                                                    {{val.total| number}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="text-black-neraca">
+                                                    Total Harta
+                                                </span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span class="text-black-neraca"  style="font-weight: bold;">
+                                                    {{data.modelHarta.total| number}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="3">
+                                                <span class="text-blue-neraca">
+                                                    Kewajiban
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody ng-repeat="val in data.modelKewajiban.list">
+                                        <tr>
+                                            <td colspan="3" style="padding-left: 25px!important;">
+                                                <span style="color: #0055ef;">
+                                                    {{val.nama}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr ng-repeat="row in val.detail">
+                                            <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important; width: 195px;">
+                                                {{row.kode}}
+                                            </td>
+                                            <td ng-if="row.is_tipe == 0" style="text-align: left;">
+                                                {{row.nama}}
+                                            </td>
+                                            <td ng-if="row.is_tipe == 0" style="text-align: right;">
+                                                {{row.saldo_rp| number}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="padding-left: 25px!important;">
+                                                <span style="color: #0055ef;padding-left: 20px!important">
+                                                    Total {{val.nama}}
+                                                </span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span style="color: #0055ef;">
+                                                    {{val.total| number}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="text-blue-neraca">
+                                                    Total Kewajiban
+                                                </span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span class="text-blue-neraca"  style="font-weight: bold;">
+                                                    {{data.modelKewajiban.total| number}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="3">
+                                                <span class="text-blue-neraca">
+                                                    Modals
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody ng-repeat="val in data.modelModal.list">
+                                        <tr>
+                                            <td colspan="3" style="padding-left: 25px!important;">
+                                                <span style="color: #0055ef;">
+                                                    {{val.nama}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr ng-repeat="row in val.detail">
+                                            <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important; width: 195px;">
+                                                {{row.kode}}
+                                            </td>
+                                            <td ng-if="row.is_tipe == 0" style="text-align: left;">
+                                                {{row.nama}}
+                                                <span>
+                                                    {{row.laba}}
+                                                </span>
+                                            </td>
+                                            <td ng-if="row.is_tipe == 0" style="text-align: right;">
+                                                {{row.saldo_rp| number}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="padding-left: 25px!important;">
+                                                <span style="color: #0055ef;padding-left: 20px!important">
+                                                    Total {{val.nama}}
+                                                </span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span style="color: #0055ef;">
+                                                    {{val.total| number}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="text-blue-neraca">
+                                                    Total Modal
+                                                </span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span class="text-blue-neraca"  style="font-weight: bold;">
+                                                    {{data.modelModal.total| number}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="text-black-neraca">
+                                                    Total Kewajiban dan Modal
+                                                </span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span class="text-black-neraca" style="font-weight: bold;">
+                                                    {{data.modelKewajibanModal.total| number}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--<div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>-->
+            </div>
+        </div>
+
+    </div>
+</div>

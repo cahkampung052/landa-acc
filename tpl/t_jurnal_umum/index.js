@@ -53,7 +53,10 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
 
     uploader.onSuccessItem = function (fileItem, response) {
         if (response.answer == 'File transfer completed') {
+            var d = new Date();
             $scope.gambar.unshift({img: response.img, id: response.id});
+            $scope.urlgambar = "api/file/jurnal-umum/"+d.getFullYear()+"/"+(d.getMonth()+1)+"/";
+            console.log($scope.urlgambar)
         }
     };
 
@@ -78,7 +81,9 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
 
     $scope.listgambar = function (id) {
         Data.get('acc/t_jurnal_umum/listgambar/' + id).then(function (data) {
-            $scope.gambar = data.data;
+            $scope.gambar = data.data.model;
+            console.log(data)
+            $scope.urlgambar = data.data.url;
         });
     };
     /* sampe di sini*/

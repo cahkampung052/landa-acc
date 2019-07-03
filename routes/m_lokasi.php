@@ -23,6 +23,17 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
     ]);
 });
 
+$app->get('/acc/m_lokasi/list', function ($request, $response){
+    $db = $this->db;
+    $models = $db->select("acc_m_lokasi.*")
+        ->from('acc_m_lokasi')
+//        ->where('is_parent', '=', '1')
+        ->where('is_deleted', '=', 0)
+        ->orderBy('acc_m_lokasi.kode ASC')
+        ->findAll();
+    return successResponse($response, ['list' => $models]);
+});
+
 $app->get('/acc/m_lokasi/index', function ($request, $response) {
     $params = $request->getParams();
     // $sort     = "m_akun.kode ASC";
@@ -59,6 +70,11 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
 
     $models    = $db->findAll();
     $totalItem = $db->count();
+    
+    foreach($models as $key => $val){
+//        $spasi                            = ($val->level == 1) ? '' : str_repeat("···", $val->level - 1);
+//        $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
+    }
 //     print_r($models);exit();
     
 //      print_r($arr);exit();
@@ -71,15 +87,30 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
 
 
 
-$app->post('/acc/m_lokasi/create', function ($request, $response) {
+$app->post('/acc/m_lokasi/save', function ($request, $response) {
 
     $params = $request->getParams();
-    $data   = $params;
+    
     $sql    = $this->db;
 
-    $validasi = validasi($data);
+    $validasi = validasi($params);
     if ($validasi === true) {
-        $model = $sql->insert("acc_m_lokasi", $params);
+        if($params['parent_id'] == 0){
+//            $params['is_parent'] = 1;
+            $params['level'] = 1;
+        }else{
+//            $params['is_parent'] = 0;
+            $getlevel = $sql->select("*")->from("acc_m_lokasi")->where("id", "=", $params['parent_id'])->find();
+//            die();
+            $params['level'] = $getlevel->level + 1;
+        }
+//        print_r($params);die();
+        if(isset($params['id']) && !empty($params['id'])){
+            $model = $sql->update("acc_m_lokasi", $params, ["id" => $params['id']]);
+        }else{
+            $model = $sql->insert("acc_m_lokasi", $params);
+        }
+        
         if ($model) {
             return successResponse($response, $model);
         } else {

@@ -16,22 +16,22 @@
                     <div class="row mt-15px">
                         <div class="col-md-12">
                             <div class="alert alert-secondary">
-                                    <div class="form-group row">
-                                        <label class="col-sm-1 col-form-label-sm required">Tanggal</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" ng-change="getHutang(form)" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" ng-disabled="is_view" required/>
+                                <div class="form-group row">
+                                    <label class="col-sm-1 col-form-label-sm required">Tanggal</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" ng-change="getHutang(form)" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" ng-disabled="is_view" required/>
 
-                                            <!-- <input type="text" class="form-control form-control-sm align-left" ng-model="form.profesi" ng-disabled="is_view" required/> -->
-                                        </div>
-                                        <label class="col-sm-1 col-form-label-sm required">Lokasi</label>
-                                        <div class="col-sm-3">
-                                            <select class="form-control form-control-sm" id="fakultas" ng-model="form.m_lokasi_id" required ng-change="getHutang(form)">
-                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama}}</option>
-                                            </select>
-
-                                            <!-- <input type="text" class="form-control form-control-sm align-left" ng-model="form.profesi" ng-disabled="is_view" required/> -->
-                                        </div>
+                                        <!-- <input type="text" class="form-control form-control-sm align-left" ng-model="form.profesi" ng-disabled="is_view" required/> -->
                                     </div>
+                                    <label class="col-sm-1 col-form-label-sm required">Lokasi</label>
+                                    <div class="col-sm-3">
+                                        <select class="form-control form-control-sm" id="fakultas" ng-model="form.m_lokasi_id" required ng-change="getHutang(form)">
+                                            <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama}}</option>
+                                        </select>
+
+                                        <!-- <input type="text" class="form-control form-control-sm align-left" ng-model="form.profesi" ng-disabled="is_view" required/> -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -57,6 +57,35 @@
                                     Nominal
                                 </th>
                             </tr>
+                            <tr ng-repeat="row in displayed">
+                                <td style="text-align: left;">
+                                    {{row.nama}}
+                                </td>
+                                <!--  <td style="text-align: left;">
+                                    {{row.tipe}}
+                                </td> -->
+                                <td style="text-align: left;">
+                                    <div>
+                                        <ui-select class="ui-select-sm ui-select-container" ng-model="row.m_akun_id" theme="bootstrap" ng-disabled="is_view">
+                                            <ui-select-match placeholder="Pilih Akun">
+                                                {{ $select.selected.kode + " - " + $select.selected.nama}}
+                                            </ui-select-match>
+                                            <ui-select-choices repeat="val in listAkun | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                </td>
+                                <td style="text-align: left;">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Rp</span>
+                                        </div>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.total" ng-disabled="is_view" ng-change="sumTotal()"/>
+                                    </div>
+                                </td>
+
+
+
+                            </tr>
                         </thead>
 
                         <tbody ng-show="!isLoading">
@@ -69,13 +98,13 @@
                                 </td> -->
                                 <td style="text-align: left;">
                                     <div>
-                                                            <ui-select class="ui-select-sm ui-select-container" ng-model="row.m_akun_id" theme="bootstrap" ng-disabled="is_view">
-                                                                <ui-select-match placeholder="Pilih Akun">
-                                                                    {{ $select.selected.kode + " - " + $select.selected.nama}}
-                                                                </ui-select-match>
-                                                                <ui-select-choices repeat="val in listAkun | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
-                                                            </ui-select>
-                                                        </div>
+                                        <ui-select class="ui-select-sm ui-select-container" ng-model="row.m_akun_id" theme="bootstrap" ng-disabled="is_view">
+                                            <ui-select-match placeholder="Pilih Akun">
+                                                {{ $select.selected.kode + " - " + $select.selected.nama}}
+                                            </ui-select-match>
+                                            <ui-select-choices repeat="val in listAkun | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
+                                        </ui-select>
+                                    </div>
                                 </td>
                                 <td style="text-align: left;">
                                     <div class="input-group input-group-sm">
@@ -109,7 +138,7 @@
         </div>-->
         <div class="app-footer" style="background-color: #29363d;left:0;bottom: 0;position: fixed;padding:10px 0px;width: 100%;padding-left: 20px;color: #fff;">
             <div class="col-md-6" style="padding: 0px;">
-                <span style="font-weight: bold;">Total : <span style="font-weight: normal;">{{total | number}}</span></span>
+                <span style="font-weight: bold;">Total : <span style="font-weight: normal;">{{total| number}}</span></span>
             </div>  
             <div class="col-md-3">
                 <!--<span style="font-weight: bold;">Debit : <span style="font-weight: normal;">{{totaldebit}}</span></span>-->
@@ -119,12 +148,12 @@
                     <i class="fa fa-save">&nbsp;</i>Simpan
                 </button>
             </div>
-<!--            <div class="col-md-10">
-                <button class="pull-right btn btn-sm btn-success" ng-click="save(form)" ng-disabled="totaldebit != totalkredit">
-                    <i class="fa fa-save">&nbsp;</i>Simpan
-                </button>
-            </div>-->
-            
+            <!--            <div class="col-md-10">
+                            <button class="pull-right btn btn-sm btn-success" ng-click="save(form)" ng-disabled="totaldebit != totalkredit">
+                                <i class="fa fa-save">&nbsp;</i>Simpan
+                            </button>
+                        </div>-->
+
         </div>
     </div>
 </div>

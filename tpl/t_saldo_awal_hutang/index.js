@@ -51,33 +51,6 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
         $scope.isLoading = false;
     };
 
-    /** create */
-    $scope.create = function () {
-        $scope.is_edit = true;
-        $scope.is_view = false;
-        $scope.is_create = true;
-        $scope.is_disable = false;
-        $scope.formtitle = master + " | Form Tambah Data";
-        $scope.form = {};
-        $scope.form.parent_id = '0';
-    };
-    /** update */
-    $scope.update = function (form) {
-        $scope.is_edit = true;
-        $scope.is_view = false;
-        $scope.is_update = true;
-        $scope.is_disable = true;
-        $scope.formtitle = master + " | Edit Data : " + form.nama;
-        $scope.form = form;
-    };
-    /** view */
-    $scope.view = function (form) {
-        $scope.is_edit = true;
-        $scope.is_view = true;
-        $scope.is_disable = true;
-        $scope.formtitle = master + " | Lihat Data : " + form.nama;
-        $scope.form = form;
-    };
     
     $scope.getHutang = function(form){
         console.log(form);
@@ -94,7 +67,6 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
         }else{
             console.log("tidak")
         }
-        
     }
     /** save action */
     $scope.save = function (form) {

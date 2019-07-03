@@ -9,12 +9,14 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
     $scope.is_view = false;
     $scope.totaldebit = 0;
     $scope.form = {};
+    $scope.form.tanggal = "";
     $scope.totalkredit = 0;
 //    $scope.form.m_fakultas_id = 1;
 
-//    Data.get(control_link + '/cabang').then(function(data) {
-//        $scope.cabang = data.data.data;
-//    });
+    Data.get('acc/m_akun/getTanggalSetting').then(function(data) {
+        console.log(data.data.tanggal)
+        $scope.form.tanggal = new Date(data.data.tanggal)
+    });
 
     $scope.sumTotal = function () {
         var totaldebit = 0;
@@ -113,7 +115,7 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
                     $scope.callServer(tableStateRef);
                 });
             } else {
-                Swal.fire("Gagal", result.errors, "error");
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors) ,"error");
             }
         });
     };

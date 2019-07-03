@@ -25,7 +25,13 @@ $app->get('/acc/t_saldo_awal_piutang/getPiutangAwal', function ($request, $respo
             $getcus[$key]['m_akun_id'] = ["id" => $models->m_akun_id, "kode" => $models->kodeAkun, "nama" => $models->namaAkun];
         } else {
             $getcus[$key]['total'] = 0;
-//            $getsupplier[$key]['m_akun_id'] = [];
+            $akun = $db->select("*")->from("acc_m_akun")
+            ->customWhere("tipe IN('Piutang Usaha', 'Piutang Lain')")
+            ->where("is_tipe", "=", 0)
+            ->where("is_deleted", "=", 0)
+            ->find();
+            
+            $getcus[$key]['m_akun_id'] = ["id" =>$akun->id, "kode"=>$akun->kode, "nama"=>$akun->nama];
         }
     }
 

@@ -13,6 +13,18 @@ function validasi($data, $custom = array())
     return $cek;
 }
 
+$app->get('/acc/m_customer/getCustomer', function ($request, $response) {
+    $db = $this->db;
+    $models = $db->select("*")
+                ->from("acc_m_customer")
+                ->orderBy('acc_m_customer.nama')
+                ->where("is_deleted", "=", 0)
+                ->findAll();
+    return successResponse($response, [
+      'list'        => $models
+    ]);
+});
+
 $app->get('/acc/m_customer/index', function ($request, $response) {
     $params = $request->getParams();
     // $sort     = "m_akun.kode ASC";

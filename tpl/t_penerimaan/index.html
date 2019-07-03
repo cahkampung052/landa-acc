@@ -124,14 +124,14 @@
             <div class="card-body">
                 <form name="landaform" novalidate="">
                     <uib-tabset active="activeForm">
-                        <uib-tab heading="Global" index="0">
+                        <uib-tab heading="Formulir" index="0">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="col-md-12">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
                                             <div class="col-sm-9">
-                                                <ui-select class="ui-select-sm ui-select-container" ng-change="kode(form.m_lokasi_id)" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
                                                     <ui-select-match placeholder="Pilih Lokasi">
                                                         {{ $select.selected.kode + " - " + $select.selected.nama}}
                                                     </ui-select-match>
@@ -181,6 +181,19 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label-sm required">Customer</label>
+                                            <div class="col-sm-9">
+                                                <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_customer_id" theme="bootstrap" ng-disabled="is_view">
+                                                    <ui-select-match placeholder="Pilih Customer">
+                                                        {{ $select.selected.nama}}
+                                                    </ui-select-match>
+                                                    <ui-select-choices position="down" repeat="val in listCustomer | filter : $select.search">{{val.nama}}</ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
                                             <label class="col-sm-3 col-form-label-sm">Diterima Dari</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control form-control-sm" ng-model="form.diterima_dari" ng-disabled="is_view" required/>
@@ -200,7 +213,7 @@
                                             <thead>
                                                 <tr>
                                                     <th width="5%"><button type="button" class="btn btn-success fa fa-plus btn-sm" ng-click="addDetail(listDetail)" ng-disabled="is_view"></button></th>
-                                                    <!--<th class="align-center" style="width: 80px;"></th>-->
+                                                    <th class="align-center">Lokasi</th>
                                                     <th class="align-center">Nama Akun</th>
                                                     <th class="align-center">Keterangan</th>
                                                     <th class="align-center" width="15%">Nominal</th>
@@ -213,6 +226,16 @@
                                                         <button type="button" class="btn btn-danger fa fa-minus btn-sm" ng-click="removeDetail(listDetail, $index)" ng-disabled="is_view"></button>
                                                         <!--<button type="button" class="btn btn-success fa fa-plus" ng-click="addDetail(listDetail, $index)" ng-disabled="is_view"></button>-->
                                                         <!--</div>-->
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <ui-select class="ui-select-sm ui-select-container" ng-model="val.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                                <ui-select-match placeholder="Pilih Lokasi">
+                                                                    {{$select.selected.nama}}
+                                                                </ui-select-match>
+                                                                <ui-select-choices repeat="val in listLokasi | filter : $select.search">{{val.nama}}</ui-select-choices>
+                                                            </ui-select>
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <div>
@@ -240,6 +263,7 @@
                                                 <tr>
                                                     <td></td>
                                                     <td></td>
+                                                    <td></td>
                                                     <td style="text-align: right"><b>Total</b></td>
                                                     <td>
                                                         <div class="input-group input-group-sm">
@@ -257,7 +281,7 @@
                                 </div>
                             </div>
                         </uib-tab>
-                        <uib-tab heading="File" index="1">
+                        <uib-tab heading="Bukti Transaksi" index="1">
                             <div class="col-md-12" style="margin-top: 10px">
                                 <div class="hbox hbox-auto-xs hbox-auto-sm" filters="queueLimit, customFilter" nv-file-drop="" uploader="uploader">
                                     <div class="row" ng-hide="is_view">
@@ -335,12 +359,12 @@
                                                                 </span>
                                                             </td>
                                                             <td nowrap="">
-                                                                <button class="btn btn-default btn-sm" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" type="button">
-                                                                    Upload
-                                                                </button>
-                                                                <button class="btn btn-default btn-sm" ng-click="item.cancel()" ng-disabled="!item.isUploading" type="button">
-                                                                    Cancel
-                                                                </button>
+                                                                <!--                                                                <button class="btn btn-default btn-sm" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" type="button">
+                                                                                                                                    Upload
+                                                                                                                                </button>
+                                                                                                                                <button class="btn btn-default btn-sm" ng-click="item.cancel()" ng-disabled="!item.isUploading" type="button">
+                                                                                                                                    Cancel
+                                                                                                                                </button>-->
                                                                 <button class="btn btn-default btn-sm" ng-click="item.remove()" type="button">
                                                                     Remove
                                                                 </button>
@@ -361,16 +385,16 @@
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <button class="btn btn-addon btn-success btn-sm" ng-click="uploadGambar(form.nik)" ng-disabled="!uploader.getNotUploadedItems().length" type="button">
-                                                            <i class="fa fa-arrow-circle-o-up">
-                                                            </i>
-                                                            Upload all
-                                                        </button>
-                                                        <button class="btn btn-addon btn-warning btn-sm" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" type="button">
-                                                            <i class="fa fa-ban">
-                                                            </i>
-                                                            Cancel all
-                                                        </button>
+                                                        <!--                                                        <button class="btn btn-addon btn-success btn-sm" ng-click="uploadGambar(form.nik)" ng-disabled="!uploader.getNotUploadedItems().length" type="button">
+                                                                                                                    <i class="fa fa-arrow-circle-o-up">
+                                                                                                                    </i>
+                                                                                                                    Upload all
+                                                                                                                </button>
+                                                                                                                <button class="btn btn-addon btn-warning btn-sm" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" type="button">
+                                                                                                                    <i class="fa fa-ban">
+                                                                                                                    </i>
+                                                                                                                    Cancel all
+                                                                                                                </button>-->
                                                         <button class="btn btn-addon btn-danger btn-sm" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" type="button">
                                                             <i class="fa fa-trash-o">
                                                             </i>
@@ -378,13 +402,7 @@
                                                         </button>
                                                     </div>
                                                     <br>
-                                                    <div class="alert alert-info" ng-show="is_create">
-                                                        <i>
-                                                            " Gambar yang di upload pertama akan otomatis di
-                                                            jadikan sebagai gambar produk. "
-                                                        </i>
-                                                    </div>
-                                                    </br>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -398,7 +416,7 @@
                                             </div>
                                             <div class="col-md-2 m-b repeat-animation hide-fade" ng-repeat="slide in gambar">
                                                 <a href="" ng-click="gambarzoom(slide.img)">
-                                                    <img class="img-thumbnail" ng-src="api/acc/landa-acc/upload/bukti/{{slide.img}}"/>
+                                                    <img class="img-thumbnail" ng-src="{{url}}{{slide.img}}"/>
                                                 </a>
                                                 <p align="center" ng-show="!is_view" style="padding:10px;">
                                                     <!--<div class="list-group-item">-->
