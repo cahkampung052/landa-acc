@@ -8,8 +8,8 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     $scope.is_edit = false;
     $scope.is_view = false;
 
-    Data.get('acc/m_akun/akunKas').then(function(data) {
-        $scope.akunKas = data.data.list;
+    Data.get('acc/m_akun/akunDetail').then(function(data) {
+        $scope.akunDetail = data.data.list;
     });
     Data.get('acc/m_akun/akunAll').then(function(data) {
         $scope.akunAll = data.data.list;

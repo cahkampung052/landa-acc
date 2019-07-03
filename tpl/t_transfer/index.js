@@ -8,7 +8,7 @@ app.controller('transferCtrl', function ($scope, Data, $rootScope, $uibModal, Up
     $scope.is_edit = false;
     $scope.is_view = false;
 
-    Data.get(control_link + '/akunKas').then(function (data) {
+    Data.get('acc/m_akun/akunKas').then(function (data) {
         $scope.akun = data.data.list;
     });
 

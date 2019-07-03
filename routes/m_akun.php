@@ -434,7 +434,7 @@ $app->get('/acc/m_akun/getakunkas', function ($request, $response) {
     $db   = $this->db;
     $data = $db->select('*')
         ->from('acc_m_akun')
-        ->where('tipe', '=', 'Cash & Bank')
+        ->where('is_kas', '=', '1')
         ->andWhere('is_deleted', '=', 0)
         ->andWhere('level', '=', 2)
         ->findAll();

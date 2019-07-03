@@ -69,14 +69,14 @@ function validasi($data, $custom = array()) {
     $validasi = array(
 //        'no_transaksi' => 'required',
         'm_lokasi_id' => 'required',
-        'm_supplier_id' => 'required',
+//        'm_supplier_id' => 'required',
         'm_akun_id' => 'required',
         'tanggal' => 'required',
         'total' => 'required',
 //        'diterima_dari' => 'required'
     );
     GUMP::set_field_name("m_akun_id", "Keluar dari akun");
-    GUMP::set_field_name("m_supplier_id", "Supplier");
+//    GUMP::set_field_name("m_supplier_id", "Supplier");
     GUMP::set_field_name("m_lokasi_id", "Lokasi");
     GUMP::set_field_name("total", "Detail");
     $cek = validate($data, $validasi, $custom);
