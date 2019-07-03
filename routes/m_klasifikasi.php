@@ -363,7 +363,7 @@ function setLevelTipeAkun($parent_id)
 {
 
     $db = new Cahkampung\Landadb(config('DB')['db']);
-    $parent = $db->find("select * from m_akun where id = '" . $parent_id . "'");
+    $parent = $db->find("select * from acc_m_akun where id = '" . $parent_id . "'");
     return $parent->level + 1;
 }
 
