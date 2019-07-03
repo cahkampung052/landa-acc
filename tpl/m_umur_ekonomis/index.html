@@ -1,10 +1,5 @@
-<style type="text/css">
-    .modal-lg {
-        max-width: 90%;
-    }
-</style>
 <div class="animated fadeIn">
-    <div ng-controller="supplierCtrl">
+    <div ng-controller="umurEkonomisCtrl">
         <div class="card" ng-if="!is_edit" st-pipe="callServer" st-table="displayed">
             <div class="card-header">
                 <strong class="d-md-down-none">
@@ -19,7 +14,7 @@
                     <button class="btn btn-primary btn-sm" ng-click="create();">
                         <i class="fa fa-plus">
                         </i>
-                        Tambahkan Asset Baru
+                        Tambahkan Umur Ekonomis Baru
                     </button>
                 </div>
             </div>
@@ -63,13 +58,10 @@
                                     Nama
                                 </th>
                                 <th style="text-align: left;">
-                                    Tgl Beli
+                                    Tahun
                                 </th>
                                 <th style="text-align: left;">
-                                    Harga Beli
-                                </th>
-                                <th style="text-align: left;">
-                                    Lokasi
+                                    Persentase
                                 </th>
                                 <th>
                                 </th>
@@ -81,18 +73,13 @@
                                     {{row.nama}}
                                 </td>
                                 <td style="text-align: left;">
-                                    {{row.tanggal_beli}}
+                                    {{row.tahun}}
                                 </td>
                                 <td style="text-align: left;">
-                                    {{row.harga_beli| currency:undefined:0}}
-                                </td>
-                                <td style="text-align: left;">
-                                    {{row.nm_lokasi}}
+                                    {{row.persentase}} %
                                 </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
-                                        <button class="btn btn-success fa fa-info" ng-click="detail_penyusutan(row)" ng-if="row.is_deleted == 0 && row.is_penyusutan == 1" type="button">
-                                        </button>
                                         <button class="btn btn-info fa fa-pencil" ng-click="update(row)" ng-if="row.is_deleted == 0" type="button">
                                         </button>
                                         <button class="btn btn-danger fa fa-trash" ng-click="trash(row);" ng-if="row.is_deleted == 0" type="button">
@@ -118,16 +105,46 @@
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
-                    <uib-tabset active="activeForm">
-                        <uib-tab heading="Data" index="0">
-                            <div ng-include="'../acc-ukdc/api/acc/landa-acc/tpl/m_asset/form_data.html'">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label-sm required">
+                                        Nama Umur Ekonomis
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.nama" required="" type="text"/>
+                                    </div>
+                                </div>
                             </div>
-                        </uib-tab>
-                        <uib-tab  heading="Akun" index="1">
-                            <div ng-include="'../acc-ukdc/api/acc/landa-acc/tpl/m_asset/form_akun.html'">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label-sm required">
+                                        Tahun
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.tahun" required="" type="text"/>
+                                    </div>
+                                </div>
                             </div>
-                        </uib-tab>
-                    </uib-tabset>
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label-sm required">
+                                        Persentase
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group input-group-sm">
+                                            <input class="form-control form-control-sm text-right" name="" ng-disabled="is_view" ng-model="form.persentase" type="number" >
+                                            </input>
+                                            <div class="input-group-text">
+                                                %
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="card-footer">
@@ -137,7 +154,7 @@
                         </i>
                         Kembali
                     </button>
-                    <button button-spinner="loading" class="btn btn-primary btn-sm" ng-click="save(form)" ng-disabled="cek <= 3 || loading" ng-hide="is_view" type="submit">
+                    <button button-spinner="loading" class="btn btn-primary btn-sm" ng-click="save(form)" ng-disabled="loading" ng-hide="is_view" type="submit">
                         <i class="fa fa-save">
                         </i>
                         Simpan

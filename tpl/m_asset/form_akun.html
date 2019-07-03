@@ -1,0 +1,55 @@
+<div class="row">
+    <div class="col-md-8">
+        <div class="col-md-12">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label-sm required">
+                    Akun asset
+                </label>
+                <div class="col-sm-9">
+                    <ui-select class="w100" ng-disabled="is_view" ng-model="form.akun_asset" theme="bootstrap">
+                        <ui-select-match placeholder="Pilih Akun">
+                            {{ $select.selected.nama }}
+                        </ui-select-match>
+                        <ui-select-choices position="down" repeat="lb in listakun| filter :$select.search">
+                            {{ lb.nama }}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label-sm required">
+                    Akumulasi Penyusutan
+                </label>
+                <div class="col-sm-9">
+                    <ui-select class="w100" ng-disabled="is_view" ng-model="form.akun_akumulasi" theme="bootstrap">
+                        <ui-select-match placeholder="Pilih Akun">
+                            {{ $select.selected.nama }}
+                        </ui-select-match>
+                        <ui-select-choices position="down" repeat="lb in listakun| filter :$select.search">
+                            {{ lb.nama }}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label-sm required">
+                    Beban Penyusutan
+                </label>
+                <div class="col-sm-9">
+                    <ui-select class="w100" ng-disabled="is_view" ng-model="form.akun_beban" theme="bootstrap">
+                        <ui-select-match placeholder="Pilih Akun">
+                            {{ $select.selected.nama }}
+                        </ui-select-match>
+                        <ui-select-choices position="down" repeat="lb in listakun| filter :$select.search">
+                            {{ lb.nama }}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
