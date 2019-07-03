@@ -20,7 +20,7 @@
                         <i class="fa fa-plus"></i>
                         &nbsp;Tambahkan Akun Baru
                     </button>
-                    
+
                 </div>
             </div>
             <div class="card-body p-0px">
@@ -100,10 +100,10 @@
 
                                 <td>
                                     <div class="btn-group pull-right" role="group" ng-show="row.is_tipe == 0">
-                                        <label class="i-checks btn-table" style="float: left; margin-top: 6px; margin-right:10px" title="Tampil Di Kasir" ng-if="row.tipe == 'Cash & Bank'">
-                                            <input ng-disabled="is_view" ng-model="row.is_kasir" type="checkbox" ng-click="save_akun_kasir(row)">
-                                            <i></i>
-                                        </label>
+                                        <!--                                        <label class="i-checks btn-table" style="float: left; margin-top: 6px; margin-right:10px" title="Tampil Di Kasir" ng-if="row.tipe == 'Cash & Bank'">
+                                                                                    <input ng-disabled="is_view" ng-model="row.is_kasir" type="checkbox" ng-click="save_akun_kasir(row)">
+                                                                                    <i></i>
+                                                                                </label>-->
                                         <button type="button" class="btn btn-success fa fa-briefcase" ng-if="row.is_deleted == 0" ng-click="modalBudget(row)"></button>
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
                                         <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
@@ -159,6 +159,17 @@
                                 <label class="col-sm-3 col-form-label-sm required">Nama Akun</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label-sm required">Kas</label>
+                                <div class="col-sm-9">
+                                    <div class="btn-group">
+                                        <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.is_kas" ng-disabled="is_view" uib-btn-radio="1">Ya</label>
+                                        <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.is_kas" ng-disabled="is_view" uib-btn-radio="0">Tidak</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

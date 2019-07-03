@@ -117,14 +117,14 @@
             <div class="card-body">
                 <form name="landaform" novalidate="">
                     <uib-tabset active="activeForm">
-                        <uib-tab heading="Global" index="0">
+                        <uib-tab heading="Formulir" index="0">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="col-md-12">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
                                             <div class="col-sm-9">
-                                                <ui-select class="ui-select-sm ui-select-container" ng-change="kode(form.m_lokasi_id)" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
                                                     <ui-select-match placeholder="Pilih Lokasi">
                                                         {{ $select.selected.kode + " - " + $select.selected.nama}}
                                                     </ui-select-match>
@@ -181,8 +181,8 @@
                                             <thead>
                                                 <tr>
                                                     <th width="5%"><button type="button" class="btn btn-success fa fa-plus btn-sm" ng-click="addDetail(listDetail)" ng-disabled="is_view"></button></th>
-                                                    <!--<th class="align-center" style="width: 80px;"></th>-->
-                                                    <th class="align-center">Nama Akun</th>
+                                                    <th class="align-center">Lokasi</th>
+                                                    <th class="align-center">Akun</th>
                                                     <th class="align-center">Keterangan</th>
                                                     <th class="align-center" width="15%">Debit</th>
                                                     <th class="align-center" width="15%">Kredit</th>
@@ -195,6 +195,16 @@
                                                         <button type="button" class="btn btn-danger fa fa-minus btn-sm" ng-click="removeDetail(listDetail, $index)" ng-disabled="is_view"></button>
                                                         <!--<button type="button" class="btn btn-success fa fa-plus" ng-click="addDetail(listDetail, $index)" ng-disabled="is_view"></button>-->
                                                         <!--</div>-->
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <ui-select class="ui-select-sm ui-select-container" ng-model="val.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                                <ui-select-match placeholder="Pilih Lokasi">
+                                                                    {{$select.selected.nama}}
+                                                                </ui-select-match>
+                                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.nama}}</ui-select-choices>
+                                                            </ui-select>
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <div>
@@ -231,13 +241,14 @@
                                                 <tr>
                                                     <td></td>
                                                     <td></td>
+                                                    <td></td>
                                                     <td style="text-align: right"><b>Total</b></td>
                                                     <td>
                                                         <div class="input-group input-group-sm">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
-                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka" maxlength="12" ng-disabled="true" ng-model="form.total_debit"/>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="true" ng-model="form.total_debit"/>
                                                         </div>
                                                     </td>
                                                     <td>
@@ -245,7 +256,7 @@
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
-                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka" maxlength="12" ng-disabled="true" ng-model="form.total_kredit"/>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="true" ng-model="form.total_kredit"/>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -256,7 +267,7 @@
                                 </div>
                             </div>
                         </uib-tab>
-                        <uib-tab heading="File" index="1">
+                        <uib-tab heading="Bukti Transaksi" index="1">
                             <div class="col-md-12" style="margin-top: 10px">
                                 <div class="hbox hbox-auto-xs hbox-auto-sm" filters="queueLimit, customFilter" nv-file-drop="" uploader="uploader">
                                     <div class="row" ng-hide="is_view">
@@ -334,12 +345,12 @@
                                                                 </span>
                                                             </td>
                                                             <td nowrap="">
-                                                                <button class="btn btn-default btn-sm" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" type="button">
+<!--                                                                <button class="btn btn-default btn-sm" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" type="button">
                                                                     Upload
                                                                 </button>
                                                                 <button class="btn btn-default btn-sm" ng-click="item.cancel()" ng-disabled="!item.isUploading" type="button">
                                                                     Cancel
-                                                                </button>
+                                                                </button>-->
                                                                 <button class="btn btn-default btn-sm" ng-click="item.remove()" type="button">
                                                                     Remove
                                                                 </button>
@@ -360,7 +371,7 @@
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <button class="btn btn-addon btn-success btn-sm" ng-click="uploadGambar(form.nik)" ng-disabled="!uploader.getNotUploadedItems().length" type="button">
+<!--                                                        <button class="btn btn-addon btn-success btn-sm" ng-click="uploadGambar(form.nik)" ng-disabled="!uploader.getNotUploadedItems().length" type="button">
                                                             <i class="fa fa-arrow-circle-o-up">
                                                             </i>
                                                             Upload all
@@ -369,7 +380,7 @@
                                                             <i class="fa fa-ban">
                                                             </i>
                                                             Cancel all
-                                                        </button>
+                                                        </button>-->
                                                         <button class="btn btn-addon btn-danger btn-sm" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" type="button">
                                                             <i class="fa fa-trash-o">
                                                             </i>
@@ -377,13 +388,13 @@
                                                         </button>
                                                     </div>
                                                     <br>
-                                                    <div class="alert alert-info" ng-show="is_create">
+<!--                                                    <div class="alert alert-info" ng-show="is_create">
                                                         <i>
                                                             " Gambar yang di upload pertama akan otomatis di
                                                             jadikan sebagai gambar produk. "
                                                         </i>
                                                     </div>
-                                                    </br>
+                                                    </br>-->
                                                 </div>
                                             </div>
                                         </div>

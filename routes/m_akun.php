@@ -6,9 +6,10 @@ function validasi($data, $custom = array())
         'parent_id' => 'required',
         'kode'      => 'required',
         'nama'      => 'required',
-        // 'tipe' => 'required',
+         'is_kas' => 'required',
     );
     GUMP::set_field_name("parent_id", "Akun");
+    GUMP::set_field_name("is_kas", "Kas");
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
@@ -157,7 +158,7 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $arr[$key]['nama_lengkap'] = $spasi . $value->kode . ' - ' . $value->nama;
         $arr[$key]['parent_id']    = $value->parent_id;
         $arr[$key]['kode']         = str_replace($value->kode_induk.".", "", $value->kode);
-        $arr[$key]['is_kasir']     = $value->is_kasir == 1 ? true : false;
+//        $arr[$key]['is_kasir']     = $value->is_kasir == 1 ? true : false;
         // $arr[$key]['kode_akun']    = str_replace($value->kode_induk.".", "", $value->kode);
 
         if ($value->tipe == 'Hutang Lancar' || $value->tipe == 'Hutang Tidak Lancar') {
