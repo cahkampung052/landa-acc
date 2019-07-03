@@ -1,0 +1,78 @@
+<div class="modal-header bg-success text-white">
+        <h5 class="modal-title">Detail Penyusutan</h5>
+        <button type="button" class="close" ng-click="close()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+      <div class="col-md-12">
+          <div class="alert alert-success" role="alert">
+            <div class="row">
+              <div class="col-sm-2">
+                <b>Nama Asset </b>
+                <b class="float-right">:</b>
+              </div>
+              <div class="col-sm-4">
+                {{form.nama}}
+              </div>
+              <div class="col-sm-2">
+                <b>Tanggal Perolehan </b>
+                <b class="float-right">:</b>
+              </div>
+              <div class="col-sm-4">
+                {{form.tanggal_beli_format}}
+              </div>
+              <div class="col-sm-2">
+                <b>Harga Perolehan </b>
+                <b class="float-right">:</b>
+              </div>
+              <div class="col-sm-4">
+                {{form.harga_beli| currency:undefined:0}}
+              </div>
+              <div class="col-sm-2">
+                <b>Nilai Residu </b>
+                <b class="float-right">:</b>
+              </div>
+              <div class="col-sm-4">
+                {{form.nilai_residu| currency:undefined:0}}
+              </div>
+            </div>
+            <br>
+            <!-- Tgl Beli Asset : {{form.tanggal_beli_format}}<br> -->
+            <!-- Harga Beli Asset : {{form.harga_beli| currency:undefined:0}}<br> -->
+            <!-- Nilai Residu : {{form.nilai_residu| currency:undefined:0}}<br> -->
+          </div>
+      </div>
+        <div class="col-md-12">
+            <table class="table">
+              <tr>
+                <th class="text-center">Tahun Ke</th>
+                <th class="text-center">Periode Awal</th>
+                <th class="text-center">Periode Akhir</th>
+                <th class="text-center">Jumlah Bulan</th>
+                <th class="text-center">Saldo Awal Buku</th>
+                <th class="text-center">Perentase</th>
+                <th class="text-center">Penyusutan pertahun</th>
+                <th class="text-center">Penyusutan perbulan</th>
+                <th class="text-center">Saldo Akhir Buku</th>
+              </tr>
+              <tr ng-repeat="ld in listDetail">
+                <td align="center">{{$index+1}}</td>
+                <td align="center">{{ld.awal}}</td>
+                <td align="center">{{ld.akhir}}</td>
+                <td align="center">{{ld.selisih}}</td>
+                <td align="right">{{ld.saldo_awal| currency:undefined:0}}</td>
+                <td align="center">{{ld.persentase}} %</td>
+                <td align="right">{{ld.penyusutan_pertahun| currency:undefined:0}}</td>
+                <td align="right">{{ld.penyusutan_perbulan| currency:undefined:0}}</td>
+                <td align="right">{{ld.saldo_akhir| currency:undefined:0}}</td>
+              </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<!--</div>-->
+<!-- <div class="modal-footer">
+
+</div> -->

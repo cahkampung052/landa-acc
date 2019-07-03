@@ -36,23 +36,10 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         $scope.isLoading = false;
     };
 
-    Data.get(control_link + '/getAkun').then(function (response) {
-        $scope.listakun = response.data.list;
-    });
-    
     Data.get('acc/m_lokasi/index', {filter:{is_deleted:0}}).then(function (response) {
         $scope.listLokasi = response.data.list;
-        $scope.listLokasi.push({"id":-1,"nama":"Lainya" });
-
     });
-
-    Data.get('acc/m_umur_ekonomis/index', {filter:{is_deleted:0}}).then(function (response) {
-        $scope.listUmur = response.data.list;
-    });
-    
-    $scope.setTahun = function(persentase){
-        $scope.form.persentase = persentase;
-    }
+        
 
     /** create */
     $scope.create = function () {
@@ -63,7 +50,6 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
         $scope.form.tanggal = new Date();
-        $scope.form.is_penyusutan = 0;
     };
     // $scope.create();
     /** update */
@@ -167,45 +153,4 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         });
 
     };
-
-
-    $scope.detail_penyusutan = function(form){
-      var modalInstance = $uibModal.open({
-          templateUrl: "../acc-ukdc/api/acc/landa-acc/tpl/m_asset/modal_detail_penyusutan.html",
-          controller: "penyusutanCtrl",
-          size: "lg",
-          backdrop: "static",
-          keyboard: false,
-          resolve: {
-            form: form,
-          }
-      });
-
-      modalInstance.result.then(function(response) {
-        if(response.data == undefined){
-        } else {
-        }
-      });
-    }
-});
-
-
-app.controller("penyusutanCtrl", function($state, $scope, Data, $uibModalInstance, form) {
-    $scope.form = form;
-    $scope.listDetail = [];
-
-    $scope.getDetailPenyusutan = function(id){
-
-        Data.get('acc/m_asset/getDetailPenyusutan', {id:id}).then(function(result) {
-          $scope.listDetail = result.data.list;
-        });
-    };
-
-    $scope.getDetailPenyusutan(form.id);
-
-
-    $scope.close = function() {
-      $uibModalInstance.close({'data' : undefined });
-    };
-
 });
