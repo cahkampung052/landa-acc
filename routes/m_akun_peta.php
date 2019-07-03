@@ -51,8 +51,13 @@ $app->post('/acc/m_akun_peta/save', function ($request, $response) {
     $sql = $this->db;
     foreach ($data as $key => $val) {
         $val['m_akun_id'] = isset($val['m_akun_id']) ? $val['m_akun_id']['id'] : '';
-
-        $model = $sql->insert("acc_m_akun_peta", $val);
+        $cek = $sql->select("*")->from("acc_m_akun_peta")->where("type", "=", $val["type"])->find();
+        if($cek){
+            $model = $sql->update("acc_m_akun_peta", $val, ["id"=>$cek->id]);
+        }else{
+            $model = $sql->insert("acc_m_akun_peta", $val);
+        }
+        
     }
 
     if ($model) {
