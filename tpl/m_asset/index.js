@@ -1,4 +1,4 @@
-app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/m_asset";
     var master = 'Master Asset';
@@ -42,7 +42,7 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
     
     Data.get('acc/m_lokasi/index', {filter:{is_deleted:0}}).then(function (response) {
         $scope.listLokasi = response.data.list;
-        $scope.listLokasi.push({"id":-1,"nama":"Lainya" });
+        // $scope.listLokasi.push({"id":-1,"nama":"Lainya" });
 
     });
 
@@ -85,19 +85,32 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         $scope.is_disable = true;
         $scope.formtitle = master + " | Lihat Data : " + form.nama;
         $scope.form = form;
+        $scope.form.tanggal = new Date(form.tanggal_beli);
+        $scope.form.harga = form.harga_beli;
     };
     /** save action */
     $scope.save = function (form) {
         Data.post(control_link + "/save", form).then(function (result) {
             if (result.status_code == 200) {
-                $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
-                $scope.callServer(tableStateRef);
-                $scope.is_edit = false;
+                if (result.data.is_penyusutan==1) {
+                    $scope.update_penyusutan(result.data.id);
+                }else{
+                    $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                    $scope.callServer(tableStateRef);
+                    $scope.is_edit = false;
+                }
             } else {
                 $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors) ,"error");
             }
         });
     };
+    $scope.update_penyusutan = function(id){
+        Data.get('acc/m_asset/getDetailPenyusutan', {id:id}).then(function(result) {
+            $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+            $scope.callServer(tableStateRef);
+            $scope.is_edit = false;
+        });
+    }
     /** cancel action */
     $scope.cancel = function () {
         if (!$scope.is_view) {
@@ -171,7 +184,7 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
 
     $scope.detail_penyusutan = function(form){
       var modalInstance = $uibModal.open({
-          templateUrl: "../acc-ukdc/api/acc/landa-acc/tpl/m_asset/modal_detail_penyusutan.html",
+          templateUrl: "../acc-ukdc/api/acc/landaacc/tpl/m_asset/modal_detail_penyusutan.html",
           controller: "penyusutanCtrl",
           size: "lg",
           backdrop: "static",
