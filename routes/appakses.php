@@ -13,6 +13,13 @@ function validasi($data, $custom = array())
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
+
+$app->get("/acc/appakses/tes", function ($request, $response) {
+    $db = $this->db;
+    $child = getChildId("acc_m_lokasi", 1);
+
+    print_r($child);
+});
 /**
  * Ambil semua hak akses
  */
