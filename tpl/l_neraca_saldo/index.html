@@ -9,16 +9,18 @@
                 <div class="pl-15px pr-15px">
                     <div class="row mt-15px">
                         <div class="col-md-12">
-                            <div class="alert alert-secondary">
+                            <div class="">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row">
                                         <div class="col-sm-3">
                                             <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
                                         </div>
                                         <div class="col-sm-6"></div>
-                                        <div class="col-sm-3">
-                                            <button class="btn btn-success btn-sm pull-right" ng-click="exportExcel(form)">Export Excel</button>
-                                            <button class="btn btn-default btn-sm pull-right" ng-click="view(form)">Tampilkan</button>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-12 content-center">
+                                            <button class="btn btn-primary btn-sm" ng-click="view(form)"><i class="fa fa-search"></i> Tampilkan</button>
                                         </div>
                                     </div>
                                 </form>
@@ -26,148 +28,129 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-body" id="print" ng-show="tampilkan">
-                    <style type="text/css">
-                        @media print {
-                            .table-print{
-                                border-collapse: collapse;
-                                width: 100%;
-                            }
-                            td, th{
-                                font-size: 10px;
-                            }
-                            tr {
-                                page-break-inside: avoid;
-                            }
-                            .table-print td, .table-print th{
-                                border: 1px solid #000 !important;
-                                padding: 2px !important;
-                            }
-                            table.table-print tr td, table.table-print tr th {
-                                page-break-inside: avoid;
-                                page-break-after: avoid;
-                                page-break-before: avoid;
-                            }
-                            img{
-                                position: absolute;
-                            }
-                        }
-                    </style>
-                    <div align="left">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <img src="img/{{setting.logo}}" style="width: 100px; "/>
-                            </div>
-                            <div class="col-md-6">
-                                <br/>
-                                <center>
-                                    <h2 style="margin: 0px; font-size: 18px; font-weight: bold;">
-                                        LAPORAN NERACA SALDO
-                                    </h2>
-                                    Periode : {{data.tanggal| date:'dd MMMM yyyy'}}
-                                    <br/>
-                                    Disiapkan Tanggal : {{data.disiapkan| date:'dd MMMM yyyy, H:i'}}
-                                    <br/>
-                                    </br>
-                                </center>
-                                <br/>
-                            </div>
-                            <div class="col-md-3">
-                            </div>
+
+            </div>
+
+        </div>
+        <div class="card">
+            <div class="card-body" ng-show="tampilkan">
+                <div align="left">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img src="img/{{setting.logo}}" style="width: 100px; "/>
                         </div>
-                        <br/>
-                            
-                            <div class="table-responsive">
-                                <table border="1" class="table table-striped table-hover table-bordered table-print" style="border-collapse: collapse;">
-                                    <thead>
-                                        <tr style="background-color: darkseagreen;">
-                                            <th width="80">
-                                                <b>
-                                                    KODE
-                                                </b>
-                                            </th>
-                                            <th>
-                                                <b>
-                                                    AKUN
-                                                </b>
-                                            </th>
-                                            <th width="100">
-                                                <b>
-                                                    SALDO AWAL
-                                                </b>
-                                            </th>
-                                            <th width="100">
-                                                <b>
-                                                    DEBIT
-                                                </b>
-                                            </th>
-                                            <th width="100">
-                                                <b>
-                                                    KREDIT
-                                                </b>
-                                            </th>
-                                            <th width="100">
-                                                <b>
-                                                    SALDO AKHIR
-                                                </b>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody ng-repeat="val in detail">
-                                        <tr>
-                                            <td>
-                                                {{val.kode}}
-                                            </td>
-                                            <td>
-                                                {{val.nama}}
-                                            </td>
-                                            <td align="right" class="text-right">
-                                                {{val.saldo_awal | number}}
-                                            </td>
-                                            <td align="right" class="text-right">
-                                                    {{val.debit | number}}
-                                            </td>
-                                            <td align="right" class="text-right">
-                                                {{val.kredit | number}}
-                                            </td>
-                                            <td align="right" class="text-right">
-                                                {{val.saldo_akhir | number}}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td align="right" class="text-center" colspan="2">
-                                                <b>
-                                                    Saldo Akhir
-                                                </b>
-                                            </td>
-                                            <td></td>
-                                            <td align="right" class="text-right">
-                                                <b>
-                                                    {{data.total_debit | number}}
-                                                </b>
-                                            </td>
-                                            <td align="right" class="text-right">
-                                                <b>
-                                                    {{data.total_kredit | number}}
-                                                </b>
-                                            </td>
-                                            <td align="right" class="text-right">
-<!--                                                <b>
-                                                    {{val.total_saldo | number}}
-                                                </b>-->
-                                            </td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+                        <div class="col-md-6">
+                            <br/>
+                            <center>
+                                <h2 class="header-laporan">
+                                    LAPORAN NERACA SALDO
+                                </h2>
+                                Periode : {{data.tanggal| date:'dd MMMM yyyy'}}
+                                <br/>
+                                Disiapkan Tanggal : {{data.disiapkan| date:'dd MMMM yyyy, H:i'}}
+                                <br/>
+                            </center>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success btn-sm pull-right" ng-click="exportExcel(form)">
+                                    <i class="fa fa-file"></i>
+                                    Excel
+                                </button>
+                                <button class="btn btn-warning btn-sm pull-right" ng-click="">
+                                    <i class="fa fa-print"></i>
+                                    Print
+                                </button>
+                        </div>
+                    </div>
+                    <br/>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-laporan">
+                            <thead>
+                                <tr>
+                                    <th width="80">
+                                        <b>
+                                            KODE
+                                        </b>
+                                    </th>
+                                    <th>
+                                        <b>
+                                            AKUN
+                                        </b>
+                                    </th>
+                                    <th width="100">
+                                        <b>
+                                            SALDO AWAL
+                                        </b>
+                                    </th>
+                                    <th width="100">
+                                        <b>
+                                            DEBIT
+                                        </b>
+                                    </th>
+                                    <th width="100">
+                                        <b>
+                                            KREDIT
+                                        </b>
+                                    </th>
+                                    <th width="100">
+                                        <b>
+                                            SALDO AKHIR
+                                        </b>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody ng-repeat="val in detail">
+                                <tr>
+                                    <td>
+                                        {{val.kode}}
+                                    </td>
+                                    <td>
+                                        {{val.nama}}
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        {{val.saldo_awal| number}}
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        {{val.debit| number}}
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        {{val.kredit| number}}
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        {{val.saldo_akhir| number}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td align="right" class="text-center" colspan="2">
+                                        <b>
+                                            Saldo Akhir
+                                        </b>
+                                    </td>
+                                    <td></td>
+                                    <td align="right" class="text-right">
+                                        <b>
+                                            {{data.total_debit| number}}
+                                        </b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <b>
+                                            {{data.total_kredit| number}}
+                                        </b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <!--                                                <b>
+                                                                                            {{val.total_saldo | number}}
+                                                                                        </b>-->
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
-
-                <!--<div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>-->
             </div>
         </div>
-
     </div>
 </div>

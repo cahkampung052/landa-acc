@@ -56,12 +56,12 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
         console.log(form);
         if(form.tanggal != undefined && form.m_lokasi_id != undefined){
             console.log("ya")
-            var param = {};
-            param['m_lokasi_id'] = form.m_lokasi_id;
-            param['tanggal'] = moment(form.tanggal).format('YYYY-MM-DD');
-            Data.get('acc/t_saldo_awal_hutang/getHutangAwal', param).then(function (response) {
+            var a = form.tanggal;
+            form.tanggal = moment(form.tanggal).format('YYYY-MM-DD');
+            Data.post('acc/t_saldo_awal_hutang/getHutangAwal', form).then(function (response) {
                 $scope.displayed = response.data.detail;
                 $scope.sumTotal();
+                form.tanggal = new Date(form.tanggal)
     //            $scope.form = {};
             });
         }else{
@@ -76,16 +76,21 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
             form : form,
             detail : $scope.displayed
         }
-        Data.post('acc/t_saldo_awal_hutang/saveHutang', data).then(function (result) {
-            if (result.status_code == 200) {
+        if(form.tanggal != undefined && form.m_lokasi_id != undefined){
+            Data.post('acc/t_saldo_awal_hutang/saveHutang', data).then(function (result) {
+                if (result.status_code == 200) {
 
 
-                $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
-                $scope.getHutang(form)
-            } else {
-                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors) ,"error");
-            }
-        });
+                    $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                    $scope.getHutang(form)
+                } else {
+                    $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors) ,"error");
+                }
+            });
+        }else{
+            $rootScope.alert("Terjadi Kesalahan", "Tanggal dan lokasi harus diisi" ,"error");
+        }
+        
     };
     /** cancel action */
     $scope.cancel = function () {

@@ -120,7 +120,8 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
             },
             m_lokasi_id: {
                 id : $scope.listLokasi[0].id,
-                nama : $scope.listLokasi[0].nama
+                nama : $scope.listLokasi[0].nama,
+                kode : $scope.listLokasi[0].kode
             },
             keterangan : '',
             kredit : 0,
@@ -194,7 +195,8 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
             },
             m_lokasi_id: {
                 id : $scope.listLokasi[0].id,
-                nama : $scope.listLokasi[0].nama
+                nama : $scope.listLokasi[0].nama,
+                kode : $scope.listLokasi[0].kode
             },
             kredit : 0
         }];

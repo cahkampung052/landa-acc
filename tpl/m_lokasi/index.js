@@ -9,7 +9,7 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     $scope.is_view = false;
 
     $scope.listParent = function () {
-        Data.get(control_link + '/list').then(function (data) {
+        Data.get(control_link + '/getLokasi').then(function (data) {
 
             $scope.parent = data.data.list;
             console.log($scope.parent);
@@ -21,9 +21,14 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         tableStateRef = tableState;
         $scope.isLoading = true;
         var offset = tableState.pagination.start || 0;
-        var limit = tableState.pagination.number || 1000;
+        var limit = tableState.pagination.number || 10;
+        
         /** set offset and limit */
-        var param = {};
+        var param = {
+//            offset: offset,
+//            limit: limit
+        };
+        
         /** set sort and order */
         if (tableState.sort.predicate) {
             param['sort'] = tableState.sort.predicate;
@@ -36,6 +41,9 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
             $scope.base_url = response.data.base_url;
+            tableState.pagination.numberOfPages = Math.ceil(
+                    response.data.totalItems / limit
+                    );
         });
         $scope.isLoading = false;
     };
@@ -49,7 +57,6 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-        $scope.form.parent_id = "0";
         $scope.listParent();
     };
     /** update */

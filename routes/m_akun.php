@@ -594,7 +594,7 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response){
 $app->get('/acc/m_akun/akunHutang', function ($request, $response){
     $db = $this->db;
     $models = $db->select("*")->from("acc_m_akun")
-            ->customWhere("tipe IN('Hutang Lancar', 'Hutang Tidak Lancar')")
+//            ->customWhere("tipe IN('Hutang Lancar', 'Hutang Tidak Lancar')")
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             
@@ -607,7 +607,7 @@ $app->get('/acc/m_akun/akunHutang', function ($request, $response){
 $app->get('/acc/m_akun/akunPiutang', function ($request, $response){
     $db = $this->db;
     $models = $db->select("*")->from("acc_m_akun")
-            ->customWhere("tipe IN('Piutang Usaha', 'Piutang Lain')")
+//            ->customWhere("tipe IN('Piutang Usaha', 'Piutang Lain')")
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             
@@ -628,4 +628,14 @@ $app->get('/acc/m_akun/getTanggalSetting', function ($request, $response){
             ->find();
     $models->tanggal = date('Y-m-d H:i:s', strtotime($models->tanggal . ' -1 day'));
     return successResponse($response, $models);
+});
+
+$app->get('/acc/m_akun/getakun/{id}', function ($request, $response) {
+    $db   = $this->db;
+    $id   = $request->getAttribute('id');
+    $data = $db->select("kode")
+        ->from("acc_m_akun")
+        ->where('id', '=', $id)
+        ->find();
+    return successResponse($response, ['data' => $data]);
 });

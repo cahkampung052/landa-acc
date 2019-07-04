@@ -60,9 +60,9 @@
                                 <th style="text-align: left;">
                                     Tanggal
                                 </th>
-                                <th style="text-align: left;">
+<!--                                <th style="text-align: left;">
                                     Akun
-                                </th>
+                                </th>-->
                                 <th style="text-align: left;">
                                     Total
                                 </th>
@@ -91,11 +91,11 @@
                                 <td style="text-align: left;">
                                     {{row.tanggal}}
                                 </td>
-                                <td style="text-align: left;">
+<!--                                <td style="text-align: left;">
                                     {{row.kodeAkun + " - " + row.namaAkun}}
-                                </td>
+                                </td>-->
                                 <td style="text-align: left;">
-                                    {{row.total| number}}
+                                    {{row.total| currency}}
                                 </td>
                                 <td style="text-align: left;">
                                     {{row.created_at}}

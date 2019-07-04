@@ -9,7 +9,7 @@
                 <div class="pl-15px pr-15px">
                     <div class="row mt-15px">
                         <div class="col-md-12">
-                            <div class="alert alert-secondary">
+                            <div class="">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row">
                                         <div class="col-sm-3">
@@ -23,10 +23,10 @@
                                                 <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
                                             </ui-select>
                                         </div>
-                                        
-                                        <div class="col-sm-3">
-                                            <button class="btn btn-success btn-sm pull-right" ng-click="exportExcel(form)">Export Excel</button>
-                                            <button class="btn btn-default btn-sm pull-right" ng-click="view(form)">Tampilkan</button>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-12 content-center">
+                                            <button class="btn btn-primary btn-sm" ng-click="view(form)"><i class="fa fa-search"></i> Tampilkan</button>
                                         </div>
                                     </div>
                                 </form>
@@ -34,64 +34,51 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-body" id="print" ng-show="tampilkan">
-                    <style type="text/css">
-                        @media print {
-                            .table-print{
-                                border-collapse: collapse;
-                                width: 100%;
-                            }
-                            td, th{
-                                font-size: 10px;
-                            }
-                            tr {
-                                page-break-inside: avoid;
-                            }
-                            .table-print td, .table-print th{
-                                border: 1px solid #000 !important;
-                                padding: 2px !important;
-                            }
-                            table.table-print tr td, table.table-print tr th {
-                                page-break-inside: avoid;
-                                page-break-after: avoid;
-                                page-break-before: avoid;
-                            }
-                            img{
-                                position: absolute;
-                            }
-                        }
-                    </style>
+                
+
+                <!--<div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>-->
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body" id="print" ng-show="tampilkan">
+                    
                     <div align="left">
                         <div class="row">
                             <div class="col-md-3">
-                                <img src="img/{{setting.logo}}" style="width: 100px; "/>
+                                <!--<img src="img/{{setting.logo}}" style="width: 100px; "/>-->
                             </div>
                             <div class="col-md-6">
                                 <br/>
                                 <center>
-                                    <h2 style="margin: 0px; font-size: 18px; font-weight: bold;">
+                                    <h2 class="header-laporan">
                                         LAPORAN LABA RUGI
                                     </h2>
                                     Lokasi : {{data.lokasi}}
                                     <br>
                                     Periode : {{data.tanggal| date:'dd MMMM yyyy'}}
                                     <br/>
-                                    Disiapkan Tanggal : {{data.disiapkan| date:'dd MMMM yyyy, H:i'}}
+                                    Disiapkan Tanggal : {{data.disiapkan| date:'dd MMMM yyyy'}}
                                     <br/>
-                                    </br>
                                 </center>
-                                <br/>
                             </div>
                             <div class="col-md-3">
+                                <button class="btn btn-success btn-sm pull-right" ng-click="exportExcel(form)">
+                                    <i class="fa fa-file"></i>
+                                    Excel
+                                </button>
+                                <button class="btn btn-warning btn-sm pull-right" ng-click="">
+                                    <i class="fa fa-print"></i>
+                                    Print
+                                </button>
                             </div>
                         </div>
                         <br/>
                         <div>
                             
                             <div class="table-responsive">
-                                <table border="1" class="table table-striped table-hover table-bordered table-print" style="border-collapse: collapse;">
+                                <table class="table table-striped table-hover table-laporan" style="border-collapse: collapse;">
                                     <thead>
-                                        <tr style="background-color: darkseagreen;">
+                                        <tr>
                                             <th>
                                                 <b>
                                                     KODE
@@ -148,7 +135,7 @@
                                     <tfoot>
                                         <tr>
                                             <td align="right" colspan="2">
-                                                <b style="color:green" ng-if='detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) >= 0'>
+                                                <b style="color:greenyellow" ng-if='detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) >= 0'>
                                                     LABA
                                                 </b>
                                                 <b style="color:red" ng-if='detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) < 0'>
@@ -156,7 +143,7 @@
                                                 </b>
                                             </td>
                                             <td align="right" class="text-right">
-                                                <b style="color:green" ng-if='detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) >= 0'>
+                                                <b style="color: greenyellow" ng-if='detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) >= 0'>
                                                     {{detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) | number}}
                                                 </b>
                                                 <b style="color:red" ng-if='detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) < 0'>
@@ -170,9 +157,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!--<div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>-->
-            </div>
         </div>
 
     </div>

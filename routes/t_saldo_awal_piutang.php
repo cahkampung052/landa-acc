@@ -2,7 +2,7 @@
 
 date_default_timezone_set('Asia/Jakarta');
 
-$app->get('/acc/t_saldo_awal_piutang/getPiutangAwal', function ($request, $response) {
+$app->post('/acc/t_saldo_awal_piutang/getPiutangAwal', function ($request, $response) {
     $params = $request->getParams();
 //    print_r($params);die();
     $db = $this->db;
@@ -15,7 +15,7 @@ $app->get('/acc/t_saldo_awal_piutang/getPiutangAwal', function ($request, $respo
                 ->join("join", "acc_m_akun", "acc_m_akun.id = acc_saldo_piutang.m_akun_id")
                 ->join("join", "acc_m_customer", "acc_m_customer.id = acc_saldo_piutang.m_customer_id")
 //                ->where("acc_saldo_hutang.tanggal", "=", $params['tanggal'])
-                ->where("acc_saldo_piutang.m_lokasi_id", "=", $params['m_lokasi_id'])
+                ->where("acc_saldo_piutang.m_lokasi_id", "=", $params['m_lokasi_id']['id'])
                 ->where("acc_saldo_piutang.m_customer_id", "=", $val->id)
                 ->find();
 
@@ -26,7 +26,7 @@ $app->get('/acc/t_saldo_awal_piutang/getPiutangAwal', function ($request, $respo
         } else {
             $getcus[$key]['total'] = 0;
             $akun = $db->select("*")->from("acc_m_akun")
-            ->customWhere("tipe IN('Piutang Usaha', 'Piutang Lain')")
+//            ->customWhere("tipe IN('Piutang Usaha', 'Piutang Lain')")
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->find();
@@ -50,7 +50,7 @@ $app->post('/acc/t_saldo_awal_piutang/savePiutang', function ($request, $respons
 //    die();
     if (isset($params['form']['tanggal']) && !empty($params['form']['tanggal'])) {
         $tanggal = date("Y-m-d", strtotime($params['form']['tanggal']));
-        $m_lokasi_id = $params['form']['m_lokasi_id'];
+        $m_lokasi_id = $params['form']['m_lokasi_id']['id'];
 
         if (!empty($params['detail'])) {
             $db = $this->db;

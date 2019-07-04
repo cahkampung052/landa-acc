@@ -26,7 +26,7 @@ $app->get('/acc/m_supplier/index', function ($request, $response) {
     $params = $request->getParams();
     // $sort     = "m_akun.kode ASC";
     $offset   = isset($params['offset']) ? $params['offset'] : 0;
-    $limit    = isset($params['limit']) ? $params['limit'] : 20;
+    $limit    = isset($params['limit']) ? $params['limit'] : 10;
 
     $db = $this->db;
     $db->select("*")

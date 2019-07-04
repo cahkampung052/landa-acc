@@ -15,43 +15,41 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("*")
                 ->from("acc_m_lokasi")
-                ->orderBy('acc_m_lokasi.nama')
+                ->orderBy('acc_m_lokasi.kode_parent')
                 ->where("is_deleted", "=", 0)
                 ->findAll();
+    
+    foreach($models as $key => $val){
+        $spasi                            = ($val->level == 0) ? '' : str_repeat("· · · ", $val->level);
+        $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
+        
+    }
+    
     return successResponse($response, [
       'list'        => $models
     ]);
 });
 
-$app->get('/acc/m_lokasi/list', function ($request, $response){
-    $db = $this->db;
-    $models = $db->select("acc_m_lokasi.*")
-        ->from('acc_m_lokasi')
-//        ->where('is_parent', '=', '1')
-        ->where('is_deleted', '=', 0)
-        ->orderBy('acc_m_lokasi.kode ASC')
-        ->findAll();
-    return successResponse($response, ['list' => $models]);
-});
 
 $app->get('/acc/m_lokasi/index', function ($request, $response) {
     $params = $request->getParams();
     // $sort     = "m_akun.kode ASC";
     $offset   = isset($params['offset']) ? $params['offset'] : 0;
-    $limit    = isset($params['limit']) ? $params['limit'] : 20;
+    $limit    = isset($params['limit']) ? $params['limit'] : 10;
 
     $db = $this->db;
-    $db->select("*")
+    $db->select("acc_m_lokasi.*, induk.kode as kodeInduk, induk.nama as namaInduk")
         ->from("acc_m_lokasi")
-        ->orderBy('acc_m_lokasi.nama')
-        ->where("is_deleted", "=", 0);
+        ->join("left join", "acc_m_lokasi induk", "induk.id = acc_m_lokasi.parent_id")
+        ->orderBy('acc_m_lokasi.kode_parent')
+        ->where("acc_m_lokasi.is_deleted", "=", 0);
 
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
 
         foreach ($filter as $key => $val) {
             if ($key == 'is_deleted') {
-                $db->where("is_deleted", '=', $val);
+                $db->where("acc_m_lokasi.is_deleted", '=', $val);
             }else{
                 $db->where($key, 'LIKE', $val);
             }
@@ -72,8 +70,10 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
     $totalItem = $db->count();
     
     foreach($models as $key => $val){
-//        $spasi                            = ($val->level == 1) ? '' : str_repeat("···", $val->level - 1);
-//        $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
+        $spasi                            = ($val->level == 0) ? '' : str_repeat("· · · ", $val->level);
+        $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
+        $val->parent_id = ["id"=>$val->parent_id, "nama"=>$val->namaInduk, "kode"=>$val->kodeInduk];
+        
     }
 //     print_r($models);exit();
     
@@ -90,27 +90,32 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
 $app->post('/acc/m_lokasi/save', function ($request, $response) {
 
     $params = $request->getParams();
-    
+//    print_r($params);die();
     $sql    = $this->db;
 
     $validasi = validasi($params);
     if ($validasi === true) {
-        if($params['parent_id'] == 0){
-//            $params['is_parent'] = 1;
-            $params['level'] = 1;
+        if(isset($params['parent_id']) && !empty($params['parent_id'])){
+            $params['level'] = $params['parent_id']['level']+1;
+            $kode_parent = $params['parent_id']['kode_parent'];
         }else{
-//            $params['is_parent'] = 0;
-            $getlevel = $sql->select("*")->from("acc_m_lokasi")->where("id", "=", $params['parent_id'])->find();
-//            die();
-            $params['level'] = $getlevel->level + 1;
+            $params['level'] = 0;
         }
-//        print_r($params);die();
+        
         if(isset($params['id']) && !empty($params['id'])){
+            $params['parent_id'] = $params['parent_id']['id'];
             $model = $sql->update("acc_m_lokasi", $params, ["id" => $params['id']]);
         }else{
             $model = $sql->insert("acc_m_lokasi", $params);
         }
         
+        if(isset($params['parent_id']) && !empty($params['parent_id'])){
+            $data['kode_parent'] = $kode_parent . "." . $model->id;
+        }else{
+            $data['kode_parent'] = $model->id;
+        }
+        $models = $sql->update("acc_m_lokasi", $data, ["id"=> $model->id]);
+            
         if ($model) {
             return successResponse($response, $model);
         } else {
@@ -121,27 +126,6 @@ $app->post('/acc/m_lokasi/save', function ($request, $response) {
     }
 });
 
-$app->post('/acc/m_lokasi/update', function ($request, $response) {
-
-    $data = $request->getParams();
-    $db   = $this->db;
-
-    $validasi = validasi($data);
-
-    if ($validasi === true) {
-
-        
-
-        $model = $db->update("acc_m_lokasi", $data, array('id' => $data['id']));
-        if ($model) {
-            return successResponse($response, $model);
-        } else {
-            return unprocessResponse($response, ['Data Gagal Di Simpan']);
-        }
-    } else {
-        return unprocessResponse($response, $validasi);
-    }
-});
 
 $app->post('/acc/m_lokasi/trash', function ($request, $response) {
 

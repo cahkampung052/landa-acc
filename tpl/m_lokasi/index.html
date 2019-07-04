@@ -58,7 +58,7 @@
                                     {{row.kode}}
                                 </td>-->
                                 <td style="text-align: left;">
-                                    {{row.nama}}
+                                    {{row.nama_lengkap}}
                                 </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group"><button type="button" class="btn btn-info fa fa-pencil" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
@@ -86,15 +86,12 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label-sm">Induk</label>
                                     <div class="col-sm-9">
-                                        <select class="form-control form-control-sm" id="parent" ng-disabled="is_view" ng-model="form.parent_id">
-                                        <option value="0" ng-selected="value.id == form.parent_id">
-                                            - Pilih Induk -
-                                        </option>
-                                        <option ng-repeat="value in parent" ng-selected="value.id == form.parent_id" ng-value="{{value.id}}">
-                                            {{value.kode}} - {{value.nama}}
-                                        </option>
-
-                                    </select>
+                                        <ui-select class="ui-select-sm ui-select-container" ng-model="form.parent_id" theme="bootstrap" ng-disabled="is_view">
+                                            <ui-select-match placeholder="Pilih Induk">
+                                                {{ $select.selected.kode +" - "+$select.selected.nama}}
+                                            </ui-select-match>
+                                            <ui-select-choices position="down" repeat="val in parent | filter : $select.search">{{val.kode +" - "+val.nama}}</ui-select-choices>
+                                        </ui-select>
                                     </div>
                                 </div>
                             </div>
