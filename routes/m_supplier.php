@@ -3,10 +3,7 @@
 function validasi($data, $custom = array())
 {
     $validasi = array(
-        'tlp' => 'required',
-        'email'      => 'required',
         'nama'      => 'required',
-        'alamat' => 'required'
     );
     GUMP::set_field_name("tlp", "No Telepon");
     $cek = validate($data, $validasi, $custom);

@@ -1,4 +1,4 @@
-app.controller("klasifikasiCtrl", function ($scope, Data, $rootScope, Upload) {
+app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
     /**
      * Inialisasi
      */
@@ -14,13 +14,11 @@ app.controller("klasifikasiCtrl", function ($scope, Data, $rootScope, Upload) {
     /**
      * End inialisasi
      */
-
-    Data.get(control_link + '/list').then(function (data) {
-
-        $scope.parent = data.data.list;
-        console.log($scope.parent);
-    });
-
+    $scope.getList = function() {
+        Data.get(control_link + '/list').then(function(data) {
+            $scope.parent = data.data.list;
+        });
+    };
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -37,35 +35,31 @@ app.controller("klasifikasiCtrl", function ($scope, Data, $rootScope, Upload) {
         if (tableState.search.predicateObject) {
             param["filter"] = tableState.search.predicateObject;
         }
-
-        Data.get(control_link + "/index", param).then(function (response) {
+        Data.get(control_link + "/index", param).then(function(response) {
             $scope.displayed = response.data.list;
-//            $scope.parent = response.data.list;
+            //            $scope.parent = response.data.list;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
         $scope.isLoading = false;
     };
-
-
-    $scope.getakun = function (id) {
-        Data.get('acc/m_akun/getakun/' + id).then(function (data) {
+    $scope.getakun = function(id) {
+        Data.get('acc/m_akun/getakun/' + id).then(function(data) {
             $scope.form.kode_induk = data.data.data.kode;
         });
     }
-
     /**import*/
-    $scope.uploadFiles = function (file, errFiles) {
+    $scope.uploadFiles = function(file, errFiles) {
         $scope.f = file;
         $scope.errFile = errFiles && errFiles[0];
         if (file) {
-            Data.get('site/url').then(function (data) {
+            Data.get('site/url').then(function(data) {
                 file.upload = Upload.upload({
                     url: data.data + 'acc/m_klasifikasi/import',
                     data: {
                         file: file
                     }
                 });
-                file.upload.then(function (response) {
+                file.upload.then(function(response) {
                     var data = response.data;
                     if (data.status_code == 200) {
                         $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
@@ -80,19 +74,20 @@ app.controller("klasifikasiCtrl", function ($scope, Data, $rootScope, Upload) {
         }
     };
     /**export*/
-    $scope.export = function () {
+    $scope.export = function() {
         window.location = 'api/acc/m_klasifikasi/export';
     };
-    $scope.create = function () {
+    $scope.create = function() {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = true;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
         $scope.form.parent_id = '0';
+        $scope.getList();
     };
     /** update */
-    $scope.update = function (form) {
+    $scope.update = function(form) {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_update = true;
@@ -100,9 +95,10 @@ app.controller("klasifikasiCtrl", function ($scope, Data, $rootScope, Upload) {
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
         $scope.getakun(form.parent_id);
+        $scope.getList();
     };
     /** view */
-    $scope.view = function (form) {
+    $scope.view = function(form) {
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_update = true;
@@ -111,9 +107,9 @@ app.controller("klasifikasiCtrl", function ($scope, Data, $rootScope, Upload) {
         $scope.form.password = '';
     };
     /** save action */
-    $scope.save = function (form) {
+    $scope.save = function(form) {
         var url = (form.id > 0) ? '/update' : '/create';
-        Data.post(control_link + url, form).then(function (result) {
+        Data.post(control_link + url, form).then(function(result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.cancel();
@@ -123,14 +119,14 @@ app.controller("klasifikasiCtrl", function ($scope, Data, $rootScope, Upload) {
         });
     };
     /** cancel action */
-    $scope.cancel = function () {
+    $scope.cancel = function() {
         if (!$scope.is_view) {
             $scope.callServer(tableStateRef);
         }
         $scope.is_edit = false;
         $scope.is_view = false;
     };
-    $scope.trash = function (row) {
+    $scope.trash = function(row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -143,15 +139,14 @@ app.controller("klasifikasiCtrl", function ($scope, Data, $rootScope, Upload) {
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/trash', row).then(function (result) {
+                Data.post(control_link + '/trash', row).then(function(result) {
                     $rootScope.alert("Berhasil", "Data berhasil dihapus", "success");
                     $scope.cancel();
-
                 });
             }
         });
     };
-    $scope.restore = function (row) {
+    $scope.restore = function(row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -164,15 +159,14 @@ app.controller("klasifikasiCtrl", function ($scope, Data, $rootScope, Upload) {
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 0;
-                Data.post(control_link + '/trash', row).then(function (result) {
+                Data.post(control_link + '/trash', row).then(function(result) {
                     $rootScope.alert("Berhasil", "Data berhasil direstore", "success");
                     $scope.cancel();
-
                 });
             }
         });
     };
-    $scope.delete = function (row) {
+    $scope.delete = function(row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -185,13 +179,11 @@ app.controller("klasifikasiCtrl", function ($scope, Data, $rootScope, Upload) {
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/delete', row).then(function (result) {
+                Data.post(control_link + '/delete', row).then(function(result) {
                     $rootScope.alert("Berhasil", "Data berhasil dihapus permanen", "success");
                     $scope.cancel();
-
                 });
             }
         });
-
     };
 });

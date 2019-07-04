@@ -2,7 +2,7 @@
     <div ng-controller="akunCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong class="d-md-down-none">{{master}}</strong>
+                <strong class="d-md-down-none">{{ master }}</strong>
                 <div class="btn-group pull-right mt-5px" role="group">
                     <button class="btn btn-secondary btn-sm" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
                         <i class="fa fa-search"></i>
@@ -20,7 +20,6 @@
                         <i class="fa fa-plus"></i>
                         &nbsp;Tambahkan Akun Baru
                     </button>
-
                 </div>
             </div>
             <div class="card-body p-0px">
@@ -56,54 +55,36 @@
                         <thead>
                             <tr>
                                 <!-- <th style="text-align: left; width: 3%">
-                                No
-                                </th> -->
-                                <th style="text-align: left;">
-                                    Kode Akun
-                                </th>
+                                                                No
+                                                                </th> -->
+                                <th style="text-align: left;">Kode Akun</th>
                                 <!-- <th style="text-align: left;">
-                                    Nama
-                                </th> -->
-                                <th style="text-align: left;">
-                                    Saldo Berjalan
-                                </th>
-                                <th style="text-align: left;">
-                                    Tipe Arus
-                                </th>
-                                <th>
-                                </th>
+                                                                    Nama
+                                                                </th> -->
+                                <th style="text-align: left;">Saldo Berjalan</th>
+                                <th style="text-align: left;">Tipe Arus</th>
+                                <th></th>
                             </tr>
                         </thead>
-
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
                                 <td style="text-align: left;">
                                     <span ng-if="row.is_tipe == 1">
-                                        <b>
-                                            {{row.nama_lengkap}}
-                                        </b>
+                                        <b>{{ row.nama_lengkap }}</b>
                                     </span>
-                                    <span ng-if="row.is_tipe == 0">
-                                        {{row.nama_lengkap}}
-                                    </span>
+                                    <span ng-if="row.is_tipe == 0">{{ row.nama_lengkap }}</span>
                                 </td>
                                 <!--  <td style="text-align: left;">
-                                    {{row.tipe}}
-                                </td> -->
-                                <td style="text-align: left;">
-                                    {{row.saldo}}
-                                </td>
-                                <td style="text-align: left;">
-                                    {{row.tipe_arus}}
-                                </td>
-
-
+                                                                    {{row.tipe}}
+                                                                </td> -->
+                                <td style="text-align: left;">{{ row.saldo }}</td>
+                                <td style="text-align: left;">{{ row.tipe_arus }}</td>
                                 <td>
                                     <div class="btn-group pull-right" role="group" ng-show="row.is_tipe == 0">
                                         <!--                                        <label class="i-checks btn-table" style="float: left; margin-top: 6px; margin-right:10px" title="Tampil Di Kasir" ng-if="row.tipe == 'Cash & Bank'">
-                                                                                    <input ng-disabled="is_view" ng-model="row.is_kasir" type="checkbox" ng-click="save_akun_kasir(row)">
-                                                                                    <i></i>
-                                                                                </label>-->
+                                                                                                                            <input ng-disabled="is_view" ng-model="row.is_kasir" type="checkbox" ng-click="save_akun_kasir(row)">
+                                                                                                                            <i></i>
+                                                                                                                        </label>-->
                                         <button type="button" class="btn btn-success fa fa-briefcase" ng-if="row.is_deleted == 0" ng-click="modalBudget(row)"></button>
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
                                         <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
@@ -120,7 +101,7 @@
         </div>
         <div class="card" ng-if="is_edit">
             <div class="card-header">
-                <strong>{{ formtitle}}</strong>
+                <strong>{{ formtitle }}</strong>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
@@ -130,13 +111,8 @@
                                 <label class="col-sm-3 col-form-label-sm required">Akun</label>
                                 <div class="col-sm-9">
                                     <select class="form-control form-control-sm" ng-change="getakun(form.parent_id)" id="parent" ng-disabled="is_view" ng-model="form.parent_id">
-                                        <option value="">
-                                            - Pilih Akun -
-                                        </option>
-                                        <option ng-repeat="value in dataakun" ng-selected="value.id == form.parent_id" ng-value="{{value.id}}">
-                                            {{value.kode}} - {{value.nama}}
-                                        </option>
-
+                                        <option value="">- Pilih Akun -</option>
+                                        <option ng-repeat="value in dataakun" ng-selected="value.id == form.parent_id" ng-value="{{ value.id }}">{{ value.kode }} - {{ value.nama }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -147,7 +123,7 @@
                                 <div class="col-sm-9">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">{{form.kode_induk}}</span>
+                                            <span class="input-group-text">{{ form.kode_induk }}</span>
                                         </div>
                                         <input type="text" class="form-control form-control-sm angka" style="text-align: left" ng-model="form.kode" ng-disabled="is_view" required/>
                                     </div>
@@ -182,7 +158,7 @@
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
                     </button>
-                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek <= 3 || loading" ng-click="save(form)">
+                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek  <= 3 || loading" ng-click="save(form)">
                         <i class="fa fa-save"></i>
                         &nbsp;Simpan
                     </button>

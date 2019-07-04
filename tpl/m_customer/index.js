@@ -1,17 +1,11 @@
-app.controller('customerCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/m_customer";
     var master = 'Master Customer';
     $scope.formTitle = '';
     $scope.displayed = [];
-    $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
-
-//    Data.get(control_link + '/cabang').then(function(data) {
-//        $scope.cabang = data.data.data;
-//    });
-
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
@@ -29,15 +23,14 @@ app.controller('customerCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         if (tableState.search.predicateObject) {
             param['filter'] = tableState.search.predicateObject;
         }
-        Data.get(control_link + '/index', param).then(function (response) {
+        Data.get(control_link + '/index', param).then(function(response) {
             $scope.displayed = response.data.list;
-            $scope.base_url = response.data.base_url;
+            tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
         $scope.isLoading = false;
     };
-
     /** create */
-    $scope.create = function () {
+    $scope.create = function() {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = true;
@@ -46,17 +39,16 @@ app.controller('customerCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         $scope.form = {};
     };
     /** update */
-    $scope.update = function (form) {
+    $scope.update = function(form) {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_update = true;
         $scope.is_disable = true;
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
-        console.log(form);
     };
     /** view */
-    $scope.view = function (form) {
+    $scope.view = function(form) {
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_disable = true;
@@ -64,17 +56,14 @@ app.controller('customerCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         $scope.form = form;
     };
     /** save action */
-    $scope.save = function (form) {
-        var url = (form.id > 0) ? '/update' : '/create';
-        Data.post(control_link + url, form).then(function (result) {
+    $scope.save = function(form) {
+        Data.post(control_link + '/save', form).then(function(result) {
             if (result.status_code == 200) {
-
-
                 Swal.fire({
                     title: "Tersimpan",
                     text: "Data Berhasil Di Simpan.",
                     type: "success"
-                }).then(function () {
+                }).then(function() {
                     $scope.callServer(tableStateRef);
                     $scope.is_edit = false;
                 });
@@ -84,15 +73,14 @@ app.controller('customerCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         });
     };
     /** cancel action */
-    $scope.cancel = function () {
+    $scope.cancel = function() {
         if (!$scope.is_view) {
             $scope.callServer(tableStateRef);
         }
         $scope.is_edit = false;
         $scope.is_view = false;
     };
-    $scope.trash = function (row) {
-        var data = angular.copy(row);
+    $scope.trash = function(row) {
         Swal.fire({
             title: "Peringatan ! ",
             text: "Apakah Anda Yakin Ingin Menghapus Data Ini",
@@ -104,21 +92,19 @@ app.controller('customerCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/trash', row).then(function (result) {
+                Data.post(control_link + '/trash', row).then(function(result) {
                     Swal.fire({
                         title: "Terhapus",
                         text: "Data Berhasil Di Hapus.",
                         type: "success"
-                    }).then(function () {
+                    }).then(function() {
                         $scope.cancel();
                     });
-
                 });
             }
         });
     };
-    $scope.restore = function (row) {
-        var data = angular.copy(row);
+    $scope.restore = function(row) {
         Swal.fire({
             title: "Peringatan ! ",
             text: "Apakah Anda Yakin Ingin Merestore Data Ini",
@@ -130,21 +116,19 @@ app.controller('customerCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 0;
-                Data.post(control_link + '/trash', row).then(function (result) {
+                Data.post(control_link + '/trash', row).then(function(result) {
                     Swal.fire({
                         title: "Restore",
                         text: "Data Berhasil Di Restore.",
                         type: "success"
-                    }).then(function () {
+                    }).then(function() {
                         $scope.cancel();
                     });
-
                 });
             }
         });
     };
-    $scope.delete = function (row) {
-        var data = angular.copy(row);
+    $scope.delete = function(row) {
         Swal.fire({
             title: "Peringatan ! ",
             text: "Apakah Anda Yakin Ingin Menghapus Permanen Data Ini",
@@ -156,18 +140,16 @@ app.controller('customerCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/delete', row).then(function (result) {
+                Data.post(control_link + '/delete', row).then(function(result) {
                     Swal.fire({
                         title: "Terhapus",
                         text: "Data Berhasil Di Hapus Permanen.",
                         type: "success"
-                    }).then(function () {
+                    }).then(function() {
                         $scope.cancel();
                     });
-
                 });
             }
         });
-
     };
 });
