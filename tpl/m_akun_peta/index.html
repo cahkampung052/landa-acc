@@ -11,8 +11,8 @@
                         <div class="col-md-6" ng-repeat="val in displayed">
                             <div class="col-md-12">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm required">{{val.type}}</label>
-                                    <div class="col-sm-9">
+                                    <label class="col-sm-4 col-form-label-sm required">{{val.type}}</label>
+                                    <div class="col-sm-8">
                                         <ui-select class="ui-select-sm ui-select-container" ng-model="val.m_akun_id" theme="bootstrap" ng-disabled="is_view">
                                             <ui-select-match placeholder="Pilih Akun">
                                                 {{$select.selected.kode +" - "+$select.selected.nama}}

@@ -1,0 +1,122 @@
+<div class="animated fadeIn">
+    <div ng-controller="penyusutanassetCtrl">
+        <div class="card">
+            <div class="card-header">
+                <strong>
+                    Penyusutan Asset
+                </strong>
+            </div>
+            <div class="card-body">
+                <form name="landaform" novalidate="">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h6 id="asdasd">
+                                Filter
+                            </h6>
+                            <hr>
+                                <div class="row ml-2 mr-2">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label-sm mb-0 required">
+                                                Periode
+                                            </label>
+                                            <div class="col-sm-8">
+                                                <input class="form-control form-control-sm" datepicker-mode="'month'" datepicker-options="{minMode: 'month'}" is-open="opened.tgl" ng-change="is_show==false" ng-click="toggle($event, 'tgl')" ng-model="filter.bulan" placeholder="Bulan Tahun" type="text" uib-datepicker-popup="MMMM yyyy"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label-sm mb-0 required">
+                                                Lokasi
+                                            </label>
+                                            <div class="col-sm-8">
+                                                <ui-select class="w100" ng-disabled="is_view" ng-model="filter.lokasi" on-select="is_show==false" theme="bootstrap">
+                                                    <ui-select-match placeholder="Pilih Lokasi">
+                                                        {{ $select.selected.nama }}
+                                                    </ui-select-match>
+                                                    <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">
+                                                        {{ lb.nama }}
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 text-center">
+                                    <hr>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-primary btn-sm" ng-click="view(filter);">
+                                                <i class="fa fa-search">
+                                                </i>
+                                                Tampilkan
+                                            </button>
+                                        </div>
+                                    </hr>
+                                </div>
+                            </hr>
+                        </div>
+                        <div class="col-md-12 mt-5" ng-if="is_show">
+                            <div class="alert alert-danger" ng-show="listDetail.length<=0" role="alert">
+                                <center>
+                                    <h6>
+                                        Data Kosong
+                                    </h6>
+                                </center>
+                            </div>
+                            <table class="table table-bordered" ng-show="listDetail.length>0">
+                                <tr>
+                                    <th class="text-center">
+                                        No
+                                    </th>
+                                    <th class="text-center">
+                                        Nama Asset
+                                    </th>
+                                    <th class="text-center">
+                                        No Serial
+                                    </th>
+                                    <th class="text-center">
+                                        Penyusutan perbulan
+                                    </th>
+                                </tr>
+                                <tr ng-repeat="ld in listDetail">
+                                    <td class="text-center">
+                                        {{$index+1}}
+                                    </td>
+                                    <td class="text-left">
+                                        {{ld.nama}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ld.no_serial}}
+                                    </td>
+                                    <td class="text-right">
+                                        {{ld.penyusutan_perbulan| currency:undefined:0}}
+                                    </td>
+                                </tr>
+                                <tfoot>
+                                    <tr>
+                                        <th class="text-center bg-secondary" colspan="3">
+                                            Total
+                                        </th>
+                                        <th class="text-right bg-secondary">
+                                            {{filter.total| currency:undefined:0}}
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="pull-right">
+                    <button button-spinner="loading" class="btn btn-primary btn-sm" ng-click="prosesPenyusutan()" ng-disabled="loading" ng-show="listDetail.length>0 && is_show==true" type="submit">
+                        <i class="fa fa-refresh">
+                        </i>
+                        Proses
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

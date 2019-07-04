@@ -15,11 +15,13 @@ app.controller('l_budgetingCtrl', function ($scope, Data, $rootScope, $uibModal,
 
 $scope.setLokasi = function(form){
     console.log(form);
+    $scope.isLoading = true;
         Data.get(control_link + '/getBudgeting', form).then(function (response) {
             $scope.listAkun = response.data.data;
             $scope.bulan = response.data.bulan;
             $scope.setiapbulan = response.data.setiapbulan;
-            $scope.isLoading = false;
+            $scope.tampilkan = true;
+            $scope.disiapkan = new Date();
 //            $scope.sumTotal();
 //            $scope.form = {};
         });
@@ -53,11 +55,8 @@ $scope.setLokasi = function(form){
             param['filter'] = tableState.search.predicateObject;
         }
         
-        Data.get('acc/m_lokasi/getLokasi', param).then(function (response) {
-            $scope.listLokasi = response.data.list;
-        });
         
-        $scope.isLoading = false;
+        $scope.isLoading = true;
     };
 
     /** create */

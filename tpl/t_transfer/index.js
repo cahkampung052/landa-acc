@@ -87,20 +87,16 @@ app.controller('transferCtrl', function ($scope, Data, $rootScope, $uibModal, Up
 
 
         console.log(data)
-        if((form.m_akun_asal_id.id == form.m_akun_tujuan_id.id) || (form.m_lokasi_asal_id.id == form.m_lokasi_tujuan_id.id)){
-            $rootScope.alert("Terjadi Kesalahan", "Lokasi, Akun asal dan tujuan tidak boleh sama", "error");
-        }else{
-//            var url = (form.id > 0) ? '/update' : '/create';
-            Data.post(control_link + '/save', data).then(function (result) {
-                if (result.status_code == 200) {
+        
+        Data.post(control_link + '/save', data).then(function (result) {
+            if (result.status_code == 200) {
 
-                    $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
-                    $scope.cancel();
-                } else {
-                    $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
-                }
-            });
-        }
+                $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                $scope.cancel();
+            } else {
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+            }
+        });
         
     };
     /** cancel action */

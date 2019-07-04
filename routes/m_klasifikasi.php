@@ -10,7 +10,7 @@ function validasi($data, $custom = array())
     $validasi = array(
         "kode" => "required",
         "nama" => "required",
-        "tipe" => "required"
+//        "tipe" => "required"
     );
     $cek = validate($data, $validasi, $custom);
     return $cek;
@@ -96,6 +96,7 @@ $app->get('/acc/m_klasifikasi/list', function ($request, $response) {
 $app->post('/acc/m_klasifikasi/create', function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
+//    print_r($data);die();
     $data['tipe'] = isset($data['tipe']) ? $data['tipe'] : '';
     $validasi = validasi($data);
     if ($validasi === true) {
@@ -105,7 +106,10 @@ $app->post('/acc/m_klasifikasi/create', function ($request, $response) {
             $data['level'] = 1;
         } else {
             $data['level'] = setLevelTipeAkun($data['parent_id']);
+            $getparent = $db->select("*")->from("acc_m_akun")->where("id", "=", $data['parent_id'])->find();
+            $data['tipe'] = $getparent->nama;
         }
+//        print_r($data);die();
         $model = $db->insert("acc_m_akun", $data);
         if ($model) {
             return successResponse($response, $model);

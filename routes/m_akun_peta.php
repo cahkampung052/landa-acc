@@ -18,26 +18,24 @@ $app->get('/acc/m_akun_peta/index', function ($request, $response) {
     $db = $this->db;
 
 //    DEKLARASI AKUN PEMETAAN
-    $akunpeta = ["Pengimbang Neraca", "Laba Rugi", "tes"];
+//    $akunpeta = ["Pengimbang Neraca", "Laba Rugi", "tes"];
+    $akunpeta = $db->select("acc_m_akun_peta.*, acc_m_akun.kode, acc_m_akun.nama")
+                ->from("acc_m_akun_peta")
+                ->join("left join", "acc_m_akun", "acc_m_akun.id = acc_m_akun_peta.m_akun_id")
+                ->findAll();
     $arr = [];
     $status = 1;
     foreach ($akunpeta as $key => $val) {
-        $arr[$key]['type'] = $val;
-        $models = $db->select("acc_m_akun_peta.*, acc_m_akun.kode, acc_m_akun.nama")
-                ->from("acc_m_akun_peta")
-                ->join("join", "acc_m_akun", "acc_m_akun.id = acc_m_akun_peta.m_akun_id")
-                ->where("type", "=", $val)
-                ->find();
-
-        if ($models) {
-            $arr[$key]['m_akun_id'] = ["id" => $models->m_akun_id, "kode" => $models->kode, "nama" => $models->nama];
+        if($val->m_akun_id != 0){
+            $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kode, "nama" => $val->nama];
         }else{
             $status = 0;
+            $val->m_akun_id = ["id" => "", "kode" => "", "nama" => ""];
         }
     }
     
     return successResponse($response, [
-        'list' => $arr,
+        'list' => $akunpeta,
         'status_data' => $status,
         'base_url' => str_replace('api/', '', config('SITE_URL'))
     ]);

@@ -147,12 +147,15 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
             $insert['no_transaksi'] = $kode;
             $model = $sql->insert("acc_transfer", $insert);
         }
+        
+        //delete transdetail
+        $deletetransdetail = $sql->delete("acc_trans_detail", ["reff_id"=>$model->id, "reff_type"=>"acc_transfer"]);
 
-        $insert2['m_lokasi_tujuan_id'] = $data['form']['m_lokasi_tujuan_id']['id'];
+        $insert2['m_lokasi_id'] = $data['form']['m_lokasi_tujuan_id']['id'];
         $insert2['m_akun_id'] = $data['form']['m_akun_tujuan_id']['id'];
         $insert2['tanggal'] = date("Y-m-d",strtotime($data['form']['tanggal']));
         $insert2['debit'] = $data['form']['total'];
-        $insert2['reff_type'] = "Transfer";
+        $insert2['reff_type'] = "acc_transfer";
         $insert2['reff_id'] = $model->id;
         $insert2['keterangan'] = (isset($data['form']['keterangan']) && !empty($data['form']['keterangan']) ? $data['form']['keterangan'] : '');
         $insert2['kode'] = $model->no_transaksi;
@@ -162,23 +165,29 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
         $insert3['m_akun_id'] = $data['form']['m_akun_asal_id']['id'];
         $insert3['tanggal'] = date("Y-m-d",strtotime($data['form']['tanggal']));
         $insert3['kredit'] = $data['form']['total'];
-        $insert3['reff_type'] = "Transfer";
+        $insert3['reff_type'] = "acc_transfer";
         $insert3['reff_id'] = $model->id;
         $insert3['kode'] = $model->no_transaksi;
         $insert3['keterangan'] = (isset($data['form']['keterangan']) && !empty($data['form']['keterangan']) ? $data['form']['keterangan'] : '');
 //        $model3 = $sql->insert("acc_trans_detail", $insert3);
         
-        if (isset($data['form']['id']) && !empty($data['form']['id'])) {
-            $model2 = $sql->update("acc_trans_detail", $insert2, ["reff_id"=>$model->id, "reff_type"=>"Transfer", "m_akun_id"=>$data['form']['m_akun_tujuan_id']['id']]);
-            $model3 = $sql->update("acc_trans_detail", $insert3, ["reff_id"=>$model->id, "reff_type"=>"Transfer", "m_akun_id"=>$data['form']['m_akun_asal_id']['id']]);
-        }else{
-            $model2 = $sql->insert("acc_trans_detail", $insert2);
-            $model3 = $sql->insert("acc_trans_detail", $insert3);
+        $model2 = $sql->insert("acc_trans_detail", $insert2);
+        $model3 = $sql->insert("acc_trans_detail", $insert3);
+        
+        if($data['form']['m_lokasi_asal_id'] != $data['form']['m_lokasi_tujuan_id']){
+            $insert2_ = $insert2;
+            $insert2_['debit'] = NULL;
+            $insert2_['kredit'] = $data['form']['total'];
+            
+            $insert3_ = $insert3;
+            $insert3_['kredit'] = NULL;
+            $insert3_['debit'] = $data['form']['total'];
+            
+            $model2_ = $sql->insert("acc_trans_detail", $insert2_);
+            $model3_ = $sql->insert("acc_trans_detail", $insert3_);
         }
         
-
-//        die();
-        if ($model && $model2 && $model3) {
+        if ($model) {
             
             return successResponse($response, $model);
         } else {

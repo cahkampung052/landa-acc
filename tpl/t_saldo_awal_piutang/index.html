@@ -15,7 +15,7 @@
                 <div class="pl-15px pr-15px">
                     <div class="row mt-15px">
                         <div class="col-md-12">
-                            <div class="alert alert-secondary">
+                            <div class="">
                                     <div class="form-group row">
                                         <label class="col-sm-1 col-form-label-sm required">Tanggal</label>
                                         <div class="col-sm-3">
@@ -25,9 +25,12 @@
                                         </div>
                                         <label class="col-sm-1 col-form-label-sm required">Lokasi</label>
                                         <div class="col-sm-3">
-                                            <select class="form-control form-control-sm" id="fakultas" ng-model="form.m_lokasi_id" required ng-change="getPiutang(form)">
-                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama}}</option>
-                                            </select>
+                                            <ui-select class="ui-select-sm ui-select-container" ng-change="getPiutang(form)" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view" ng-change="getHutang(form)">
+                                            <ui-select-match placeholder="Pilih Lokasi">
+                                                {{ $select.selected.kode +" - "+$select.selected.nama}}
+                                            </ui-select-match>
+                                            <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.kode +" - "+val.nama}}</ui-select-choices>
+                                        </ui-select>
 
                                             <!-- <input type="text" class="form-control form-control-sm align-left" ng-model="form.profesi" ng-disabled="is_view" required/> -->
                                         </div>
