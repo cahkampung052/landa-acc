@@ -1,5 +1,10 @@
+<style type="text/css">
+    .modal-lg {
+        max-width: 90%;
+    }
+</style>
 <div class="animated fadeIn">
-    <div ng-controller="pelepasanCtrl">
+    <div ng-controller="PelepasanCtrl">
         <div class="card" ng-if="!is_edit" st-pipe="callServer" st-table="displayed">
             <div class="card-header">
                 <strong class="d-md-down-none">
@@ -64,7 +69,7 @@
                                     {{row.tanggal_beli}}
                                 </td>
                                 <td style="text-align: left;">
-                                    {{row.harga_beli}}
+                                    {{row.harga_beli| currency:undefined:0}}
                                 </td>
                                 <td style="text-align: left;">
                                     {{row.nm_lokasi}}
@@ -74,8 +79,7 @@
                                 </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
-                                        <button class="btn btn-sm btn-success fa fa-refresh" ng-click="update(row)" ng-show="row.status=='Aktif'" type="button">
-                                            Proses
+                                        <button class="btn btn-success fa fa-refresh" ng-click="detail_pelepasan(row)" ng-if="row.is_deleted == 0 && row.status == 'Aktif'" type="button">
                                         </button>
                                     </div>
                                 </td>
@@ -86,34 +90,204 @@
                 <!--<div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>-->
             </div>
         </div>
-        <div class="card" ng-if="is_edit">
-            <div class="card-header">
-                <strong>
-                    {{ formtitle}}
-                </strong>
-            </div>
-            <div class="card-body">
-                <form name="landaform" novalidate="">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm ">
-                                        Nama Item
-                                    </label>
-                                    <div class="col-sm-9">
-                                        <input class="form-control form-control-sm" ng-disabled="true" ng-model="form.nama" required="" type="text"/>
+        <div class="row" ng-if="is_edit">
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-header">
+                        <strong>
+                            {{ formtitle}}
+                        </strong>
+                    </div>
+                    <div class="card-body">
+                        <form name="landaform" novalidate="">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm ">
+                                                Kode Item
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input class="form-control form-control-sm" ng-disabled="true" ng-model="form.kode" required="" type="text"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm ">
+                                                Nama Item
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input class="form-control form-control-sm" ng-disabled="true" ng-model="form.nama" required="" type="text"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm">
+                                                No Serial
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input class="form-control form-control-sm" ng-disabled="true" ng-model="form.no_serial" required="" type="text"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm">
+                                                Tgl Perolehan
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-sm">
+                                                    <input class="form-control form-control-sm" is-open="opened.tanggal" ng-click="toggle($event, 'tanggal')" ng-disabled="true" ng-model="form.tanggal" type="text" uib-datepicker-popup="dd-MM-yyyy"/>
+                                                    <div class="input-group-text">
+                                                        <i class="icon icon-calendar">
+                                                        </i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm ">
+                                                Nilai Perolehan
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-text">
+                                                        Rp.
+                                                    </div>
+                                                    <input class="form-control form-control-sm text-right" name="" ng-disabled="true" ng-model="form.harga" type="text" ui-number-mask="0">
+                                                    </input>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm ">
+                                                Lokasi
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <ui-select class="w100" ng-disabled="true" ng-model="form.lokasi" theme="bootstrap">
+                                                    <ui-select-match placeholder="Pilih Lokasi">
+                                                        {{ $select.selected.nama }}
+                                                    </ui-select-match>
+                                                    <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">
+                                                        {{ lb.nama }}
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                                <input class="form-control form-control-sm mt-2" name="" ng-model="form.nama_lokasi" ng-show="form.lokasi.id==-1" placeholder="Lainya" type="text">
+                                                </input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm ">
+                                                Penyusutan
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <div class="btn-group" ng-disabled="true">
+                                                    <label class="btn btn-primary btn-sm" ng-disabled="true" ng-model="form.is_penyusutan" uib-btn-radio="'1'">
+                                                        <i class="fa fa-check" ng-if="form.is_penyusutan == '1'">
+                                                        </i>
+                                                        Ya
+                                                    </label>
+                                                    <label class="btn btn-primary btn-sm" ng-disabled="true" ng-model="form.is_penyusutan" uib-btn-radio="'0'">
+                                                        <i class="fa fa-check" ng-if="form.is_penyusutan == '0'">
+                                                        </i>
+                                                        Tidak
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" ng-show="form.is_penyusutan == '1'">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm ">
+                                                Umur Ekonomis
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <ui-select class="w100" ng-disabled="true" ng-model="form.umur" on-select="setTahun(form.umur.persentase)" theme="bootstrap">
+                                                    <ui-select-match placeholder="Pilih Umur Ekonomis">
+                                                        {{ $select.selected.nama }} | {{ $select.selected.tahun }} tahun
+                                                    </ui-select-match>
+                                                    <ui-select-choices position="down" repeat="lb in listUmur| filter :$select.search">
+                                                        {{ lb.nama }} | {{ lb.tahun }} tahun
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" ng-show="form.is_penyusutan == '1'">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm ">
+                                                Tarif Depresiasi
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-sm">
+                                                    <input class="form-control form-control-sm" ng-disabled="true" ng-model="form.persentase" required="" type="text"/>
+                                                    <div class="input-group-text">
+                                                        %
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" ng-show="form.is_penyusutan == '1'">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm ">
+                                                Nilai residu
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-text">
+                                                        Rp.
+                                                    </div>
+                                                    <input class="form-control form-control-sm text-right" name="" ng-disabled="true" ng-model="form.nilai_residu" type="text" ui-number-mask="0">
+                                                    </input>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label-sm">
+                                                Keterangan
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <textarea class="form-control form-control-sm" ng-disabled="true" ng-model="form.keterangan" required="" style="height:120px">
+                                                </textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5" style="margin-left: 0; padding-left: 0;">
+                <div class="card">
+                    <div class="card-header">
+                        <strong>
+                            Pelepasan Asset
+                        </strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">
-                                        Tanggal Beli
+                                    <label class="col-sm-4 col-form-label-sm required">
+                                        Tgl Pelepasan
                                     </label>
-                                    <div class="col-sm-9">
+                                    <div class="col-sm-8">
                                         <div class="input-group input-group-sm">
-                                            <input class="form-control form-control-sm" is-open="opened.tanggal" ng-click="toggle($event, 'tanggal')" ng-disabled="true" ng-model="form.tanggal" type="text" uib-datepicker-popup="dd-MM-yyyy"/>
+                                            <input class="form-control form-control-sm" is-open="opened.tgl_pelepasan" ng-click="toggle($event, 'tgl_pelepasan')" ng-disabled="is_view" ng-model="form.tgl_pelepasan" type="text" uib-datepicker-popup="dd-MM-yyyy"/>
                                             <div class="input-group-text">
                                                 <i class="icon icon-calendar">
                                                 </i>
@@ -124,15 +298,28 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm ">
-                                        Harga Beli
+                                    <label class="col-sm-4 col-form-label-sm required">
+                                        Jenis Pelepasan
                                     </label>
-                                    <div class="col-sm-9">
+                                    <div class="col-sm-8">
+                                        <select class="form-control form-control-sm" ng-model="form.jenis_pelepasan" ng-disabled="is_view">
+                                            <option value="Dijual">Dijual</option>
+                                            <option value="Hilang/Dibuang">Hilang/Dibuang</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12" ng-show="form.jenis_pelepasan=='Dijual'">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label-sm required">
+                                        Nilai Pelepasan
+                                    </label>
+                                    <div class="col-sm-8">
                                         <div class="input-group input-group-sm">
                                             <div class="input-group-text">
                                                 Rp.
                                             </div>
-                                            <input class="form-control form-control-sm text-right" name="" ng-disabled="true" ng-model="form.harga" type="text" ui-number-mask="0">
+                                            <input class="form-control form-control-sm text-right" name="" ng-disabled="is_view" ng-model="form.nilai_pelepasan" type="text" ui-number-mask="0">
                                             </input>
                                         </div>
                                     </div>
@@ -140,158 +327,45 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">
-                                        No Serial
+                                    <label class="col-sm-4 col-form-label-sm">
+                                        Keterangan
                                     </label>
-                                    <div class="col-sm-9">
-                                        <input class="form-control form-control-sm" ng-disabled="true" ng-model="form.no_serial" required="" type="text"/>
+                                    <div class="col-sm-8">
+                                        <textarea class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.keterangan_pelepasan" required="" style="height:120px">
+                                        </textarea>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12" ng-show="form.jenis_pelepasan=='Dijual'" >
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm ">
-                                        Lokasi
+                                    <label class="col-sm-4 col-form-label-sm required">
+                                        Akun Kas / Piutang
                                     </label>
-                                    <div class="col-sm-9">
-                                        <ui-select class="w100" ng-disabled="true" ng-model="form.lokasi" theme="bootstrap">
-                                            <ui-select-match placeholder="Pilih Lokasi">
+                                    <div class="col-sm-8">
+                                        <ui-select class="w100" ng-disabled="is_view" ng-model="form.akun_kas_pelepasan" theme="bootstrap">
+                                            <ui-select-match placeholder="Pilih Akun">
                                                 {{ $select.selected.nama }}
                                             </ui-select-match>
-                                            <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">
+                                            <ui-select-choices position="down" repeat="lb in listakun| filter :$select.search">
                                                 {{ lb.nama }}
                                             </ui-select-choices>
                                         </ui-select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12" >
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm required">
-                                        Jenis Pelepasan
+                                    <label class="col-sm-4 col-form-label-sm required">
+                                        <span ng-show="form.jenis_pelepasan=='Hilang/Dibuang'">Akun Rugi</span>
+                                        <span ng-show="form.jenis_pelepasan=='Dijual'">Akun Laba / Rugi</span>
                                     </label>
-                                    <div class="col-sm-9">
-                                        <select class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.status" style="">
-                                            <option value="Aktif">
-                                                Pilih Jenis Pelepasan
-                                            </option>
-                                            <option value="Rusak">
-                                                Rusak
-                                            </option>
-                                            <option value="Hilang">
-                                                Hilang
-                                            </option>
-                                            <option value="Dijual">
-                                                Dijual
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm required">
-                                        Tanggal Pelepasan
-                                    </label>
-                                    <div class="col-sm-9">
-                                        <div class="input-group input-group-sm">
-                                            <input class="form-control form-control-sm" is-open="opened.tanggal_pelepasan" ng-click="toggle($event, 'tanggal_pelepasan')" ng-disabled="is_view" ng-model="form.tanggal_pelepasan" type="text" uib-datepicker-popup="dd-MM-yyyy"/>
-                                            <div class="input-group-text">
-                                                <i class="icon icon-calendar">
-                                                </i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">
-                                        Pemeliharaan
-                                    </label>
-                                    <div class="col-sm-9">
-                                        <div class="input-group input-group-sm">
-                                            <input class="form-control form-control-sm" ng-disabled="true" ng-model="form.pemeliharaan" required="" type="text"/>
-                                            <div class="input-group-text">
-                                                Bulan
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">
-                                        Keterangan
-                                    </label>
-                                    <div class="col-sm-9">
-                                        <textarea class="form-control form-control-sm" ng-disabled="true" ng-model="form.keterangan" required="" style="height:120px">
-                                        </textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">
-                                        Merk
-                                    </label>
-                                    <div class="col-sm-9">
-                                        <input class="form-control form-control-sm" ng-disabled="true" ng-model="form.merk" required="" type="text"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">
-                                        Nilai Pelepasan
-                                    </label>
-                                    <div class="col-sm-9">
-                                        <input class="form-control form-control-sm" ng-disabled="is_view" ng-keyup="jurnal_create()" ng-model="form.nilai_pelepasan" required="" type="text"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">
-                                        Keterangan Pelepasan
-                                    </label>
-                                    <div class="col-sm-9">
-                                        <textarea class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.keterangan_pelepasan" required="" style="height:120px">
-                                        </textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">
-                                        Masuk Ke Akun
-                                    </label>
-                                    <div class="col-sm-9">
-                                        <ui-select ng-disabled="is_view" ng-model="form.akun_masuk_id" on-select="jurnal_create()" theme="bootstrap">
+                                    <div class="col-sm-8">
+                                        <ui-select class="w100" ng-disabled="is_view" ng-model="form.akun_laba_rugi" theme="bootstrap">
                                             <ui-select-match placeholder="Pilih Akun">
-                                                {{$select.selected.kode}} - {{$select.selected.nama}}
+                                                {{ $select.selected.nama }}
                                             </ui-select-match>
-                                            <ui-select-choices position="down" refresh="getAkun($select.search)" repeat="vals in listakun">
-                                                {{vals.kode}} - {{vals.nama}}
-                                            </ui-select-choices>
-                                        </ui-select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">
-                                        Ikhtisar Laba Rugi
-                                    </label>
-                                    <div class="col-sm-9">
-                                        <ui-select ng-disabled="is_view" ng-model="form.akun_keluar_id" on-select="jurnal_create()" theme="bootstrap">
-                                            <ui-select-match placeholder="Pilih Akun">
-                                                {{$select.selected.kode}} - {{$select.selected.nama}}
-                                            </ui-select-match>
-                                            <ui-select-choices position="down" refresh="getAkun($select.search)" repeat="vals in listakun">
-                                                {{vals.kode}} - {{vals.nama}}
+                                            <ui-select-choices position="down" repeat="lb in listakun| filter :$select.search">
+                                                {{ lb.nama }}
                                             </ui-select-choices>
                                         </ui-select>
                                     </div>
@@ -299,78 +373,20 @@
                             </div>
                         </div>
                     </div>
-                </form>
-                <div>
-                    <h4>
-                        Jurnal Akutansi
-                    </h4>
-                    <table border="1" class="table table-hover table-bordered">
-                        <thead>
-                            <tr>
-                                <th>
-                                    AKUN
-                                </th>
-                                <th>
-                                    KETERANGAN
-                                </th>
-                                <th width="150">
-                                    DEBIT
-                                </th>
-                                <th width="150">
-                                    KREDIT
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="val in detAkutansi">
-                                <td style="vertical-align: top!important;">
-                                    <span ng-bind-html="val.nama_akun">
-                                    </span>
-                                </td>
-                                <td class="text-left">
-                                    <span ng-bind-html="val.keterangan">
-                                    </span>
-                                </td>
-                                <td class="text-right">
-                                    {{val.debit| currency:undefined:0}}
-                                </td>
-                                <td class="text-right">
-                                    {{val.kredit| currency:undefined:0}}
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th class="text-center" colspan="2">
-                                    Total
-                                </th>
-                                <th class="text-right" style="text-align: right;">
-                                    <b>
-                                        {{totalAkutansi.totalDebit| currency:undefined:0}}
-                                    </b>
-                                </th>
-                                <th class="text-right" style="text-align: right;">
-                                    <b>
-                                        {{totalAkutansi.totalKredit| currency:undefined:0}}
-                                    </b>
-                                </th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-            <div class="card-footer">
-                <div class="pull-right">
-                    <button class="btn btn-secondary btn-sm" ng-click="cancel()" type="submit">
-                        <i class="fa fa-arrow-left">
-                        </i>
-                        Kembali
-                    </button>
-                    <button button-spinner="loading" class="btn btn-primary btn-sm" ng-click="save(form)" ng-disabled="cek <= 3 || loading" ng-hide="is_view" type="submit">
-                        <i class="fa fa-save">
-                        </i>
-                        Simpan
-                    </button>
+                    <div class="card-footer">
+                        <div class="pull-right">
+                            <button class="btn btn-secondary btn-sm" ng-click="cancel()" type="submit">
+                                <i class="fa fa-arrow-left">
+                                </i>
+                                Kembali
+                            </button>
+                            <button button-spinner="loading" class="btn btn-primary btn-sm" ng-click="proses_pelepasan(form)" ng-disabled="loading" ng-hide="is_view" type="submit">
+                                <i class="fa fa-save">
+                                </i>
+                                Simpan
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

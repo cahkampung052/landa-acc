@@ -37,7 +37,7 @@
                 </label>
                 <div class="col-sm-9">
                     <div class="input-group input-group-sm">
-                        <input class="form-control form-control-sm" is-open="opened.tanggal" ng-click="toggle($event, 'tanggal')" ng-model="form.tanggal" type="text" uib-datepicker-popup="dd-MM-yyyy"/>
+                        <input class="form-control form-control-sm" is-open="opened.tanggal" ng-click="toggle($event, 'tanggal')" ng-disabled="is_view" ng-model="form.tanggal" type="text" uib-datepicker-popup="dd-MM-yyyy"/>
                         <div class="input-group-text">
                             <i class="icon icon-calendar">
                             </i>
@@ -90,12 +90,12 @@
                 </label>
                 <div class="col-sm-9">
                     <div class="btn-group">
-                        <label class="btn btn-primary btn-sm" ng-model="form.is_penyusutan" uib-btn-radio="'1'">
+                        <label ng-disabled="is_view" class="btn btn-primary btn-sm" ng-model="form.is_penyusutan" uib-btn-radio="'1'">
                             <i class="fa fa-check" ng-if="form.is_penyusutan == '1'">
                             </i>
                             Ya
                         </label>
-                        <label class="btn btn-primary btn-sm" ng-model="form.is_penyusutan" uib-btn-radio="'0'">
+                        <label ng-disabled="is_view" class="btn btn-primary btn-sm" ng-model="form.is_penyusutan" uib-btn-radio="'0'">
                             <i class="fa fa-check" ng-if="form.is_penyusutan == '0'">
                             </i>
                             Tidak
