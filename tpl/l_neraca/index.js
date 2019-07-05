@@ -18,7 +18,7 @@ app.controller('l_neracaCtrl', function ($scope, Data, $rootScope) {
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan', param).then(function (response) {
                 if (response.status_code == 200) {
-                    $scope.data = response.data.data;
+                    $scope.data = response.data;
                     $scope.detail = response.data.detail;
                     $scope.tampilkan = true;
                 } else {
@@ -27,7 +27,7 @@ app.controller('l_neracaCtrl', function ($scope, Data, $rootScope) {
                 }
             });
         } else {
-            window.open("api/acc/l_buku_besar/laporan?" + $.param(param), "_blank");
+            window.open("api/acc/l_neraca/laporan?" + $.param(param), "_blank");
         }
     };
 });

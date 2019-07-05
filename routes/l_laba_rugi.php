@@ -12,7 +12,7 @@ function validasi($data, $custom = array()) {
     return $cek;
 }
 
-$app->post('/acc/l_laba_rugi/laporan', function ($request, $response) {
+$app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
     $params = $request->getParams();
 //    print_r($params);
 //    die();
@@ -20,50 +20,71 @@ $app->post('/acc/l_laba_rugi/laporan', function ($request, $response) {
     $validasi = validasi($params);
     if ($validasi === true) {
 
-        //tanggal awal
-        $tanggal_awal = new DateTime($params['tanggal']['startDate']);
+        /*
+         * tanggal awal
+         */
+        $tanggal_awal = new DateTime($params['startDate']);
         $tanggal_awal->setTimezone(new DateTimeZone('Asia/Jakarta'));
 
-        //tanggal akhir
-        $tanggal_akhir = new DateTime($params['tanggal']['endDate']);
+        /*
+         * tanggal akhir
+         */
+        $tanggal_akhir = new DateTime($params['endDate']);
         $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
 
         $tanggal_start = $tanggal_awal->format("Y-m-d");
         $tanggal_end = $tanggal_akhir->format("Y-m-d");
 
-
-
+        /*
+         * return untuk header
+         */
         $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
         $data['disiapkan'] = date("d-m-Y, H:i");
         $data['lokasi'] = "Semua";
-        if (isset($params['m_lokasi_id']['id']) && !empty($params['m_lokasi_id']['id'])) {
-            $data['lokasi'] = $params['m_lokasi_id']['nama'];
+        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+            $data['lokasi'] = $params['m_lokasi_nama'];
         }
+        
+        /*
+         * ambil child lokasi
+         */
+        $lokasiId = getChildId("acc_m_lokasi", $params['m_lokasi_id']);
+        if(!empty($lokasiId)){
+            array_push($lokasiId, $params['m_lokasi_id']);
+            $lokasiId = implode(",", $lokasiId);
+        }else{
+            $lokasiId = $params['m_lokasi_id'];
+        }
+        
 
 
         $data['saldo_awal'] = 0;
         $data['total_saldo'] = 0;
 
+        /*
+         * get akun parent 0, akun utama
+         */
+        $klasifikasi = $sql->select("*")
+                ->from("acc_m_akun")
+                ->where("parent_id", "=", 0)
+                ->findAll();
         $arr = [];
 
-        $arr_klasifikasi = [
-            "PEMASUKAN" => "'Pendapatan', 'Pendapatan Usaha', 'Pendapatan Non Usaha'",
-            "HPP" => "'Hpp'",
-            "PENGELUARAN" => "'Biaya Operasional', 'Biaya Non Operasional'"
-        ];
-//        print_r($arr_klasifikasi);die();
-//        $index = 0;
-
-        foreach ($arr_klasifikasi as $index => $akun) {
-
-            $arr[$index]['nama'] = $index;
+        /*
+         * proses perulangan
+         */
+        foreach ($klasifikasi as $index => $akun) {
+            $arr[$index] = (array) $akun;
             $arr[$index]['total'] = 0;
+            /*
+             * ambil child akun
+             */
+            $akunId = getChildId("acc_m_akun", $akun->id);
+            
 
             $getakun = $sql->select("*")
                     ->from("acc_m_akun")
-                    ->customWhere("tipe IN($akun)")
-                    ->where("is_tipe", "=", 0)
-                    ->where("is_deleted", "=", 0)
+                    ->customWhere("id IN(". implode(',', $akunId).")")
                     ->orderBy("kode")
                     ->findAll();
 
@@ -71,174 +92,60 @@ $app->post('/acc/l_laba_rugi/laporan', function ($request, $response) {
             foreach ($getakun as $key => $val) {
 
                 $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                        ->from("acc_trans_detail")
-                        ->where('acc_trans_detail.m_akun_id', '=', $val->id)
+                        ->from("acc_trans_detail");
+                        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+                            $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
+                        }
+                        $sql->where('acc_trans_detail.m_akun_id', '=', $val->id)
                         ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
                         ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
-                if (isset($params['m_lokasi_id']['id']) && !empty($params['m_lokasi_id']['id'])) {
-                    $sql->andWhere('acc_trans_detail.m_lokasi_id', '=', $params['m_lokasi_id']['id']);
-                }
+                
                 $gettransdetail = $sql->find();
-                if (intval($gettransdetail->debit) - intval($gettransdetail->kredit) > 0) {
-                    $arr[$index]['detail'][$key]['kode'] = $val->kode;
-                    $arr[$index]['detail'][$key]['nama'] = $val->nama;
-                    $arr[$index]['detail'][$key]['nominal'] = intval($gettransdetail->debit) - intval($gettransdetail->kredit);
-                    $arr[$index]['total'] += $arr[$index]['detail'][$key]['nominal'];
+                if ((intval($gettransdetail->debit) - intval($gettransdetail->kredit) > 0) || (intval($gettransdetail->debit) - intval($gettransdetail->kredit) < 0) || $val->is_tipe == 1) {
+                    if ($val->is_tipe == 1) {
+                        $arr[$index]['detail'][$val->id]['kode'] = $val->kode;
+                        $arr[$index]['detail'][$val->id]['nama'] = $val->nama;
+                        $arr[$index]['detail'][$val->id]['nominal'] = 0; 
+                    } else {
+//                        $arr[$index][$val->parent_id]['detail'][] = (array) $val;
+                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['kode'] = $val->kode;
+                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nama'] = $val->nama;
+                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'] = intval($gettransdetail->debit) - intval($gettransdetail->kredit);
+                        $arr[$index]['total'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
+                        $arr[$index]['detail'][$val->parent_id]['nominal'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
+                    }
+                    
                 }
             }
         }
-
-//        print_r($arr);die();
-
-
-
-
-        return successResponse($response, ["data" => $data, "detail" => $arr]);
+        
+        if (isset($params['export']) && $params['export'] == 1) {
+            $view = twigViewPath();
+            $content = $view->fetch('laporan/labaRugi.html', [
+                "data" => $data,
+                "detail" => $arr,
+                "totalsemua" => $arr[3]['total']-$arr[4]['total']-$arr[5]['total']-$arr[6]['total']+$arr[7]['total']-$arr[8]['total'],
+                "css" => modulUrl().'/assets/css/style.css',
+            ]);
+            header("Content-type: application/vnd.ms-excel");
+            header("Content-Disposition: attachment;Filename=laporan-buku-besar.xls");
+            echo $content;
+        } else if (isset($params['print']) && $params['print'] == 1) {
+            $view = twigViewPath();
+            $content = $view->fetch('laporan/labaRugi.html', [
+                "data" => $data,
+                "detail" => $arr,
+                "totalsemua" => $arr[3]['total']-$arr[4]['total']-$arr[5]['total']-$arr[6]['total']+$arr[7]['total']-$arr[8]['total'],
+                "css" => modulUrl().'/assets/css/style.css',
+            ]);
+            echo $content;
+            echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+        }else{
+            return successResponse($response, ["data" => $data, "detail" => $arr]);
+        }
+        
+        
     } else {
         return unprocessResponse($response, $validasi);
     }
 });
-
-
-$app->get('/acc/l_laba_rugi/exportExcel', function ($request, $response) {
-
-    $params = $request->getParams();
-//    echo json_encode($params) ;die();
-//    $tahun = $params['tahun'];
-//    echo $tahun;die();
-    $sql = $this->db;
-
-    //tanggal awal
-    $tanggal_awal = new DateTime($params['tanggal']['startDate']);
-    $tanggal_awal->setTimezone(new DateTimeZone('Asia/Jakarta'));
-
-    //tanggal akhir
-    $tanggal_akhir = new DateTime($params['tanggal']['endDate']);
-    $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
-
-    $tanggal_start = $tanggal_awal->format("Y-m-d");
-    $tanggal_end = $tanggal_akhir->format("Y-m-d");
-
-
-
-    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
-    $data['disiapkan'] = date("d-m-Y, H:i");
-    $data['lokasi'] = "Semua";
-    if (isset($params['m_lokasi_id']['id']) && !empty($params['m_lokasi_id']['id'])) {
-        $data['lokasi'] = $params['m_lokasi_id']['nama'];
-    }
-
-
-    $data['saldo_awal'] = 0;
-    $data['total_saldo'] = 0;
-
-    $arr = [];
-
-    $arr_klasifikasi = [
-        "PEMASUKAN" => "'Pendapatan', 'Pendapatan Usaha', 'Pendapatan Non Usaha'",
-        "HPP" => "'Hpp'",
-        "PENGELUARAN" => "'Biaya Operasional', 'Biaya Non Operasional'"
-    ];
-//        print_r($arr_klasifikasi);die();
-//        $index = 0;
-
-    foreach ($arr_klasifikasi as $index => $akun) {
-
-        $arr[$index]['nama'] = $index;
-        $arr[$index]['total'] = 0;
-
-        $getakun = $sql->select("*")
-                ->from("acc_m_akun")
-                ->customWhere("tipe IN($akun)")
-                ->where("is_tipe", "=", 0)
-                ->where("is_deleted", "=", 0)
-                ->orderBy("kode")
-                ->findAll();
-
-
-        foreach ($getakun as $key => $val) {
-
-            $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                    ->from("acc_trans_detail")
-                    ->where('acc_trans_detail.m_akun_id', '=', $val->id)
-                    ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
-                    ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
-            if (isset($params['m_lokasi_id']['id']) && !empty($params['m_lokasi_id']['id'])) {
-                $sql->andWhere('acc_trans_detail.m_lokasi_id', '=', $params['m_lokasi_id']['id']);
-            }
-            $gettransdetail = $sql->find();
-            if (intval($gettransdetail->debit) - intval($gettransdetail->kredit) > 0) {
-                $arr[$index]['detail'][$key]['kode'] = $val->kode;
-                $arr[$index]['detail'][$key]['nama'] = $val->nama;
-                $arr[$index]['detail'][$key]['nominal'] = intval($gettransdetail->debit) - intval($gettransdetail->kredit);
-                $arr[$index]['total'] += $arr[$index]['detail'][$key]['nominal'];
-            }
-        }
-    }
-
-
-    $path = 'acc/landaacc/upload/format_laba_rugi.xls';
-    $objReader = PHPExcel_IOFactory::createReader('Excel5');
-    $objPHPExcel = $objReader->load($path);
-
-    $objPHPExcel->getActiveSheet()->setCellValue('A' . 4, "Lokasi : " . $data['lokasi']);
-    $objPHPExcel->getActiveSheet()->setCellValue('A' . 5, "Periode : " . $data['tanggal']);
-    $objPHPExcel->getActiveSheet()->setCellValue('A' . 6, "Disiapkan Pada : " . $data['disiapkan']);
-
-    $row = 9;
-    foreach ($arr as $key => $val) {
-
-        $objPHPExcel->getActiveSheet()->setCellValue('A' . $row, $key);
-        if (isset($val['detail'])) {
-            $row2 = $row + 1;
-            foreach ($val['detail'] as $keys => $vals) {
-                $objPHPExcel->getActiveSheet()->setCellValue('A' . $row2, $vals['kode']);
-                $objPHPExcel->getActiveSheet()->setCellValue('B' . $row2, $vals['nama']);
-                $objPHPExcel->getActiveSheet()->setCellValue('C' . $row2, $vals['nominal']);
-                $row2++;
-            }
-            $row = $row2 + 2;
-            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($row2), "TOTAL " . $key);
-            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($row2), $val['total']);
-            if($key == "HPP"){
-                $objPHPExcel->getActiveSheet()->setCellValue('A' . ($row2+1), "LABA KOTOR(PEMASUKAN-HPP)");
-                $objPHPExcel->getActiveSheet()->setCellValue('C' . ($row2+1), $arr['PEMASUKAN']['total']-$arr['HPP']['total']);
-                $row = $row2 + 3;
-            }
-            
-        }else{
-            $row2 = $row + 1;
-            $objPHPExcel->getActiveSheet()->setCellValue('A' . ($row2), "TOTAL " . $key);
-            $objPHPExcel->getActiveSheet()->setCellValue('C' . ($row2), $val['total']);
-            $row = $row2 + 2;
-            if($key == "HPP"){
-                $objPHPExcel->getActiveSheet()->setCellValue('A' . ($row2+1), "LABA KOTOR(TOTAL PEMASUKAN - TOTAL HPP)");
-                $objPHPExcel->getActiveSheet()->setCellValue('C' . ($row2+1), $arr['PEMASUKAN']['total']-$arr['HPP']['total']);
-                $row = $row2 + 3;
-            }
-            
-        }
-
-        
-
-        
-    }
-
-    if($arr['PEMASUKAN']['total']-($arr['HPP']['total']+$arr['PENGELUARAN']['total']) >= 0){
-        $objPHPExcel->getActiveSheet()->setCellValue('A' . ($row+1), "LABA");
-        $objPHPExcel->getActiveSheet()->setCellValue('C' . ($row+1), $arr['PEMASUKAN']['total']-($arr['HPP']['total']+$arr['PENGELUARAN']['total']));
-    }else{
-        $objPHPExcel->getActiveSheet()->setCellValue('A' . ($row+1), "RUGI");
-        $objPHPExcel->getActiveSheet()->setCellValue('C' . ($row+1),($arr['PEMASUKAN']['total']-($arr['HPP']['total']+$arr['PENGELUARAN']['total']))*1);
-    }
-    
-    
-    header("Content-type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment;Filename=laporan_laba_rugi.xls");
-
-    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-    $objWriter->save('php://output');
-});
-
-
-

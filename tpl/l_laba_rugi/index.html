@@ -26,7 +26,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-12 content-center">
-                                            <button class="btn btn-primary btn-sm" ng-click="view(form)"><i class="fa fa-search"></i> Tampilkan</button>
+                                            <button class="btn btn-primary btn-sm" ng-click="view(0, 0)"><i class="fa fa-search"></i> Tampilkan</button>
                                         </div>
                                     </div>
                                 </form>
@@ -39,15 +39,24 @@
                 <!--<div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>-->
             </div>
         </div>
-        <div class="card">
-            <div class="card-body" id="print" ng-show="tampilkan">
+        <div class="card" ng-show="tampilkan">
+            <div class="card-header card-header-white">
+                <div class="btn-group pull-right">
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1,0)">
+                        <i class="fa fa-file"></i>
+                        Excel
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0,1)">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </button>
+                </div>
+            </div>
+            <div class="card-body" id="print" >
                     
                     <div align="left">
                         <div class="row">
-                            <div class="col-md-3">
-                                <!--<img src="img/{{setting.logo}}" style="width: 100px; "/>-->
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <br/>
                                 <center>
                                     <h2 class="header-laporan">
@@ -61,16 +70,7 @@
                                     <br/>
                                 </center>
                             </div>
-                            <div class="col-md-3">
-                                <button class="btn btn-success btn-sm pull-right" ng-click="exportExcel(form)">
-                                    <i class="fa fa-file"></i>
-                                    Excel
-                                </button>
-                                <button class="btn btn-warning btn-sm pull-right" ng-click="">
-                                    <i class="fa fa-print"></i>
-                                    Print
-                                </button>
-                            </div>
+                            
                         </div>
                         <br/>
                         <div>
@@ -100,7 +100,7 @@
                                     <tbody ng-repeat="(key,val) in detail">
                                         <tr>
                                             <td align="left" style="vertical-align: top" colspan="3">
-                                                <b>{{key}}</b>
+                                                <b>{{val.nama}}</b>
                                             </td>
                                         </tr>
                                         <tr ng-repeat="vals in val.detail">
@@ -117,37 +117,30 @@
                                         </tr>
                                         <tr>
                                             <td align="right" class="text-right" style="vertical-align: top" colspan="2">
-                                                <b>TOTAL {{key}}</b>
+                                                <b>TOTAL {{val.nama}}</b>
                                             </td>
                                             <td align="right" class="text-right" style="vertical-align: top" colspan="2">
                                                 <b>{{val.total | number}}</b>
                                             </td>
                                         </tr>
-                                        <tr ng-if="key == 'HPP'">
-                                            <td align="right" class="text-right" style="vertical-align: top" colspan="2">
-                                                <b>LABA KOTOR (PEMASUKAN - HPP)</b>
-                                            </td>
-                                            <td align="right" class="text-right" style="vertical-align: top" colspan="2">
-                                                <b>{{detail["PEMASUKAN"].total - detail["HPP"].total | number}}</b>
-                                            </td>
-                                        </tr>
+                                        
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <td align="right" colspan="2">
-                                                <b style="color:greenyellow" ng-if='detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) >= 0'>
+                                                <b style="color:greenyellow" ng-if="totalsemua >= 0">
                                                     LABA
                                                 </b>
-                                                <b style="color:red" ng-if='detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) < 0'>
+                                                <b style="color:red" ng-if="totalsemua < 0">
                                                     RUGI
                                                 </b>
                                             </td>
                                             <td align="right" class="text-right">
-                                                <b style="color: greenyellow" ng-if='detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) >= 0'>
-                                                    {{detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) | number}}
+                                                <b style="color: greenyellow" ng-if="totalsemua >= 0">
+                                                    {{totalsemua | number}}
                                                 </b>
-                                                <b style="color:red" ng-if='detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total) < 0'>
-                                                    {{(detail["PEMASUKAN"].total - (detail["HPP"].total + detail["PENGELUARAN"].total)) * -1 | number}}
+                                                <b style="color:red" ng-if="totalsemua < 0">
+                                                    {{totalsemua*-1 | number}}
                                                 </b>
                                             </td>
                                         </tr>
