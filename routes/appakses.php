@@ -16,9 +16,9 @@ function validasi($data, $custom = array())
 
 $app->get("/acc/appakses/tes", function ($request, $response) {
     $db = $this->db;
-    $child = getChildId("acc_m_lokasi", 1);
+    $child = getChildId("acc_m_akun", 9);
 
-    print_r($child);
+    $db->run("update acc_m_akun set tipe='PENGELUARAN LAIN' where id in (".implode(",", $child).")");
 });
 /**
  * Ambil semua hak akses

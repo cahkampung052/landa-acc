@@ -1,5 +1,32 @@
 <?php
 /**
+ * Multi insert ke trans detail
+ */
+function insertTransDetail($data)
+{
+    $db = new Cahkampung\Landadb(config('DB')['db']);
+    if(!empty($data)){
+        foreach ($data as $key => $value) {
+            $db->insert("acc_trans_detail", $value);
+        }
+    }
+}
+/**
+ * Set modul ACC URL
+ */
+function modulUrl()
+{
+    return config('SITE_URL')."/".config('MODUL_ACC_PATH');
+}
+/**
+ * Set path untuk slim twig view
+ */
+function twigViewPath()
+{
+    $view = new \Slim\Views\Twig(config('MODUL_ACC_PATH').'/view');
+    return $view;
+}
+/**
  * Buat nested tree
  */
 function buildTree($elements, $parentId = 0)
@@ -51,8 +78,8 @@ function getChildId($tabelName, $parentId)
     return $child;
 }
 
-function getLabaRugi($tanggal_start, $lokasi=null) {
-    
+function getLabaRugi($tanggal_start, $lokasi=null)
+{
     $sql = new Cahkampung\Landadb(config('DB')['db']);
 
     $data['saldo_awal'] = 0;
@@ -69,7 +96,6 @@ function getLabaRugi($tanggal_start, $lokasi=null) {
 //        $index = 0;
 
     foreach ($arr_klasifikasi as $index => $akun) {
-
         $arr[$index]['nama'] = $index;
         $arr[$index]['total'] = 0;
 
@@ -83,7 +109,6 @@ function getLabaRugi($tanggal_start, $lokasi=null) {
 
 
         foreach ($getakun as $key => $val) {
-
             $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
                     ->from("acc_trans_detail")
                     ->where('acc_trans_detail.m_akun_id', '=', $val->id)
@@ -104,4 +129,3 @@ function getLabaRugi($tanggal_start, $lokasi=null) {
     
     return $arr;
 }
-

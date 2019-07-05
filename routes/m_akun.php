@@ -26,6 +26,13 @@ function validasiSaldo($data, $custom = array())
     return $cek;
 }
 
+function setLevelTipeAkun($parent_id)
+{
+    $db = new Cahkampung\Landadb(config('DB')['db']);
+    $parent = $db->find("select * from acc_m_akun where id = '" . $parent_id . "'");
+    return $parent->level + 1;
+}
+
 $app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
     $params = $request->getParams();
 //    print_r($params['form']);die();
@@ -182,13 +189,17 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     ]);
 });
 
+$app->get('/acc/m_akun/listakun', function ($request, $response) {
+    $sql = $this->db;
 
-function setLevelTipeAkun($parent_id)
-{
-    $db = new Cahkampung\Landadb(config('DB')['db']);
-    $parent = $db->find("select * from acc_m_akun where id = '" . $parent_id . "'");
-    return $parent->level + 1;
-}
+    $data = $sql->findAll('select * from acc_m_akun where is_deleted = 0 order by kode');
+    foreach ($data as $key => $val) {
+        $data[$key] = (array) $val;
+        $spasi = ($val->level == 1) ? '' : str_repeat("···", $val->level - 1);
+        $data[$key]['nama_lengkap'] = $spasi . $val->kode . ' - ' . $val->nama;
+    }
+    return successResponse($response, $data);
+});
 
 $app->post('/acc/m_akun/create', function ($request, $response) {
 
@@ -214,6 +225,9 @@ $app->post('/acc/m_akun/create', function ($request, $response) {
             $data['tipe'] = isset($akun->tipe) ? $akun->tipe : '';
         }
 
+                    $getparent = $db->select("*")->from("acc_m_akun")->where("id", "=", $data['parent_id'])->find();
+            $data['tipe'] = $getparent->tipe;
+
         $model = $sql->insert("acc_m_akun", $data);
         if ($model) {
             return successResponse($response, $model);
@@ -225,61 +239,20 @@ $app->post('/acc/m_akun/create', function ($request, $response) {
     }
 });
 
-$app->post('/acc/m_akun/cariunker', function ($request, $response) {
-    $params = $request->getParams();
-    $sql    = $this->db;
-    $id     = $request->getAttribute('id');
-    $data   = $sql->findAll("select * from acc_m_akun where (is_tipe=0 and is_deleted = 0 and nama like '%{$params['nama']}%') order by kode");
-    foreach ($data as $key => $val) {
-        $data[$key]                 = (array) $val;
-        $spasi                      = ($val->level == 1) ? '' : str_repeat("···", $val->level - 1);
-        $data[$key]['nama_lengkap'] = $spasi . $val->kode . ' - ' . $val->nama;
-    }
-    return successResponse($response, $data);
-});
-
-
-
-$app->get('/acc/m_akun/saldoakunkas/{m_unker_id}', function ($request, $response) {
-    $m_unker_id = $request->getAttribute('m_unker_id');
-    $sql       = $this->db;
-    $data      = $sql->findAll("select * from acc_m_akun where is_deleted = 0 and is_tipe = 0 and tipe = 'Cash & Bank' order by kode");
-    $cabang    = $sql->find("select * from m_unker where is_deleted = 0 order by id asc");
-    $cbg_id    = ($m_unker_id != 0) ? $m_unker_id : $cabang->id;
-    $starttime = new DateTime("NOW");
-    $starttime->setTimezone(new DateTimeZone("Asia/Jakarta"));
-    $tanggal_start = $starttime->format("Y-m-d");
-    $return        = [];
-    foreach ($data as $key => $val) {
-        $saldo                 = saldo($val->id, '', '');
-        $return[$key]          = (array) $val;
-        $return[$key]['saldo'] = (!empty($saldo)) ? rp($saldo) : 0;
-    }
-    return successResponse($response, ['data' => $return, 'cabangid' => $cbg_id]);
-});
-
 $app->post('/acc/m_akun/update', function ($request, $response) {
 
     $data = $request->getParams();
     $db   = $this->db;
 
-    // $data['parent_id'] = isset($data['parent_id']) ? $data['parent_id'] : '';
-
     $validasi = validasi($data);
 
     if ($validasi === true) {
 
-        // $data['kode'] = $data['kode'];
-
-        // if ($data['parent_id'] == 0) {
-        //     $data['level'] = 1;
-        // } else {
-        //     $data['level'] = setLevelTipeAkun($data['parent_id']);
-        // }
-
         $akun         = $db->find("select * from acc_m_akun where id = '" . $data['parent_id'] . "'");
         $data['tipe'] = isset($akun->tipe) ? $akun->tipe : '';
         $data['kode']    = $data['kode_induk'] . '.' . $data['kode'];
+                    $getparent = $db->select("*")->from("acc_m_akun")->where("id", "=", $data['parent_id'])->find();
+            $data['tipe'] = $getparent->tipe;
 
         $model = $db->update("acc_m_akun", $data, array('id' => $data['id']));
         if ($model) {
@@ -297,24 +270,6 @@ $app->post('/acc/m_akun/trash', function ($request, $response) {
     $data = $request->getParams();
     $db   = $this->db;
 
-//    $cek_komponenGaji = $db->select('*')
-//    ->from('m_komponen_gaji')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_komponenGaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Master Komponen Gaji']);
-//    }
-
-//    $cek_Gaji = $db->select('*')
-//    ->from('t_penggajian')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_Gaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi Penggajian']);
-//    }
-
     $model = $db->update("acc_m_akun", $data, array('id' => $data['id']));
     if ($model) {
         return successResponse($response, $model);
@@ -326,33 +281,6 @@ $app->post('/acc/m_akun/trash', function ($request, $response) {
 $app->post('/acc/m_akun/delete', function ($request, $response) {
     $data = $request->getParams();
     $db   = $this->db;
-
-//    $cek = $db->select("*")
-//    ->from("acc_trans_detail")
-//    ->where("m_akun_id", "=", $request->getAttribute('id'))
-//    ->find();
-//
-//    if ($cek) {
-//        return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi']);
-//    }
-//
-//    $cek_komponenGaji = $db->select('*')
-//    ->from('m_komponen_gaji')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_komponenGaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Master Komponen Gaji']);
-//    }
-//
-//    $cek_Gaji = $db->select('*')
-//    ->from('t_penggajian')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_Gaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi Penggajian']);
-//    }
 
     $delete = $db->delete('acc_m_akun', array('id' => $data['id']));
        if ($delete) {
@@ -409,8 +337,6 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     }
                 }
             }
-//            echo json_encode($tes);
-            //            exit();
             unlink($inputFileName);
 
             return successResponse($response, 'data berhasil di import');

@@ -107,7 +107,7 @@ $app->post('/acc/m_klasifikasi/create', function ($request, $response) {
         } else {
             $data['level'] = setLevelTipeAkun($data['parent_id']);
             $getparent = $db->select("*")->from("acc_m_akun")->where("id", "=", $data['parent_id'])->find();
-            $data['tipe'] = $getparent->nama;
+            $data['tipe'] = $getparent->tipe;
         }
 //        print_r($data);die();
         $model = $db->insert("acc_m_akun", $data);
@@ -129,6 +129,8 @@ $app->post('/acc/m_klasifikasi/update', function ($request, $response) {
     $validasi = validasi($data);
     if ($validasi === true) {
         $data['is_tipe'] = 1;
+                    $getparent = $db->select("*")->from("acc_m_akun")->where("id", "=", $data['parent_id'])->find();
+            $data['tipe'] = $getparent->tipe;
         $model = $db->update("acc_m_akun", $data, array('id' => $data['id']));
         /** 
          * Update tipe di semua akun
