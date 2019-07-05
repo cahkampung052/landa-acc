@@ -4,22 +4,37 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     var master = 'Transaksi Jurnal Umum';
     $scope.formTitle = '';
     $scope.displayed = [];
+    $scope.gambar = [];
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
+    $scope.options = {
+        minDate: new Date(),
+    };
 
+    /*
+     * ambil akun untuk detail
+     */
     Data.get('acc/m_akun/akunDetail').then(function(data) {
-        $scope.akunDetail = data.data.list;
+        $scope.akunKas = data.data.list;
     });
+    
     Data.get('acc/m_akun/akunAll').then(function(data) {
         $scope.akunAll = data.data.list;
     });
+    
+    /*
+     * ambil lokasi
+     */
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
     });
     
     
-    //============================GAMBAR===========================//
+    /*
+     * 
+     * @type FileUploader
+     */
     var uploader = $scope.uploader = new FileUploader({
         url: Data.base + 'acc/t_jurnal_umum/upload/bukti',
         formData: [],
@@ -92,7 +107,9 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     };
     /* sampe di sini*/
 
-    
+    /*
+     * ambil detail
+     */
     $scope.getDetail = function (id){
         console.log(id)
         var data = {
@@ -103,7 +120,9 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         });
     }
     
-    
+    /*
+     * tambah detail
+     */
     $scope.addDetail = function (val) {
         var comArr = $(".tabletr").last().index() + 1
         var newDet = {
@@ -124,6 +143,10 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         val.splice(comArr, 0, newDet);
         $scope.sumTotal();
     };
+    
+    /*
+     * hapus detail
+     */
     $scope.removeDetail = function (val, paramindex) {
         console.log(val.paramindex)
         var comArr = eval(val);
@@ -135,6 +158,9 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         }
     };
     
+    /*
+     * kalkulasi total detail
+     */
     $scope.sumTotal = function () {
         console.log("ya")
         var totalkredit = 0;
@@ -147,14 +173,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.form.total_kredit = totalkredit;
     };
     
-    $scope.kode = function (lokasi) {
-        Data.get(control_link + '/kode/' + lokasi.kode).then(function (response) {
-            $scope.form.no_transaksi = response.data.kode;
-            $scope.form.no_urut = response.data.urutan;
-        });
-    };
-
-
+    
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
@@ -204,6 +223,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         }];
         $scope.sumTotal();
     };
+    
     /** update */
     $scope.update = function (form) {
         $scope.is_edit = true;
@@ -218,6 +238,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         console.log($scope.form);
         
     };
+    
     /** view */
     $scope.view = function (form) {
         $scope.is_edit = true;
@@ -226,6 +247,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.formtitle = master + " | Lihat Data : " + form.nama;
         $scope.form = form;
     };
+    
     /** save action */
     $scope.save = function (form) {
         var data = {
@@ -233,8 +255,6 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
             detail : $scope.listDetail
         }
         
-        console.log(data)
-//        var url = (form.id > 0) ? '/update' : '/create';
         Data.post(control_link + '/save', data).then(function (result) {
             if (result.status_code == 200) {
                 $scope.uploadGambar();
@@ -245,6 +265,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
             }
         });
     };
+    
     /** cancel action */
     $scope.cancel = function () {
         if (!$scope.is_view) {
@@ -253,48 +274,10 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.is_edit = false;
         $scope.is_view = false;
     };
-    $scope.trash = function (row) {
-        var data = angular.copy(row);
-        Swal.fire({
-            title: "Peringatan ! ",
-            text: "Apakah Anda Yakin Ingin Menghapus Data Ini",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Iya, di Hapus",
-            cancelButtonText: "Tidak",
-        }).then((result) => {
-            if (result.value) {
-                row.is_deleted = 1;
-                Data.post(control_link + '/trash', row).then(function (result) {
-                    $rootScope.alert("Berhasil", "Data berhasil dihapus", "success");
-                $scope.cancel();
-
-                });
-            }
-        });
-    };
-    $scope.restore = function (row) {
-        var data = angular.copy(row);
-        Swal.fire({
-            title: "Peringatan ! ",
-            text: "Apakah Anda Yakin Ingin Merestore Data Ini",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Iya, di Restore",
-            cancelButtonText: "Tidak",
-        }).then((result) => {
-            if (result.value) {
-                row.is_deleted = 0;
-                Data.post(control_link + '/trash', row).then(function (result) {
-                    $rootScope.alert("Berhasil", "Data berhasil direstore", "success");
-                $scope.cancel();
-
-                });
-            }
-        });
-    };
+    
+    /*
+     * delete action
+     */
     $scope.delete = function (row) {
         var data = angular.copy(row);
         Swal.fire({
@@ -309,7 +292,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
             if (result.value) {
                 row.is_deleted = 1;
                 Data.post(control_link + '/delete', row).then(function (result) {
-                    $rootScope.alert("Berhasil", "Data berhasil dihapus permanen", "success");
+                    $rootScope.alert("Berhasil", "Data berhasil dihapus", "success");
                 $scope.cancel();
 
                 });

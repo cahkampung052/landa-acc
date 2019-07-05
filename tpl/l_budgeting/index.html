@@ -12,21 +12,26 @@
                             <div class="">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row">
-                                        <label class="col-sm-1 col-form-label-sm required">Tahun</label>
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-6">
                                             <input class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'year'}" is-open="opened.tgl" ng-click="toggle($event, 'tgl')" ng-model="form.tahun" placeholder="Tahun" type="text" uib-datepicker-popup="yyyy"/>
 
                                             <!--<input type="text" class="form-control form-control-sm align-left" ng-model="form.profesi" ng-disabled="is_view" required/>--> 
                                         </div>
-                                        <label class="col-sm-2 col-form-label-sm required">Nama Akun</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" class="form-control form-control-sm align-left" ng-model="form.nama" ng-disabled="is_view" required/> 
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <div class="col-sm-12">
+                                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view">
+                                                        <ui-select-match placeholder="Pilih Akun">{{ $select.selected.nama}}</ui-select-match>
+                                                        <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-12 content-center">
-                                            
-                                            <button class="btn btn-primary btn-sm" ng-click="setLokasi(form)"><i class="fa fa-search"></i> Tampilkan</button>
+
+                                            <button class="btn btn-primary btn-sm" ng-click="view(0, 0)"><i class="fa fa-search"></i> Tampilkan</button>
                                         </div>
                                     </div>
                                 </form>
@@ -39,33 +44,29 @@
             </div>
         </div>
         <div class="card" ng-show="tampilkan">
+            <div class="card-header card-header-white">
+                <div class="btn-group pull-right">
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1, 0)">
+                        <i class="fa fa-file"></i>
+                        Excel
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0, 1)">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </button>
+                </div>
+            </div>
             <div class="card-body">
-                <div class="row">
-                            <div class="col-md-3">
-                                <!--<img src="img/{{setting.logo}}" style="width: 100px; "/>-->
-                            </div>
-                            <div class="col-md-6">
-                                <br/>
-                                <center>
-                                    <h2 class="header-laporan">
-                                        LAPORAN BUDGETING
-                                    </h2>
-                                    Disiapkan Tanggal : {{disiapkan| date:'dd MMMM yyyy'}}
-                                    <br/>
-                                </center>
-                            </div>
-                            
-                            <div class="col-md-3">
-                                <button class="btn btn-success btn-sm pull-right" ng-click="exportExcel(form)">
-                                    <i class="fa fa-file"></i>
-                                    Excel
-                                </button>
-                                <button class="btn btn-warning btn-sm pull-right" ng-click="">
-                                    <i class="fa fa-print"></i>
-                                    Print
-                                </button>
-                            </div>
-                        </div>
+                <div class="row header-laporan-wrapper">
+                    <div class="col-md-12">
+                        <center>
+                            <h2 class="header-laporan">LAPORAN BUDGETING</h2>
+                            Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
+                            <br/>
+                        </center>
+                        <hr/>
+                    </div>
+                </div>
                 <br>
                 <div class="table-responsive" >
                     <table class="table table-striped table-hover table-laporan" width="100%">
@@ -74,15 +75,15 @@
                                 <th style="text-align: left; vertical-align: middle" rowspan="2" width="30%">
                                     Nama
                                 </th>
-                                <th ng-repeat="val in bulan" style="text-align: center" colspan="2">{{val.bulan}}</th>
+                                <th ng-repeat="val in data.bulan" style="text-align: center" colspan="2">{{val.bulan}}</th>
                             </tr>
                             <tr>
-                                <th ng-repeat="vals in setiapbulan">{{vals.nama}}</th>
+                                <th ng-repeat="vals in data.setiapbulan">{{vals.nama}}</th>
                             </tr>
                         </thead>
 
                         <tbody >
-                            <tr ng-repeat="row in listAkun" ng-dblclick="view(row)">
+                            <tr ng-repeat="row in detail" ng-dblclick="view(row)">
                                 <td style="text-align: left;">
                                     {{row.nama}}
                                 </td>

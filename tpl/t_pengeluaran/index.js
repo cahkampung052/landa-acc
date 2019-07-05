@@ -4,28 +4,47 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     var master = 'Transaksi Pengeluaran';
     $scope.formTitle = '';
     $scope.displayed = [];
+    $scope.gambar = [];
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
+    $scope.options = {
+        minDate: new Date(),
+    };
 
+    /*
+     * Ambil akun kas
+     */
     Data.get('acc/m_akun/akunKas').then(function(data) {
         $scope.akun = data.data.list;
     });
     
+    /*
+     * Ambil akun untuk detail
+     */
     Data.get('acc/m_akun/akunDetail').then(function(data) {
         $scope.akunDetail = data.data.list;
     });
     
+    /*
+     * ambil supplier
+     */
     Data.get('acc/m_supplier/getSupplier').then(function (response) {
         $scope.listSupplier = response.data.list;
     });
     
+    /*
+     * ambil lokasi
+     */
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
     });
     
     
-    //============================GAMBAR===========================//
+    /*
+     * 
+     * @type FileUploader
+     */
     var uploader = $scope.uploader = new FileUploader({
         url: Data.base + 'acc/t_pengeluaran/upload/bukti',
         formData: [],
@@ -97,7 +116,9 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     };
     /* sampe di sini*/
     
-    
+    /*
+     * ambil detail pengeluaran
+     */
     $scope.getDetail = function (id){
         console.log(id)
         var data = {
@@ -108,7 +129,9 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         });
     }
     
-    
+    /*
+     * tambah detail
+     */
     $scope.addDetail = function (val) {
         var comArr = $(".tabletr").last().index() + 1
         console.log($scope.akunDetail)
@@ -129,6 +152,10 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.sumTotal();
         val.splice(comArr, 0, newDet);
     };
+    
+    /*
+     * hapus detail
+     */
     $scope.removeDetail = function (val, paramindex) {
         console.log(val.paramindex)
         var comArr = eval(val);
@@ -140,6 +167,9 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         }
     };
     
+    /*
+     * kalkulasi total detail
+     */
     $scope.sumTotal = function () {
         var totaldebit = 0;
         angular.forEach($scope.listDetail, function (value, key) {
@@ -202,6 +232,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.gambar = {};
         $scope.url = "";
     };
+    
     /** update */
     $scope.update = function (form) {
         $scope.is_edit = true;
@@ -217,6 +248,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         console.log($scope.form);
         
     };
+    
     /** view */
     $scope.view = function (form) {
         $scope.is_edit = true;
@@ -228,6 +260,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
     };
+    
     /** save action */
     $scope.save = function (form) {
         var data = {
@@ -235,8 +268,6 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
             detail : $scope.listDetail
         }
         
-        console.log(data)
-//        var url = (form.id > 0) ? '/update' : '/create';
         Data.post(control_link + '/save', data).then(function (result) {
             if (result.status_code == 200) {
                 $scope.form.id = result.data.id;
@@ -248,6 +279,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
             }
         });
     };
+    
     /** cancel action */
     $scope.cancel = function () {
         if (!$scope.is_view) {
@@ -256,58 +288,10 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.is_edit = false;
         $scope.is_view = false;
     };
-    $scope.trash = function (row) {
-        var data = angular.copy(row);
-        Swal.fire({
-            title: "Peringatan ! ",
-            text: "Apakah Anda Yakin Ingin Menghapus Data Ini",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Iya, di Hapus",
-            cancelButtonText: "Tidak",
-        }).then((result) => {
-            if (result.value) {
-                row.is_deleted = 1;
-                Data.post(control_link + '/trash', row).then(function (result) {
-                    Swal.fire({
-                        title: "Terhapus",
-                        text: "Data Berhasil Di Hapus.",
-                        type: "success"
-                    }).then(function () {
-                        $scope.cancel();
-                    });
-
-                });
-            }
-        });
-    };
-    $scope.restore = function (row) {
-        var data = angular.copy(row);
-        Swal.fire({
-            title: "Peringatan ! ",
-            text: "Apakah Anda Yakin Ingin Merestore Data Ini",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Iya, di Restore",
-            cancelButtonText: "Tidak",
-        }).then((result) => {
-            if (result.value) {
-                row.is_deleted = 0;
-                Data.post(control_link + '/trash', row).then(function (result) {
-                    Swal.fire({
-                        title: "Restore",
-                        text: "Data Berhasil Di Restore.",
-                        type: "success"
-                    }).then(function () {
-                        $scope.cancel();
-                    });
-
-                });
-            }
-        });
-    };
+    
+    /*
+     * delete action
+     */
     $scope.delete = function (row) {
         var data = angular.copy(row);
         Swal.fire({

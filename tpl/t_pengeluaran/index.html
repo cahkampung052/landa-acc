@@ -169,7 +169,7 @@
                                             <label class="col-sm-3 col-form-label-sm required">Tanggal</label>
                                             <div class="col-sm-9">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" ng-disabled="is_view"/>
+                                                    <input type="text" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" datepicker-options="options" ng-disabled="is_view"/>
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">
                                                             <i class="fa fa-calendar"></i>
@@ -213,7 +213,7 @@
                                             <thead>
                                                 <tr>
                                                     <th width="5%"><button type="button" class="btn btn-success fa fa-plus btn-sm" ng-click="addDetail(listDetail)" ng-disabled="is_view"></button></th>
-                                                    <th class="align-center">Lokasi</th>
+                                                    <!--<th class="align-center">Lokasi</th>-->
                                                     <th class="align-center">Nama Akun</th>
                                                     <th class="align-center">Keterangan</th>
                                                     <th class="align-center" width="15%">Nominal</th>
@@ -227,7 +227,7 @@
                                                         <!--<button type="button" class="btn btn-success fa fa-plus" ng-click="addDetail(listDetail, $index)" ng-disabled="is_view"></button>-->
                                                         <!--</div>-->
                                                     </td>
-                                                    <td>
+<!--                                                    <td>
                                                         <div>
                                                             <ui-select class="ui-select-sm ui-select-container" ng-model="val.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
                                                                 <ui-select-match placeholder="Pilih Lokasi">
@@ -236,7 +236,7 @@
                                                                 <ui-select-choices repeat="val in listLokasi | filter : $select.search">{{val.nama}}</ui-select-choices>
                                                             </ui-select>
                                                         </div>
-                                                    </td>
+                                                    </td>-->
                                                     <td>
                                                         <div>
                                                             <ui-select class="ui-select-sm ui-select-container" ng-model="val.m_akun_id" theme="bootstrap" ng-disabled="is_view">
@@ -261,7 +261,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td></td>
+                                                    <!--<td></td>-->
                                                     <td></td>
                                                     <td></td>
                                                     <td style="text-align: right"><b>Total</b></td>

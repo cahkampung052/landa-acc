@@ -1,7 +1,23 @@
 <?php
 
-date_default_timezone_set('Asia/Jakarta');
+function validasi($data, $custom = array()) {
+    $validasi = array(
+        'm_lokasi_id' => 'required',
+        'tanggal' => 'required',
+        'total_kredit' => 'required',
+        'total_debit' => 'required'
+    );
+    GUMP::set_field_name("no_transaksi", "No transaksi");
+    GUMP::set_field_name("m_lokasi_id", "Lokasi");
+    GUMP::set_field_name("total_kredit", "Total Kredit");
+    GUMP::set_field_name("total_debit", "Total Debit");
+    $cek = validate($data, $validasi, $custom);
+    return $cek;
+}
 
+/*
+ * upload gambar
+ */
 $app->post('/acc/t_jurnal_umum/upload/{folder}', function ($request, $response) {
     $folder = $request->getAttribute('folder');
     $params = $request->getParams();
@@ -49,7 +65,9 @@ $app->post('/acc/t_jurnal_umum/upload/{folder}', function ($request, $response) 
     }
 });
 
-
+/*
+ * ambil list gambar
+ */
 $app->get('/acc/t_jurnal_umum/listgambar/{id}', function ($request, $response) {
     $id = $request->getAttribute('id');
     $sql = $this->db;
@@ -57,6 +75,9 @@ $app->get('/acc/t_jurnal_umum/listgambar/{id}', function ($request, $response) {
     return successResponse($response, ["model" => $model, "url" => "api/file/jurnal-umum/" . date("Y") . "/" . str_replace("0", "", date("m")) . "/"]);
 });
 
+/*
+ * delete gambar
+ */
 $app->post('/acc/t_jurnal_umum/removegambar', function ($request, $response) {
     $params = $request->getParams();
     $sql = $this->db;
@@ -65,22 +86,10 @@ $app->post('/acc/t_jurnal_umum/removegambar', function ($request, $response) {
     unlink(__DIR__ . "/../../../file/jurnal-umum/" . date('Y') . "/" . str_replace("0", "", date("m")) . "/" . $params['img']);
 });
 
-function validasi($data, $custom = array()) {
-    $validasi = array(
-//        'no_transaksi' => 'required',
-        'm_lokasi_id' => 'required',
-        'tanggal' => 'required',
-        'total_kredit' => 'required',
-        'total_debit' => 'required'
-    );
-    GUMP::set_field_name("no_transaksi", "No transaksi");
-    GUMP::set_field_name("m_lokasi_id", "Lokasi");
-    GUMP::set_field_name("total_kredit", "Total Kredit");
-    GUMP::set_field_name("total_debit", "Total Debit");
-    $cek = validate($data, $validasi, $custom);
-    return $cek;
-}
 
+/*
+ * ambil / generate kode
+ */
 $app->get('/acc/t_jurnal_umum/kode/{kode}', function ($request, $response) {
 
     $kode_unit_1 = $request->getAttribute('kode');
@@ -92,17 +101,17 @@ $app->get('/acc/t_jurnal_umum/kode/{kode}', function ($request, $response) {
     return successResponse($response, ["kode" => $kode_unit_1 . date("y") . "JRNL" . $no_urut, "urutan" => $no_urut]);
 });
 
-
+/*
+ * ambil list detail
+ */
 $app->get('/acc/t_jurnal_umum/getDetail', function ($request, $response) {
     $params = $request->getParams();
-//    print_r($params);die();
     $db = $this->db;
     $models = $db->select("acc_jurnal_det.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun, acc_m_lokasi.nama as namaLokasi")
             ->from("acc_jurnal_det")
             ->join("join", "acc_m_akun", "acc_m_akun.id = acc_jurnal_det.m_akun_id")
             ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal_det.m_lokasi_id")
             ->where("acc_jurnal_id", "=", $params['id'])
-//            ->where("acc_pemasukan_det.is_deleted", "=", 0)
             ->findAll();
 
     foreach ($models as $key => $val) {
@@ -114,6 +123,9 @@ $app->get('/acc/t_jurnal_umum/getDetail', function ($request, $response) {
     ]);
 });
 
+/*
+ * ambil riwayat jurnal umum
+ */
 $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
     $params = $request->getParams();
     // $sort     = "m_akun.kode ASC";
@@ -126,7 +138,6 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
             ->join("join", "acc_m_user", "acc_jurnal.created_by = acc_m_user.id")
             ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal.m_lokasi_id")
             ->orderBy('acc_jurnal.no_urut');
-//        ->where("acc_pemasukan.is_deleted", "=", 0);
 
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
@@ -168,141 +179,99 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
 });
 
 
-
+/*
+ * simpan jurnal umum
+ */
 $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
 
     $params = $request->getParams();
-    $data = $params;
-//    print_r($data);
     $sql = $this->db;
-    $validasi = validasi($data['form']);
+    $validasi = validasi($params['form']);
     if ($validasi === true) {
-
+        /**
+         * Generate kode jurnal
+         */
         $getNoUrut = $sql->select("*")->from("acc_jurnal")->orderBy("no_urut DESC")->find();
-        $insert['no_urut'] = 1;
+        $penerimaan['no_urut'] = 1;
         $urut = 1;
-//        print_r($getNoUrut);die();
         if ($getNoUrut) {
-            $insert['no_urut'] = $getNoUrut->no_urut + 1;
+            $penerimaan['no_urut'] = $getNoUrut->no_urut + 1;
             $urut = ((int) substr($getNoUrut->no_urut, -4)) + 1;
         }
         $no_urut = substr('0000' . $urut, -4);
-        $kode = $data['form']['m_lokasi_id']['kode'] . date("y") . "JRNL" . $no_urut;
-
-//        $insert['no_transaksi'] = $data['form']['no_transaksi'];
-        $insert['m_lokasi_id'] = $data['form']['m_lokasi_id']['id'];
-        $insert['keterangan'] = (isset($data['form']['keterangan']) && !empty($data['form']['keterangan']) ? $data['form']['keterangan'] : '');
-        $insert['tanggal'] = date("Y-m-d h:i:s", strtotime($data['form']['tanggal']));
-        $insert['total_kredit'] = $data['form']['total_kredit'];
-        $insert['total_debit'] = $data['form']['total_debit'];
-//        print_r($insert);die();
-        if (isset($data['form']['id']) && !empty($data['form']['id'])) {
-            $insert['no_urut'] = $data['form']['no_urut'];
-            $insert['no_transaksi'] = $data['form']['no_transaksi'];
-            $model = $sql->update("acc_jurnal", $insert, ["id" => $data['form']['id']]);
+        $kode = $params['form']['m_lokasi_id']['kode'] . date("y") . "PMSK" . $no_urut;
+        /**
+         * Simpan jurnal
+         */
+        $jurnal['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
+        $jurnal['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
+        $jurnal['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
+        $jurnal['total_debit'] = $params['form']['total_debit'];
+        $jurnal['total_kredit'] = $params['form']['total_kredit'];
+        if (isset($params['form']['id']) && !empty($params['form']['id'])) {
+            $jurnal['no_urut'] = $params['form']['no_urut'];
+            $jurnal['no_transaksi'] = $params['form']['no_transaksi'];
+            $model = $sql->update("acc_jurnal", $jurnal, ["id" => $params['form']['id']]);
+            /**
+             * Hapus jurnal detail
+             */
+            $sql->delete("acc_jurnal_det", ["acc_jurnal_id" => $model->id]);
+            /**
+             * Hapus trans detail
+             */
+            $sql->delete("acc_trans_detail", ["reff_type"=> "acc_jurnal", "reff_id" => $model->id]);
         } else {
-            $insert['no_transaksi'] = $kode;
-            $model = $sql->insert("acc_jurnal", $insert);
+            $jurnal['no_transaksi'] = $kode;
+            $model = $sql->insert("acc_jurnal", $jurnal);
         }
-
-
-        $insert2['m_lokasi_id'] = $data['form']['m_lokasi_id']['id'];
-        $insert2['tanggal'] = date("Y-m-d", strtotime($data['form']['tanggal']));
-        $insert2['debit'] = $data['form']['total_debit'];
-        $insert2['kredit'] = $data['form']['total_kredit'];
-        $insert2['reff_type'] = "Jurnal Header";
-        $insert2['reff_id'] = $model->id;
-        $insert2['kode'] = $model->no_transaksi;
-        $insert2['keterangan'] = (isset($data['form']['keterangan']) && !empty($data['form']['keterangan']) ? $data['form']['keterangan'] : '');
-
-
-        if (isset($data['form']['id']) && !empty($data['form']['id'])) {
-            $model2 = $sql->update("acc_trans_detail", $insert2, ["reff_id" => $model->id, "reff_type" => "Jurnal Header"]);
-        } else {
-            $model2 = $sql->insert("acc_trans_detail", $insert2);
-        }
-
-        if (isset($data['form']['id']) && !empty($data['form']['id'])) {
-            //select acc_jurnal_detail lalu hapus acc_jurnal_detail
-            $selectdetail = $sql->select("*")
-                    ->from("acc_jurnal_det")
-                    ->where("acc_jurnal_id", "=", $data['form']['id'])
-                    ->findAll();
-            $array_id = [];
-            $array_akun = [];
-            foreach ($selectdetail as $key => $val) {
-                array_push($array_id, $val->id);
-                array_push($array_akun, $val->m_akun_id);
-            }
-            $array_id = implode(", ", $array_id);
-            $array_akun = implode(", ", $array_akun);
-            //        echo $array_akun;
-            //        echo $array_id;
-            //        die();
-            //hapus acc_jurnal_det, acc_trans_detail dari detail
-            $delete = $sql->delete("acc_jurnal_det", ["acc_jurnal_id" => $data['form']['id']]);
-            $deletedetail = $sql->run("DELETE FROM acc_trans_detail WHERE reff_type = 'Jurnal Detail' AND reff_id IN($array_id) AND m_akun_id IN($array_akun)");
-        } else {
-            $delete = 1;
-            $deletedetail = 1;
-        }
-
-
-//        die();
-        if ($model && $model2 && $delete && $deletedetail) {
-            foreach ($data['detail'] as $keys => $vals) {
-
-                $detail['m_akun_id'] = $vals['m_akun_id']['id'];
-                $detail['m_lokasi_id'] = $vals['m_lokasi_id']['id'];
-                $detail['kredit'] = $vals['kredit'];
-                $detail['debit'] = $vals['debit'];
+       
+        /**
+         * Simpan ke pemasukan detail
+         */
+        if (isset($params['detail']) && !empty($params['detail'])) {
+            foreach ($params['detail'] as $key => $val) {
+                $detail['m_akun_id'] = $val['m_akun_id']['id'];
+                $detail['m_lokasi_id'] = $model->m_lokasi_id;
+                $detail['kredit'] = $val['kredit'];
+                $detail['debit'] = $val['debit'];
                 $detail['acc_jurnal_id'] = $model->id;
-                $detail['keterangan'] = $vals['keterangan'];
+                $detail['keterangan'] = (isset($val['keterangan']) && !empty($val['keterangan']) ? $val['keterangan'] : '');
                 $modeldetail = $sql->insert("acc_jurnal_det", $detail);
-
-                $detail2['m_akun_id'] = $vals['m_akun_id']['id'];
-                $detail2['m_lokasi_id'] = $vals['m_lokasi_id']['id'];
-                $detail2['tanggal'] = date("Y-m-d", strtotime($data['form']['tanggal']));
-                $detail2['kredit'] = $vals['kredit'];
-                $detail2['debit'] = $vals['debit'];
-                $detail2['reff_type'] = "Jurnal Detail";
-                $detail2['reff_id'] = $modeldetail->id;
-                $detail2['keterangan'] = $vals['keterangan'];
-                $modeldetail2 = $sql->insert("acc_trans_detail", $detail2);
+                
+                /**
+                 * Simpan trans detail ke array
+                 */
+                $transDetail[$key]['m_akun_id'] = $modeldetail->m_akun_id;
+                $transDetail[$key]['m_lokasi_id'] = $modeldetail->m_lokasi_id;
+                $transDetail[$key]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
+                $transDetail[$key]['kredit'] = $modeldetail->kredit;
+                $transDetail[$key]['debit'] = $modeldetail->debit;
+                $transDetail[$key]['keterangan'] = $modeldetail->keterangan;
+                $transDetail[$key]['kode'] = $model->no_transaksi;
+                $transDetail[$key]['reff_type'] = "acc_jurnal";
+                $transDetail[$key]['reff_id'] = $model->id;
             }
-            return successResponse($response, $model);
-        } else {
-            return unprocessResponse($response, ['Data Gagal Di Simpan']);
         }
+        /**
+         * Simpan array trans detail ke database
+         */
+        insertTransDetail($transDetail);
+        return successResponse($response, $model);
     } else {
         return unprocessResponse($response, $validasi);
     }
 });
 
-
-$app->post('/acc/t_jurnal_umum/trash', function ($request, $response) {
+/*
+ * hapus jurnal umum
+ */
+$app->post('/acc/t_jurnal_umum/delete', function ($request, $response) {
 
     $data = $request->getParams();
     $db = $this->db;
-
-//    $cek_komponenGaji = $db->select('*')
-//    ->from('m_komponen_gaji')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_komponenGaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Master Komponen Gaji']);
-//    }
-//    $cek_Gaji = $db->select('*')
-//    ->from('t_penggajian')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_Gaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi Penggajian']);
-//    }
-
-    $model = $db->update("t_jurnal_umum", $data, array('id' => $data['id']));
+    $model = $db->delete("acc_jurnal", ['id' => $data['id']]);
+    $model = $db->delete("acc_jurnal_det", ['acc_jurnal_id' => $data['id']]);
+    $model = $db->delete("acc_trans_detail", ['reff_type' => 'acc_jurnal','reff_id' => $data['id']]);
     if ($model) {
         return successResponse($response, $model);
     } else {

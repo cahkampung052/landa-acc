@@ -238,7 +238,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         if (isset($params['detail']) && !empty($params['detail'])) {
             foreach ($params['detail'] as $key => $val) {
                 $detail['m_akun_id'] = $val['m_akun_id']['id'];
-                $detail['m_lokasi_id'] = $val['m_lokasi_id']['id'];
+                $detail['m_lokasi_id'] = $model->m_lokasi_id;
                 $detail['kredit'] = $val['kredit'];
                 $detail['acc_pemasukan_id'] = $model->id;
                 $detail['keterangan'] = (isset($val['keterangan']) && !empty($val['keterangan']) ? $val['keterangan'] : '');

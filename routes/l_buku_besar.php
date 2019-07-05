@@ -24,6 +24,27 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
     $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' s/d ' . date("d-m-Y", strtotime($tanggal_end));
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = (isset($params['nama_lokasi']) && !empty($params['nama_lokasi'])) ? $params['nama_lokasi'] : "Semua";
+    
+    /*
+     * Siapkan parameter lokasi
+     */
+    if(isset($params['m_lokasi_id'])){
+        $lokasiId = getChildId("acc_m_lokasi", $params['m_lokasi_id']);
+        /*
+         * jika lokasi punya child
+         */
+        if(!empty($lokasiId)){
+            $lokasiId = implode(",", $lokasiId);
+        }
+        /*
+         * jika lokasi tidak punya child
+         */
+        else{
+            $lokasiId = $params['m_lokasi_id'];
+        }
+    }
+    
+    
     /**
      * Proses laporan
      */
@@ -57,12 +78,12 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                      * Ambil Saldo awal akun
                      */
                     $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                        ->from("acc_trans_detail")
-                        ->where('m_akun_id', '=', $val->id)
+                        ->from("acc_trans_detail");
+                        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+                            $sql->customWhere("m_lokasi_id in (".$lokasiId.")");
+                        }
+                        $sql->where('m_akun_id', '=', $val->id)
                         ->andWhere('date(tanggal)', '<', $tanggal_start);
-                    if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-                        $sql->andWhere('m_lokasi_id', '=', $params['m_lokasi_id']);
-                    }
                     $getsaldoawal = $sql->find();
                     $arr[$key]['saldo_awal'] = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
                     $arr[$key]['debit_awal'] = intval($getsaldoawal->debit);
@@ -73,14 +94,15 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                      * Ambil detail transaksi
                      */
                     $gettransdetail = $sql->select("*")
-                        ->from("acc_trans_detail")
-                        ->where('m_akun_id', '=', $val->id)
+                        ->from("acc_trans_detail");
+                        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+                            $sql->customWhere("m_lokasi_id in (".$lokasiId.")");
+                        }
+                        $sql->where('m_akun_id', '=', $val->id)
                         ->andWhere('date(tanggal)', '>=', $tanggal_start)
                         ->andWhere('date(tanggal)', '<=', $tanggal_end)
                         ->orderBy('tanggal');
-                    if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-                        $sql->andWhere('m_lokasi_id', '=', $params['m_lokasi_id']);
-                    }
+                    
                     $detail = $sql->findAll();
                     $saldo_sekarang = $arr[$key]['saldo_awal'];
                     $total_debit = $arr[$key]['debit_awal'];
@@ -110,12 +132,12 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
              * Ambil Saldo Awal Akun
              */
             $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                ->from("acc_trans_detail")
-                ->where('m_akun_id', '=', $params['m_akun_id'])
+                ->from("acc_trans_detail");
+                if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+                        $sql->customWhere("m_lokasi_id in (".$lokasiId.")");
+                    }
+                $sql->where('m_akun_id', '=', $params['m_akun_id'])
                 ->andWhere('date(tanggal)', '<', $tanggal_start);
-            if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-                $sql->andWhere('m_lokasi_id', '=', $params['m_lokasi_id']);
-            }
             $getsaldoawal = $sql->find();
             $arr[0]['saldo_awal'] = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
             $arr[0]['debit_awal'] = intval($getsaldoawal->debit);
@@ -126,14 +148,15 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
              * Ambil detail transaksi
              */
             $gettransdetail = $sql->select("*")
-                    ->from("acc_trans_detail")
-                    ->where('m_akun_id', '=', $params['m_akun_id'])
+                    ->from("acc_trans_detail");
+                    if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+                        $sql->customWhere("m_lokasi_id in (".$lokasiId.")");
+                    }
+                    $sql->where('m_akun_id', '=', $params['m_akun_id'])
                     ->andWhere('date(tanggal)', '>=', $tanggal_start)
                     ->andWhere('date(tanggal)', '<=', $tanggal_end)
                     ->orderBy('tanggal');
-            if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-                $sql->andWhere('m_lokasi_id', '=', $params['m_lokasi_id']);
-            }
+            
             $detail = $sql->findAll();
             /**
              * End ambil detail transaksi

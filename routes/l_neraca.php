@@ -12,35 +12,17 @@ function validasi($data, $custom = array()) {
     return $cek;
 }
 
-$app->post('/acc/l_neraca/laporan', function ($request, $response) {
+$app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $params = $request->getParams();
     $filter = $params;
-//    print_r($filter);die();
-//    $filter = (array) json_decode($params, true);
     $db = $this->db;
 
 
 
-    /** startDate */
-    $tanggal_awal = new DateTime($filter['tanggal']);
-    $tanggal_awal->setTimezone(new DateTimeZone('Asia/Jakarta'));
-
-    /** endDate */
-//    $tanggal_akhir = new DateTime($filter['tanggal']['endDate']);
-//    $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
-
-    $tanggal_start = $tanggal_awal->format("Y-m-d");
-//    $tanggal_end = $tanggal_akhir->format("Y-m-d");
-
-//    $tanggal_ = new Datime($filter['tanggal']);
-//    $tanggal_->modify('+1 day');
-//    $tanggal = $tanggal_->format("Y-m-d");
-//
-//    $tanggal_->modify('-1 day');
-//    $tgl = $tanggal_->format("Y-m-d");
-//    $cabang_id = null;
-    
-    
+    /** tanggal */
+    $tanggal = new DateTime($filter['tanggal']);
+    $tanggal->setTimezone(new DateTimeZone('Asia/Jakarta'));
+    $tanggal = $tanggal->format("Y-m-d");
 
     $db->select("
         acc_m_akun.id,
@@ -54,7 +36,6 @@ $app->post('/acc/l_neraca/laporan', function ($request, $response) {
             ->groupBy("acc_m_akun.id")
             ->orderBy("acc_m_akun.kode")
             ->customWhere("acc_m_akun.tipe IN('Piutang Usaha','Piutang Lain','Cash & Bank','Persediaan','Harta Tetap', 'Aset Lain', 'Investasi')");
-    // ->andWhere("acc_m_akun.is_deleted", "=", 0);
 
     $modelHarta = $db->findAll();
     $totalHarta = 0;

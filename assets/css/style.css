@@ -1,0 +1,48 @@
+td, th {
+    padding: 5px;
+    font-size: 11px;
+    font-family: Verdana, Geneva, sans-serif;
+}
+.header-laporan {
+    margin: 0px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: bold;
+}
+.header-text {
+    font-size: 13px;
+    margin-bottom: 15px;
+    font-family: Verdana, Geneva, sans-serif;
+}
+.table-laporan {
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+}
+.table-laporan td, th {
+    padding: 5px;
+    font-size: 11px;
+    border: none;
+}
+.table-laporan tr {
+    background-color: #e3f1f31f;
+    border-bottom: none;
+}
+.table-laporan td {
+    border: none !important;
+}
+.table-laporan tbody tr:nth-of-type(odd) {
+    background-color: rgba(57, 143, 163, 0.12);
+}
+.table-laporan thead tr {
+    background-color: #398fa3;
+    color: white;
+}
+.table-laporan tbody tr th {
+    background-color: #398fa3;
+    color: white;
+}
+.table-laporan tfoot tr {
+    background-color: #398fa3;
+    color: white;
+}

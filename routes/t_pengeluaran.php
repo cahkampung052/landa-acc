@@ -1,7 +1,22 @@
 <?php
 
-date_default_timezone_set('Asia/Jakarta');
+function validasi($data, $custom = array()) {
+    $validasi = array(
+        'm_lokasi_id' => 'required',
+        'm_akun_id' => 'required',
+        'tanggal' => 'required',
+        'total' => 'required',
+    );
+    GUMP::set_field_name("m_akun_id", "Keluar dari akun");
+    GUMP::set_field_name("m_lokasi_id", "Lokasi");
+    GUMP::set_field_name("total", "Detail");
+    $cek = validate($data, $validasi, $custom);
+    return $cek;
+}
 
+/*
+ * Upload Gambar
+ */
 $app->post('/acc/t_pengeluaran/upload/{folder}', function ($request, $response) {
     $folder = $request->getAttribute('folder');
     $params = $request->getParams();
@@ -49,7 +64,9 @@ $app->post('/acc/t_pengeluaran/upload/{folder}', function ($request, $response) 
     }
 });
 
-
+/*
+ * Ambil list gambar
+ */
 $app->get('/acc/t_pengeluaran/listgambar/{id}', function ($request, $response) {
     $id = $request->getAttribute('id');
     $sql = $this->db;
@@ -57,6 +74,9 @@ $app->get('/acc/t_pengeluaran/listgambar/{id}', function ($request, $response) {
     return successResponse($response, ["model" => $model, "url" => "api/file/pengeluaran/" . date("Y") . "/" . str_replace("0", "", date("m")) . "/"]);
 });
 
+/*
+ * Hapus gambar
+ */
 $app->post('/acc/t_pengeluaran/removegambar', function ($request, $response) {
     $params = $request->getParams();
     $sql = $this->db;
@@ -65,24 +85,10 @@ $app->post('/acc/t_pengeluaran/removegambar', function ($request, $response) {
     unlink(__DIR__ . "/../../../file/pengeluaran/" . date('Y') . "/" . str_replace("0", "", date("m")) . "/" . $params['img']);
 });
 
-function validasi($data, $custom = array()) {
-    $validasi = array(
-//        'no_transaksi' => 'required',
-        'm_lokasi_id' => 'required',
-//        'm_supplier_id' => 'required',
-        'm_akun_id' => 'required',
-        'tanggal' => 'required',
-        'total' => 'required',
-//        'diterima_dari' => 'required'
-    );
-    GUMP::set_field_name("m_akun_id", "Keluar dari akun");
-//    GUMP::set_field_name("m_supplier_id", "Supplier");
-    GUMP::set_field_name("m_lokasi_id", "Lokasi");
-    GUMP::set_field_name("total", "Detail");
-    $cek = validate($data, $validasi, $custom);
-    return $cek;
-}
 
+/*
+ * Ambil / generate kode
+ */
 $app->get('/acc/t_pengeluaran/kode/{kode}', function ($request, $response) {
 
     $kode_unit_1 = $request->getAttribute('kode');
@@ -94,6 +100,9 @@ $app->get('/acc/t_pengeluaran/kode/{kode}', function ($request, $response) {
     return successResponse($response, ["kode" => $kode_unit_1 . date("y") . "PNGL" . $no_urut, "urutan" => $no_urut]);
 });
 
+/*
+ * Ambil detail pengeluaran
+ */
 $app->get('/acc/t_pengeluaran/getDetail', function ($request, $response) {
     $params = $request->getParams();
 //    print_r($params);die();
@@ -103,7 +112,6 @@ $app->get('/acc/t_pengeluaran/getDetail', function ($request, $response) {
             ->join("join", "acc_m_akun", "acc_m_akun.id = acc_pengeluaran_det.m_akun_id")
             ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pengeluaran_det.m_lokasi_id")
             ->where("acc_pengeluaran_id", "=", $params['id'])
-//            ->where("acc_pemasukan_det.is_deleted", "=", 0)
             ->findAll();
 
     foreach ($models as $key => $val) {
@@ -117,18 +125,21 @@ $app->get('/acc/t_pengeluaran/getDetail', function ($request, $response) {
     ]);
 });
 
+/*
+ * ambil riwayat pengeluaran
+ */
 $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
     $db->select("
-        acc_pengeluaran.*, 
-        acc_m_lokasi.kode as kodeLokasi, 
-        acc_m_lokasi.nama as namaLokasi, 
-        acc_m_user.nama as namaUser, 
-        acc_m_akun.kode as kodeAkun, 
-        acc_m_akun.nama as namaAkun, 
-        acc_m_supplier.nama as namaSup
-    ")
+            acc_pengeluaran.*, 
+            acc_m_lokasi.kode as kodeLokasi, 
+            acc_m_lokasi.nama as namaLokasi, 
+            acc_m_user.nama as namaUser, 
+            acc_m_akun.kode as kodeAkun, 
+            acc_m_akun.nama as namaAkun, 
+            acc_m_supplier.nama as namaSup
+        ")
             ->from("acc_pengeluaran")
             ->join("left join", "acc_m_user", "acc_pengeluaran.created_by = acc_m_user.id")
             ->join("left join", "acc_m_akun", "acc_pengeluaran.m_akun_id = acc_m_akun.id")
@@ -137,6 +148,9 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
             ->orderBy('acc_pengeluaran.tanggal DESC')
             ->orderBy('acc_pengeluaran.created_at DESC');
 
+    /*
+     * set filter
+     */
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
 
@@ -170,9 +184,7 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
         $models[$key]['m_supplier_id'] = ["id" => $val->m_supplier_id, "nama" => $val->namaSup];
     }
-//     print_r($models);exit();
-//    die();
-//      print_r($arr);exit();
+
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
@@ -180,121 +192,108 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
     ]);
 });
 
-
-
+/*
+ * Simpan pengeluaran
+ */
 $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
 
     $params = $request->getParams();
-    $data = $params;
-//    print_r($data);
     $sql = $this->db;
-    $validasi = validasi($data['form']);
+    $validasi = validasi($params['form']);
     if ($validasi === true) {
-
+        /**
+         * Generate kode pengeluaran
+         */
         $getNoUrut = $sql->select("*")->from("acc_pengeluaran")->orderBy("no_urut DESC")->find();
-        $insert['no_urut'] = 1;
+        $penerimaan['no_urut'] = 1;
         $urut = 1;
-//        print_r($getNoUrut);die();
         if ($getNoUrut) {
-            $insert['no_urut'] = $getNoUrut->no_urut + 1;
+            $penerimaan['no_urut'] = $getNoUrut->no_urut + 1;
             $urut = ((int) substr($getNoUrut->no_urut, -4)) + 1;
         }
         $no_urut = substr('0000' . $urut, -4);
-        $kode = $data['form']['m_lokasi_id']['kode'] . date("y") . "PMSK" . $no_urut;
-
-        $insert['m_lokasi_id'] = $data['form']['m_lokasi_id']['id'];
-        $insert['m_akun_id'] = $data['form']['m_akun_id']['id'];
-        $insert['m_supplier_id'] = isset($data['form']['m_supplier_id']['id']) ? $data['form']['m_supplier_id']['id'] : '';
-        $insert['dibayar_kepada'] = (isset($data['form']['dibayar_kepada']) && !empty($data['form']['dibayar_kepada']) ? $data['form']['dibayar_kepada'] : '');
-        $insert['tanggal'] = date("Y-m-d h:i:s", strtotime($data['form']['tanggal']));
-        $insert['total'] = $data['form']['total'];
-//        print_r($insert);die();
-        if (isset($data['form']['id']) && !empty($data['form']['id'])) {
-            $insert['no_urut'] = $data['form']['no_urut'];
-            $insert['no_transaksi'] = $data['form']['no_transaksi'];
-            $model = $sql->update("acc_pengeluaran", $insert, ["id" => $data['form']['id']]);
+        $kode = $params['form']['m_lokasi_id']['kode'] . date("y") . "PNGL" . $no_urut;
+        /**
+         * Simpan penerimaan
+         */
+        $pengeluaran['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
+        $pengeluaran['m_akun_id'] = $params['form']['m_akun_id']['id'];
+        $pengeluaran['m_supplier_id'] = (isset($params['form']['m_supplier_id']['id']) && !empty($params['form']['m_supplier_id']['id'])) ? $params['form']['m_supplier_id']['id'] : '';
+        $pengeluaran['dibayar_kepada'] = (isset($params['form']['dibayar_kepada']) && !empty($params['form']['dibayar_kepada']) ? $params['form']['dibayar_kepada'] : '');
+        $pengeluaran['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
+        $pengeluaran['total'] = $params['form']['total'];
+        if (isset($params['form']['id']) && !empty($params['form']['id'])) {
+            $pengeluaran['no_urut'] = $params['form']['no_urut'];
+            $pengeluaran['no_transaksi'] = $params['form']['no_transaksi'];
+            $model = $sql->update("acc_pemasukan", $pengeluaran, ["id" => $params['form']['id']]);
+            /**
+             * Hapus pengeluaran detail
+             */
+            $sql->delete("acc_pengeluaran_det", ["acc_pengeluaran_id" => $model->id]);
+            /**
+             * Hapus trans detail
+             */
+            $sql->delete("acc_trans_detail", ["reff_type" => "acc_pengeluaran", "reff_id" => $model->id]);
         } else {
-            $insert['no_transaksi'] = $kode;
-            $model = $sql->insert("acc_pengeluaran", $insert);
+            $pengeluaran['no_transaksi'] = $kode;
+            $model = $sql->insert("acc_pengeluaran", $pengeluaran);
         }
-
-
-        $insert2['m_lokasi_id'] = $data['form']['m_lokasi_id']['id'];
-        $insert2['m_akun_id'] = $data['form']['m_akun_id']['id'];
-        $insert2['m_supplier_id'] = isset($data['form']['m_supplier_id']['id']) ? $data['form']['m_supplier_id']['id'] : '';
-        $insert2['tanggal'] = date("Y-m-d", strtotime($data['form']['tanggal']));
-        $insert2['kredit'] = $data['form']['total'];
-        $insert2['reff_type'] = "Pengeluaran Header";
-        $insert2['kode'] = $model->no_transaksi;
-        $insert2['reff_id'] = $model->id;
-
-        if (isset($data['form']['id']) && !empty($data['form']['id'])) {
-            $model2 = $sql->update("acc_trans_detail", $insert2, ["reff_id" => $model->id, "reff_type" => "Pengeluaran Header"]);
-        } else {
-            $model2 = $sql->insert("acc_trans_detail", $insert2);
-        }
-
-        if (isset($data['form']['id']) && !empty($data['form']['id'])) {
-            //select acc_pemasukan_detail lalu hapus acc_pemasukan_detail
-            $selectdetail = $sql->select("*")
-                    ->from("acc_pengeluaran_det")
-                    ->where("acc_pengeluaran_id", "=", $data['form']['id'])
-                    ->findAll();
-            $array_id = [];
-            $array_akun = [];
-            $array_lokasi = [];
-            foreach ($selectdetail as $key => $val) {
-                array_push($array_id, $val->id);
-                array_push($array_akun, $val->m_akun_id);
-                array_push($array_lokasi, $val->m_lokasi_id);
-            }
-            $array_id = implode(", ", $array_id);
-            $array_akun = implode(", ", $array_akun);
-            $array_lokasi = implode(", ", $array_lokasi);
-
-            //hapus acc_pemasukan_det, acc_trans_detail dari detail
-            $delete = $sql->delete("acc_pengeluaran_det", ["acc_pengeluaran_id" => $data['form']['id']]);
-            $deletedetail = $sql->run("DELETE FROM acc_trans_detail WHERE reff_type = 'Pengeluaran Detail' AND reff_id IN($array_id) AND m_akun_id IN($array_akun) AND m_lokasi_id IN($array_lokasi)");
-        } else {
-            $delete = 1;
-            $deletedetail = 1;
-        }
-
-
-//        die();
-        if ($model && $model2 && $delete && $deletedetail) {
-            foreach ($data['detail'] as $key => $val) {
+        /**
+         * Masukkan ke dalam array trans detail
+         */
+        $transDetail[0]['m_lokasi_id'] = $model->m_lokasi_id;
+        $transDetail[0]['m_akun_id'] = $model->m_akun_id;
+        $transDetail[0]['m_supplier_id'] = $model->m_supplier_id;
+        $transDetail[0]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
+        $transDetail[0]['kredit'] = $model->total;
+        $transDetail[0]['reff_type'] = "acc_pengeluaran";
+        $transDetail[0]['kode'] = $model->no_transaksi;
+        $transDetail[0]['reff_id'] = $model->id;
+        /**
+         * Simpan ke pemasukan detail
+         */
+        if (isset($params['detail']) && !empty($params['detail'])) {
+            foreach ($params['detail'] as $key => $val) {
                 $detail['m_akun_id'] = $val['m_akun_id']['id'];
-                $detail['m_lokasi_id'] = $val['m_lokasi_id']['id'];
+                $detail['m_lokasi_id'] = $model->m_lokasi_id;
                 $detail['debit'] = $val['debit'];
                 $detail['acc_pengeluaran_id'] = $model->id;
                 $detail['keterangan'] = (isset($val['keterangan']) && !empty($val['keterangan']) ? $val['keterangan'] : '');
                 $modeldetail = $sql->insert("acc_pengeluaran_det", $detail);
 
-                $detail2['m_akun_id'] = $val['m_akun_id']['id'];
-                $detail2['m_lokasi_id'] = $val['m_lokasi_id']['id'];
-                $detail2['tanggal'] = date("Y-m-d", strtotime($data['form']['tanggal']));
-                $detail2['debit'] = $val['debit'];
-                $detail2['keterangan'] = (isset($val['keterangan']) && !empty($val['keterangan']) ? $val['keterangan'] : '');
-                $detail2['reff_type'] = "Pengeluaran Detail";
-                $detail2['reff_id'] = $modeldetail->id;
-                $modeldetail2 = $sql->insert("acc_trans_detail", $detail2);
+                /**
+                 * Simpan trans detail ke array
+                 */
+                $transDetail[$key + 1]['m_akun_id'] = $modeldetail->m_akun_id;
+                $transDetail[$key + 1]['m_lokasi_id'] = $modeldetail->m_lokasi_id;
+                $transDetail[$key + 1]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
+                $transDetail[$key + 1]['debit'] = $modeldetail->debit;
+                $transDetail[$key + 1]['keterangan'] = $modeldetail->keterangan;
+                $transDetail[$key + 1]['kode'] = $model->no_transaksi;
+                $transDetail[$key + 1]['reff_type'] = "acc_pengeluaran";
+                $transDetail[$key + 1]['reff_id'] = $model->id;
             }
-            return successResponse($response, $model);
-        } else {
-            return unprocessResponse($response, ['Data Gagal Di Simpan']);
         }
+        /**
+         * Simpan array trans detail ke database
+         */
+        insertTransDetail($transDetail);
+        return successResponse($response, $model);
     } else {
         return unprocessResponse($response, $validasi);
     }
 });
 
-$app->post('/acc/t_penerimaan/trash', function ($request, $response) {
+/*
+ * Hapus pengeluaran
+ */
+$app->post('/acc/t_pengeluaran/delete', function ($request, $response) {
 
     $data = $request->getParams();
     $db = $this->db;
-
-    $model = $db->update("t_penerimaan", $data, array('id' => $data['id']));
+    $model = $db->delete("acc_pengeluaran", ['id' => $data['id']]);
+    $model = $db->delete("acc_pengeluaran_det", ['acc_pengeluaran_id' => $data['id']]);
+    $model = $db->delete("acc_trans_detail", ['reff_type' => 'acc_pengeluaran', 'reff_id' => $data['id']]);
     if ($model) {
         return successResponse($response, $model);
     } else {
