@@ -34,6 +34,7 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
          * jika lokasi punya child
          */
         if(!empty($lokasiId)){
+            $lokasiId[] = $params['m_lokasi_id'];
             $lokasiId = implode(",", $lokasiId);
         }
         /*
