@@ -104,11 +104,10 @@
                                     {{row.namaUser}}
                                 </td>
                                 <td>
-                                    <div class="btn-group pull-right" role="group"><button type="button" class="btn btn-info fa fa-pencil"  ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
-                                        <button type="button" class="btn btn-warning fa fa-refresh" ng-if="row.is_deleted == 1" ng-click="restore(row);"></button>
-                                        <button type="button" class="btn btn-danger fa fa-minus" ng-if="row.is_deleted == 1" ng-click="delete(row);"></button>
-                                    </div>
+                                    <div class="btn-group pull-right" role="group">
+                                        <button type="button" class="btn btn-info fa fa-pencil"  ng-click="update(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row);"></button>
+                                        </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -248,7 +247,7 @@
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control form-control-sm" maxlength="12" ng-disabled="is_view" ng-model="val.keterangan"/>
+                                                        <input type="text" class="form-control form-control-sm" ng-disabled="is_view" ng-model="val.keterangan"/>
                                                     </td>
                                                     <td>
                                                         <div class="input-group input-group-sm">

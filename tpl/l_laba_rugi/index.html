@@ -125,26 +125,26 @@
                                         </tr>
                                         
                                     </tbody>
-                                    <tfoot>
+                                    <tbody>
                                         <tr>
                                             <td align="right" colspan="2">
-                                                <b style="color:greenyellow" ng-if="totalsemua >= 0">
+                                                <b style="color:green; font-size: 18px" ng-if="totalsemua >= 0">
                                                     LABA
                                                 </b>
-                                                <b style="color:red" ng-if="totalsemua < 0">
+                                                <b style="color:red; font-size: 18px" ng-if="totalsemua < 0">
                                                     RUGI
                                                 </b>
                                             </td>
                                             <td align="right" class="text-right">
-                                                <b style="color: greenyellow" ng-if="totalsemua >= 0">
+                                                <b style="color: green; font-size: 18px" ng-if="totalsemua >= 0">
                                                     {{totalsemua | number}}
                                                 </b>
-                                                <b style="color:red" ng-if="totalsemua < 0">
+                                                <b style="color:red; font-size: 18px" ng-if="totalsemua < 0">
                                                     {{totalsemua*-1 | number}}
                                                 </b>
                                             </td>
                                         </tr>
-                                    </tfoot>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

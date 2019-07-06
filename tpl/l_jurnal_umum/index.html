@@ -23,12 +23,12 @@
                                                 <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
                                             </ui-select>
                                         </div>
-                                        
-                                        
+
+
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-12 content-center">
-                                            <button class="btn btn-primary btn-sm" ng-click="view(form)"><i class="fa fa-search"></i> Tampilkan</button>
+                                            <button class="btn btn-primary btn-sm" ng-click="view(0, 0)"><i class="fa fa-search"></i> Tampilkan</button>
                                         </div>
                                     </div>
                                 </form>
@@ -36,133 +36,142 @@
                         </div>
                     </div>
                 </div>
-                
+
 
                 <!--<div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>-->
             </div>
         </div>
-        <div class="card">
-            <div class="card-body" id="print" ng-show="tampilkan">
-                    
-                    <div align="left">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <!--<img src="img/{{setting.logo}}" style="width: 100px; "/>-->
-                            </div>
-                            <div class="col-md-6">
+        <div class="card" ng-show="tampilkan">
+            <div class="card-header card-header-white">
+                <div class="btn-group pull-right">
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1, 0)">
+                        <i class="fa fa-file"></i>
+                        Excel
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0, 1)">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </button>
+                </div>
+            </div>
+            <div class="card-body" id="print" >
+
+                <div align="left">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <br/>
+                            <center>
+                                <h2 class="header-laporan">
+                                    LAPORAN JURNAL UMUM
+                                </h2>
+                                Lokasi : {{data.lokasi}}
+                                <br>
+                                Periode : {{data.tanggal| date:'dd MMMM yyyy'}}
                                 <br/>
-                                <center>
-                                    <h2 class="header-laporan">
-                                        LAPORAN JURNAL UMUM
-                                    </h2>
-                                    Lokasi : {{data.lokasi}}
-                                    <br>
-                                    Periode : {{data.tanggal| date:'dd MMMM yyyy'}}
-                                    <br/>
-                                    Disiapkan Tanggal : {{data.disiapkan| date:'dd MMMM yyyy, H:i'}}
-                                    <br/>
-                                </center>
-                            </div>
-                            <div class="col-md-3">
-                                <button class="btn btn-success btn-sm pull-right" ng-click="exportExcel(form)">
-                                    <i class="fa fa-file"></i>
-                                    Excel
-                                </button>
-                                <button class="btn btn-warning btn-sm pull-right" ng-click="">
-                                    <i class="fa fa-print"></i>
-                                    Print
-                                </button>
-                            </div>
+                                Disiapkan Tanggal : {{data.disiapkan| date:'dd MMMM yyyy, H:i'}}
+                                <br/>
+                            </center>
+                            <hr/>
                         </div>
-                        <br/>
-                        <div>
-                            
-                            <div class="table-responsive">
-                                <table class="table table-striped table-hover table-laporan" style="border-collapse: collapse;">
-                                    <thead>
-                                        <tr>
-                                            <th width="80">
-                                                <b>
-                                                    TANGGAL
-                                                </b>
-                                            </th>
-                                            <th width="80">
-                                                <b>
-                                                    REFF
-                                                </b>
-                                            </th>
-                                            <th>
-                                                <b>
-                                                    AKUN
-                                                </b>
-                                            </th>
-                                            <th>
-                                                <b>
-                                                    KETERANGAN
-                                                </b>
-                                            </th>
-                                            <th width="100">
-                                                <b>
-                                                    DEBIT
-                                                </b>
-                                            </th>
-                                            <th width="100">
-                                                <b>
-                                                    KREDIT
-                                                </b>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody ng-repeat="val in detail">
-                                        <tr>
-                                            <td align="center" class="text-center" style="vertical-align: top">
-                                                {{val.tanggal}}
-                                            </td>
-                                            <td align="center" style="vertical-align: top">
-                                                {{val.kode}}
-                                            </td>
-                                            <td style="vertical-align: top">
-<!--                                                <div ng-bind-html="valdetail.keterangan">
-                                                </div>-->
-                                                <span style="margin-left:50px" ng-if="val.debit == 0">{{val.nama}}</span>
-                                                <span ng-if="val.debit != 0">{{val.nama}}</span>
-                                            </td>
-                                            <td>
-                                                {{val.keterangan}}
-                                            </td>
-                                            <td align="right" class="text-right" style="vertical-align: top">
-                                                {{val.debit | number}}
-                                            </td>
-                                            <td align="right" class="text-right" style="vertical-align: top">
-                                                {{val.kredit | number}}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td align="right" class="text-center" colspan="4">
-                                                <b>
-                                                    Total
-                                                </b>
-                                            </td>
-                                            <td align="right" class="text-right">
-                                                <b>
-                                                    {{data.total_debit | number}}
-                                                </b>
-                                            </td>
-                                            <td align="right" class="text-right">
-                                                <b>
-                                                    {{data.total_kredit | number}}
-                                                </b>
-                                            </td>
-                                            
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+
+                    </div>
+                    <br/>
+                    <div>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover table-laporan" style="border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th width="80">
+                                            <b>
+                                                TANGGAL
+                                            </b>
+                                        </th>
+                                        <th width="80">
+                                            <b>
+                                                REFF
+                                            </b>
+                                        </th>
+                                        <th>
+                                            <b>
+                                                LOKASI
+                                            </b>
+                                        </th>
+                                        <th>
+                                            <b>
+                                                AKUN
+                                            </b>
+                                        </th>
+                                        <th>
+                                            <b>
+                                                KETERANGAN
+                                            </b>
+                                        </th>
+                                        <th width="100">
+                                            <b>
+                                                DEBIT
+                                            </b>
+                                        </th>
+                                        <th width="100">
+                                            <b>
+                                                KREDIT
+                                            </b>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="val in detail">
+                                        <td align="center" class="text-center" style="vertical-align: top">
+                                            {{val.tanggal}}
+                                        </td>
+                                        <td align="center" style="vertical-align: top">
+                                            {{val.kode}}
+                                        </td>
+                                        <td align="center" style="vertical-align: top">
+                                            {{val.namaLokasi}}
+                                        </td>
+                                        <td style="vertical-align: top">
+                                            <!--                                                <div ng-bind-html="valdetail.keterangan">
+                                                                                            </div>-->
+                                            <span style="margin-left:50px" ng-if="val.debit == 0">{{val.kodeAkun + " - " + val.namaAkun}}</span>
+                                            <span ng-if="val.debit != 0">{{val.kodeAkun + " - " + val.namaAkun}}</span>
+                                        </td>
+                                        <td>
+                                            {{val.keterangan}}
+                                        </td>
+                                        <td align="right" class="text-right" style="vertical-align: top">
+                                            {{val.debit| number}}
+                                        </td>
+                                        <td align="right" class="text-right" style="vertical-align: top">
+                                            {{val.kredit| number}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td align="right" class="text-center" colspan="5">
+                                            <b>
+                                                Total
+                                            </b>
+                                        </td>
+                                        <td align="right" class="text-right">
+                                            <b>
+                                                {{data.total_debit| number}}
+                                            </b>
+                                        </td>
+                                        <td align="right" class="text-right">
+                                            <b>
+                                                {{data.total_kredit| number}}
+                                            </b>
+                                        </td>
+
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 </div>

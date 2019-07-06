@@ -238,20 +238,11 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
             $pengeluaran['no_transaksi'] = $kode;
             $model = $sql->insert("acc_pengeluaran", $pengeluaran);
         }
-        /**
-         * Masukkan ke dalam array trans detail
-         */
-        $transDetail[0]['m_lokasi_id'] = $model->m_lokasi_id;
-        $transDetail[0]['m_akun_id'] = $model->m_akun_id;
-        $transDetail[0]['m_supplier_id'] = $model->m_supplier_id;
-        $transDetail[0]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
-        $transDetail[0]['kredit'] = $model->total;
-        $transDetail[0]['reff_type'] = "acc_pengeluaran";
-        $transDetail[0]['kode'] = $model->no_transaksi;
-        $transDetail[0]['reff_id'] = $model->id;
+        
         /**
          * Simpan ke pemasukan detail
          */
+        $index = 0;
         if (isset($params['detail']) && !empty($params['detail'])) {
             foreach ($params['detail'] as $key => $val) {
                 $detail['m_akun_id'] = $val['m_akun_id']['id'];
@@ -264,16 +255,29 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
                 /**
                  * Simpan trans detail ke array
                  */
-                $transDetail[$key + 1]['m_akun_id'] = $modeldetail->m_akun_id;
-                $transDetail[$key + 1]['m_lokasi_id'] = $modeldetail->m_lokasi_id;
-                $transDetail[$key + 1]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
-                $transDetail[$key + 1]['debit'] = $modeldetail->debit;
-                $transDetail[$key + 1]['keterangan'] = $modeldetail->keterangan;
-                $transDetail[$key + 1]['kode'] = $model->no_transaksi;
-                $transDetail[$key + 1]['reff_type'] = "acc_pengeluaran";
-                $transDetail[$key + 1]['reff_id'] = $model->id;
+                $transDetail[$index]['m_akun_id'] = $modeldetail->m_akun_id;
+                $transDetail[$index]['m_lokasi_id'] = $modeldetail->m_lokasi_id;
+                $transDetail[$index]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
+                $transDetail[$index]['debit'] = $modeldetail->debit;
+                $transDetail[$index]['keterangan'] = $modeldetail->keterangan;
+                $transDetail[$index]['kode'] = $model->no_transaksi;
+                $transDetail[$index]['reff_type'] = "acc_pengeluaran";
+                $transDetail[$index]['reff_id'] = $model->id;
             }
+            $index++;
         }
+        /**
+         * Masukkan ke dalam array trans detail
+         */
+        $transDetail[$index]['m_lokasi_id'] = $model->m_lokasi_id;
+        $transDetail[$index]['m_akun_id'] = $model->m_akun_id;
+        $transDetail[$index]['m_supplier_id'] = $model->m_supplier_id;
+        $transDetail[$index]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
+        $transDetail[$index]['kredit'] = $model->total;
+        $transDetail[$index]['reff_type'] = "acc_pengeluaran";
+        $transDetail[$index]['kode'] = $model->no_transaksi;
+        $transDetail[$index]['reff_id'] = $model->id;
+        
         /**
          * Simpan array trans detail ke database
          */

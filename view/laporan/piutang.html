@@ -1,0 +1,75 @@
+<link href="{{ css }}" rel="stylesheet" type="text/css"/>
+<div class="card-body">
+    <div class="row header-laporan-wrapper">
+        <div class="col-md-12">
+            <center>
+                <h2 class="header-laporan">LAPORAN HUTANG</h2>
+                Lokasi : {{ data.lokasi}}
+                <br/>
+                Periode : {{ data.tanggal}}
+                <br/>
+                Disiapkan Tanggal : {{ data.disiapkan }}
+                <br/>
+            </center>
+            <hr/>
+        </div>
+    </div>
+    <table class="table table-responside table-striped table-hover table-print table-laporan" style="border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th width="80">
+                    <b>TANGGAL</b>
+                </th>
+                <th width="80">
+                    <b>REFF</b>
+                </th>
+                <th>
+                    <b>URAIAN</b>
+                </th>
+                <th width="90">
+                    <b>DEBIT</b>
+                </th>
+                <th width="90">
+                    <b>KREDIT</b>
+                </th>
+                <th width="90">
+                    <b>SALDO</b>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="3">Saldo Awal</td>
+                <td align="right" class="text-right"></td>
+                <td align="right" class="text-right"></td>
+                <td align="right" class="text-right">{{ data.saldoAwal }}</td>
+            </tr>
+            {%for key, val in detail%}
+            <tr>
+                <td align="center" class="text-center" style="vertical-align: top">{{ val.tanggal }}</td>
+                <td align="center" style="vertical-align: top">{{ val.kode}}</td>
+                <td style="vertical-align: top">{{ val.keterangan}}</td>
+                <td align="right" class="text-right" style="vertical-align: top">{{ val.debit }}</td>
+                <td align="right" class="text-right" style="vertical-align: top">{{ val.kredit }}</td>
+                <td align="right" class="text-right" style="vertical-align: top">{{ val.saldo_sekarang }}</td>
+            </tr>
+            {%endfor%}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">
+                    <b>Saldo Akhir</b>
+                </td>
+                <td align="right" class="text-right">
+                    <b>{{ data.debitAkhir }}</b>
+                </td>
+                <td align="right" class="text-right">
+                    <b>{{ data.kreditAkhir }}</b>
+                </td>
+                <td align="right" class="text-right">
+                    <b>{{ data.saldoAkhir }}</b>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

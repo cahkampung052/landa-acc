@@ -12,20 +12,19 @@ function validasi($data, $custom = array()) {
     return $cek;
 }
 
-$app->post('/acc/l_arus_kas/laporan', function ($request, $response) {
+$app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
     $params = $request->getParams();
-//    print_r($params);
-//    die();
+    
     $sql = $this->db;
     $validasi = validasi($params);
     if ($validasi === true) {
 
         //tanggal awal
-        $tanggal_awal = new DateTime($params['tanggal']['startDate']);
+        $tanggal_awal = new DateTime($params['startDate']);
         $tanggal_awal->setTimezone(new DateTimeZone('Asia/Jakarta'));
 
         //tanggal akhir
-        $tanggal_akhir = new DateTime($params['tanggal']['endDate']);
+        $tanggal_akhir = new DateTime($params['endDate']);
         $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
 
         $tanggal_start = $tanggal_awal->format("Y-m-d");
@@ -35,9 +34,22 @@ $app->post('/acc/l_arus_kas/laporan', function ($request, $response) {
 
         $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
         $data['disiapkan'] = date("d-m-Y, H:i");
-        $data['lokasi'] = "Semua";
-        if (isset($params['m_lokasi_id']['id']) && !empty($params['m_lokasi_id']['id'])) {
-            $data['lokasi'] = $params['m_lokasi_id']['nama'];
+        $data['lokasi'] = $params['nama_lokasi'];
+
+        if (isset($params['m_lokasi_id'])) {
+            $lokasiId = getChildId("acc_m_lokasi", $params['m_lokasi_id']);
+            /*
+             * jika lokasi punya child
+             */
+            if (!empty($lokasiId)) {
+                $lokasiId[] = $params['m_lokasi_id'];
+                $lokasiId = implode(",", $lokasiId);
+            }
+            /*
+             * jika lokasi tidak punya child
+             */ else {
+                $lokasiId = $params['m_lokasi_id'];
+            }
         }
 
         $data['saldo_awal'] = 0;
@@ -45,6 +57,9 @@ $app->post('/acc/l_arus_kas/laporan', function ($request, $response) {
 
         $arr = [];
 
+        /*
+         * deklarasi aku yg digunakan
+         */
         $arr_klasifikasi = ["Aktivitas Operasi", "Investasi", "Pendanaan"];
 
         $index = 0;
@@ -53,7 +68,10 @@ $app->post('/acc/l_arus_kas/laporan', function ($request, $response) {
 
             $arr[$index]['nama'] = $akun;
             $arr[$index]['saldo'] = 0;
-
+            
+            /*
+             * ambil arus yg tipe arus
+             */
             $getakun = $sql->select("*")
                     ->from("acc_m_akun")
                     ->where("is_tipe", "=", 0)
@@ -88,12 +106,30 @@ $app->post('/acc/l_arus_kas/laporan', function ($request, $response) {
         }
 
         $data['kas'] = $data['total_saldo'] - $data['saldo_awal'];
-//        print_r($data);die();
 
+        if (isset($params['export']) && $params['export'] == 1) {
+            $view = twigViewPath();
+            $content = $view->fetch('laporan/arusKas.html', [
+                "data" => $data,
+                "detail" => $arr,
+                "css" => modulUrl().'/assets/css/style.css',
+            ]);
+            header("Content-type: application/vnd.ms-excel");
+            header("Content-Disposition: attachment;Filename=laporan-buku-besar.xls");
+            echo $content;
+        } else if (isset($params['print']) && $params['print'] == 1) {
+            $view = twigViewPath();
+            $content = $view->fetch('laporan/arusKas.html', [
+                "data" => $data,
+                "detail" => $arr,
+                "css" => modulUrl().'/assets/css/style.css',
+            ]);
+            echo $content;
+            echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+        } else {
+            return successResponse($response, ["data" => $data, "detail" => $arr]);
+        }
 
-
-
-        return successResponse($response, ["data" => $data, "detail" => $arr]);
     } else {
         return unprocessResponse($response, $validasi);
     }

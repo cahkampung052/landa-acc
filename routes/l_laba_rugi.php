@@ -46,78 +46,9 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
         }
         
         /*
-         * ambil child lokasi
+         * panggil function saldo laba rugi, karena digunakan juga di laporan neraca
          */
-        $lokasiId = getChildId("acc_m_lokasi", $params['m_lokasi_id']);
-        if(!empty($lokasiId)){
-            array_push($lokasiId, $params['m_lokasi_id']);
-            $lokasiId = implode(",", $lokasiId);
-        }else{
-            $lokasiId = $params['m_lokasi_id'];
-        }
-        
-
-
-        $data['saldo_awal'] = 0;
-        $data['total_saldo'] = 0;
-
-        /*
-         * get akun parent 0, akun utama
-         */
-        $klasifikasi = $sql->select("*")
-                ->from("acc_m_akun")
-                ->where("parent_id", "=", 0)
-                ->findAll();
-        $arr = [];
-
-        /*
-         * proses perulangan
-         */
-        foreach ($klasifikasi as $index => $akun) {
-            $arr[$index] = (array) $akun;
-            $arr[$index]['total'] = 0;
-            /*
-             * ambil child akun
-             */
-            $akunId = getChildId("acc_m_akun", $akun->id);
-            
-
-            $getakun = $sql->select("*")
-                    ->from("acc_m_akun")
-                    ->customWhere("id IN(". implode(',', $akunId).")")
-                    ->orderBy("kode")
-                    ->findAll();
-
-
-            foreach ($getakun as $key => $val) {
-
-                $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                        ->from("acc_trans_detail");
-                        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-                            $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
-                        }
-                        $sql->where('acc_trans_detail.m_akun_id', '=', $val->id)
-                        ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
-                        ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
-                
-                $gettransdetail = $sql->find();
-                if ((intval($gettransdetail->debit) - intval($gettransdetail->kredit) > 0) || (intval($gettransdetail->debit) - intval($gettransdetail->kredit) < 0) || $val->is_tipe == 1) {
-                    if ($val->is_tipe == 1) {
-                        $arr[$index]['detail'][$val->id]['kode'] = $val->kode;
-                        $arr[$index]['detail'][$val->id]['nama'] = $val->nama;
-                        $arr[$index]['detail'][$val->id]['nominal'] = 0; 
-                    } else {
-//                        $arr[$index][$val->parent_id]['detail'][] = (array) $val;
-                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['kode'] = $val->kode;
-                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nama'] = $val->nama;
-                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'] = intval($gettransdetail->debit) - intval($gettransdetail->kredit);
-                        $arr[$index]['total'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
-                        $arr[$index]['detail'][$val->parent_id]['nominal'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
-                    }
-                    
-                }
-            }
-        }
+        $arr = getLabaRugi($tanggal_start, $tanggal_end, $params['m_lokasi_id']);
         
         if (isset($params['export']) && $params['export'] == 1) {
             $view = twigViewPath();

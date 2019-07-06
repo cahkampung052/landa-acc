@@ -172,8 +172,9 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $modelModal = $db->findAll();
 
     $arr = getLabaRugi($tanggal);
+    
 
-    $saldo_labarugi = $arr['PEMASUKAN']['total'] - ($arr['HPP']['total'] + $arr['PENGELUARAN']['total']);
+    $saldo_labarugi = $arr[0]['total']-$arr[1]['total']-$arr[2]['total']-$arr[3]['total']+$arr[4]['total']-$arr[5]['total'];
     $totalModal = 0;
     $arrModal = [];
     foreach ($modelModal as $key => $val) {

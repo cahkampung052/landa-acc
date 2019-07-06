@@ -39,7 +39,7 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
                     $scope.data = response.data.data;
                     $scope.detail = response.data.detail;
                     $scope.tampilkan = true;
-                    $scope.totalsemua = ($scope.detail[3].total-$scope.detail[4].total-$scope.detail[5].total-$scope.detail[6].total+$scope.detail[7].total-$scope.detail[8].total);
+                    $scope.totalsemua = ($scope.detail[0].total-$scope.detail[1].total-$scope.detail[2].total-$scope.detail[3].total+$scope.detail[4].total-$scope.detail[5].total);
                 } else {
                     $scope.tampilkan = false;
     //                toaster.pop('error', "Terjadi Kesalahan", setErrorMessage(response.errors));

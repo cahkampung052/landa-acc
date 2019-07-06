@@ -74,13 +74,13 @@ $app->post('/acc/t_saldo_awal_hutang/saveHutang', function ($request, $response)
                     $detail2['m_akun_id'] = $val['m_akun_id']['id'];
                     $detail2['tanggal'] = $tanggal;
                     $detail2['kredit'] = $val['total'];
-                    $detail2['reff_type'] = 'Saldo Hutang';
+                    $detail2['reff_type'] = 'acc_saldo_hutang';
                     $detail2['reff_id'] = $insert->id;
                     $detail2['keterangan'] = 'Saldo Hutang';
                     
                     
                     if(isset($val['saldo_id']) && !empty($val['saldo_id'])){
-                        $insert = $db->update('acc_trans_detail', $detail2, ["reff_id" => $val['saldo_id'], "reff_type"=>"Saldo Hutang"]);
+                        $insert = $db->update('acc_trans_detail', $detail2, ["reff_id" => $val['saldo_id'], "reff_type"=>"acc_saldo_hutang"]);
                     }else{
                         $insert2 = $db->insert('acc_trans_detail', $detail2);
                     }

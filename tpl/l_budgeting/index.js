@@ -9,6 +9,7 @@ app.controller('l_budgetingCtrl', function ($scope, Data, $rootScope, $uibModal,
     $scope.is_edit = false;
     $scope.is_view = false;
     $scope.form.tahun = new Date();
+    $scope.master = master;
     
     /**
      * Ambil list semua akun

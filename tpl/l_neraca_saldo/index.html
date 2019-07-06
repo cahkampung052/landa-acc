@@ -58,6 +58,7 @@
                                 Disiapkan Tanggal : {{data.disiapkan| date:'dd MMMM yyyy, H:i'}}
                                 <br/>
                             </center>
+                            <hr/>
                         </div>
                         
                     </div>
@@ -99,8 +100,8 @@
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody ng-repeat="val in detail">
-                                <tr>
+                            <tbody>
+                                <tr ng-repeat="val in detail">
                                     <td>
                                         {{val.kode}}
                                     </td>

@@ -13,6 +13,7 @@
                     Disiapkan Tanggal : {{data.disiapkan}}
                     <br/>
                 </center>
+                <hr/>
             </div>
 
         </div>
@@ -54,8 +55,9 @@
                         </th>
                     </tr>
                 </thead>
-                {%for key, val in detail%}
+                
                 <tbody>
+                    {%for key, val in detail%}
                     <tr>
                         <td>
                             {{val.kode}}
@@ -76,8 +78,9 @@
                             {{val.saldo_akhir}}
                         </td>
                     </tr>
+                    {%endfor%}
                 </tbody>
-                {%endfor%}
+                
                 <tfoot>
                     <tr>
                         <td align="right" class="text-center" colspan="2">
