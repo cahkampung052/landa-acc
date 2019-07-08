@@ -8,9 +8,6 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
-    $scope.options = {
-        minDate: new Date(),
-    };
 
     /*
      * Ambil akun kas
@@ -40,6 +37,11 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.listLokasi = response.data.list;
     });
     
+    Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
+        $scope.options = {
+            minDate: new Date(response.data.tanggal),
+        };
+    });
     
     /*
      * 
@@ -318,5 +320,10 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
             }
         });
 
+    };
+    
+    $scope.print = function (row) {
+        var data = angular.copy(row);
+        console.log(row);
     };
 });

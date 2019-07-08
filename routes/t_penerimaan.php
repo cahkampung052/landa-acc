@@ -278,3 +278,20 @@ $app->post('/acc/t_penerimaan/delete', function ($request, $response) {
         return unprocessResponse($response, ['Gagal menghapus data']);
     }
 });
+
+$app->post('/acc/t_penerimaan/print', function ($request, $response) {
+    $data = $request->getParams();
+//    print_r($data);die();
+    $db = $this->db;
+    $model = $db->select("*")
+            ->from("acc_pemasukan_det")
+            ->where("acc_pemasukan_id", "=", $data['id'])
+            ->findAll();
+    print_r($model);die();
+    
+    if ($model) {
+        return successResponse($response, $model);
+    } else {
+        return unprocessResponse($response, ['Gagal menghapus data']);
+    }
+});

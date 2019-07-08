@@ -69,6 +69,7 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
                 ->where("is_deleted", "=", 0)
                 ->orderBy("kode")
                 ->findAll();
+        
         foreach ($getakun as $key => $val) {
 
             /*
@@ -94,6 +95,7 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
                 ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
             
             $gettransdetail = $sql->findAll();
+            
             foreach ($gettransdetail as $keys => $vals) {
                 if ($vals->debit == NULL) {
                     $vals->debit = 0;
@@ -101,6 +103,7 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
                 if ($vals->kredit == NULL) {
                     $vals->kredit = 0;
                 }
+                
                 
                 $arr[$index]['tanggal2'] = $vals->tanggal;
                 $vals->tanggal = date("d-m-Y", strtotime($vals->tanggal));
@@ -118,6 +121,19 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
             return strcmp($a['tanggal2'], $b['tanggal2']);
         }
         usort($arr, "cmp");
+        
+        $kode = "";
+        foreach($arr as $key => $val){
+            if($val['kode'] == $kode && $val['kode'] != ""){
+                $arr[$key]['kode'] = "";
+                $arr[$key]['kodeLokasi'] = "";
+                $arr[$key]['namaLokasi'] = "";
+                $arr[$key]['tanggal'] = "";
+            }else{
+                $kode = $val['kode'];
+            }
+        }
+        
 
         if (isset($params['export']) && $params['export'] == 1) {
             $view = twigViewPath();

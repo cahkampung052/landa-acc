@@ -11,7 +11,7 @@
 
                 </div>
             </div>
-            <div class="card-body p-0px">
+            <div class="card-body p-0px mb-30px">
                 <div class="pl-15px pr-15px">
                     <div class="row mt-15px">
                         <div class="col-md-12">
@@ -19,13 +19,13 @@
                                 <div class="form-group row">
                                     <label class="col-sm-1 col-form-label-sm required">Tanggal</label>
                                     <div class="col-sm-3">
-                                        <input type="text" ng-change="getHutang(form)" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" ng-disabled="is_view" required/>
+                                        <input type="text" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" ng-disabled="is_view" required/>
 
                                         <!-- <input type="text" class="form-control form-control-sm align-left" ng-model="form.profesi" ng-disabled="is_view" required/> -->
                                     </div>
                                     <label class="col-sm-1 col-form-label-sm required">Lokasi</label>
                                     <div class="col-sm-3">
-                                        <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view" ng-change="getHutang(form)">
+                                        <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view" ng-change="view(form)">
                                             <ui-select-match placeholder="Pilih Lokasi">
                                                 {{ $select.selected.kode +" - "+$select.selected.nama}}
                                             </ui-select-match>

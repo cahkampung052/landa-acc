@@ -6,6 +6,7 @@ $app->post('/acc/t_saldo_awal_piutang/getPiutangAwal', function ($request, $resp
     $params = $request->getParams();
 //    print_r($params);die();
     $db = $this->db;
+    $tanggal = $params['tanggal'];
     $getcus = $db->select("*")->from("acc_m_customer")->findAll();
 
     foreach ($getcus as $key => $val) {
@@ -20,26 +21,19 @@ $app->post('/acc/t_saldo_awal_piutang/getPiutangAwal', function ($request, $resp
                 ->find();
 
         if ($models) {
+            $tanggal = $models->tanggal;
             $getcus[$key]['saldo_id'] = $models->id;
             $getcus[$key]['total'] = $models->total;
             $getcus[$key]['m_akun_id'] = ["id" => $models->m_akun_id, "kode" => $models->kodeAkun, "nama" => $models->namaAkun];
-        } else {
-            $getcus[$key]['total'] = 0;
-            $akun = $db->select("*")->from("acc_m_akun")
-//            ->customWhere("tipe IN('Piutang Usaha', 'Piutang Lain')")
-            ->where("is_tipe", "=", 0)
-            ->where("is_deleted", "=", 0)
-            ->find();
-            
-            $getcus[$key]['m_akun_id'] = ["id" =>$akun->id, "kode"=>$akun->kode, "nama"=>$akun->nama];
-        }
+        } 
     }
 
 //    echo '<pre>', print_r($getcus), '</pre>';die();
 //    echo '<pre>', print_r($models), '</pre>';die();
 
     return successResponse($response, [
-        'detail' => $getcus
+        'detail' => $getcus,
+        'tanggal' => $tanggal
     ]);
 });
 
@@ -49,7 +43,9 @@ $app->post('/acc/t_saldo_awal_piutang/savePiutang', function ($request, $respons
 //    print_r($params);
 //    die();
     if (isset($params['form']['tanggal']) && !empty($params['form']['tanggal'])) {
-        $tanggal = date("Y-m-d", strtotime($params['form']['tanggal']));
+        $tanggal = new DateTime($params['form']['tanggal']);
+        $tanggal->setTimezone(new DateTimeZone('Asia/Jakarta'));
+        $tanggal = $tanggal->format("Y-m-d");
         $m_lokasi_id = $params['form']['m_lokasi_id']['id'];
 
         if (!empty($params['detail'])) {

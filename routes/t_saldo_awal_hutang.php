@@ -4,6 +4,7 @@ date_default_timezone_set('Asia/Jakarta');
 
 $app->post('/acc/t_saldo_awal_hutang/getHutangAwal', function ($request, $response) {
     $params = $request->getParams();
+    $tanggal = $params['tanggal'];
 //    print_r($params);die();
     $db = $this->db;
     $getsupplier = $db->select("*")->from("acc_m_supplier")->where("is_deleted", "=", 0)->findAll();
@@ -20,17 +21,10 @@ $app->post('/acc/t_saldo_awal_hutang/getHutangAwal', function ($request, $respon
                 ->find();
 
         if ($models) {
+            $tanggal = $models->tanggal;
             $getsupplier[$key]['saldo_id'] = $models->id;
             $getsupplier[$key]['total'] = $models->total;
             $getsupplier[$key]['m_akun_id'] = ["id" => $models->m_akun_id, "kode" => $models->kodeAkun, "nama" => $models->namaAkun];
-        } else {
-            $getsupplier[$key]['total'] = 0;
-            $akun = $db->select("*")->from("acc_m_akun")
-//                ->customWhere("tipe IN('Hutang Lancar', 'Hutang Tidak Lancar')")
-                ->where("is_tipe", "=", 0)
-                ->where("is_deleted", "=", 0)
-                ->find();
-            $getsupplier[$key]['m_akun_id'] = ["id" =>$akun->id, "kode"=>$akun->kode, "nama"=>$akun->nama];
         }
     }
 
@@ -38,7 +32,8 @@ $app->post('/acc/t_saldo_awal_hutang/getHutangAwal', function ($request, $respon
 //    echo '<pre>', print_r($models), '</pre>';die();
 
     return successResponse($response, [
-        'detail' => $getsupplier
+        'detail' => $getsupplier,
+        'tanggal' => $tanggal
     ]);
 });
 

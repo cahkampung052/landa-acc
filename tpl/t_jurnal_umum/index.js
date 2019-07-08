@@ -8,9 +8,6 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
-    $scope.options = {
-        minDate: new Date(),
-    };
 
     /*
      * ambil akun untuk detail
@@ -30,6 +27,11 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.listLokasi = response.data.list;
     });
     
+    Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
+        $scope.options = {
+            minDate: new Date(response.data.tanggal),
+        };
+    });
     
     /*
      * 

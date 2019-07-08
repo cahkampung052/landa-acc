@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.-->
+<style type="text/css">
+    body{
+        font-family: monospace;
+    }
+   table.table, table.table td , table.table th {
+    border: 1px solid black;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    padding: 2px 6px 2px;
+    vertical-align: bottom;
+    display: table-cell;
+    }
+    table.noborder, table.noborder td , table.noborder th {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    padding: 2px 6px 2px;
+    }
+    table.noborders, table.noborders td , table.noborders th {
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    padding: 2px 6px 2px;
+    }
+    
+    table.noborder-l, table.noborder-l td, table.noborder-l tr {
+
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    padding: 2px 6px 2px;
+    }
+    table.noborder-l, table.noborder-l tr:first-child td:first-child {
+        border: 1px solid black;
+        padding: 5px 2px 2px;
+    }
+    .tengah{
+        text-align: center;
+    }
+    .angka{
+        text-align: right;
+    }
+   table{display: table-cell;border-collapse: collapse;width: 100%;}
+    .border th{
+        border-top: 1px solid #000;
+        border-bottom: 1px solid #000;
+        line-height: 16px;
+    }
+    .border td{
+        /*margin-top: 5px; */
+        /*border-top: 1px solid #000;*/
+    }
+   .borders th{
+         border-bottom: 1px solid #000;
+    }
+    /*.footer table{
+        border-collapse: collapse;
+    }
+    .footer table, .footer td{
+        border: 1px solid black;
+    }*/
+    .footer td{
+        padding: 10px;
+        font-size: 12px;  
+    }
+     .footer .text-2x{
+        font-weight: 500;
+        
+
+        vertical-align: top;
+    }
+    .footer .text-3x{
+        text-align: left;
+         font-size: 12px; 
+        
+    }
+    .footer .text-1x{
+
+        font-weight: 400;
+       
+        vertical-align: bottom;
+    }
+     .footer .text{
+        text-align: left;
+        font-size: 12px;      
+        vertical-align: bottom;
+    }
+    
+    tr{
+        padding-bottom: 18px;
+    }
+
+    hr{
+        color: red;
+        background-color: red;
+    }
+</style>
+<table class="table">
+    <tr>
+        <td colspan="3" style="width: 25%" class="tengah">{{model.cabang}}</td>
+        <td colspan="3" style="width: 50%" class="tengah">PENGELUARAN <br> {{model.akun}} </td>
+        <td colspan="2" style="width: 25%" class="tengah">{{model.no_transaksi}} <br>{{model.tanggal | date('d M Y')}}</td>
+    </tr>
+    <tr>
+        <td colspan="8">Dibayarkan Kepada:  {{model.dibayar}}</td>
+    </tr>
+    <tr>
+        <td style="width: 7%">No. </td>
+        <td style="width: 18%"class="tengah" colspan="2">Perkiraan</td>
+        <td class="tengah" colspan="3">Keterangan</td>
+        <td class="tengah" colspan="2">Jumlah</td>
+    </tr>
+    </table>
+    <table class="noborder">
+    {% if model.detail %}
+    {% for val in model.detail %}
+    <tr >
+        <td class="tengah" style="width: 7%">{{val.no}}</td>
+        <td class="tengah" style="width: 18%" colspan="2">{{val.akun}}</td>
+        <td colspan="3" style="width: 50%">{{val.keterangan}}</td>
+        <td class="angka" colspan="2">{{val.debet}}</td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr >
+        <td class="tengah" style="width: 7%"></td>
+        <td class="tengah" style="width: 18%" colspan="2"></td>
+        <td colspan="3" style="width: 50%"></td>
+        <td class="angka" colspan="2"></td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td class="tengah"></td>
+        <td class="tengah" colspan="2"></td>
+        <td colspan="3">{{model.br | raw}}
+        </td>
+        <td class="angka" colspan="2"></td>
+    </tr>
+</table>
+    <table class="table">
+    <tr>
+        <td colspan="6" style="width: 75%">{{model.terbilang}}
+        </td>
+        <td class="angka" colspan="2" style="width: 25%">{{model.total}}</td>
+    </tr></table>
+    <table class="noborder-l">
+    <tr>
+       <td class="tengah" colspan="2">Pembukuan </td>
+       <td class="tengah" colspan="2">Menyetujui </td>
+       <td class="tengah" colspan="2">Menerima </td>
+       <td class="tengah" colspan="2">Kasir </td>
+    </tr>
+    <tr>
+        <td colspan="6">
+          <br>  
+          <br>  
+          <br>  
+          <br>  
+        </td>
+    </tr>
+</table>
+<table class="noborders">
+    <tr>
+        <td colspan="6" class="angka"><i>{{model.user}}({{model.user_tgl}})</i></td>
+    </tr>
+</table>
+</div>
