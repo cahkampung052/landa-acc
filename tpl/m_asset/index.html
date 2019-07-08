@@ -68,8 +68,14 @@
                                 <th style="text-align: left;">
                                     Nilai Perolehan
                                 </th>
+                                <th style="text-align: center;">
+                                    Tarif Depresiasi
+                                </th>
                                 <th style="text-align: left;">
                                     Lokasi
+                                </th>
+                                <th style="text-align: center;">
+                                    Status Asset
                                 </th>
                                 <th>
                                 </th>
@@ -81,13 +87,19 @@
                                     {{row.nama}}
                                 </td>
                                 <td style="text-align: left;">
-                                    {{row.tanggal_beli}}
+                                    {{row.tanggal_beli_format}}
                                 </td>
                                 <td style="text-align: left;">
                                     {{row.harga_beli| currency:undefined:0}}
                                 </td>
+                                <td style="text-align: center;">
+                                    {{row.persentase}} %
+                                </td>
                                 <td style="text-align: left;">
                                     {{row.nm_lokasi}}
+                                </td>
+                                <td style="text-align: center;">
+                                    {{row.status}}
                                 </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
@@ -95,7 +107,7 @@
                                         </button>
                                         <button class="btn btn-info fa fa-pencil" ng-click="update(row)" ng-if="row.is_deleted == 0" type="button">
                                         </button>
-                                        <button class="btn btn-danger fa fa-trash" ng-click="trash(row);" ng-if="row.is_deleted == 0" type="button">
+                                        <button class="btn btn-danger fa fa-trash" ng-click="trash(row);" ng-if="row.is_deleted == 0 && row.proses_penyusutan== 0" type="button">
                                         </button>
                                         <button class="btn btn-warning fa fa-refresh" ng-click="restore(row);" ng-if="row.is_deleted == 1" type="button">
                                         </button>

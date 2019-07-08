@@ -64,6 +64,9 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
         $scope.form = {};
         $scope.form.tanggal = new Date();
         $scope.form.is_penyusutan = 0;
+        Data.get('acc/m_asset/generateKode').then(function (response) {
+            $scope.form.kode = response.data;
+        });
     };
     // $scope.create();
     /** update */

@@ -61,7 +61,11 @@ app.controller('PelepasanCtrl', function ($scope, Data, $rootScope, $uibModal, U
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal_beli);
         $scope.form.harga = form.harga_beli;
-        $scope.form.tgl_pelepasan = new Date(form.tgl_pelepasan);
+        if (form.status == 'Aktif') {
+            $scope.form.tgl_pelepasan = new Date();
+        }else{
+            $scope.form.tgl_pelepasan = new Date(form.tgl_pelepasan);
+        }
         $scope.form.jenis_pelepasan = 'Dijual';
     };
     /** view */
@@ -72,7 +76,11 @@ app.controller('PelepasanCtrl', function ($scope, Data, $rootScope, $uibModal, U
         $scope.formtitle = master + " | Lihat Data : " + form.nama;
         $scope.form = form;
         $scope.form.jenis_pelepasan = form.status;
-        $scope.form.tgl_pelepasan = new Date(form.tgl_pelepasan);
+        if ($scope.form.jenis_pelepasan == 'Aktif') {
+            $scope.form.tgl_pelepasan = new Date();
+        }else{
+            $scope.form.tgl_pelepasan = new Date(form.tgl_pelepasan);
+        }
     };
     /** save action */
     $scope.proses_pelepasan = function (form) {
