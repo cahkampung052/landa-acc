@@ -15,8 +15,15 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
 
     Data.get('acc/m_akun/getTanggalSetting').then(function(data) {
         console.log(data.data.tanggal)
-        $scope.form.tanggal = new Date(data.data.tanggal)
+        var tanggal = new Date(data.data.tanggal)
+        tanggal.setDate(tanggal.getDate() - 1)
+        $scope.form.tanggal = tanggal
+        
     });
+    
+    Data.get('acc/m_lokasi/getLokasi').then(function (response) {
+            $scope.listLokasi = response.data.list;
+        });
 
     $scope.sumTotal = function () {
         var totaldebit = 0;
@@ -46,52 +53,19 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
         if (tableState.search.predicateObject) {
             param['filter'] = tableState.search.predicateObject;
         }
-        
-        Data.get('acc/m_lokasi/getLokasi', param).then(function (response) {
-            $scope.listLokasi = response.data.list;
-        });
-        
-//        Data.get('acc/m_akun/getSaldoAwal', param).then(function (response) {
-//            $scope.displayed = response.data.detail;
-//            $scope.form = {};
-//        });
         $scope.isLoading = false;
     };
-
-    /** create */
-    $scope.create = function () {
-        $scope.is_edit = true;
-        $scope.is_view = false;
-        $scope.is_create = true;
-        $scope.is_disable = false;
-        $scope.formtitle = master + " | Form Tambah Data";
-        $scope.form = {};
-        $scope.form.parent_id = '0';
-    };
-    /** update */
-    $scope.update = function (form) {
-        $scope.is_edit = true;
-        $scope.is_view = false;
-        $scope.is_update = true;
-        $scope.is_disable = true;
-        $scope.formtitle = master + " | Edit Data : " + form.nama;
-        $scope.form = form;
-    };
-    /** view */
-    $scope.view = function (form) {
-        $scope.is_edit = true;
-        $scope.is_view = true;
-        $scope.is_disable = true;
-        $scope.formtitle = master + " | Lihat Data : " + form.nama;
-        $scope.form = form;
-    };
     
-    $scope.setLokasi = function(lokasi){
-        var param = {};
-        param['m_lokasi_id'] = lokasi;
+    $scope.view = function(form){
+        var param = {
+            m_lokasi_id : form.m_lokasi_id,
+            tanggal : form.tanggal
+        };
         Data.get('acc/m_akun/getSaldoAwal', param).then(function (response) {
             $scope.displayed = response.data.detail;
             $scope.sumTotal();
+            $scope.form.tanggal = new Date(response.data.tanggal);
+            console.log(response)
 //            $scope.form = {};
         });
     }

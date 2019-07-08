@@ -9,9 +9,6 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
-    $scope.options = {
-        minDate: new Date(),
-    };
     Data.get('acc/m_akun/akunKas').then(function(data) {
         $scope.akun = data.data.list;
     });
@@ -23,6 +20,11 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
     });
     Data.get('acc/m_lokasi/getLokasi').then(function(response) {
         $scope.listLokasi = response.data.list;
+    });
+    Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
+        $scope.options = {
+            minDate: new Date(response.data.tanggal),
+        };
     });
     /**
      * Upload Gambar
@@ -288,6 +290,14 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
                     });
                 });
             }
+        });
+    };
+    
+    $scope.print = function (row) {
+        var data = angular.copy(row);
+        console.log(row);
+        Data.post(control_link + '/print', row).then(function(result) {
+                    
         });
     };
 });

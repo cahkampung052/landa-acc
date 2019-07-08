@@ -304,3 +304,8 @@ $app->post('/acc/t_pengeluaran/delete', function ($request, $response) {
         return unprocessResponse($response, ['Gagal menghapus data']);
     }
 });
+
+$app->get('/acc/t_pengeluaran/print', function ($request, $response) {
+    $data = $request->getParams();
+    print_r($data);die();
+});

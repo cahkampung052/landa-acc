@@ -11,6 +11,12 @@ app.controller('transferCtrl', function ($scope, Data, $rootScope, $uibModal, Up
     Data.get('acc/m_akun/akunKas').then(function (data) {
         $scope.akun = data.data.list;
     });
+    
+    Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
+        $scope.options = {
+            minDate: new Date(response.data.tanggal),
+        };
+    });
 
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {

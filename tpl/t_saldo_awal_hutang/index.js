@@ -19,6 +19,14 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
     Data.get('acc/m_akun/akunHutang').then(function (response) {
         $scope.listAkun = response.data.list;
     });
+    
+    Data.get('acc/m_akun/getTanggalSetting').then(function(data) {
+        console.log(data.data.tanggal)
+        var tanggal = new Date(data.data.tanggal)
+        tanggal.setDate(tanggal.getDate() - 1)
+        $scope.form.tanggal = tanggal
+        
+    });
 
     $scope.sumTotal = function () {
         var total = 0;
@@ -52,16 +60,21 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
     };
 
     
-    $scope.getHutang = function(form){
-        console.log(form);
+    $scope.view = function(form){
         if(form.tanggal != undefined && form.m_lokasi_id != undefined){
             console.log("ya")
             var a = form.tanggal;
             form.tanggal = moment(form.tanggal).format('YYYY-MM-DD');
             Data.post('acc/t_saldo_awal_hutang/getHutangAwal', form).then(function (response) {
                 $scope.displayed = response.data.detail;
+                $scope.form.tanggal = new Date(response.data.tanggal);
+                angular.forEach($scope.displayed, function (value, key) {
+                    if(value.m_akun_id === undefined){
+                        value.m_akun_id = $scope.listAkun[0]
+                        value.total = 0;
+                    }
+                });
                 $scope.sumTotal();
-                form.tanggal = new Date(form.tanggal)
     //            $scope.form = {};
             });
         }else{

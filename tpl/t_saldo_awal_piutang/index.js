@@ -19,6 +19,14 @@ app.controller('saldoawalpiutangCtrl', function ($scope, Data, $rootScope, $uibM
     Data.get('acc/m_akun/akunPiutang').then(function (response) {
         $scope.listAkun = response.data.list;
     });
+    
+    Data.get('acc/m_akun/getTanggalSetting').then(function(data) {
+        console.log(data.data.tanggal)
+        var tanggal = new Date(data.data.tanggal)
+        tanggal.setDate(tanggal.getDate() - 1)
+        $scope.form.tanggal = tanggal
+        
+    });
 
     $scope.sumTotal = function () {
         var total = 0;
@@ -51,17 +59,24 @@ app.controller('saldoawalpiutangCtrl', function ($scope, Data, $rootScope, $uibM
         $scope.isLoading = false;
     };
 
-    $scope.getPiutang = function(form){
-        console.log(form);
+    $scope.view = function(form){
         if(form.tanggal != undefined && form.m_lokasi_id != undefined){
             console.log("ya")
             var param = {};
             param['m_lokasi_id'] = form.m_lokasi_id;
             param['tanggal'] = moment(form.tanggal).format('YYYY-MM-DD');
             Data.post('acc/t_saldo_awal_piutang/getPiutangAwal', param).then(function (response) {
+                console.log(response)
                 $scope.displayed = response.data.detail;
+                $scope.form.tanggal = new Date(response.data.tanggal);
+                angular.forEach($scope.displayed, function (value, key) {
+                    if(value.m_akun_id === undefined){
+                        value.m_akun_id = $scope.listAkun[0]
+                        value.total = 0;
+                    }
+                    
+                });
                 $scope.sumTotal();
-    //            $scope.form = {};
             });
         }else{
             console.log("tidak")

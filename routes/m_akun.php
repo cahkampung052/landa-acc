@@ -39,8 +39,12 @@ $app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
     $validasi = validasiSaldo($params['form']);
 //    print_r($validasi);die();
     if ($validasi === true) {
-        $tanggal   = date("Y-m-d", strtotime($params['form']['tanggal']));
-        $m_lokasi_id = $params['form']['m_lokasi_id'];
+        
+        $tanggal = new DateTime($params['form']['tanggal']);
+        $tanggal->setTimezone(new DateTimeZone('Asia/Jakarta'));
+        $tanggal = $tanggal->format("Y-m-d");
+        
+        $m_lokasi_id = $params['form']['m_lokasi_id']['id'];
 
         if (!empty($params['detail'])) {
             $db = $this->db;
@@ -83,7 +87,7 @@ $app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
 
 $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
     $params  = $request->getParams();
-    $tanggal = date("Y-m-d");
+    
     $db = $this->db;
     $db->select("
         acc_m_akun.*,
@@ -93,23 +97,29 @@ $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
     ")
         ->from('acc_m_akun')
         ->leftJoin('acc_trans_detail', 
-            'acc_trans_detail.m_lokasi_id = ' . $params['m_lokasi_id'] . ' and 
+            'acc_trans_detail.m_lokasi_id = ' . $params['m_lokasi_id']['id'] . ' and 
             acc_trans_detail.m_akun_id = acc_m_akun.id and
             acc_trans_detail.reff_type = "Saldo Awal" and
             acc_trans_detail.keterangan = "Saldo Awal"')
         ->where("acc_m_akun.is_deleted", "=", 0)
-//            ->where("acc_trans_detail.m_lokasi_id", "=", $params['m_lokasi_id'])
-            ->orderBy('acc_m_akun.kode');
+        ->orderBy('acc_m_akun.kode');
 
     $models = $db->findAll();
     
+    /*
+     * deklarasi tanggal untuk sek form.tanggal di index
+     */
+    $tanggal = $params['tanggal'];
     foreach ($models as $key => $value) {
         $spasi               = ($value->level == 1) ? '' : str_repeat("···", $value->level - 1);
         $value->nama_lengkap = $spasi . $value->kode . ' - ' . $value->nama;
 
-//        if (!empty($value->m_unker_id)) { $tanggal = $value->tanggal; }
         if (empty($value->kredit)) { $value->kredit = 0; }
         if (empty($value->debit)) { $value->debit = 0; }
+        
+        if (!empty($value->tanggal)) { 
+            $tanggal = $value->tanggal;
+        }
     }   
 //    print_r($models);die();
     return successResponse($response, ['detail' => $models, 'tanggal' => $tanggal]);
@@ -546,9 +556,6 @@ $app->get('/acc/m_akun/akunPiutang', function ($request, $response){
 $app->get('/acc/m_akun/getTanggalSetting', function ($request, $response){
     $db = $this->db;
     $models = $db->select("*")->from("acc_m_setting")
-//            ->customWhere("tipe IN('Piutang Usaha', 'Piutang Lain')")
-//            ->where("is_tipe", "=", 0)
-//            ->where("is_deleted", "=", 0)
             ->orderBy("id DESC")
             
             ->find();
