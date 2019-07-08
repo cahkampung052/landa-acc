@@ -166,7 +166,7 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
 
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
-        $models[$key]['tanggal'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
+        $models[$key]['tanggal2'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
         $models[$key]['m_lokasi_id'] = ["id" => $val->idLokasi, "kode" => $val->kodeLokasi, "nama" => $val->namaLokasi];
     }
@@ -277,4 +277,29 @@ $app->post('/acc/t_jurnal_umum/delete', function ($request, $response) {
     } else {
         return unprocessResponse($response, ['Gagal menghapus data']);
     }
+});
+
+$app->get('/acc/t_jurnal_umum/print', function ($request, $response) {
+    $data = $request->getParams();
+//    print_r($data);die();
+    $db = $this->db;
+    $detail = $db->select("acc_jurnal_det.*, acc_m_akun.id as idAkun, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")
+            ->from("acc_jurnal_det")
+            ->join("join", "acc_m_akun", "acc_m_akun.id = acc_jurnal_det.m_akun_id")
+            ->where("acc_jurnal_id", "=", $data['id'])
+            ->findAll();
+    
+    foreach($detail as $key => $val){
+        $val->m_akun_id = ["id"=>$val->m_akun_id, "kode"=>$val->kodeAkun, "nama"=>$val->namaAkun];
+    }
+    
+    $data['tanggalsekarang'] = date("d-m-Y H:i");
+     $view = twigViewPath();
+        $content = $view->fetch('laporan/tJurnalUmum.html', [
+            "data" => $data,
+            "detail" => $detail,
+        ]);
+        echo $content;
+//        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+    
 });

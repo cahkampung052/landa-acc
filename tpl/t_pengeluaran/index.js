@@ -323,7 +323,9 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     };
     
     $scope.print = function (row) {
+        $scope.print = function (row) {
         var data = angular.copy(row);
-        console.log(row);
+        window.open("api/acc/t_pengeluaran/print?" + $.param(row), "_blank");
+    };
     };
 });

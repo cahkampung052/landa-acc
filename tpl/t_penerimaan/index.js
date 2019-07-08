@@ -295,9 +295,6 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
     
     $scope.print = function (row) {
         var data = angular.copy(row);
-        console.log(row);
-        Data.post(control_link + '/print', row).then(function(result) {
-                    
-        });
+        window.open("api/acc/t_penerimaan/print?" + $.param(row), "_blank");
     };
 });

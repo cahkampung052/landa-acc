@@ -1,47 +1,34 @@
 app.controller('tutupbulanCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/t_tutup_bulan";
-    var master = 'Transaksi Tutup Bulan';
+    var master = 'Transaksi Tutup Tahun';
     $scope.formTitle = '';
     $scope.displayed = [];
+    $scope.form = [];
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
-
-    Data.get('acc/m_akun/akunDetail').then(function(data) {
-        $scope.listAkun = data.data.list;
-    });
     
-    Data.get('acc/t_tutup_bulan/tahun').then(function (response) {
-            $scope.listTahun = response.data;
-        });
-
-    
-    $scope.getDetail = function (){
-        console.log("ya")
-        var data = $scope.form;
-        if ((data.bulan != undefined) && (data.tahun != undefined) && (data.akun_ikhtisar_id != undefined) && (data.akun_pemindahan_modal_id != undefined)) {
-            Data.get('acc/t_tutup_bulan/getDetail', data).then(function (response) {
-                $scope.listDetail  = response.data.list;
-                $scope.total_debit = response.data.total_debit;
-                $scope.total_kredit = response.data.total_kredit;
-                $scope.nama_debit = data.akun_pemindahan_modal_id.nama;
-                $scope.nama_kredit = data.akun_ikhtisar_id.nama;
+    $scope.getNeracaSaldo = function () {
+        var date = new Date();
+        var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+        
+        var param = {
+            export: 0,
+            print: 0,
+            startDate: moment(firstDay).format('YYYY-MM-DD'),
+            endDate: moment(date).format('YYYY-MM-DD'),
+        };
+            Data.get('acc/l_neraca_saldo/laporan', param).then(function (response) {
+                if (response.status_code == 200) {
+                    $scope.data = response.data.data;
+                    $scope.detail = response.data.detail;
+                    $scope.tampilkan = true;
+                } else {
+                    $scope.tampilkan = false;
+                }
             });
-        }
-
     }
-    
-    
-    $scope.sumTotal = function () {
-        console.log("ya")
-        var totaldebit = 0;
-        angular.forEach($scope.listDetail, function (value, key) {
-            totaldebit += parseInt(value.debit);
-        });
-        console.log(totaldebit)
-        $scope.form.total = totaldebit;
-    };
 
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
@@ -76,7 +63,10 @@ app.controller('tutupbulanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
+        $scope.form.bulan = new Date();
         $scope.listDetail = [{}];
+        console.log($scope.form)
+        $scope.getNeracaSaldo();
     };
     /** update */
     $scope.update = function (form) {
@@ -102,39 +92,17 @@ app.controller('tutupbulanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     /** save action */
     $scope.save = function (form) {
         
-        form['hasil_lr'] = parseInt($scope.total_debit)-parseInt($scope.total_kredit);
-        console.log(form)
-        console.log($scope.listDetail)
         
         var data = {
             form : form,
-            detail : $scope.listDetail,
-            total_debit : $scope.total_debit,
-            total_kredit : $scope.total_kredit
         }
         
-        Data.post(control_link + '/create', data).then(function (result) {
+        Data.post(control_link + '/save', data).then(function (result) {
             if (result.status_code == 200) {
-
-
-                Swal.fire({
-                    title: "Tersimpan",
-                    text: "Data Berhasil Di Simpan.",
-                    type: "success"
-                }).then(function () {
-                    $scope.callServer(tableStateRef);
-                    $scope.is_edit = false;
-                });
+                $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                $scope.cancel();
             } else {
-                Swal.fire({
-                    title: "Gagal",
-                    text: result.errores,
-                    type: "error"
-                }).then(function () {
-                    $scope.callServer(tableStateRef);
-                    $scope.is_edit = false;
-                });
-                
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors) ,"error");
             }
         });
     };

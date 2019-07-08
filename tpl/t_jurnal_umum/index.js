@@ -302,4 +302,9 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         });
 
     };
+    
+    $scope.print = function (row) {
+        var data = angular.copy(row);
+        window.open("api/acc/t_jurnal_umum/print?" + $.param(row), "_blank");
+    };
 });
