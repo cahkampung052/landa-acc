@@ -126,7 +126,8 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
                 acc_m_user.nama as namaUser, 
                 acc_m_akun.kode as kodeAkun, 
                 acc_m_akun.nama as namaAkun, 
-                acc_m_kontak.nama as namaCus
+                acc_m_kontak.nama as namaCus,
+                acc_m_kontak.type as typeCus
             ")
             ->from("acc_pemasukan")
             ->join("left join", "acc_m_user", "acc_pemasukan.created_by = acc_m_user.id")
@@ -169,7 +170,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
         $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
-        $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaCus];
+        $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaCus, "type"=>ucfirst($val->typeCus)];
     }
     return successResponse($response, [
         'list' => $models,
@@ -203,7 +204,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $penerimaan['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
         $penerimaan['m_akun_id'] = $params['form']['m_akun_id']['id'];
         $penerimaan['m_kontak_id'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['id'] : '';
-        $penerimaan['diterima_dari'] = (isset($params['form']['diterima_dari']) && !empty($params['form']['diterima_dari']) ? $params['form']['diterima_dari'] : '');
+        $penerimaan['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $penerimaan['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $penerimaan['total'] = $params['form']['total'];
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
@@ -232,6 +233,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $transDetail[0]['debit'] = $model->total;
         $transDetail[0]['reff_type'] = "acc_pemasukan";
         $transDetail[0]['kode'] = $model->no_transaksi;
+        $transDetail[0]['keterangan'] = $model->keterangan;
         $transDetail[0]['reff_id'] = $model->id;
         /**
          * Simpan ke pemasukan detail

@@ -27,7 +27,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     /*
      * ambil supplier
      */
-    Data.get('acc/m_supplier/getSupplier').then(function (response) {
+    Data.get('acc/m_customer/getKontak').then(function (response) {
         $scope.listSupplier = response.data.list;
     });
     

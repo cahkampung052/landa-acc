@@ -138,7 +138,8 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
             acc_m_user.nama as namaUser, 
             acc_m_akun.kode as kodeAkun, 
             acc_m_akun.nama as namaAkun, 
-            acc_m_kontak.nama as namaSup
+            acc_m_kontak.nama as namaSup,
+            acc_m_kontak.type as typeSup
         ")
             ->from("acc_pengeluaran")
             ->join("left join", "acc_m_user", "acc_pengeluaran.created_by = acc_m_user.id")
@@ -183,7 +184,7 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
         $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
         $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
-        $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup];
+        $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup, "type"=> ucfirst($val->typeSup)];
     }
 
     return successResponse($response, [
@@ -224,7 +225,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $pengeluaran['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
         $pengeluaran['m_akun_id'] = $params['form']['m_akun_id']['id'];
         $pengeluaran['m_kontak_id'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['id'] : '';
-        $pengeluaran['dibayar_kepada'] = (isset($params['form']['dibayar_kepada']) && !empty($params['form']['dibayar_kepada']) ? $params['form']['dibayar_kepada'] : '');
+        $pengeluaran['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $pengeluaran['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $pengeluaran['total'] = $params['form']['total'];
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
@@ -281,6 +282,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $transDetail[$index]['kredit'] = $model->total;
         $transDetail[$index]['reff_type'] = "acc_pengeluaran";
         $transDetail[$index]['kode'] = $model->no_transaksi;
+        $transDetail[$index]['keterangan'] = $model->keterangan;
         $transDetail[$index]['reff_id'] = $model->id;
         
         /**

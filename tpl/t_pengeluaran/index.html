@@ -181,22 +181,22 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label-sm">Supplier</label>
+                                            <label class="col-sm-3 col-form-label-sm">Penerima</label>
                                             <div class="col-sm-9">
                                                 <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_kontak_id" theme="bootstrap" ng-disabled="is_view">
-                                                    <ui-select-match placeholder="Pilih Supplier">
-                                                        {{ $select.selected.nama}}
+                                                    <ui-select-match placeholder="Pilih Kontak">
+                                                        {{ $select.selected.type +" - "+ $select.selected.nama}}
                                                     </ui-select-match>
-                                                    <ui-select-choices position="down" repeat="val in listSupplier | filter : $select.search">{{val.nama}}</ui-select-choices>
+                                                    <ui-select-choices position="down" repeat="val in listSupplier | filter : $select.search">{{val.type +" - "+ val.nama}}</ui-select-choices>
                                                 </ui-select>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group row">
-                                            <label class="col-sm-3 col-form-label-sm">Dibayar Kepada</label>
+                                            <label class="col-sm-3 col-form-label-sm">Keterangan</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control form-control-sm" ng-model="form.dibayar_kepada" ng-disabled="is_view" required/>
+                                                <input type="text" class="form-control form-control-sm" ng-model="form.keterangan" ng-disabled="is_view" required/>
                                             </div>
                                         </div>
                                     </div>

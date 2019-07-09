@@ -7,6 +7,21 @@ function validasi($data, $custom = array())
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
+$app->get('/acc/m_customer/getKontak', function ($request, $response) {
+    $db = $this->db;
+    $models = $db->select("*")
+                ->from("acc_m_kontak")
+                ->orderBy("acc_m_kontak.nama")
+                ->where("is_deleted", "=", 0)
+                ->findAll();
+    
+    foreach($models as $key => $val){
+        $val->type = ucfirst($val->type);
+    }
+    return successResponse($response, [
+      'list' => $models
+    ]);
+});
 $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("*")

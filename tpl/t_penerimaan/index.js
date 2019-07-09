@@ -17,7 +17,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
     Data.get('acc/m_akun/akunDetail').then(function(data) {
         $scope.akunDetail = data.data.list;
     });
-    Data.get('acc/m_customer/getCustomer').then(function(response) {
+    Data.get('acc/m_customer/getKontak').then(function(response) {
         $scope.listCustomer = response.data.list;
     });
     Data.get('acc/m_lokasi/getLokasi').then(function(response) {
