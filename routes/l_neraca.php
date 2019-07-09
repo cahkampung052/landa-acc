@@ -17,12 +17,23 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $filter = $params;
     $db = $this->db;
 
-
-
-    /** tanggal */
+    /** 
+     * tanggal
+     */
     $tanggal = new DateTime($filter['tanggal']);
     $tanggal->setTimezone(new DateTimeZone('Asia/Jakarta'));
     $tanggal = $tanggal->format("Y-m-d");
+
+    /**
+     * Ambil laba / rugi
+     */
+    $totalLabaRugi = getLabaRugi("1970-01-01", $tanggal, null, false);
+
+    /**
+     * Ambil akun laba rugi
+     */
+    $labarugi = $db->find("select * from acc_m_akun_peta where type = 'Laba Rugi Berjalan'");
+    $akunLabaRugi = isset($labarugi->m_akun_id) ? $labarugi->m_akun_id : 0;
 
     /*
      * ambil child dari harta, kewajiban, modal
@@ -40,7 +51,8 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             acc_m_akun.nama,
             acc_m_akun.level,
             acc_m_akun.is_tipe,
-            acc_m_akun.parent_id
+            acc_m_akun.parent_id,
+            acc_m_akun.saldo_normal
             ")
             ->from("acc_m_akun")
             ->groupBy("acc_m_akun.id")
@@ -57,7 +69,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 ->where('m_akun_id', '=', $val->id)
                 ->andWhere('date(tanggal)', '<=', $tanggal);
         $getsaldoawal = $db->find();
-        $saldoAwal = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
+        $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
+
+        if($val->id == $akunLabaRugi){
+            $saldoAwal += $totalLabaRugi;
+        }
 
         $val->nama_lengkap = $val->kode . ' - ' . $val->nama;
         $val->saldo = $saldoAwal;
@@ -102,7 +118,8 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         acc_m_akun.nama,
         acc_m_akun.level,
         acc_m_akun.is_tipe,
-        acc_m_akun.parent_id
+        acc_m_akun.parent_id,
+        acc_m_akun.saldo_normal
         ")
             ->from("acc_m_akun")
             ->groupBy("acc_m_akun.id")
@@ -118,7 +135,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 ->where('m_akun_id', '=', $val->id)
                 ->andWhere('date(tanggal)', '<=', $tanggal);
         $getsaldoawal = $db->find();
-        $saldoAwal = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
+        $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
+
+        if($val->id == $akunLabaRugi){
+            $saldoAwal += $totalLabaRugi;
+        }
 
         $val->nama_lengkap = $val->kode . ' - ' . $val->nama;
         $val->saldo = $saldoAwal;
@@ -162,7 +183,8 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         acc_m_akun.nama,
         acc_m_akun.level,
         acc_m_akun.is_tipe,
-        acc_m_akun.parent_id
+        acc_m_akun.parent_id,
+        acc_m_akun.saldo_normal
         ")
             ->from("acc_m_akun")
             ->groupBy("acc_m_akun.id")
@@ -183,14 +205,13 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 ->where('m_akun_id', '=', $val->id)
                 ->andWhere('date(tanggal)', '<=', $tanggal);
         $getsaldoawal = $db->find();
-        $saldoAwal = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
+        $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
+
+        if($val->id == $akunLabaRugi){
+            $saldoAwal += $totalLabaRugi;
+        }
 
         $val->nama_lengkap = $val->kode . ' - ' . $val->nama;
-        $val->laba = '';
-        if ($val->nama == 'Laba Tahun Berjalan') {
-            $val->laba = $saldo_labarugi > 0 || $saldo_labarugi < 0 ? '(' . $saldo_labarugi . ')' : '';
-            $saldoAwal += $saldo_labarugi;
-        }
         $val->saldo = $saldoAwal;
         $val->saldo_rp = $val->saldo;
 
