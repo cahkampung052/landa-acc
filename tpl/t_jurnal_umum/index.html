@@ -85,10 +85,10 @@
                                     {{row.namaLokasi}}
                                 </td>
                                 <td style="text-align: left;">
-                                    {{row.tanggal}}
+                                    {{row.tanggal2}}
                                 </td>
                                 <td style="text-align: right;">
-                                    {{(row.total_debit - row.total_kredit) | number}}
+                                    {{(row.total_debit) | number}}
                                 </td>
                                 <td style="text-align: left;">
                                     {{row.created_at}}
@@ -97,7 +97,9 @@
                                     {{row.namaUser}}
                                 </td>
                                 <td>
-                                    <div class="btn-group pull-right" role="group"><button type="button" class="btn btn-info fa fa-pencil"  ng-click="update(row)"></button>
+                                    <div class="btn-group pull-right" role="group">
+                                        <button type="button" class="btn btn-default fa fa-print"  ng-click="print(row)"></button>
+                                        <button type="button" class="btn btn-info fa fa-pencil"  ng-click="update(row)"></button>
                                         <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row);"></button>
                                         </div>
                                 </td>

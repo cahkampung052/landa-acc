@@ -307,5 +307,25 @@ $app->post('/acc/t_pengeluaran/delete', function ($request, $response) {
 
 $app->get('/acc/t_pengeluaran/print', function ($request, $response) {
     $data = $request->getParams();
-    print_r($data);die();
+    
+    $db = $this->db;
+    $detail = $db->select("acc_pengeluaran_det.*, acc_m_akun.id as idAkun, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")
+            ->from("acc_pengeluaran_det")
+            ->join("join", "acc_m_akun", "acc_m_akun.id = acc_pengeluaran_det.m_akun_id")
+            ->where("acc_pengeluaran_id", "=", $data['id'])
+            ->findAll();
+    
+    foreach($detail as $key => $val){
+        $val->m_akun_id = ["id"=>$val->m_akun_id, "kode"=>$val->kodeAkun, "nama"=>$val->namaAkun];
+    }
+    
+    $data['tanggalsekarang'] = date("d-m-Y H:i");
+     $view = twigViewPath();
+        $content = $view->fetch('laporan/pengeluaran.html', [
+            "data" => $data,
+            "detail" => $detail,
+        ]);
+        echo $content;
+        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+    
 });

@@ -83,6 +83,21 @@
                                             SALDO AWAL
                                         </b>
                                     </th>
+                                    <th colspan="2" style="text-align: center">
+                                        <b>
+                                            MUTASI
+                                        </b>
+                                    </th>
+                                    <th colspan="2" style="text-align: center">
+                                        <b>
+                                            SALDO AKHIR
+                                        </b>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
                                     <th width="100">
                                         <b>
                                             DEBIT
@@ -95,7 +110,12 @@
                                     </th>
                                     <th width="100">
                                         <b>
-                                            SALDO AKHIR
+                                            DEBIT
+                                        </b>
+                                    </th>
+                                    <th width="100">
+                                        <b>
+                                            KREDIT
                                         </b>
                                     </th>
                                 </tr>
@@ -118,7 +138,10 @@
                                         {{val.kredit| number}}
                                     </td>
                                     <td align="right" class="text-right">
-                                        {{val.saldo_akhir| number}}
+                                        {{val.debit_akhir| number}}
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        {{val.kredit_akhir| number}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -140,7 +163,7 @@
                                             {{data.total_kredit| number}}
                                         </b>
                                     </td>
-                                    <td align="right" class="text-right">
+                                    <td align="right" class="text-right" colspan="2">
                                         <!--                                                <b>
                                                                                             {{val.total_saldo | number}}
                                                                                         </b>-->

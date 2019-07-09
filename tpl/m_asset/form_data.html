@@ -37,7 +37,7 @@
                 </label>
                 <div class="col-sm-9">
                     <div class="input-group input-group-sm">
-                        <input class="form-control form-control-sm" is-open="opened.tanggal" ng-click="toggle($event, 'tanggal')" ng-disabled="is_view" ng-model="form.tanggal" type="text" uib-datepicker-popup="dd-MM-yyyy"/>
+                        <input class="form-control form-control-sm" is-open="opened.tanggal" ng-click="toggle($event, 'tanggal')" ng-disabled="is_view || form.proses_penyusutan == 1" ng-model="form.tanggal" type="text" uib-datepicker-popup="dd-MM-yyyy"/>
                         <div class="input-group-text">
                             <i class="icon icon-calendar">
                             </i>
@@ -56,7 +56,7 @@
                         <div class="input-group-text">
                             Rp.
                         </div>
-                        <input class="form-control form-control-sm text-right" name="" ng-disabled="is_view" ng-model="form.harga" type="text" ui-number-mask="0">
+                        <input class="form-control form-control-sm text-right" name="" ng-disabled="is_view || form.proses_penyusutan == 1" ng-model="form.harga" type="text" ui-number-mask="0">
                         </input>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                     Lokasi
                 </label>
                 <div class="col-sm-9">
-                    <ui-select class="w100" ng-disabled="is_view" ng-model="form.lokasi" theme="bootstrap">
+                    <ui-select class="w100" ng-disabled="is_view || form.proses_penyusutan == 1" ng-model="form.lokasi" theme="bootstrap">
                         <ui-select-match placeholder="Pilih Lokasi">
                             {{ $select.selected.nama }}
                         </ui-select-match>
@@ -90,12 +90,12 @@
                 </label>
                 <div class="col-sm-9">
                     <div class="btn-group">
-                        <label ng-disabled="is_view" class="btn btn-primary btn-sm" ng-model="form.is_penyusutan" uib-btn-radio="'1'">
+                        <label ng-disabled="is_view || form.proses_penyusutan == 1" class="btn btn-primary btn-sm" ng-model="form.is_penyusutan" uib-btn-radio="'1'">
                             <i class="fa fa-check" ng-if="form.is_penyusutan == '1'">
                             </i>
                             Ya
                         </label>
-                        <label ng-disabled="is_view" class="btn btn-primary btn-sm" ng-model="form.is_penyusutan" uib-btn-radio="'0'">
+                        <label ng-disabled="is_view || form.proses_penyusutan == 1" class="btn btn-primary btn-sm" ng-model="form.is_penyusutan" uib-btn-radio="'0'">
                             <i class="fa fa-check" ng-if="form.is_penyusutan == '0'">
                             </i>
                             Tidak
@@ -110,7 +110,7 @@
                     Umur Ekonomis
                 </label>
                 <div class="col-sm-9">
-                    <ui-select class="w100" ng-disabled="is_view" ng-model="form.umur" on-select="setTahun(form.umur.persentase)" theme="bootstrap">
+                    <ui-select class="w100" ng-disabled="is_view || form.proses_penyusutan == 1" ng-model="form.umur" on-select="setTahun(form.umur.persentase)" theme="bootstrap">
                         <ui-select-match placeholder="Pilih Umur Ekonomis">
                             {{ $select.selected.nama }} | {{ $select.selected.tahun }} tahun
                         </ui-select-match>
@@ -128,7 +128,7 @@
                 </label>
                 <div class="col-sm-9">
                     <div class="input-group input-group-sm">
-                        <input class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.persentase" required="" type="text"/>
+                        <input class="form-control form-control-sm" ng-disabled="true" ng-model="form.persentase" required="" type="text"/>
                         <div class="input-group-text">
                             %
                         </div>
@@ -146,7 +146,7 @@
                         <div class="input-group-text">
                             Rp.
                         </div>
-                        <input class="form-control form-control-sm text-right" name="" ng-disabled="is_view" ng-model="form.nilai_residu" type="text" ui-number-mask="0">
+                        <input class="form-control form-control-sm text-right" name="" ng-disabled="is_view || form.proses_penyusutan == 1" ng-model="form.nilai_residu" type="text" ui-number-mask="0">
                         </input>
                     </div>
                 </div>

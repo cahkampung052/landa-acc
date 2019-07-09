@@ -77,7 +77,8 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
             $arr2['debit'] = $detail->debit;
             $arr2['kredit'] = $detail->kredit;
 
-            $arr2['saldo_akhir'] = $arr2['saldo_awal'] + $arr2['debit'] - $arr2['kredit'];
+            $arr2['debit_akhir'] = $arr2['saldo_awal'] + $arr2['debit'];
+            $arr2['kredit_akhir'] = $arr2['saldo_awal'] - $arr2['kredit'];
             if ($arr2['saldo_awal'] != 0 || $arr2['debit'] != 0 || $arr2['kredit'] != 0) {
                 $arr[$key] = $arr2;
                 $data['total_debit'] += $arr2['debit'];

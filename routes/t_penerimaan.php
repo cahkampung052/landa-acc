@@ -279,19 +279,27 @@ $app->post('/acc/t_penerimaan/delete', function ($request, $response) {
     }
 });
 
-$app->post('/acc/t_penerimaan/print', function ($request, $response) {
+$app->get('/acc/t_penerimaan/print', function ($request, $response) {
     $data = $request->getParams();
-//    print_r($data);die();
+    
     $db = $this->db;
-    $model = $db->select("*")
+    $detail = $db->select("acc_pemasukan_det.*, acc_m_akun.id as idAkun, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")
             ->from("acc_pemasukan_det")
+            ->join("join", "acc_m_akun", "acc_m_akun.id = acc_pemasukan_det.m_akun_id")
             ->where("acc_pemasukan_id", "=", $data['id'])
             ->findAll();
-    print_r($model);die();
     
-    if ($model) {
-        return successResponse($response, $model);
-    } else {
-        return unprocessResponse($response, ['Gagal menghapus data']);
+    foreach($detail as $key => $val){
+        $val->m_akun_id = ["id"=>$val->m_akun_id, "kode"=>$val->kodeAkun, "nama"=>$val->namaAkun];
     }
+    
+    $data['tanggalsekarang'] = date("d-m-Y H:i");
+     $view = twigViewPath();
+        $content = $view->fetch('laporan/penerimaan.html', [
+            "data" => $data,
+            "detail" => $detail,
+        ]);
+        echo $content;
+        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+    
 });

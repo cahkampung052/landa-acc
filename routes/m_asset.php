@@ -37,6 +37,98 @@ function validasi_pelepasan($data, $custom = array())
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
+$app->get('/acc/m_asset/cekPenyusutanBulanini', function ($request, $response) {
+    $sql = $this->db;
+    $y = date("Y");
+    $m = date("m");
+
+    $cek = $sql->select("*")->from("acc_riw_penyusutan")
+        ->where("MONTH(periode)", "=", $m)
+        ->where("YEAR(periode)", "=", $y)
+        ->limit(1)
+        ->findAll();
+    $totalItem = $sql->count();
+
+
+    return successResponse($response,$totalItem);
+});
+
+$app->get('/acc/m_asset/list_penyusutan', function ($request, $response) {
+    $params = $request->getParams();
+    // $sort     = "m_akun.kode ASC";
+    $offset = isset($params['offset']) ? $params['offset'] : 0;
+    $limit  = isset($params['limit']) ? $params['limit'] : 20;
+
+    $db = $this->db;
+    $db->select("acc_riw_penyusutan.*,acc_m_lokasi.nama as nm_lokasi,acc_m_user.nama as nm_user")
+        ->from("acc_riw_penyusutan")
+        ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_riw_penyusutan.lokasi_id")
+        ->leftJoin("acc_m_user", "acc_m_user.id = acc_riw_penyusutan.created_by")
+        ->orderBy('acc_riw_penyusutan.id DESC');
+
+    if (isset($params['filter'])) {
+        $filter = (array) json_decode($params['filter']);
+
+        foreach ($filter as $key => $val) {
+            // if ($key == 'is_deleted') {
+            //     $db->where("acc_asset.is_deleted", '=', $val);
+            // } else if ($key == 'nama') {
+            //     $db->where("acc_asset.nama", 'LIKE', $val);
+            // } else {
+                $db->where($key, 'LIKE', $val);
+            // }
+        }
+    }
+
+    /** Set limit */
+    if (isset($params['limit']) && !empty($params['limit'])) {
+        $db->limit($params['limit']);
+    }
+
+    /** Set offset */
+    if (isset($params['offset']) && !empty($params['offset'])) {
+        $db->offset($params['offset']);
+    }
+
+    $models    = $db->findAll();
+    $totalItem = $db->count();
+    foreach ($models as $key => $value) {
+        $value->periode_format = date("F Y",strtotime($value->periode));   
+    }
+//     print_r($models);exit();
+
+//      print_r($arr);exit();
+    return successResponse($response, [
+        'list'       => $models,
+        'totalItems' => $totalItem,
+        'base_url'   => str_replace('api/', '', config('SITE_URL')),
+    ]);
+});
+
+$app->post('/acc/m_asset/hapus_penyusutan', function ($request, $response) {
+    $data = $request->getParams();
+    $sql   = $this->db;
+
+    $cek_riw = $sql->select("acc_riw_penyusutan.id,acc_jurnal.id as jurnal_id")
+                ->from("acc_riw_penyusutan")
+                ->leftJoin("acc_jurnal","acc_jurnal.reff_id = acc_riw_penyusutan.id AND reff_type = 'acc_riw_penyusutan'")
+                ->where("acc_riw_penyusutan.id","=",$data["id"])
+                ->find();
+
+    $delete = $sql->delete('acc_riw_penyusutan', array('id' => $cek_riw->id));
+    $delete = $sql->delete('acc_riw_penyusutan_dt', array('riw_id' => $cek_riw->id));
+    $delete = $sql->delete('acc_jurnal', array('id' => $cek_riw->jurnal_id));
+    $delete = $sql->delete('acc_jurnal_det', array('acc_jurnal_id' => $cek_riw->jurnal_id));
+    $delete = $sql->delete('acc_trans_detail', array('reff_type' => "acc_jurnal_penyusutan",'reff_id' => $cek_riw->jurnal_id));
+
+    if ($delete) {
+        return successResponse($response, ['data berhasil dihapus']);
+    } else {
+        return unprocessResponse($response, ['data gagal dihapus']);
+    }
+});
+
+
 
 $app->get('/acc/m_asset/tampilPenyusutan', function ($request, $response) {
     $params = $request->getParams();
@@ -72,14 +164,14 @@ $app->post('/acc/m_asset/prosesPenyusutan', function ($request, $response) {
     //cek riwayat penyusutan jika ada maka ditimpa
     $cek_riw = $sql->select("acc_riw_penyusutan.id,acc_jurnal.id as jurnal_id")
                 ->from("acc_riw_penyusutan")
-                ->leftJoin("acc_jurnal","acc_jurnal.riw_penyusutan_id = acc_riw_penyusutan.id")
+                ->leftJoin("acc_jurnal","acc_jurnal.reff_id = acc_riw_penyusutan.id AND reff_type = 'acc_riw_penyusutan'")
                 ->where("acc_riw_penyusutan.periode","=",date("Y-m-d",strtotime($params["bulan"])))
                 ->where("acc_riw_penyusutan.lokasi_id","=",$params["form"]["lokasi"]["id"])
                 ->find();
     if ($cek_riw!=FALSE) {
         $delete = $sql->delete('acc_riw_penyusutan', array('id' => $cek_riw->id));
         $delete = $sql->delete('acc_riw_penyusutan_dt', array('riw_id' => $cek_riw->id));
-        $delete = $sql->delete('acc_jurnal', array('riw_penyusutan_id' => $cek_riw->id));
+        $delete = $sql->delete('acc_jurnal', array('id' => $cek_riw->jurnal_id));
         $delete = $sql->delete('acc_jurnal_det', array('acc_jurnal_id' => $cek_riw->jurnal_id));
         $delete = $sql->delete('acc_trans_detail', array('reff_type' => "acc_jurnal_penyusutan",'reff_id' => $cek_riw->jurnal_id));
     }
@@ -105,7 +197,8 @@ $app->post('/acc/m_asset/prosesPenyusutan', function ($request, $response) {
         "tanggal" => date("Y-m-d",strtotime($params["bulan"])),
         "total_kredit" =>  $params["form"]["total"],
         "total_debit" =>  $params["form"]["total"],
-        "riw_penyusutan_id" => $insert_riw->id
+        "reff_id" => $insert_riw->id,
+        "reff_type" => 'acc_riw_penyusutan'
     );
     $insert_jurnal = $sql->insert("acc_jurnal", $d_jurnal);
 
@@ -203,14 +296,19 @@ $app->get('/acc/m_asset/getDetailPenyusutan', function ($request, $response) {
         if ($i==$tahun) {
             $dt[$i]['saldo_awal'] = $models->harga_beli;
             $dt[$i]['awal'] = date("t M Y",strtotime($models->tanggal_beli));
-            $dt[$i]['akhir'] = date("t M Y", strtotime($i."-12-01"));
-
-            //format
             $dt[$i]['awal_default'] = date("Y-m-t",strtotime($models->tanggal_beli));
-            $dt[$i]['akhir_default'] = date("Y-m-t", strtotime($i."-12-01"));
+            
+            if ($models->status=='Aktif') {
+                $dt[$i]['akhir'] = date("t M Y", strtotime($i."-12-01"));
+                $dt[$i]['akhir_default'] = date("Y-m-t", strtotime($i."-12-01"));
+            }else{
+                $dt[$i]['awal_default'] = date("Y-m-d",strtotime($models->tanggal_beli));
+                $dt[$i]['akhir'] = date("t M Y", strtotime($i."-".$batas_bulan."-01"));
+                $dt[$i]['akhir_default'] = date("Y-m-t", strtotime($i."-".$batas_bulan."-01"));
+            }
 
             //data_update
-            $data_update["periode_awal_penyusutan"] = $dt[$i]['awal_default']; 
+            $data_update["periode_awal_penyusutan"] = date("Y-m-t",strtotime($models->tanggal_beli)); 
         }else if ($i==$batas_tahun) {
             $dt[$i]['awal'] = date("t M Y",strtotime($i."-01-01"));
             $dt[$i]['akhir'] = date("t M Y",strtotime($i."-".$batas_bulan."-01")); 
@@ -280,13 +378,15 @@ $app->get('/acc/m_asset/index', function ($request, $response) {
     $limit  = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_asset.*,acc_m_lokasi.nama as nm_lokasi,acc_m_lokasi.kode as kode_lokasi, acc_umur_ekonomis.nama as nama_umur, acc_umur_ekonomis.tahun as tahun_umur, acc_umur_ekonomis.persentase as persentase_umur, akun_asset.nama as nm_akun_asset, akun_akumulasi.nama as nm_akun_akumulasi, akun_beban.nama as nm_akun_beban")
+    $db->select("acc_asset.*,acc_m_lokasi.nama as nm_lokasi,acc_m_lokasi.kode as kode_lokasi, acc_umur_ekonomis.nama as nama_umur, acc_umur_ekonomis.tahun as tahun_umur, acc_umur_ekonomis.persentase as persentase_umur, akun_asset.nama as nm_akun_asset, akun_akumulasi.nama as nm_akun_akumulasi, akun_beban.nama as nm_akun_beban, acc_riw_penyusutan_dt.id as id_penyusutan")
         ->from("acc_asset")
         ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_asset.lokasi_id")
         ->leftJoin("acc_umur_ekonomis", "acc_umur_ekonomis.id = acc_asset.umur_ekonomis")
         ->leftJoin("acc_m_akun akun_asset", "akun_asset.id = acc_asset.akun_asset_id")
         ->leftJoin("acc_m_akun akun_akumulasi", "akun_akumulasi.id = acc_asset.akun_akumulasi_id")
         ->leftJoin("acc_m_akun akun_beban", "akun_beban.id = acc_asset.akun_beban_id")
+        ->leftJoin("acc_riw_penyusutan_dt", "acc_riw_penyusutan_dt.asset_id = acc_asset.id")
+        ->groupBy("acc_asset.id")
         ->orderBy('acc_asset.id DESC');
 
     if (isset($params['filter'])) {
@@ -327,6 +427,11 @@ $app->get('/acc/m_asset/index', function ($request, $response) {
         $value->akun_asset = ["id"=>$value->akun_asset_id,"nama"=>$value->nm_akun_asset];
         $value->akun_akumulasi = ["id"=>$value->akun_akumulasi_id,"nama"=>$value->nm_akun_akumulasi];
         $value->akun_beban = ["id"=>$value->akun_beban_id,"nama"=>$value->nm_akun_beban];
+        if (isset($value->id_penyusutan)) {
+            $value->proses_penyusutan = 1;
+        }else{
+            $value->proses_penyusutan = 0;
+        }
     }
 //     print_r($models);exit();
 
@@ -338,6 +443,18 @@ $app->get('/acc/m_asset/index', function ($request, $response) {
     ]);
 });
 
+$app->get('/acc/m_asset/generateKode', function ($request, $response) {
+    
+    $sql    = $this->db;
+    $y = date("Y");
+    $m = date("m");
+    $cek = $sql->find("select kode from acc_asset where FROM_UNIXTIME(created_at,'%m') = ".$m." and FROM_UNIXTIME(created_at,'%Y') = ".$y." order by kode desc");
+    $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -4)) + 1;
+    $no_urut = substr('0000' . $urut, -4);
+    $no_transaksi = "AST".date("my").$no_urut;
+    
+    return successResponse($response, $no_transaksi);
+}); 
 $app->post('/acc/m_asset/save', function ($request, $response) {
 
     $params = $request->getParams();
@@ -623,32 +740,6 @@ $app->post('/acc/m_asset/delete', function ($request, $response) {
     $data = $request->getParams();
     $db   = $this->db;
 
-//    $cek = $db->select("*")
-    //    ->from("acc_trans_detail")
-    //    ->where("m_akun_id", "=", $request->getAttribute('id'))
-    //    ->find();
-    //
-    //    if ($cek) {
-    //        return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi']);
-    //    }
-    //
-    //    $cek_komponenGaji = $db->select('*')
-    //    ->from('m_komponen_gaji')
-    //    ->where('m_akun_id','=',$data['id'])
-    //    ->find();
-    //
-    //    if (!empty($cek_komponenGaji)) {
-    //       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Master Komponen Gaji']);
-    //    }
-    //
-    //    $cek_Gaji = $db->select('*')
-    //    ->from('t_penggajian')
-    //    ->where('m_akun_id','=',$data['id'])
-    //    ->find();
-    //
-    //    if (!empty($cek_Gaji)) {
-    //       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi Penggajian']);
-    //    }
 
     $delete = $db->delete('m_asset', array('id' => $data['id']));
     if ($delete) {
