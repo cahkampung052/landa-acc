@@ -8,6 +8,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
+    $scope.urlfoto = "api/file/pengeluaran/";
 
     /*
      * Ambil akun kas
@@ -247,6 +248,8 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.getDetail(form.id);
 //        $scope.sumTotal();
         $scope.listgambar(form.id);
+        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
+        
         console.log($scope.form);
         
     };
@@ -261,6 +264,8 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
+        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
+        
     };
     
     /** save action */

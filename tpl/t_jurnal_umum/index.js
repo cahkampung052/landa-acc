@@ -8,6 +8,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
+    $scope.urlfoto = "api/file/jurnal-umum/";
 
     /*
      * ambil akun untuk detail
@@ -95,7 +96,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     };
     $scope.gambarzoom = function (img) {
         var modalInstance = $uibModal.open({
-            template: '<center><img src="api/acc/landa-acc/upload/bukti/' + img + '" class="img-responsive" ></center>',
+            template: '<center><img src=' + $scope.urlfoto + img + '" class="img-responsive" ></center>',
             size: 'md',
         });
     };
@@ -237,6 +238,8 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
+        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
+        console.log($scope.form);
         
     };
     
@@ -247,6 +250,11 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.is_disable = true;
         $scope.formtitle = master + " | Lihat Data : " + form.nama;
         $scope.form = form;
+        $scope.form.tanggal = new Date(form.tanggal);
+        $scope.getDetail(form.id);
+        $scope.listgambar(form.id);
+        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
+        
     };
     
     /** save action */

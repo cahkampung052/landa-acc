@@ -9,13 +9,17 @@ app.controller('tutupbulanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.is_edit = false;
     $scope.is_view = false;
     
+    /*
+     * untuk permission button
+     */
+    $scope.permission = 0;
+    
     $scope.getNeracaSaldo = function (date = null) {
         if(date == null){
             var date = new Date();
         }else{
             var date = new Date(date)
         }
-        
         var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
         var param = {
             export: 0,
@@ -25,6 +29,7 @@ app.controller('tutupbulanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         };
         Data.get('acc/l_neraca_saldo/laporan', param).then(function (response) {
             if (response.status_code == 200) {
+                $scope.form.bulan = date;
                 $scope.data = response.data.data;
                 $scope.detail = response.data.detail;
                 $scope.tampilkan = true;
@@ -54,6 +59,9 @@ app.controller('tutupbulanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
+            if($scope.displayed.length > 1){
+                $scope.permission = 1;
+            }
             $scope.base_url = response.data.base_url;
         });
         $scope.isLoading = false;
@@ -108,63 +116,12 @@ app.controller('tutupbulanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.is_edit = false;
         $scope.is_view = false;
     };
-    $scope.trash = function (row) {
-        var data = angular.copy(row);
-        Swal.fire({
-            title: "Peringatan ! ",
-            text: "Apakah Anda Yakin Ingin Menghapus Data Ini",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Iya, di Hapus",
-            cancelButtonText: "Tidak",
-        }).then((result) => {
-            if (result.value) {
-                row.is_deleted = 1;
-                Data.post(control_link + '/trash', row).then(function (result) {
-                    Swal.fire({
-                        title: "Terhapus",
-                        text: "Data Berhasil Di Hapus.",
-                        type: "success"
-                    }).then(function () {
-                        $scope.cancel();
-                    });
-
-                });
-            }
-        });
-    };
-    $scope.restore = function (row) {
-        var data = angular.copy(row);
-        Swal.fire({
-            title: "Peringatan ! ",
-            text: "Apakah Anda Yakin Ingin Merestore Data Ini",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Iya, di Restore",
-            cancelButtonText: "Tidak",
-        }).then((result) => {
-            if (result.value) {
-                row.is_deleted = 0;
-                Data.post(control_link + '/trash', row).then(function (result) {
-                    Swal.fire({
-                        title: "Restore",
-                        text: "Data Berhasil Di Restore.",
-                        type: "success"
-                    }).then(function () {
-                        $scope.cancel();
-                    });
-
-                });
-            }
-        });
-    };
+    
     $scope.delete = function (row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
-            text: "Apakah Anda Yakin Ingin Menghapus Permanen Data Ini",
+            text: "Apakah Anda Yakin Ingin Menghapus Data Ini",
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
