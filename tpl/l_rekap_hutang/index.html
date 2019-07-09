@@ -1,0 +1,147 @@
+<div class="animated fadeIn">
+    <div ng-controller="l_rekaphutangCtrl">
+        <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
+            <div class="card-header">
+                <strong>{{ master}}</strong>
+            </div>
+            <div class="card-body p-0px">
+                <div class="pl-15px pr-15px">
+                    <div class="row mt-15px">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view">
+                                        <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <div class="col-sm-12 content-center">
+                                    <button class="btn btn-primary btn-sm center" ng-click="view(0, 0)">
+                                        <i class="fa fa-search"></i>
+                                        Tampilkan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" ng-show="tampilkan">
+            <div class="card-header card-header-white">
+                <div class="btn-group pull-right">
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1, 0)">
+                        <i class="fa fa-file"></i>
+                        Excel
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0, 1)">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row header-laporan-wrapper">
+                    <div class="col-md-12">
+                        <center>
+                            <h2 class="header-laporan">LAPORAN REKAP HUTANG</h2>
+                            Lokasi : {{ data.lokasi}}
+                            <br/>
+                            Akun : {{ data.akun}}
+                            <br/>
+                            Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
+                            <br/>
+                            Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
+                            <br/>
+                        </center>
+                        <hr/>
+                    </div>
+                </div>
+                <table class="table table-responside table-striped table-hover table-print table-laporan" style="border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th width="80">
+                                <b>KODE</b>
+                            </th>
+                            <th >
+                                <b>SUPPLIER</b>
+                            </th>
+                            <th width="100">
+                                <b>SALDO AWAL</b>
+                            </th>
+                            <th width="100">
+                                <b>DEBIT</b>
+                            </th>
+                            <th width="100">
+                                <b>KREDIT</b>
+                            </th>
+                            <th width="100">
+                                <b>SALDO AKHIR</b>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="val in detail">
+                            <td align="center" class="text-center" style="vertical-align: top">{{ val.kode }}</td>
+                            <td align="left" style="vertical-align: top">{{ val.nama}}</td>
+                            <td align="right" class="text-right" style="vertical-align: top">
+                                <span ng-if="val.saldoAwal >= 0">{{ val.saldoAwal | number }}</span>
+                                <span ng-if="val.saldoAwal < 0">({{ val.saldoAwal*-1 | number }})</span>
+                            </td>
+                            <td align="right" class="text-right" style="vertical-align: top">{{ val.debit | number }}</td>
+                            <td align="right" class="text-right" style="vertical-align: top">{{ val.kredit | number }}</td>
+                            <td align="right" class="text-right" style="vertical-align: top">
+                                <span ng-if="val.saldoAkhir >= 0">{{ val.saldoAkhir | number }}</span>
+                                <span ng-if="val.saldoAkhir < 0">({{ val.saldoAkhir*-1 | number }})</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">
+                                <b>Saldo Akhir</b>
+                            </td>
+                            <td align="right" class="text-right">
+                                <b ng-if="data.totalSaldoAwal >= 0">{{ data.totalSaldoAwal | number }}</b>
+                                <b ng-if="data.totalSaldoAwal < 0">({{ data.totalSaldoAwal*-1 | number }})</b>
+                            </td>
+                            <td align="right" class="text-right">
+                                <b ng-if="data.totalDebit >= 0">{{ data.totalDebit | number }}</b>
+                                <b ng-if="data.totalDebit < 0">({{ data.totalDebit*-1 | number }})</b>
+                            </td>
+                            <td align="right" class="text-right">
+                                <b ng-if="data.totalKredit >= 0">{{ data.totalKredit | number }}</b>
+                                <b ng-if="data.totalKredit < 0">({{ data.totalKredit*-1 | number }})</b>
+                            </td>
+                            <td align="right" class="text-right">
+                                <b ng-if="data.totalSaldoAkhir >= 0">{{ data.totalSaldoAkhir | number }}</b>
+                                <b ng-if="data.totalSaldoAkhir < 0">({{ data.totalSaldoAkhir*-1 | number }})</b>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

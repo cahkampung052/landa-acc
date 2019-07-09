@@ -63,10 +63,8 @@
                                     {{row.namaUser}}
                                 </td>
                                 <td>
-                                    <div class="btn-group pull-right" role="group"><button type="button" class="btn btn-info fa fa-pencil"  ng-click="update(row)" ng-if="row.is_deleted == 0" ></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
-                                        <button type="button" class="btn btn-warning fa fa-refresh" ng-if="row.is_deleted == 1" ng-click="restore(row);"></button>
-                                        <button type="button" class="btn btn-danger fa fa-minus" ng-if="row.is_deleted == 1" ng-click="delete(row);"></button>
+                                    <div class="btn-group pull-right" role="group">
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="permission && $index == displayed.length-1" ng-click="delete(row);"></button>
                                     </div>
                                 </td>
                             </tr>

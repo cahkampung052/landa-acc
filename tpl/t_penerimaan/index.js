@@ -9,6 +9,8 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
+    $scope.urlfoto = "api/file/penerimaan/";
+    
     Data.get('acc/m_akun/akunKas').then(function(data) {
         $scope.akun = data.data.list;
     });
@@ -83,7 +85,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
     };
     $scope.gambarzoom = function(img) {
         var modalInstance = $uibModal.open({
-            template: '<center><img src="api/acc/landa-acc/upload/bukti/' + img + '" class="img-responsive" ></center>',
+            template: '<center><img src="' + $scope.urlfoto + img + '" class="img-responsive" ></center>',
             size: 'md',
         });
     };
@@ -221,6 +223,8 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
+        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
+        
     };
     /** 
      * view
@@ -234,6 +238,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
+        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
     };
     /**
      * save action

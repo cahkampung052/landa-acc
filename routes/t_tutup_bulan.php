@@ -83,9 +83,7 @@ $app->post('/acc/t_tutup_bulan/save', function ($request, $response) {
     
     $bulan = date("m", strtotime($data['form']['bulan']));
     $tahun = date("Y", strtotime($data['form']['bulan']));
-    $bulandepan = date('Y-m-d', strtotime('first day of next month'));
-    echo $bulandepan;die();
-    
+    $bulandepan = date('Y-m-d', strtotime('first day of next month', strtotime($data['form']['bulan'])));
     $sql = $this->db;
     $validasi = validasi($data['form']);
     if ($validasi === true) {
@@ -111,6 +109,7 @@ $app->post('/acc/t_tutup_bulan/save', function ($request, $response) {
         
         if($model){
             $models = $sql->update("acc_m_setting", ["tanggal"=>$bulandepan], ["id"=>1]);
+            $models2 = $sql->update("acc_trans_detail", ["is_tutup_bulan"=>1], "tanggal < '$bulandepan'");
             return successResponse($response, $model);
         } else {
             return unprocessResponse($response, 'Data Gagal Di Simpan');
@@ -123,30 +122,18 @@ $app->post('/acc/t_tutup_bulan/save', function ($request, $response) {
     }
 });
 
-$app->post('/acc/t_pengeluaran/trash', function ($request, $response) {
+$app->post('/acc/t_tutup_bulan/delete', function ($request, $response) {
 
     $data = $request->getParams();
     $db = $this->db;
-
-//    $cek_komponenGaji = $db->select('*')
-//    ->from('m_komponen_gaji')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_komponenGaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Master Komponen Gaji']);
-//    }
-//    $cek_Gaji = $db->select('*')
-//    ->from('t_penggajian')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_Gaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi Penggajian']);
-//    }
-
-    $model = $db->update("t_tutup_buku", $data, array('id' => $data['id']));
+//    print_r($data);die();
+    $bulanini = date('Y-m-d', strtotime('first day of this month', strtotime($data['tanggal'])));
+    $bulandepan = date('Y-m-d', strtotime('first day of next month', strtotime($data['tanggal'])));
+    echo $bulanini;die();
+    $model = $db->delete("acc_tutup_buku", array('id' => $data['id']));
     if ($model) {
+        $models = $sql->update("acc_m_setting", ["tanggal"=>$bulanini], ["id"=>1]);
+        $models2 = $sql->update("acc_trans_detail", ["is_tutup_bulan"=>0], "tanggal < '$bulandepan' AND tanggal >= '$bulanini'");
         return successResponse($response, $model);
     } else {
         return unprocessResponse($response, ['Gagal menghapus data']);
