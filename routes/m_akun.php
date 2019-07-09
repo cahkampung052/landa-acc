@@ -233,7 +233,7 @@ $app->post('/acc/m_akun/create', function ($request, $response) {
             $data['tipe'] = isset($akun->tipe) ? $akun->tipe : '';
         }
 
-                    $getparent = $db->select("*")->from("acc_m_akun")->where("id", "=", $data['parent_id'])->find();
+                    $getparent = $sql->select("*")->from("acc_m_akun")->where("id", "=", $data['parent_id'])->find();
             $data['tipe'] = $getparent->tipe;
 
         $model = $sql->insert("acc_m_akun", $data);
