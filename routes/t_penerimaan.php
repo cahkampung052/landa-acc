@@ -126,13 +126,13 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
                 acc_m_user.nama as namaUser, 
                 acc_m_akun.kode as kodeAkun, 
                 acc_m_akun.nama as namaAkun, 
-                acc_m_customer.nama as namaCus
+                acc_m_kontak.nama as namaCus
             ")
             ->from("acc_pemasukan")
             ->join("left join", "acc_m_user", "acc_pemasukan.created_by = acc_m_user.id")
             ->join("left join", "acc_m_akun", "acc_pemasukan.m_akun_id = acc_m_akun.id")
             ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pemasukan.m_lokasi_id")
-            ->join("left join", "acc_m_customer", "acc_m_customer.id = acc_pemasukan.m_customer_id")
+            ->join("left join", "acc_m_kontak", "acc_m_kontak.id = acc_pemasukan.m_kontak_id")
             ->orderBy('acc_pemasukan.tanggal DESC')
             ->orderBy('acc_pemasukan.created_at DESC');
     /**
@@ -164,11 +164,12 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     $totalItem = $db->count();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
+        $models[$key]['tanggal_asli'] = date("Y-m-d", $val->modified_at);
         $models[$key]['tanggal'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
         $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
-        $models[$key]['m_customer_id'] = ["id" => $val->m_customer_id, "nama" => $val->namaCus];
+        $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaCus];
     }
     return successResponse($response, [
         'list' => $models,
@@ -201,7 +202,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
          */
         $penerimaan['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
         $penerimaan['m_akun_id'] = $params['form']['m_akun_id']['id'];
-        $penerimaan['m_customer_id'] = (isset($params['form']['m_customer_id']['id']) && !empty($params['form']['m_customer_id']['id'])) ? $params['form']['m_customer_id']['id'] : '';
+        $penerimaan['m_kontak_id'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['id'] : '';
         $penerimaan['diterima_dari'] = (isset($params['form']['diterima_dari']) && !empty($params['form']['diterima_dari']) ? $params['form']['diterima_dari'] : '');
         $penerimaan['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $penerimaan['total'] = $params['form']['total'];
@@ -226,7 +227,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
          */
         $transDetail[0]['m_lokasi_id'] = $model->m_lokasi_id;
         $transDetail[0]['m_akun_id'] = $model->m_akun_id;
-        $transDetail[0]['m_customer_id'] = $model->m_customer_id;
+        $transDetail[0]['m_kontak_id'] = $model->m_kontak_id;
         $transDetail[0]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
         $transDetail[0]['debit'] = $model->total;
         $transDetail[0]['reff_type'] = "acc_pemasukan";

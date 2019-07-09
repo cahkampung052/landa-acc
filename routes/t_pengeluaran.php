@@ -138,13 +138,13 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
             acc_m_user.nama as namaUser, 
             acc_m_akun.kode as kodeAkun, 
             acc_m_akun.nama as namaAkun, 
-            acc_m_supplier.nama as namaSup
+            acc_m_kontak.nama as namaSup
         ")
             ->from("acc_pengeluaran")
             ->join("left join", "acc_m_user", "acc_pengeluaran.created_by = acc_m_user.id")
             ->join("left join", "acc_m_akun", "acc_pengeluaran.m_akun_id = acc_m_akun.id")
             ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pengeluaran.m_lokasi_id")
-            ->join("left join", "acc_m_supplier", "acc_m_supplier.id = acc_pengeluaran.m_supplier_id")
+            ->join("left join", "acc_m_kontak", "acc_m_kontak.id = acc_pengeluaran.m_kontak_id")
             ->orderBy('acc_pengeluaran.tanggal DESC')
             ->orderBy('acc_pengeluaran.created_at DESC');
 
@@ -178,11 +178,12 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
 
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
+        $models[$key]['tanggal_asli'] = date("Y-m-d", $val->modified_at);
         $models[$key]['tanggal'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
         $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
-        $models[$key]['m_supplier_id'] = ["id" => $val->m_supplier_id, "nama" => $val->namaSup];
+        $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup];
     }
 
     return successResponse($response, [
@@ -205,20 +206,24 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
          * Generate kode pengeluaran
          */
         $getNoUrut = $sql->select("*")->from("acc_pengeluaran")->orderBy("no_urut DESC")->find();
+        print_r($getNoUrut);die();
         $penerimaan['no_urut'] = 1;
         $urut = 1;
         if ($getNoUrut) {
-            $penerimaan['no_urut'] = $getNoUrut->no_urut + 1;
-            $urut = ((int) substr($getNoUrut->no_urut, -4)) + 1;
+            $pengeluaran['no_urut'] = $getNoUrut->no_urut + 1;
+            $urut = ((int) substr($getNoUrut->no_urut, -4)+ 1);
         }
+        echo $urut;die();
         $no_urut = substr('0000' . $urut, -4);
         $kode = $params['form']['m_lokasi_id']['kode'] . date("y") . "PNGL" . $no_urut;
+        
+        echo $kode;die();
         /**
          * Simpan penerimaan
          */
         $pengeluaran['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
         $pengeluaran['m_akun_id'] = $params['form']['m_akun_id']['id'];
-        $pengeluaran['m_supplier_id'] = (isset($params['form']['m_supplier_id']['id']) && !empty($params['form']['m_supplier_id']['id'])) ? $params['form']['m_supplier_id']['id'] : '';
+        $pengeluaran['m_kontak_id'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['id'] : '';
         $pengeluaran['dibayar_kepada'] = (isset($params['form']['dibayar_kepada']) && !empty($params['form']['dibayar_kepada']) ? $params['form']['dibayar_kepada'] : '');
         $pengeluaran['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $pengeluaran['total'] = $params['form']['total'];
@@ -271,7 +276,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
          */
         $transDetail[$index]['m_lokasi_id'] = $model->m_lokasi_id;
         $transDetail[$index]['m_akun_id'] = $model->m_akun_id;
-        $transDetail[$index]['m_supplier_id'] = $model->m_supplier_id;
+        $transDetail[$index]['m_kontak_id'] = $model->m_kontak_id;
         $transDetail[$index]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
         $transDetail[$index]['kredit'] = $model->total;
         $transDetail[$index]['reff_type'] = "acc_pengeluaran";

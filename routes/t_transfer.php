@@ -118,6 +118,11 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
     $sql = $this->db;
     $validasi = validasi($data['form']);
     if ($validasi === true) {
+        
+        /*
+        * akun pengimbang
+        */
+        $getakun = $sql->select("*")->from("acc_m_akun_peta")->where("type", "=", "Pengimbang Neraca")->find();
 
         $getNoUrut = $sql->select("*")->from("acc_transfer")->orderBy("no_urut DESC")->find();
         $insert['no_urut'] = 1;
@@ -151,6 +156,12 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
         //delete transdetail
         $deletetransdetail = $sql->delete("acc_trans_detail", ["reff_id"=>$model->id, "reff_type"=>"acc_transfer"]);
 
+        /*
+         * deklarasi untuk simpan ke transdetail
+         */
+        $index = 0;
+        $transDetail = [];
+        
         $insert2['m_lokasi_id'] = $data['form']['m_lokasi_tujuan_id']['id'];
         $insert2['m_akun_id'] = $data['form']['m_akun_tujuan_id']['id'];
         $insert2['tanggal'] = date("Y-m-d",strtotime($data['form']['tanggal']));
@@ -159,7 +170,25 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
         $insert2['reff_id'] = $model->id;
         $insert2['keterangan'] = (isset($data['form']['keterangan']) && !empty($data['form']['keterangan']) ? $data['form']['keterangan'] : '');
         $insert2['kode'] = $model->no_transaksi;
-//        $model2 = $sql->insert("acc_trans_detail", $insert2);
+        
+        $transDetail[$index] = $insert2;
+        
+        /*
+         * jika lokasi beda
+         */
+        if($data['form']['m_lokasi_asal_id'] != $data['form']['m_lokasi_tujuan_id']){
+            
+            
+            $insert2_ = $insert2;
+            $insert2_['m_akun_id'] = $getakun->m_akun_id;
+            $insert2_['debit'] = NULL;
+            $insert2_['kredit'] = $data['form']['total'];
+            
+            $transDetail[$index+1] = $insert2_;
+            $index = $index+2;
+        }else{
+            $index = $index+1;
+        }
         
         $insert3['m_lokasi_id'] = $data['form']['m_lokasi_asal_id']['id'];
         $insert3['m_akun_id'] = $data['form']['m_akun_asal_id']['id'];
@@ -169,23 +198,24 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
         $insert3['reff_id'] = $model->id;
         $insert3['kode'] = $model->no_transaksi;
         $insert3['keterangan'] = (isset($data['form']['keterangan']) && !empty($data['form']['keterangan']) ? $data['form']['keterangan'] : '');
-//        $model3 = $sql->insert("acc_trans_detail", $insert3);
         
-        $model2 = $sql->insert("acc_trans_detail", $insert2);
-        $model3 = $sql->insert("acc_trans_detail", $insert3);
+        
         
         if($data['form']['m_lokasi_asal_id'] != $data['form']['m_lokasi_tujuan_id']){
-            $insert2_ = $insert2;
-            $insert2_['debit'] = NULL;
-            $insert2_['kredit'] = $data['form']['total'];
-            
             $insert3_ = $insert3;
+            $insert3_['m_akun_id'] = $getakun->m_akun_id;
             $insert3_['kredit'] = NULL;
             $insert3_['debit'] = $data['form']['total'];
-            
-            $model2_ = $sql->insert("acc_trans_detail", $insert2_);
-            $model3_ = $sql->insert("acc_trans_detail", $insert3_);
+            $transDetail[$index] = $insert3_;
+            $transDetail[$index+1] = $insert3;
+        }else{
+            $transDetail[$index] = $insert3;
         }
+        
+        
+        
+        insertTransDetail($transDetail);
+        
         
         if ($model) {
             

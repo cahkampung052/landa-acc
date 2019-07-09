@@ -71,8 +71,8 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
     };
     /** save action */
     $scope.save = function (form) {
-        var url = (form.id > 0) ? '/update' : '/create';
-        Data.post(control_link + url, form).then(function (result) {
+//        var url = (form.id > 0) ? '/update' : '/create';
+        Data.post(control_link + '/save', form).then(function (result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.cancel();

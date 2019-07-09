@@ -76,7 +76,7 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
                    $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)");
                }
            $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id'])
-               ->andWhere('acc_trans_detail.m_customer_id', '=', $val->id)
+               ->andWhere('acc_trans_detail.m_kontak_id', '=', $val->id)
                ->andWhere('date(acc_trans_detail.tanggal)', '<', $tanggal_start);
 
            $getsaldoawal = $sql->find();
@@ -91,7 +91,7 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
                    $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)");
                }
            $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id'])
-                ->andWhere('acc_trans_detail.m_customer_id', '=', $val->id)
+                ->andWhere('acc_trans_detail.m_kontak_id', '=', $val->id)
                 ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
                 ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
 

@@ -87,7 +87,6 @@ $app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
 
 $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
     $params  = $request->getParams();
-    
     $db = $this->db;
     $db->select("
         acc_m_akun.*,
@@ -97,10 +96,9 @@ $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
     ")
         ->from('acc_m_akun')
         ->leftJoin('acc_trans_detail', 
-            'acc_trans_detail.m_lokasi_id = ' . $params['m_lokasi_id']['id'] . ' and 
+            'acc_trans_detail.m_lokasi_id = ' . $params['m_lokasi_id'] . ' and 
             acc_trans_detail.m_akun_id = acc_m_akun.id and
-            acc_trans_detail.reff_type = "Saldo Awal" and
-            acc_trans_detail.keterangan = "Saldo Awal"')
+            acc_trans_detail.reff_type = "Saldo Awal"')
         ->where("acc_m_akun.is_deleted", "=", 0)
         ->orderBy('acc_m_akun.kode');
 

@@ -56,8 +56,9 @@ $app->get('/acc/l_rekap_hutang/laporan', function ($request, $response) {
          * ambil supplier
          */
         $supplier = $sql->select("*")
-                ->from("acc_m_supplier")
+                ->from("acc_m_kontak")
                 ->where("is_deleted", "=", 0)
+                ->where("type", "=", "supplier")
                 ->findAll();
         
         $data['totalSaldoAwal'] = 0;
@@ -76,7 +77,7 @@ $app->get('/acc/l_rekap_hutang/laporan', function ($request, $response) {
                    $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)");
                }
            $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id'])
-               ->andWhere('acc_trans_detail.m_supplier_id', '=', $val->id)
+               ->andWhere('acc_trans_detail.m_kontak_id', '=', $val->id)
                ->andWhere('date(acc_trans_detail.tanggal)', '<', $tanggal_start);
 
            $getsaldoawal = $sql->find();
@@ -91,7 +92,7 @@ $app->get('/acc/l_rekap_hutang/laporan', function ($request, $response) {
                    $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)");
                }
            $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id'])
-                ->andWhere('acc_trans_detail.m_supplier_id', '=', $val->id)
+                ->andWhere('acc_trans_detail.m_kontak_id', '=', $val->id)
                 ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
                 ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
 

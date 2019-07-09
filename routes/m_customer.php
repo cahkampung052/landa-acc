@@ -10,9 +10,10 @@ function validasi($data, $custom = array())
 $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("*")
-                ->from("acc_m_customer")
-                ->orderBy("acc_m_customer.nama")
+                ->from("acc_m_kontak")
+                ->orderBy("acc_m_kontak.nama")
                 ->where("is_deleted", "=", 0)
+                ->where("type", "=", "customer")
                 ->findAll();
     return successResponse($response, [
       'list' => $models
@@ -24,8 +25,8 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
     $limit    = isset($params['limit']) ? $params['limit'] : 20;
     $db = $this->db;
     $db->select("*")
-        ->from("acc_m_customer")
-        ->orderBy('acc_m_customer.nama');
+        ->from("acc_m_kontak")
+        ->orderBy('acc_m_kontak.nama');
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
         foreach ($filter as $key => $val) {
@@ -57,10 +58,11 @@ $app->post('/acc/m_customer/save', function ($request, $response) {
     $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
     $validasi = validasi($params);
     if ($validasi === true) {
+        $params['type'] = "customer";
         if (isset($params["id"])) {
-            $model = $sql->update("acc_m_customer", $params, array('id' => $params['id']));
+            $model = $sql->update("acc_m_kontak", $params, array('id' => $params['id']));
         } else {
-            $model = $sql->insert("acc_m_customer", $params);
+            $model = $sql->insert("acc_m_kontak", $params);
         }
         if ($model) {
             return successResponse($response, $model);
@@ -74,7 +76,7 @@ $app->post('/acc/m_customer/save', function ($request, $response) {
 $app->post('/acc/m_customer/trash', function ($request, $response) {
     $data = $request->getParams();
     $db   = $this->db;
-    $model = $db->update("acc_m_customer", $data, array('id' => $data['id']));
+    $model = $db->update("acc_m_kontak", $data, array('id' => $data['id']));
     if ($model) {
         return successResponse($response, $model);
     } else {
@@ -84,7 +86,7 @@ $app->post('/acc/m_customer/trash', function ($request, $response) {
 $app->post('/acc/m_customer/delete', function ($request, $response) {
     $data = $request->getParams();
     $db   = $this->db;
-    $delete = $db->delete('m_customer', array('id' => $data['id']));
+    $delete = $db->delete('acc_m_kontak', array('id' => $data['id']));
     if ($delete) {
         return successResponse($response, ['data berhasil dihapus']);
     } else {

@@ -60,16 +60,16 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
             return xz;
         }
     });
-    uploader.onSuccessItem = function(fileItem, response) {
-        if (response.answer == 'File transfer completed') {
-            var d = new Date();
-            $scope.gambar.unshift({
-                img: response.img,
-                id: response.id
-            });
-            $scope.urlgambar = "api/file/penerimaan/" + d.getFullYear() + "/" + (d.getMonth() + 1) + "/";
-        }
-    };
+//    uploader.onSuccessItem = function(fileItem, response) {
+//        if (response.answer == 'File transfer completed') {
+//            var d = new Date();
+//            $scope.gambar.unshift({
+//                img: response.img,
+//                id: response.id
+//            });
+//            $scope.urlgambar = "api/file/penerimaan/" + d.getFullYear() + "/" + (d.getMonth() + 1) + "/";
+//        }
+//    };
     uploader.onBeforeUploadItem = function(item) {
         item.formData.push({
             id: $scope.form.id,
@@ -92,7 +92,6 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
     $scope.listgambar = function(id) {
         Data.get('acc/t_penerimaan/listgambar/' + id).then(function(data) {
             $scope.gambar = data.data.model;
-            $scope.url = data.data.url;
         });
     };
     /**
@@ -208,7 +207,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         }];
         $scope.sumTotal();
         $scope.gambar = [];
-        $scope.url = "";
+        $scope.urlfoto = "";
     };
     /** 
      * update
@@ -221,9 +220,10 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
+        $scope.tanggal_foto = new Date(form.tanggal_asli);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
-        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
+        $scope.urlfoto += $scope.tanggal_foto.getFullYear() +"/"+ (parseInt($scope.tanggal_foto.getMonth())+1) +"/";
         
     };
     /** 
@@ -236,9 +236,11 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
+        $scope.tanggal_foto = new Date(form.tanggal_asli);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
-        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
+        console.log(form)
+        $scope.urlfoto += $scope.tanggal_foto.getFullYear() +"/"+ (parseInt($scope.tanggal_foto.getMonth())+1) +"/";
     };
     /**
      * save action
@@ -268,6 +270,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         }
         $scope.is_edit = false;
         $scope.is_view = false;
+        $scope.urlfoto = "api/file/penerimaan/";
     };
     /**
      * Hapus transaksi

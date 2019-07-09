@@ -183,7 +183,7 @@
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label-sm">Supplier</label>
                                             <div class="col-sm-9">
-                                                <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_supplier_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_kontak_id" theme="bootstrap" ng-disabled="is_view">
                                                     <ui-select-match placeholder="Pilih Supplier">
                                                         {{ $select.selected.nama}}
                                                     </ui-select-match>
@@ -416,7 +416,7 @@
                                             </div>
                                             <div class="col-md-2 m-b repeat-animation hide-fade" ng-repeat="slide in gambar">
                                                 <a href="" ng-click="gambarzoom(slide.img)">
-                                                    <img class="img-thumbnail" ng-src="{{url}}{{slide.img}}"/>
+                                                    <img class="img-thumbnail" ng-src="{{urlfoto}}{{slide.img}}"/>
                                                 </a>
                                                 <p align="center" ng-show="!is_view" style="padding:10px;">
                                                     <!--<div class="list-group-item">-->

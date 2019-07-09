@@ -18,7 +18,7 @@
                 <div class="pl-15px pr-15px">
                     <div class="row mt-15px">
                         <div class="col-md-12">
-                            <div class="alert alert-secondary">
+                            <div class="">
                                     <div class="form-group row">
                                         <label class="col-sm-1 col-form-label-sm required">Tanggal</label>
                                         <div class="col-sm-3">
@@ -85,7 +85,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.debit"ng-disabled="is_view" ng-blur="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.debit"ng-disabled="is_view || (row.kredit != 0 && row.kredit != undefined)" ng-blur="sumTotal()"/>
                                     </div>
                                 </td>
                                 <td style="text-align: left;">
@@ -93,7 +93,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.kredit"ng-disabled="is_view" ng-blur="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.kredit"ng-disabled="is_view || (row.debit != 0 && row.debit != undefined)" ng-blur="sumTotal()"/>
                                     </div>
                                 </td>
 

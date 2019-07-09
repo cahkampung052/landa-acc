@@ -225,7 +225,7 @@
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
 
-                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="is_view" ng-model="val.debit" ng-change="sumTotal()"/>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="is_view || (val.kredit != 0 && val.kredit != undefined)" ng-model="val.debit" ng-blur="sumTotal()"/>
                                                         </div>
                                                     </td>
                                                     <td>
@@ -234,7 +234,7 @@
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
 
-                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="is_view" ng-model="val.kredit" ng-change="sumTotal()"/>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="is_view || (val.debit != 0 && val.debit != undefined)" ng-model="val.kredit" ng-blur="sumTotal()"/>
                                                         </div>
                                                     </td>
                                                 </tr>

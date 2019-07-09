@@ -35,7 +35,7 @@ app.controller('l_hutangCtrl', function($scope, Data, $rootScope) {
     Data.get('acc/m_supplier/getSupplier').then(function(response) {
         $scope.listSupplier = response.data.list;
         if ($scope.listSupplier.length > 0) {
-            $scope.form.m_supplier_id = $scope.listSupplier[0];
+            $scope.form.m_kontak_id = $scope.listSupplier[0];
         }
     });
     
@@ -49,7 +49,7 @@ app.controller('l_hutangCtrl', function($scope, Data, $rootScope) {
             export: is_export,
             print: is_print,
             m_lokasi_id: $scope.form.m_lokasi_id.id,
-            m_supplier_id : $scope.form.m_supplier_id.id,
+            m_kontak_id : $scope.form.m_kontak_id.id,
             nama_lokasi: $scope.form.m_lokasi_id.nama,
             m_akun_id: $scope.form.m_akun_id.id,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),

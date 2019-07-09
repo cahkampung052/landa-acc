@@ -83,13 +83,13 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
 
     $scope.gambar = [];
 
-    uploader.onSuccessItem = function (fileItem, response) {
-        if (response.answer == 'File transfer completed') {
-            var d = new Date();
-            $scope.gambar.unshift({img: response.img, id: response.id});
-            $scope.urlgambar = "api/file/pengeluaran/"+d.getFullYear()+"/"+(d.getMonth()+1)+"/";
-        }
-    };
+//    uploader.onSuccessItem = function (fileItem, response) {
+//        if (response.answer == 'File transfer completed') {
+//            var d = new Date();
+//            $scope.gambar.unshift({img: response.img, id: response.id});
+//            $scope.urlgambar = "api/file/pengeluaran/"+d.getFullYear()+"/"+(d.getMonth()+1)+"/";
+//        }
+//    };
 
     uploader.onBeforeUploadItem = function (item) {
         item.formData.push({
@@ -114,7 +114,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         console.log(id)
         Data.get('acc/t_pengeluaran/listgambar/' + id).then(function (data) {
             $scope.gambar = data.data.model;
-            $scope.url = data.data.url;
+            console.log("$scope.gambar")
         });
     };
     /* sampe di sini*/
@@ -245,12 +245,13 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
+        $scope.tanggal_foto = new Date(form.tanggal_asli);
         $scope.getDetail(form.id);
 //        $scope.sumTotal();
         $scope.listgambar(form.id);
-        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
+        $scope.urlfoto += $scope.tanggal_foto.getFullYear() +"/"+ (parseInt($scope.tanggal_foto.getMonth())+1) +"/";
         
-        console.log($scope.form);
+        console.log($scope.urlfoto);
         
     };
     
@@ -262,9 +263,10 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
+        $scope.tanggal_foto = new Date(form.tanggal_asli);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
-        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
+        $scope.urlfoto += $scope.tanggal_foto.getFullYear() +"/"+ (parseInt($scope.tanggal_foto.getMonth())+1) +"/";
         
     };
     
@@ -294,6 +296,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         }
         $scope.is_edit = false;
         $scope.is_view = false;
+        $scope.urlfoto = "api/file/pengeluaran/";
     };
     
     /*

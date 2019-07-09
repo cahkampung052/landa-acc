@@ -58,7 +58,7 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
     
     $scope.view = function(form){
         var param = {
-            m_lokasi_id : form.m_lokasi_id,
+            m_lokasi_id : form.m_lokasi_id.id,
             tanggal : form.tanggal
         };
         Data.get('acc/m_akun/getSaldoAwal', param).then(function (response) {

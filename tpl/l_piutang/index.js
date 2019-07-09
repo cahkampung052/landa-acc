@@ -35,7 +35,7 @@ app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
     Data.get('acc/m_customer/getCustomer').then(function(response) {
         $scope.listCustomer = response.data.list;
         if ($scope.listCustomer.length > 0) {
-            $scope.form.m_customer_id = $scope.listCustomer[0];
+            $scope.form.m_kontak_id = $scope.listCustomer[0];
         }
     });
     
@@ -49,7 +49,7 @@ app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
             export: is_export,
             print: is_print,
             m_lokasi_id: $scope.form.m_lokasi_id.id,
-            m_customer_id : $scope.form.m_customer_id.id,
+            m_kontak_id : $scope.form.m_kontak_id.id,
             nama_lokasi: $scope.form.m_lokasi_id.nama,
             m_akun_id: $scope.form.m_akun_id.id,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),

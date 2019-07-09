@@ -73,14 +73,14 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
 
     $scope.gambar = [];
 
-    uploader.onSuccessItem = function (fileItem, response) {
-        if (response.answer == 'File transfer completed') {
-            var d = new Date();
-            $scope.gambar.unshift({img: response.img, id: response.id});
-            $scope.urlgambar = "api/file/jurnal-umum/"+d.getFullYear()+"/"+(d.getMonth()+1)+"/";
-            console.log($scope.urlgambar)
-        }
-    };
+//    uploader.onSuccessItem = function (fileItem, response) {
+//        if (response.answer == 'File transfer completed') {
+//            var d = new Date();
+//            $scope.gambar.unshift({img: response.img, id: response.id});
+//            $scope.urlgambar = "api/file/jurnal-umum/"+d.getFullYear()+"/"+(d.getMonth()+1)+"/";
+//            console.log($scope.urlgambar)
+//        }
+//    };
 
     uploader.onBeforeUploadItem = function (item) {
         item.formData.push({
@@ -105,7 +105,6 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         Data.get('acc/t_jurnal_umum/listgambar/' + id).then(function (data) {
             $scope.gambar = data.data.model;
             console.log(data)
-            $scope.urlgambar = data.data.url;
         });
     };
     /* sampe di sini*/
@@ -169,11 +168,13 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         var totalkredit = 0;
         var totaldebit = 0;
         angular.forEach($scope.listDetail, function (value, key) {
-            totalkredit += parseInt(value.kredit);
-            totaldebit += parseInt(value.debit);
+            console.log(value.debit)
+            totalkredit += (value.kredit != null) ? parseInt(value.kredit) : 0;
+            totaldebit += (value.debit != null) ? parseInt(value.debit) : 0;
         });
         $scope.form.total_debit = totaldebit;
         $scope.form.total_kredit = totalkredit;
+//        console.log(totaldebit)
     };
     
     
@@ -229,6 +230,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     
     /** update */
     $scope.update = function (form) {
+        console.log($scope.urlfoto);
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_update = true;
@@ -236,10 +238,11 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
+        $scope.tanggal_foto = new Date(form.tanggal_asli);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
-        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
-        console.log($scope.form);
+        $scope.urlfoto += $scope.tanggal_foto.getFullYear() +"/"+ (parseInt($scope.tanggal_foto.getMonth())+1) +"/";
+        console.log($scope.urlfoto);
         
     };
     
@@ -248,13 +251,14 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Lihat Data : " + form.nama;
+        $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
+        $scope.tanggal_foto = new Date(form.tanggal_asli);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
-        $scope.urlfoto += $scope.form.tanggal.getFullYear() +"/"+ (parseInt($scope.form.tanggal.getMonth())+1) +"/";
-        
+        $scope.urlfoto += $scope.tanggal_foto.getFullYear() +"/"+ (parseInt($scope.tanggal_foto.getMonth())+1) +"/";
+        console.log($scope.urlfoto);
     };
     
     /** save action */
@@ -282,6 +286,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         }
         $scope.is_edit = false;
         $scope.is_view = false;
+        $scope.urlfoto = "api/file/jurnal-umum/";
     };
     
     /*
