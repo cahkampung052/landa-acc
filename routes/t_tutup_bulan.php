@@ -23,7 +23,7 @@ $app->get('/acc/t_tutup_bulan/index', function ($request, $response) {
 
     $db = $this->db;
 
-    /** Select Gudang from database */
+    /** Select tutupbulan from database */
     $db->select("
       acc_tutup_buku.*,
       acc_m_user.nama as namaUser
@@ -65,11 +65,11 @@ $app->get('/acc/t_tutup_bulan/index', function ($request, $response) {
     // print_r($models);exit();
     $array = [];
     foreach ($models as $key => $val) {
-        $tgl = date('Y-m-d', strtotime($val->tahun . '-' . $val->bulan . '-01'));
+       
         $array[$key] = (array) $val;
-        $array[$key]['created_at'] = date('Y-m-d', strtotime($val->created_at));
-        $array[$key]['hasil_rp'] = rp($val->hasil_lr);
-        $array[$key]['bln_tahun'] = $tgl;
+        $array[$key]['tanggal'] = date('Y-m-d', $val->created_at);
+        $array[$key]['created_at'] = date('d-m-Y', $val->created_at);
+        $array[$key]['bln_tahun'] = date('F', mktime(0, 0, 0, $val->bulan, 10)) .", ". $val->tahun;
     }
 
 

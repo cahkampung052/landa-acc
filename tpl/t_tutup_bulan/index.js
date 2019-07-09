@@ -9,25 +9,29 @@ app.controller('tutupbulanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.is_edit = false;
     $scope.is_view = false;
     
-    $scope.getNeracaSaldo = function () {
-        var date = new Date();
-        var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    $scope.getNeracaSaldo = function (date = null) {
+        if(date == null){
+            var date = new Date();
+        }else{
+            var date = new Date(date)
+        }
         
+        var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
         var param = {
             export: 0,
             print: 0,
             startDate: moment(firstDay).format('YYYY-MM-DD'),
             endDate: moment(date).format('YYYY-MM-DD'),
         };
-            Data.get('acc/l_neraca_saldo/laporan', param).then(function (response) {
-                if (response.status_code == 200) {
-                    $scope.data = response.data.data;
-                    $scope.detail = response.data.detail;
-                    $scope.tampilkan = true;
-                } else {
-                    $scope.tampilkan = false;
-                }
-            });
+        Data.get('acc/l_neraca_saldo/laporan', param).then(function (response) {
+            if (response.status_code == 200) {
+                $scope.data = response.data.data;
+                $scope.detail = response.data.detail;
+                $scope.tampilkan = true;
+            } else {
+                $scope.tampilkan = false;
+            }
+        });
     }
 
     $scope.master = master;
@@ -68,26 +72,16 @@ app.controller('tutupbulanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         console.log($scope.form)
         $scope.getNeracaSaldo();
     };
-    /** update */
-    $scope.update = function (form) {
-        $scope.is_edit = true;
-        $scope.is_view = false;
-        $scope.is_update = true;
-        $scope.is_disable = true;
-        $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
-        $scope.form = form;
-        $scope.form.tanggal = new Date(form.tanggal);
-        $scope.getDetail(form.id);
-        console.log($scope.form);
-        
-    };
+    
     /** view */
     $scope.view = function (form) {
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Lihat Data : " + form.nama;
+        $scope.formtitle = master + " | Lihat Data : " + form.bln_tahun;
+        console.log(form)
         $scope.form = form;
+        $scope.getNeracaSaldo(form.tanggal)
     };
     /** save action */
     $scope.save = function (form) {
