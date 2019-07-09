@@ -237,7 +237,6 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
-        console.log($scope.form);
         
     };
     

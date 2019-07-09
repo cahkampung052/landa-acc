@@ -3,7 +3,8 @@
 /**
  * Multi insert ke trans detail
  */
-function insertTransDetail($data) {
+function insertTransDetail($data)
+{
     $db = new Cahkampung\Landadb(config('DB')['db']);
     if (!empty($data)) {
         foreach ($data as $key => $value) {
@@ -15,14 +16,16 @@ function insertTransDetail($data) {
 /**
  * Set modul ACC URL
  */
-function modulUrl() {
+function modulUrl()
+{
     return config('SITE_URL') . "/" . config('MODUL_ACC_PATH');
 }
 
 /**
  * Set path untuk slim twig view
  */
-function twigViewPath() {
+function twigViewPath()
+{
     $view = new \Slim\Views\Twig(config('MODUL_ACC_PATH') . '/view');
     return $view;
 }
@@ -30,7 +33,8 @@ function twigViewPath() {
 /**
  * Buat nested tree
  */
-function buildTree($elements, $parentId = 0) {
+function buildTree($elements, $parentId = 0)
+{
     $branch = array();
 
     foreach ($elements as $element) {
@@ -49,7 +53,8 @@ function buildTree($elements, $parentId = 0) {
 /**
  * ubah id child jadi numerical array
  */
-function buildFlatTree($tree, $ids = []) {
+function buildFlatTree($tree, $ids = [])
+{
     $colName = 'id';
     $childColName = 'children';
     foreach ($tree as $element) {
@@ -68,7 +73,8 @@ function buildFlatTree($tree, $ids = []) {
 /**
  * Ambil semua id child
  */
-function getChildId($tabelName, $parentId) {
+function getChildId($tabelName, $parentId)
+{
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $db->select("*")->from($tabelName)->where("is_deleted", "=", 0);
     $data = $db->findAll();
@@ -78,13 +84,14 @@ function getChildId($tabelName, $parentId) {
     return $child;
 }
 
-function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null) {
+function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array = true)
+{
     $sql = new Cahkampung\Landadb(config('DB')['db']);
 
     /*
      * ambil child lokasi
      */
-    if($lokasi != null){
+    if ($lokasi != null) {
         $lokasiId = getChildId("acc_m_lokasi", $lokasi);
         if (!empty($lokasiId)) {
             array_push($lokasiId, $lokasi);
@@ -108,6 +115,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null) {
             ->customWhere("id IN (4, 5, 6, 7, 8, 9)")
             ->findAll();
     $arr = [];
+    $total = 0;
 
     /*
      * proses perulangan
@@ -129,17 +137,16 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null) {
 
 
         foreach ($getakun as $key => $val) {
-
             $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
                     ->from("acc_trans_detail");
             if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
                 $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
             }
             $sql->where('acc_trans_detail.m_akun_id', '=', $val->id);
-            if($tanggal_end != null){
+            if ($tanggal_end != null) {
                 $sql->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
                 ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
-            }else{
+            } else {
                 $sql->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_start);
             }
                 
@@ -151,16 +158,25 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null) {
                     $arr[$index]['detail'][$val->id]['nama'] = $val->nama;
                     $arr[$index]['detail'][$val->id]['nominal'] = 0;
                 } else {
-//                        $arr[$index][$val->parent_id]['detail'][] = (array) $val;
                     $arr[$index]['detail'][$val->parent_id]['detail'][$key]['kode'] = $val->kode;
                     $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nama'] = $val->nama;
-                    $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'] = intval($gettransdetail->debit) - intval($gettransdetail->kredit);
+                    $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'] = (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
                     $arr[$index]['total'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
                     $arr[$index]['detail'][$val->parent_id]['nominal'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
+                }
+
+                if($akun->tipe == "HARTA" || $akun->tipe == "PENDAPATAN LAIN"){
+                    $total += (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
+                }else{
+                    $total -= (intval($gettransdetail->debit) - intval($gettransdetail->kredit));
                 }
             }
         }
     }
 
-    return $arr;
+    if ($array) {
+        return $arr;
+    } else {
+        return $total;
+    }
 }
