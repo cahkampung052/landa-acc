@@ -157,7 +157,9 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $saldo               = getSaldo($value->id, null, null);
         $spasi               = ($value->level == 1) ? '' : str_repeat("···", $value->level - 1);
         $value->nama_lengkap = $spasi . $value->kode . ' - ' . $value->nama;
-        $value->parent_id    = $value->parent_id;
+        $value->parent_id    = (int) $value->parent_id;
+        $value->saldo_normal    = (int) $value->saldo_normal;
+        $value->is_kas    = (int) $value->is_kas;
         $value->kode         = str_replace($value->kode_induk.".", "", $value->kode);
         $value->saldo        = $saldo;
         $value->tipe         = ($value->tipe == 'No Type') ? '' : $value->tipe;
