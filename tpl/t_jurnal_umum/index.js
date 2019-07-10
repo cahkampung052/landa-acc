@@ -99,7 +99,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     };
     $scope.gambarzoom = function (img) {
         var modalInstance = $uibModal.open({
-            template: '<center><img src=' + $scope.urlfoto + img + '" class="img-responsive" ></center>',
+            template: '<center><img src=' + $scope.urlfoto + img + ' class="img-fluid" ></center>',
             size: 'md',
         });
     };

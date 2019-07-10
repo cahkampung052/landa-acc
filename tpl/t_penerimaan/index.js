@@ -88,7 +88,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
     };
     $scope.gambarzoom = function(img) {
         var modalInstance = $uibModal.open({
-            template: '<center><img src="' + $scope.urlfoto + img + '" class="img-responsive" ></center>',
+            template: '<center><img src="' + $scope.urlfoto + img + '" class="img-fluid" ></center>',
             size: 'md',
         });
     };
