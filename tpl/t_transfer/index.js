@@ -13,6 +13,10 @@ app.controller('transferCtrl', function ($scope, Data, $rootScope, $uibModal, Up
     });
     
     Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
+        
+        $scope.tanggal_setting = response.data.tanggal;
+        console.log($scope.tanggal_setting)
+        
         $scope.options = {
             minDate: new Date(response.data.tanggal),
         };

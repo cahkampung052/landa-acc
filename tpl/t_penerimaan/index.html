@@ -55,15 +55,15 @@
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
                                 <td style="text-align: left;">{{ row.no_transaksi }}</td>
                                 <td style="text-align: left;">{{ row.namaLokasi }}</td>
-                                <td style="text-align: left;">{{ row.tanggal }}</td>
+                                <td style="text-align: left;">{{ row.tanggal_formated }}</td>
                                 <td style="text-align: left;">{{ row.total| currency }}</td>
                                 <td style="text-align: left;">{{ row.created_at }}</td>
                                 <td style="text-align: left;">{{ row.namaUser }}</td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
-                                        <button type="button" class="btn btn-default fa fa-print"  ng-click="print(row);"></button>
-                                        <button type="button" class="btn btn-info fa fa-pencil"  ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row);"></button>
+                                        <button type="button" class="btn btn-default fa fa-print" ng-click="print(row);"></button>
+                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="row.tanggal >= tanggal_setting" ng-click="update(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.tanggal >= tanggal_setting" ng-click="delete(row);"></button>
                                     </div>
                                 </td>
                             </tr>

@@ -91,7 +91,8 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
     
     foreach($models as $key => $val){
         $models[$key] = (array) $val;
-        $models[$key]['tanggal'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
+        $models[$key]['tanggal'] = date("Y-m-d h:i:s", strtotime($val->tanggal));
+        $models[$key]['tanggal_formated'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i:s",$val->created_at);
         $models[$key]['m_akun_asal_id'] = ["id" => $val->idAsal, "nama" => $val->namaAsal, "kode" => $val->kodeAsal];
         $models[$key]['m_akun_tujuan_id'] = ["id" => $val->idTujuan, "nama" => $val->namaTujuan, "kode" => $val->kodeTujuan];
@@ -229,30 +230,14 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
 });
 
 
-$app->post('/acc/t_transfer/trash', function ($request, $response) {
+$app->post('/acc/t_transfer/delete', function ($request, $response) {
 
     $data = $request->getParams();
     $db   = $this->db;
 
-//    $cek_komponenGaji = $db->select('*')
-//    ->from('m_komponen_gaji')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_komponenGaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Master Komponen Gaji']);
-//    }
-
-//    $cek_Gaji = $db->select('*')
-//    ->from('t_penggajian')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_Gaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi Penggajian']);
-//    }
-
-    $model = $db->update("acc_transfer", $data, array('id' => $data['id']));
+    
+    $model = $db->delete("acc_transfer", ['id' => $data['id']]);
+    $model = $db->deleted("acc_trans_detail", ["reff_type" => "acc_transfer", "reff_id" => $data['id']]);
     if ($model) {
         return successResponse($response, $model);
     } else {

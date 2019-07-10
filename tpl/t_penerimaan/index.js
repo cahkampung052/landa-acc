@@ -24,6 +24,9 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.listLokasi = response.data.list;
     });
     Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
+        
+        $scope.tanggal_setting = response.data.tanggal;
+        
         $scope.options = {
             minDate: new Date(response.data.tanggal),
         };
@@ -220,7 +223,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
-        $scope.tanggal_foto = new Date(form.tanggal_asli);
+        $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
         $scope.urlfoto += $scope.tanggal_foto.getFullYear() +"/"+ (parseInt($scope.tanggal_foto.getMonth())+1) +"/";
@@ -236,7 +239,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
-        $scope.tanggal_foto = new Date(form.tanggal_asli);
+        $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
         console.log(form)

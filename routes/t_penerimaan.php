@@ -165,8 +165,8 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     $totalItem = $db->count();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
-        $models[$key]['tanggal_asli'] = date("Y-m-d", $val->modified_at);
-        $models[$key]['tanggal'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
+        $models[$key]['tanggal'] = date("Y-m-d", $val->modified_at);
+        $models[$key]['tanggal_formated'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
         $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];

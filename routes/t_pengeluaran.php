@@ -179,8 +179,8 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
 
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
-        $models[$key]['tanggal_asli'] = date("Y-m-d", $val->modified_at);
-        $models[$key]['tanggal'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
+        $models[$key]['tanggal'] = date("Y-m-d", $val->modified_at);
+        $models[$key]['tanggal_formated'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
         $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
@@ -207,18 +207,18 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
          * Generate kode pengeluaran
          */
         $getNoUrut = $sql->select("*")->from("acc_pengeluaran")->orderBy("no_urut DESC")->find();
-        print_r($getNoUrut);die();
+//        print_r($getNoUrut);die();
         $penerimaan['no_urut'] = 1;
         $urut = 1;
         if ($getNoUrut) {
             $pengeluaran['no_urut'] = $getNoUrut->no_urut + 1;
             $urut = ((int) substr($getNoUrut->no_urut, -4)+ 1);
         }
-        echo $urut;die();
+//        echo $urut;die();
         $no_urut = substr('0000' . $urut, -4);
         $kode = $params['form']['m_lokasi_id']['kode'] . date("y") . "PNGL" . $no_urut;
         
-        echo $kode;die();
+//        echo $kode;die();
         /**
          * Simpan penerimaan
          */

@@ -556,7 +556,7 @@ $app->get('/acc/m_akun/getTanggalSetting', function ($request, $response){
     $models = $db->select("*")->from("acc_m_setting")
             ->orderBy("id DESC")
             ->find();
-    $models->tanggal = date('Y-m-d H:i:s', strtotime($models->tanggal . ' -1 day'));
+    $models->tanggal = date('Y-m-d H:i:s', strtotime($models->tanggal));
     return successResponse($response, $models);
 });
 

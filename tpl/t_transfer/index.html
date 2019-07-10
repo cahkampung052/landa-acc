@@ -93,7 +93,7 @@
                                     {{row.total}}
                                 </td>
                                 <td style="text-align: left;">
-                                    {{row.tanggal}}
+                                    {{row.tanggal_formated}}
                                 </td>
                                 <td style="text-align: left;">
                                     {{row.created_at}}
@@ -102,10 +102,9 @@
                                     {{row.namaUser}}
                                 </td>
                                 <td>
-                                    <div class="btn-group pull-right" role="group"><button type="button" class="btn btn-info fa fa-pencil"  ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
-                                        <button type="button" class="btn btn-warning fa fa-refresh" ng-if="row.is_deleted == 1" ng-click="restore(row);"></button>
-                                        <button type="button" class="btn btn-danger fa fa-minus" ng-if="row.is_deleted == 1" ng-click="delete(row);"></button>
+                                    <div class="btn-group pull-right" role="group">
+                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="row.tanggal >= tanggal_setting"  ng-click="update(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.tanggal >= tanggal_setting" ng-click="delete(row);"></button>
                                     </div>
                                 </td>
                             </tr>
