@@ -56,8 +56,9 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
          * ambil supplier
          */
         $supplier = $sql->select("*")
-                ->from("acc_m_customer")
+                ->from("acc_m_kontak")
                 ->where("is_deleted", "=", 0)
+                ->where("type", "=", "customer")
                 ->findAll();
         
         $data['totalSaldoAwal'] = 0;

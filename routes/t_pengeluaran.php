@@ -262,6 +262,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
                  * Simpan trans detail ke array
                  */
                 $transDetail[$index]['m_akun_id'] = $modeldetail->m_akun_id;
+                $transDetail[$index]['m_kontak_id'] = $model->m_kontak_id;
                 $transDetail[$index]['m_lokasi_id'] = $modeldetail->m_lokasi_id;
                 $transDetail[$index]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
                 $transDetail[$index]['debit'] = $modeldetail->debit;
