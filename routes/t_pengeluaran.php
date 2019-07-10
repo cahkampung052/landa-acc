@@ -208,7 +208,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
          */
         $getNoUrut = $sql->select("*")->from("acc_pengeluaran")->orderBy("no_urut DESC")->find();
 //        print_r($getNoUrut);die();
-        $penerimaan['no_urut'] = 1;
+        $pengeluaran['no_urut'] = 1;
         $urut = 1;
         if ($getNoUrut) {
             $pengeluaran['no_urut'] = $getNoUrut->no_urut + 1;
