@@ -37,9 +37,9 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
     $offset   = isset($params['offset']) ? $params['offset'] : 0;
     $limit    = isset($params['limit']) ? $params['limit'] : 10;
 
-    $arr = getChildId("acc_m_lokasi", 0);
-    print_r($arr);
-    exit();
+    // $arr = getChildId("acc_m_lokasi", 0);
+    // print_r($arr);
+    // exit();
     
     $db = $this->db;
     $db->select("acc_m_lokasi.*, induk.kode as kodeInduk, induk.nama as namaInduk")
