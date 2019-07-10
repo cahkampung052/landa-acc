@@ -13,7 +13,7 @@ app.controller('l_rekaphutangCtrl', function($scope, Data, $rootScope) {
     /**
      * Ambil list semua akun
      */
-    Data.get('acc/m_akun/akunHutang').then(function(data) {
+    Data.get('acc/m_akun/akunDetail').then(function(data) {
         $scope.listAkun = data.data.list;
         if ($scope.listAkun.length > 0) {
             $scope.form.m_akun_id = $scope.listAkun[0];

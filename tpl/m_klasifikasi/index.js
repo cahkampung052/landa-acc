@@ -10,44 +10,46 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
     $scope.form = {};
     $scope.is_edit = false;
     $scope.is_view = false;
+    $scope.is_create = false;
     $scope.loading = false;
     /**
      * End inialisasi
      */
+    /**
+     * get list klasifikasi
+     */
     $scope.getList = function() {
         Data.get(control_link + '/list').then(function(data) {
             $scope.parent = data.data.list;
+            if ($scope.parent.length > 0 && $scope.is_create) {
+                $scope.form.parent_id = $scope.parent[0].id;
+                $scope.getakun($scope.form.parent_id);
+            }
+        });
+    };
+    /**
+     * Get kode akun induk
+     */
+    $scope.getakun = function(id) {
+        Data.get('acc/m_akun/getakun/' + id).then(function(data) {
+            $scope.form.kode_induk = data.data.data.kode;
         });
     };
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
-        var offset = tableState.pagination.start || 0;
-        var limit = tableState.pagination.number || 1000;
-        var param = {
-            offset: offset,
-            limit: limit
-        };
-        if (tableState.sort.predicate) {
-            param["sort"] = tableState.sort.predicate;
-            param["order"] = tableState.sort.reverse;
-        }
+        var param = {};
         if (tableState.search.predicateObject) {
             param["filter"] = tableState.search.predicateObject;
         }
         Data.get(control_link + "/index", param).then(function(response) {
             $scope.displayed = response.data.list;
-            //            $scope.parent = response.data.list;
-            tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
         $scope.isLoading = false;
     };
-    $scope.getakun = function(id) {
-        Data.get('acc/m_akun/getakun/' + id).then(function(data) {
-            $scope.form.kode_induk = data.data.data.kode;
-        });
-    }
-    /**import*/
+    /**
+     * import
+     */
     $scope.uploadFiles = function(file, errFiles) {
         $scope.f = file;
         $scope.errFile = errFiles && errFiles[0];
@@ -73,43 +75,50 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
             $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
         }
     };
-    /**export*/
+    /**
+     * export
+     */
     $scope.export = function() {
         window.location = 'api/acc/m_klasifikasi/export';
     };
+    /**
+     * create
+     */
     $scope.create = function() {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = true;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-        $scope.form.parent_id = '0';
         $scope.getList();
     };
-    /** update */
+    /** 
+     * update
+     */
     $scope.update = function(form) {
         $scope.is_edit = true;
         $scope.is_view = false;
-        $scope.is_update = true;
-        $scope.is_disable = true;
+        $scope.is_create = false;
         $scope.formtitle = master + " | Edit Data : " + form.nama;
+        $scope.getList();
         $scope.form = form;
         $scope.getakun(form.parent_id);
-        $scope.getList();
     };
-    /** view */
+    /** 
+     * view
+     */
     $scope.view = function(form) {
         $scope.is_edit = true;
         $scope.is_view = true;
-        $scope.is_update = true;
+        $scope.is_create = false;
         $scope.formtitle = master + " | LIhat Data : " + form.nama;
         $scope.form = form;
-        $scope.form.password = '';
     };
-    /** save action */
+    /** 
+     * save action
+     */
     $scope.save = function(form) {
-        var url = (form.id > 0) ? '/update' : '/create';
-        Data.post(control_link + url, form).then(function(result) {
+        Data.post(control_link + '/save', form).then(function(result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.cancel();
@@ -118,7 +127,9 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
             }
         });
     };
-    /** cancel action */
+    /** 
+     * cancel action
+     */
     $scope.cancel = function() {
         if (!$scope.is_view) {
             $scope.callServer(tableStateRef);
@@ -126,6 +137,9 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
         $scope.is_edit = false;
         $scope.is_view = false;
     };
+    /**
+     * Hapus
+     */
     $scope.trash = function(row) {
         var data = angular.copy(row);
         Swal.fire({
@@ -146,6 +160,9 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
             }
         });
     };
+    /**
+     * Restore
+     */
     $scope.restore = function(row) {
         var data = angular.copy(row);
         Swal.fire({
@@ -161,26 +178,6 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
                 row.is_deleted = 0;
                 Data.post(control_link + '/trash', row).then(function(result) {
                     $rootScope.alert("Berhasil", "Data berhasil direstore", "success");
-                    $scope.cancel();
-                });
-            }
-        });
-    };
-    $scope.delete = function(row) {
-        var data = angular.copy(row);
-        Swal.fire({
-            title: "Peringatan ! ",
-            text: "Apakah Anda Yakin Ingin Menghapus Permanen Data Ini",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Iya, di Hapus",
-            cancelButtonText: "Tidak",
-        }).then((result) => {
-            if (result.value) {
-                row.is_deleted = 1;
-                Data.post(control_link + '/delete', row).then(function(result) {
-                    $rootScope.alert("Berhasil", "Data berhasil dihapus permanen", "success");
                     $scope.cancel();
                 });
             }

@@ -20,7 +20,7 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
                 ->findAll();
     
     foreach($models as $key => $val){
-        $spasi                            = ($val->level == 0) ? '' : str_repeat("· · · ", $val->level);
+        $spasi                            = ($val->level == 0) ? '' : str_repeat("···", $val->level);
         $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
         
     }
@@ -37,6 +37,10 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
     $offset   = isset($params['offset']) ? $params['offset'] : 0;
     $limit    = isset($params['limit']) ? $params['limit'] : 10;
 
+    $arr = getChildId("acc_m_lokasi", 0);
+    print_r($arr);
+    exit();
+    
     $db = $this->db;
     $db->select("acc_m_lokasi.*, induk.kode as kodeInduk, induk.nama as namaInduk")
         ->from("acc_m_lokasi")
@@ -70,9 +74,9 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
     $totalItem = $db->count();
     
     foreach($models as $key => $val){
-        $spasi                            = ($val->level == 0) ? '' : str_repeat("· · · ", $val->level);
+        $spasi                            = ($val->level == 0) ? '' : str_repeat("···", $val->level);
         $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
-        $val->parent_id = ["id"=>$val->parent_id, "nama"=>$val->namaInduk, "kode"=>$val->kodeInduk];
+        $val->parent_id = ["id"=>$val->parent_id, "nama"=>$val->namaInduk, "kode"=>$val->kodeInduk, "level" => $val->level];
         
     }
 //     print_r($models);exit();
@@ -96,8 +100,7 @@ $app->post('/acc/m_lokasi/save', function ($request, $response) {
     $validasi = validasi($params);
     if ($validasi === true) {
         if(isset($params['parent_id']) && !empty($params['parent_id'])){
-            $params['level'] = $params['parent_id']['level']+1;
-            $kode_parent = $params['parent_id']['kode_parent'];
+            $params['level'] = $params['parent_id']['level'] + 1;
         }else{
             $params['level'] = 0;
         }
@@ -110,6 +113,8 @@ $app->post('/acc/m_lokasi/save', function ($request, $response) {
         }
         
         if(isset($params['parent_id']) && !empty($params['parent_id'])){
+                        $kode_parent = $params['parent_id']['kode_parent'];
+
             $data['kode_parent'] = $kode_parent . "." . $model->id;
         }else{
             $data['kode_parent'] = $model->id;

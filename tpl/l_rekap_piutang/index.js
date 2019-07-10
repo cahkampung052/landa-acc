@@ -13,7 +13,7 @@ app.controller('l_rekappiutangCtrl', function($scope, Data, $rootScope) {
     /**
      * Ambil list semua akun
      */
-    Data.get('acc/m_akun/akunPiutang').then(function(data) {
+    Data.get('acc/m_akun/akunDetail').then(function(data) {
         $scope.listAkun = data.data.list;
         if ($scope.listAkun.length > 0) {
             $scope.form.m_akun_id = $scope.listAkun[0];
