@@ -10,8 +10,9 @@ function validasi($data, $custom = array())
     $validasi = array(
         "kode" => "required",
         "nama" => "required",
-//        "tipe" => "required"
+        "parent_id" => "required",
     );
+    GUMP::set_field_name("parent_id", "Klasifikasi Induk");
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
@@ -25,29 +26,20 @@ function setLevelTipeAkun($parent_id)
     return $parent->level + 1;
 }
 /**
- * Ambil semua hak akses
+ * Ambil semua klasifikasi akun
  */
 $app->get('/acc/m_klasifikasi/index', function ($request, $response) {
     $params = $request->getParams();
-    $filter = array();
-    $sort = "acc_m_akun.kode ASC";
-    $offset = 0;
-    $limit = 1000;
-    if (isset($params['limit'])) {
-        $limit = $params['limit'];
-    }
-    if (isset($params['offset'])) {
-        $offset = $params['offset'];
-    }
     $db = $this->db;
-    $db->select("acc_m_akun.*")
+    /**
+     * Ambil semua klasifikasi
+     */
+    $db->select('acc_m_akun.*, induk.kode as kode_induk')
         ->from('acc_m_akun')
-        ->limit($limit)
-        ->orderBy($sort)
-        ->offset($offset)
-        ->where('is_tipe', '=', '1')
+        ->leftJoin('acc_m_akun as induk', 'induk.id = acc_m_akun.parent_id')
+        ->where('acc_m_akun.is_tipe', '=', '1')
         ->orderBy('acc_m_akun.kode ASC');
-    /** 
+    /**
      * set parameter
      */
     if (isset($params['filter'])) {
@@ -63,19 +55,18 @@ $app->get('/acc/m_klasifikasi/index', function ($request, $response) {
         }
     }
     $models    = $db->findAll();
-    $totalItem = $db->count();
     $arr = array();
     foreach ($models as $key => $value) {
-        $arr[$key] = (array) $value;
-        $spasi                            = ($value->level == 1) ? '' : str_repeat("···", $value->level - 1);
-        $arr[$key]['nama_lengkap']        = $spasi . $value->kode . ' - ' . $value->nama;
-        $arr[$key]['parent_id']           = $arr[$key]['parent_id'] == 0 ? (string) $value->parent_id : (int) $value->parent_id;
-        $arr[$key]['kode']                = $value->kode;
-        if ($value->tipe == 'No Type') {
-            $arr[$key]['tipe'] = '';
-        }
+        $spasi                      = ($value->level == 1) ? '' : str_repeat("···", $value->level - 1);
+        $value->nama_lengkap        = $spasi . $value->kode . ' - ' . $value->nama;
+        $value->parent_id           = $value->parent_id == 0 ? (string) $value->parent_id : (int) $value->parent_id;
+        $value->kode                = ($value->id <= 9) ? $value->kode : str_replace($value->kode_induk.".", "", $value->kode);
+        $value->tipe                = ($value->tipe == 'No Type') ? '' : $value->tipe;
     }
-    return successResponse($response, ['list' => $arr, 'totalItems' => $totalItem]);
+    /**
+     * Kirim response ke client
+     */
+    return successResponse($response, ['list' => $models]);
 });
 /**
  * Ambil list klasifikasi
@@ -84,20 +75,24 @@ $app->get('/acc/m_klasifikasi/list', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("acc_m_akun.*")
         ->from('acc_m_akun')
-        ->where('is_tipe', '=', '1')
+        ->where('is_tipe', '=', 1)
         ->where('is_deleted', '=', 0)
         ->orderBy('acc_m_akun.kode ASC')
         ->findAll();
+    /**
+     * Kirim response ke server
+     */
     return successResponse($response, ['list' => $models]);
 });
 /**
- * Create klasifikasi
+ * Simpan klasifikasi
  */
-$app->post('/acc/m_klasifikasi/create', function ($request, $response) {
-    $data = $request->getParams();
-    $db = $this->db;
-//    print_r($data);die();
+$app->post('/acc/m_klasifikasi/save', function ($request, $response) {
+    $data   = $request->getParams();
+    $db     = $this->db;
     $data['tipe'] = isset($data['tipe']) ? $data['tipe'] : '';
+    $data['nama'] = isset($data['nama']) ? $data['nama'] : '';
+    $data['parent_id'] = isset($data['parent_id']) ? $data['parent_id'] : '';
     $validasi = validasi($data);
     if ($validasi === true) {
         $data['is_tipe'] = 1;
@@ -106,56 +101,35 @@ $app->post('/acc/m_klasifikasi/create', function ($request, $response) {
             $data['level'] = 1;
         } else {
             $data['level'] = setLevelTipeAkun($data['parent_id']);
-            $getparent = $db->select("*")->from("acc_m_akun")->where("id", "=", $data['parent_id'])->find();
+            /**
+             * Update tipe akun di atasnya
+             */
+            $getparent = $db->select('*')->from('acc_m_akun')->where('id', '=', $data['parent_id'])->find();
             $data['tipe'] = $getparent->tipe;
         }
-//        print_r($data);die();
-        $model = $db->insert("acc_m_akun", $data);
-        if ($model) {
-            return successResponse($response, $model);
-        } else {
-            return unprocessResponse($response, ['Data Gagal Di Simpan']);
-        }
-    } else {
-        return unprocessResponse($response, $validasi);
-    }
-});
-/**
- * Update klasifikasi
- */
-$app->post('/acc/m_klasifikasi/update', function ($request, $response) {
-    $data = $request->getParams();
-    $db = $this->db;
-    $validasi = validasi($data);
-    if ($validasi === true) {
-        $data['is_tipe'] = 1;
-                    $getparent = $db->select("*")->from("acc_m_akun")->where("id", "=", $data['parent_id'])->find();
-            $data['tipe'] = $getparent->tipe;
-        $model = $db->update("acc_m_akun", $data, array('id' => $data['id']));
-        /** 
-         * Update tipe di semua akun
+        /**
+         * Simpan ke database
          */
-        $db->update('acc_m_akun', ['tipe' => $model->tipe], ['parent_id' => $model->id]);
-        $db->update('acc_m_akun', ['tipe_arus' => $model->tipe_arus], ['parent_id' => $model->id]);
-        if ($model) {
-            return successResponse($response, $model);
+        if (isset($data['id']) && !empty($data['id'])) {
+            $model = $db->update('acc_m_akun', $data, ['id' => $data['id']]);
         } else {
-            return unprocessResponse($response, ['Data Gagal Di Simpan']);
+            $model = $db->insert('acc_m_akun', $data);
         }
+        return successResponse($response, $model);
     } else {
         return unprocessResponse($response, $validasi);
     }
 });
 /**
- * Non aktifkasn klasifikasi
+ * Hapus klasifikasi
  */
 $app->post('/acc/m_klasifikasi/trash', function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
-    $data['is_deleted'] = $data['is_deleted'];
-    $data['tgl_nonaktif'] = date('Y-m-d');
+    $update['is_deleted'] = $data['is_deleted'];
+    $update['tgl_nonaktif'] = date('Y-m-d');
     try {
-        $model = $db->update("acc_m_akun", $data, array('id' => $data['id']));
+        $model = $db->update("acc_m_akun", $update, ['id' => $data['id']]);
         return successResponse($response, $model);
     } catch (Exception $e) {
         return unprocessResponse($response, ['Data Gagal Di Simpan']);

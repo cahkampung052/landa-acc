@@ -41,6 +41,7 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
     $db = $this->db;
     $db->select("*")
         ->from("acc_m_kontak")
+        ->where("type", "=", "customer")
         ->orderBy('acc_m_kontak.nama');
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);

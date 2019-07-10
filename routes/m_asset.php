@@ -92,8 +92,14 @@ $app->get('/acc/m_asset/list_penyusutan', function ($request, $response) {
 
     $models    = $db->findAll();
     $totalItem = $db->count();
+    $setting = $db->find("SELECT * FROM acc_m_setting LIMIT 1");
     foreach ($models as $key => $value) {
         $value->periode_format = date("F Y",strtotime($value->periode));   
+        if (date("Y-m-t",strtotime($value->periode)) < $setting->tanggal) {
+            $value->is_hidden = true;
+        }else{
+            $value->is_hidden = false;
+        }
     }
 //     print_r($models);exit();
 
@@ -503,6 +509,31 @@ $app->post('/acc/m_asset/save', function ($request, $response) {
         return unprocessResponse($response, $validasi);
     }
 });
+
+
+$app->get('/acc/m_asset/get_min_tgl_pelepasan', function ($request, $response) {
+    
+    $sql    = $this->db;
+    $params = $request->getParams();
+    $asset_id = $params["id"];
+    $cek = $sql->select("acc_riw_penyusutan.periode")
+            ->from("acc_riw_penyusutan_dt")
+            ->leftJoin("acc_riw_penyusutan","acc_riw_penyusutan.id = acc_riw_penyusutan_dt.riw_id")
+            ->where("acc_riw_penyusutan_dt.asset_id","=",$asset_id)
+            ->orderBy("acc_riw_penyusutan.periode DESC")
+            ->limit("1")
+            ->find();
+    if ($cek) {
+        $min_tgl = date("Y-m-t",strtotime($cek->periode));
+        $min_tgl = date("Y-m-d",strtotime($min_tgl. "+1 days"));
+        $minimal = true;
+    }else{
+        $min_tgl = date("Y-m-d");
+        $minimal = false;
+    }
+
+    return successResponse($response, ['tanggal'=>$min_tgl,'minimal'=>$minimal]);
+}); 
 
 $app->post('/acc/m_asset/proses_pelepasan', function ($request, $response) {
 

@@ -7,12 +7,14 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
+    $scope.is_create = false;
 
     $scope.listParent = function () {
         Data.get(control_link + '/getLokasi').then(function (data) {
-
             $scope.parent = data.data.list;
-            console.log($scope.parent);
+            if ($scope.parent.length > 0 && $scope.is_create) {
+                $scope.form.parent_id = $scope.parent[0];
+            }
         });
     }
 
@@ -53,8 +55,7 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = true;
-        $scope.is_update = false;
-        $scope.is_disable = false;
+        $scope.is_create = true;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
         $scope.listParent();
@@ -63,8 +64,7 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     $scope.update = function (form) {
         $scope.is_edit = true;
         $scope.is_view = false;
-        $scope.is_update = true;
-        $scope.is_disable = true;
+        $scope.is_create = false;
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
         console.log(form);
@@ -74,7 +74,7 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     $scope.view = function (form) {
         $scope.is_edit = true;
         $scope.is_view = true;
-        $scope.is_disable = true;
+        $scope.is_create = false;
         $scope.formtitle = master + " | Lihat Data : " + form.nama;
         $scope.form = form;
     };
