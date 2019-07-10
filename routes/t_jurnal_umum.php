@@ -193,10 +193,10 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
          * Generate kode jurnal
          */
         $getNoUrut = $sql->select("*")->from("acc_jurnal")->orderBy("no_urut DESC")->find();
-        $penerimaan['no_urut'] = 1;
+        $jurnal['no_urut'] = 1;
         $urut = 1;
         if ($getNoUrut) {
-            $penerimaan['no_urut'] = $getNoUrut->no_urut + 1;
+            $jurnal['no_urut'] = $getNoUrut->no_urut + 1;
             $urut = ((int) substr($getNoUrut->no_urut, -4)) + 1;
         }
         $no_urut = substr('0000' . $urut, -4);
