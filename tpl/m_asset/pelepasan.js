@@ -7,7 +7,7 @@ app.controller('PelepasanCtrl', function ($scope, Data, $rootScope, $uibModal, U
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
-
+    $scope.options_min = {};
 //    Data.get(control_link + '/cabang').then(function(data) {
 //        $scope.cabang = data.data.data;
 //    });
@@ -49,7 +49,22 @@ app.controller('PelepasanCtrl', function ($scope, Data, $rootScope, $uibModal, U
     Data.get('acc/m_umur_ekonomis/index', {filter:{is_deleted:0}}).then(function (response) {
         $scope.listUmur = response.data.list;
     });
-    
+    $scope.cek_min_tgl = function(id){
+        Data.get('acc/m_asset/get_min_tgl_pelepasan', {id:id}).then(function (response) {
+            if (response.data.minimal==true) {
+                 $scope.options_min = {
+                      minDate: new Date(response.data.tanggal) 
+                 };
+                 $scope.form.tgl_pelepasan = new Date(response.data.tanggal);
+            }else{
+                $scope.options_min = {
+                      minDate: '' 
+                 };
+                $scope.form.tgl_pelepasan = new Date();
+            }
+
+        });
+    }
   
     /** detail_pelepasan */
     $scope.detail_pelepasan = function (form) {
@@ -62,7 +77,7 @@ app.controller('PelepasanCtrl', function ($scope, Data, $rootScope, $uibModal, U
         $scope.form.tanggal = new Date(form.tanggal_beli);
         $scope.form.harga = form.harga_beli;
         if (form.status == 'Aktif') {
-            $scope.form.tgl_pelepasan = new Date();
+            $scope.cek_min_tgl(form.id);
         }else{
             $scope.form.tgl_pelepasan = new Date(form.tgl_pelepasan);
         }
