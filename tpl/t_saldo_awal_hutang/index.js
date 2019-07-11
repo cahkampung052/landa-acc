@@ -113,4 +113,43 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
         $scope.is_edit = false;
         $scope.is_view = false;
     };
+    
+    /*
+     * export format
+     */
+    $scope.export = function() {
+        window.location = 'api/acc/t_saldo_awal_hutang/exportHutangAwal';
+    };
+    
+    /**
+     * import
+     */
+    $scope.uploadFiles = function(file, errFiles) {
+        $scope.f = file;
+        $scope.errFile = errFiles && errFiles[0];
+        if (file) {
+            Data.get('site/url').then(function(data) {
+                file.upload = Upload.upload({
+                    url: data.data + 'acc/t_saldo_awal_hutang/importHutangAwal',
+                    data: {
+                        file: file
+                    }
+                });
+                file.upload.then(function(response) {
+                    var data = response.data.data;
+                    if (response.data.status_code == 200) {
+                        console.log(data)
+                        $scope.displayed = data.detail;
+                        $scope.sumTotal();
+                        $scope.form.tanggal = new Date(data.data.tanggal);
+                        $scope.form.m_lokasi_id = data.data.lokasi;
+                    } else {
+                        $rootScope.alert("Terjadi Kesalahan", setErrorMessage(response.errors), "error");
+                    }
+                });
+            });
+        } else {
+            $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+        }
+    };
 });

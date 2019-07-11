@@ -37,47 +37,7 @@ function setLevelTipeAkun($parent_id)
     $parent = $db->find("select * from acc_m_akun where id = '" . $parent_id . "'");
     return $parent->level + 1;
 }
-/**
- * Simpan saldo awal
- */
-$app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
-    $params = $request->getParams();
-    $validasi = validasiSaldo($params['form']);
-    if ($validasi === true) {
-        $tanggal = new DateTime($params['form']['tanggal']);
-        $tanggal->setTimezone(new DateTimeZone('Asia/Jakarta'));
-        $tanggal = $tanggal->format("Y-m-d");
-        $m_lokasi_id = $params['form']['m_lokasi_id']['id'];
-        if (!empty($params['detail'])) {
-            $db = $this->db;
-            /**
-             * Delete saldo awal di trans detail
-             */
-            $delete = $db->delete('acc_trans_detail', ['m_lokasi_id' => $m_lokasi_id, 'keterangan' => 'Saldo Awal', 'reff_type' => 'Saldo Awal']);
-            /**
-             * Masukkan saldo awal
-             */
-            if ($delete) {
-                foreach ($params['detail'] as $val) {
-                    if ((isset($val['debit']) && !empty($val['debit'])) || (isset($val['kredit']) && !empty($val['kredit']))) {
-                        $detail['m_lokasi_id']  = $m_lokasi_id;
-                        $detail['tanggal']    = $tanggal;
-                        $detail['reff_type']  = 'Saldo Awal';
-                        $detail['keterangan'] = 'Saldo Awal';
-                        $detail['debit']      = !empty($val['debit']) ? $val['debit'] : 0;
-                        $detail['kredit']     = !empty($val['kredit']) ? $val['kredit'] : 0;
-                        $detail['m_akun_id']  = $val['id'];
-                        $db->insert('acc_trans_detail', $detail);
-                    }
-                }
-                return successResponse($response, []);
-            }
-        }
-        return unprocessResponse($response, ['Silahkan buat akun terlebih dahulu']);
-    } else {
-        return unprocessResponse($response, $validasi);
-    }
-});
+
 /**
  * Ambil saldo awal
  */
@@ -119,6 +79,150 @@ $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
     }
     return successResponse($response, ['detail' => $models, 'tanggal' => $tanggal]);
 });
+
+/**
+ * Simpan saldo awal
+ */
+$app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
+    $params = $request->getParams();
+    $validasi = validasiSaldo($params['form']);
+    if ($validasi === true) {
+        $tanggal = new DateTime($params['form']['tanggal']);
+        $tanggal->setTimezone(new DateTimeZone('Asia/Jakarta'));
+        $tanggal = $tanggal->format("Y-m-d");
+        $m_lokasi_id = $params['form']['m_lokasi_id']['id'];
+        if (!empty($params['detail'])) {
+            $db = $this->db;
+            /**
+             * Delete saldo awal di trans detail
+             */
+            $delete = $db->delete('acc_trans_detail', ['m_lokasi_id' => $m_lokasi_id, 'keterangan' => 'Saldo Awal', 'reff_type' => 'Saldo Awal']);
+            /**
+             * Masukkan saldo awal
+             */
+            if ($delete) {
+                foreach ($params['detail'] as $val) {
+                    if ((isset($val['debit']) && !empty($val['debit'])) || (isset($val['kredit']) && !empty($val['kredit']))) {
+                        $detail['m_lokasi_id']  = $m_lokasi_id;
+                        $detail['tanggal']    = $tanggal;
+                        $detail['reff_type']  = 'Saldo Awal';
+                        $detail['keterangan'] = 'Saldo Awal';
+                        $detail['debit']      = !empty($val['debit']) ? $val['debit'] : 0;
+                        $detail['kredit']     = !empty($val['kredit']) ? $val['kredit'] : 0;
+                        $detail['m_akun_id']  = $val['id'];
+                        $db->insert('acc_trans_detail', $detail);
+                    }
+                }
+                return successResponse($response, []);
+            }
+        }
+        return unprocessResponse($response, ['Silahkan buat akun terlebih dahulu']);
+    } else {
+        return unprocessResponse($response, $validasi);
+    }
+});
+
+/**
+ * export
+ */
+$app->get('/acc/m_akun/exportSaldoAwal', function ($request, $response) {
+    
+    /*
+     * ambil tanggal setting
+     */
+    $db = $this->db;
+    $tanggalsetting = $db->select("*")->from("acc_m_setting")->find();
+    $tanggalsetting = date("Y-m-d", strtotime($tanggalsetting->tanggal . ' -1 day'));
+    
+    $lokasi = $db->select("*")->from("acc_m_lokasi")->orderBy("kode")->findAll();
+    
+    $akun = $db->select("*")->from("acc_m_akun")->where("is_deleted", "=", 0)->orderBy("kode")->findAll();
+    
+    $path = 'file/upload/format_saldo_awal.xls';
+    $objReader = PHPExcel_IOFactory::createReader('Excel5');
+    $objPHPExcel = $objReader->load($path);
+
+    $objPHPExcel->getActiveSheet()->setCellValue('D' . 3, $tanggalsetting);
+    
+    $row = 4;
+    foreach($lokasi as $key => $val){
+        
+        $objPHPExcel->getActiveSheet()->setCellValue('A' . $row, $val->id);
+        $objPHPExcel->getActiveSheet()->setCellValue('B' . $row, $val->kode ." - ". $val->nama);
+        $row++;
+    }
+    
+    $objPHPExcel->getActiveSheet()->setCellValue('H' . 3, $lokasi[0]->id);
+    $objPHPExcel->getActiveSheet()->setCellValue('H' . 4, $tanggalsetting);
+    
+    $rows = 6;
+    foreach($akun as $key => $val){
+        
+        $spasi               = ($val->level == 1) ? '' : str_repeat("···", $val->level - 1);
+        $val->nama_lengkap = $spasi . $val->kode . ' - ' . $val->nama;
+        
+        
+        $objPHPExcel->getActiveSheet()->setCellValue('G' . $rows, $val->id);
+        $objPHPExcel->getActiveSheet()->setCellValue('H' . $rows, $val->nama_lengkap);
+        if($val->is_tipe == 0){
+            $objPHPExcel->getActiveSheet()->setCellValue('I' . $rows, 0);
+            $objPHPExcel->getActiveSheet()->setCellValue('J' . $rows, 0);
+        }
+        $rows++;
+    }
+    
+    header("Content-type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment;Filename=format_saldo_awal.xls");
+
+    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+    $objWriter->save('php://output');
+    
+});
+
+/**
+ * import
+ */
+$app->post('/acc/m_akun/importSaldoAwal', function ($request, $response) {
+    $db = $this->db;
+    if (!empty($_FILES)) {
+        $tempPath = $_FILES['file']['tmp_name'];
+        $newName = urlParsing($_FILES['file']['name']);
+        $inputFileName = "file/upload/" . DIRECTORY_SEPARATOR . $newName;
+        move_uploaded_file($tempPath, $inputFileName);
+        if (file_exists($inputFileName)) {
+            try {
+                $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+                $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                $objPHPExcel = $objReader->load($inputFileName);
+            } catch (Exception $e) {
+                die('Error loading file "' . pathinfo($inputFileName, PATHINFO_BASENAME) . '": ' . $e->getMessage());
+            }
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow();
+            $highestColumn = $sheet->getHighestColumn();
+            
+            $models = [];
+            for ($row = 6; $row <= $highestRow; $row++) {
+                $akun = $db->select("*")->from("acc_m_akun")->where("id", "=", $objPHPExcel->getSheet(0)->getCell('G' . $row)->getValue())->find();
+                $models[$row] = (array)$akun;
+                $spasi               = ($akun->level == 1) ? '' : str_repeat("···", $akun->level - 1);
+                $models[$row]['nama_lengkap'] = $spasi . $akun->kode . ' - ' . $akun->nama;
+                $models[$row]['debit'] = $objPHPExcel->getSheet(0)->getCell('I' . $row)->getValue();
+                $models[$row]['kredit'] = $objPHPExcel->getSheet(0)->getCell('J' . $row)->getValue();
+            }
+            
+            unlink($inputFileName);
+//            print_r($models);die();
+            
+            $data['lokasi'] = $db->select("*")->from("acc_m_lokasi")->where("id", "=", $objPHPExcel->getSheet(0)->getCell('H' . 3)->getValue())->find();
+            $data['tanggal'] = $objPHPExcel->getSheet(0)->getCell('H' . 3)->getValue();
+            return successResponse($response, ['data'=>$data, 'detail'=>$models]);
+        } else {
+            return unprocessResponse($response, 'data gagal di import');
+        }
+    }
+});
+
 /**
  * Ambil daftar akun
  */

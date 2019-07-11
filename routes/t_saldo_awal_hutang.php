@@ -104,3 +104,109 @@ $app->post('/acc/t_saldo_awal_hutang/saveHutang', function ($request, $response)
 
     return unprocessResponse($response, ['Tanggal tidak boleh kosong']);
 });
+
+/**
+ * export
+ */
+$app->get('/acc/t_saldo_awal_hutang/exportHutangAwal', function ($request, $response) {
+    
+    /*
+     * ambil tanggal setting
+     */
+    $db = $this->db;
+    $tanggalsetting = $db->select("*")->from("acc_m_setting")->find();
+    $tanggalsetting = date("Y-m-d", strtotime($tanggalsetting->tanggal . ' -1 day'));
+    
+    $lokasi = $db->select("*")->from("acc_m_lokasi")->orderBy("kode")->findAll();
+    
+    $akun = $db->select("*")->from("acc_m_akun")->where("is_deleted", "=", 0)->where("is_tipe", "=", 0)->orderBy("kode")->findAll();
+    
+    $customer = $db->select("*")->from("acc_m_kontak")->where("is_deleted", "=", 0)->where("type", "=", "supplier")->findAll();
+    
+    $path = 'file/upload/format_saldo_hutang.xls';
+    $objReader = PHPExcel_IOFactory::createReader('Excel5');
+    $objPHPExcel = $objReader->load($path);
+
+    $objPHPExcel->getActiveSheet()->setCellValue('G' . 3, $tanggalsetting);
+    $objPHPExcel->getActiveSheet()->setCellValue('K' . 3, $lokasi[0]->id);
+    $objPHPExcel->getActiveSheet()->setCellValue('K' . 4, $tanggalsetting);
+    
+    $rowl = 4;
+    foreach($lokasi as $key => $val){
+        
+        $objPHPExcel->getActiveSheet()->setCellValue('A' . $rowl, $val->id);
+        $objPHPExcel->getActiveSheet()->setCellValue('B' . $rowl, $val->kode ." - ". $val->nama);
+        $rowl++;
+    }
+    
+    $row = 4;
+    foreach($akun as $key => $val){
+        
+        $objPHPExcel->getActiveSheet()->setCellValue('D' . $row, $val->id);
+        $objPHPExcel->getActiveSheet()->setCellValue('E' . $row, $val->kode ." - ". $val->nama);
+        $row++;
+    }
+    
+    $rows = 6;
+    foreach($customer as $key => $val){
+        
+        $objPHPExcel->getActiveSheet()->setCellValue('J' . $rows, $val->id);
+        $objPHPExcel->getActiveSheet()->setCellValue('K' . $rows, $val->nama);
+        $objPHPExcel->getActiveSheet()->setCellValue('L' . $rows, $akun[0]->id);
+        $objPHPExcel->getActiveSheet()->setCellValue('M' . $rows, 0);
+        $rows++;
+    }
+    
+    header("Content-type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment;Filename=format_saldo_hutang.xls");
+
+    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+    $objWriter->save('php://output');
+    
+});
+
+/**
+ * import
+ */
+$app->post('/acc/t_saldo_awal_hutang/importHutangAwal', function ($request, $response) {
+    $db = $this->db;
+    if (!empty($_FILES)) {
+        $tempPath = $_FILES['file']['tmp_name'];
+        $newName = urlParsing($_FILES['file']['name']);
+        $inputFileName = "file/upload/" . DIRECTORY_SEPARATOR . $newName;
+        move_uploaded_file($tempPath, $inputFileName);
+        if (file_exists($inputFileName)) {
+            try {
+                $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+                $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                $objPHPExcel = $objReader->load($inputFileName);
+            } catch (Exception $e) {
+                die('Error loading file "' . pathinfo($inputFileName, PATHINFO_BASENAME) . '": ' . $e->getMessage());
+            }
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow();
+            $highestColumn = $sheet->getHighestColumn();
+            
+            $customer = $db->select("*")->from("acc_m_kontak")->where("is_deleted", "=", 0)->where("type", "=", "supplier")->findAll();
+            $row = 6;
+            $models = [];
+            foreach($customer as $key => $val){
+                $akun = $db->select("*")->from("acc_m_akun")->where("id", "=", $objPHPExcel->getSheet(0)->getCell('L' . $row)->getValue())->find();
+                
+                $models[$key] = (array)$val;
+                $models[$key]['m_akun_id'] = (array)$akun;
+                $models[$key]['total'] = $objPHPExcel->getSheet(0)->getCell('M' . $row)->getValue();
+                        
+                $row++;
+            }
+            
+            unlink($inputFileName);
+            
+            $data['lokasi'] = $db->select("*")->from("acc_m_lokasi")->where("id", "=", $objPHPExcel->getSheet(0)->getCell('K' . 3)->getValue())->find();
+            $data['tanggal'] = $objPHPExcel->getSheet(0)->getCell('K' . 4)->getValue();
+            return successResponse($response, ['data'=>$data, 'detail'=>$models]);
+        } else {
+            return unprocessResponse($response, 'data gagal di import');
+        }
+    }
+});
