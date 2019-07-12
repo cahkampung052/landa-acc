@@ -30,7 +30,6 @@ $app->get('/acc/m_akun_peta/index', function ($request, $response) {
             $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kode, "nama" => $val->nama];
         }else{
             $status = 0;
-            $val->m_akun_id = ["id" => "", "kode" => "", "nama" => ""];
         }
     }
     
