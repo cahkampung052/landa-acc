@@ -10,7 +10,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label-sm required">Tahun</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control form-control-sm" ng-change="getBudget(form.tahun)" ng-model="form.tahun" ng-disabled="is_view" required/>
+                    <input class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'year'}" is-open="opened.tgl" ng-click="toggle($event, 'tgl')" ng-model="form.tahun" placeholder="Tahun" type="text" uib-datepicker-popup="yyyy"/>
                 </div>
             </div>
         </div>

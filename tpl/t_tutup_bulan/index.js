@@ -1,7 +1,7 @@
 app.controller('tutupbulanCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/t_tutup_bulan";
-    var master = 'Transaksi Tutup Tahun';
+    var master = 'Transaksi Tutup Bulan';
     $scope.formTitle = '';
     $scope.displayed = [];
     $scope.form = [];

@@ -182,8 +182,8 @@ app.controller("budgetCtrl", function($state, $scope, Data, $uibModalInstance, f
     }
     if ($scope.listBudget.length == 0) {
         var thisYear = new Date();
-        thisYear = thisYear.getFullYear();
-        $scope.getBudget(thisYear);
+        var thisYear2 = thisYear.getFullYear();
+        $scope.getBudget(thisYear2);
         $scope.form.tahun = thisYear;
     }
     $scope.save = function() {

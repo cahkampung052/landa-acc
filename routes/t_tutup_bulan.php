@@ -30,7 +30,7 @@ $app->get('/acc/t_tutup_bulan/index', function ($request, $response) {
       ")
             ->from("acc_tutup_buku")
             ->leftJoin("acc_m_user", "acc_m_user.id=acc_tutup_buku.created_by")
-            ->where("acc_tutup_buku.jenis", "=", "tahun");
+            ->where("acc_tutup_buku.jenis", "=", "bulan");
     /** Add filter */
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
@@ -97,7 +97,7 @@ $app->post('/acc/t_tutup_bulan/save', function ($request, $response) {
             die();
         }
         
-        $insert['jenis'] = "tahun";
+        $insert['jenis'] = "bulan";
         $insert['tahun'] = $tahun;
         $insert['bulan'] = $bulan;
         
