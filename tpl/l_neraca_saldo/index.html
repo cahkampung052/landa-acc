@@ -1,35 +1,34 @@
 <div class="animated fadeIn">
     <div ng-controller="l_neracasaldoCtrl">
-        <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
+        <div class="card">
             <div class="card-header">
-                <strong class="d-md-down-none">{{master}}</strong>
+                <strong class="d-md-down-none">Laporan Neraca Saldo</strong>
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
                     <div class="row mt-15px">
                         <div class="col-md-12">
-                            <div class="">
-                                <form name="landaform" novalidate="">
-                                    <div class="form-group row">
-                                        <div class="col-sm-3">
+                            <form name="landaform" novalidate="">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
                                             <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
                                         </div>
-                                        <div class="col-sm-6"></div>
-
                                     </div>
-                                    <div class="form-group row">
-                                        <div class="col-sm-12 content-center">
-                                            <button class="btn btn-primary btn-sm" ng-click="view(0, 0)"><i class="fa fa-search"></i> Tampilkan</button>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary btn-sm" ng-click="view(0, 0)">
+                                                <i class="fa fa-search"></i>
+                                                Tampilkan
+                                            </button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
         <div class="card" ng-show="tampilkan">
             <div class="card-header card-header-white">
@@ -44,54 +43,39 @@
                     </button>
                 </div>
             </div>
-            <div class="card-body" >
+            <div class="card-body">
                 <div align="left">
                     <div class="row">
                         <div class="col-md-12">
                             <br/>
                             <center>
-                                <h2 class="header-laporan">
-                                    LAPORAN NERACA SALDO
-                                </h2>
-                                Periode : {{data.tanggal| date:'dd MMMM yyyy'}}
+                                <h2 class="header-laporan">LAPORAN NERACA SALDO</h2>
+                                Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
                                 <br/>
-                                Disiapkan Tanggal : {{data.disiapkan| date:'dd MMMM yyyy, H:i'}}
+                                Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
                                 <br/>
                             </center>
                             <hr/>
                         </div>
-                        
                     </div>
-                    <br/>
-
                     <div class="table-responsive">
                         <table class="table table-striped table-hover table-laporan">
                             <thead>
                                 <tr>
                                     <th width="80">
-                                        <b>
-                                            KODE
-                                        </b>
+                                        <b>KODE</b>
                                     </th>
                                     <th>
-                                        <b>
-                                            AKUN
-                                        </b>
+                                        <b>AKUN</b>
                                     </th>
                                     <th width="100">
-                                        <b>
-                                            SALDO AWAL
-                                        </b>
+                                        <b>SALDO AWAL</b>
                                     </th>
                                     <th colspan="2" style="text-align: center">
-                                        <b>
-                                            MUTASI
-                                        </b>
+                                        <b>MUTASI</b>
                                     </th>
                                     <th colspan="2" style="text-align: center">
-                                        <b>
-                                            SALDO AKHIR
-                                        </b>
+                                        <b>SALDO AKHIR</b>
                                     </th>
                                 </tr>
                                 <tr>
@@ -99,75 +83,43 @@
                                     <th></th>
                                     <th></th>
                                     <th width="100">
-                                        <b>
-                                            DEBIT
-                                        </b>
+                                        <b>DEBIT</b>
                                     </th>
                                     <th width="100">
-                                        <b>
-                                            KREDIT
-                                        </b>
+                                        <b>KREDIT</b>
                                     </th>
                                     <th width="100">
-                                        <b>
-                                            DEBIT
-                                        </b>
+                                        <b>DEBIT</b>
                                     </th>
                                     <th width="100">
-                                        <b>
-                                            KREDIT
-                                        </b>
+                                        <b>KREDIT</b>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="val in detail">
-                                    <td>
-                                        {{val.kode}}
-                                    </td>
-                                    <td>
-                                        {{val.nama}}
-                                    </td>
-                                    <td align="right" class="text-right">
-                                        {{val.saldo_awal| number}}
-                                    </td>
-                                    <td align="right" class="text-right">
-                                        {{val.debit| number}}
-                                    </td>
-                                    <td align="right" class="text-right">
-                                        {{val.kredit| number}}
-                                    </td>
-                                    <td align="right" class="text-right">
-                                        {{val.debit_akhir| number}}
-                                    </td>
-                                    <td align="right" class="text-right">
-                                        {{val.kredit_akhir| number}}
-                                    </td>
+                                    <td>{{ val.kode }}</td>
+                                    <td>{{ val.nama }}</td>
+                                    <td align="right" class="text-right">{{ val.saldo_awal| number }}</td>
+                                    <td align="right" class="text-right">{{ val.debit| number }}</td>
+                                    <td align="right" class="text-right">{{ val.kredit| number }}</td>
+                                    <td align="right" class="text-right">{{ val.debit_akhir| number }}</td>
+                                    <td align="right" class="text-right">{{ val.kredit_akhir| number }}</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <td align="right" class="text-center" colspan="2">
-                                        <b>
-                                            Saldo Akhir
-                                        </b>
+                                        <b>Saldo Akhir</b>
                                     </td>
                                     <td></td>
                                     <td align="right" class="text-right">
-                                        <b>
-                                            {{data.total_debit| number}}
-                                        </b>
+                                        <b>{{ data.total_debit| number }}</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b>
-                                            {{data.total_kredit| number}}
-                                        </b>
+                                        <b>{{ data.total_kredit| number }}</b>
                                     </td>
-                                    <td align="right" class="text-right" colspan="2">
-                                        <!--                                                <b>
-                                                                                            {{val.total_saldo | number}}
-                                                                                        </b>-->
-                                    </td>
+                                    <td align="right" class="text-right" colspan="2">/* COMMENT */</td>
                                 </tr>
                             </tfoot>
                         </table>

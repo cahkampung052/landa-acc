@@ -1,10 +1,5 @@
 app.controller('l_bukubesarCtrl', function($scope, Data, $rootScope) {
-    var tableStateRef;
     var control_link = "acc/l_buku_besar";
-    var master = 'Laporan Buku Besar';
-    $scope.master = master;
-    $scope.formTitle = '';
-    $scope.base_url = '';
     $scope.form = {};
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
