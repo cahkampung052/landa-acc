@@ -124,7 +124,7 @@ $app->get('/acc/t_saldo_awal_piutang/exportPiutangAwal', function ($request, $re
     
     $customer = $db->select("*")->from("acc_m_kontak")->where("is_deleted", "=", 0)->where("type", "=", "customer")->findAll();
     
-    $path = 'file/format_saldo_piutang.xls';
+    $path = 'acc/landaacc/file/format_saldo_piutang.xls';
     $objReader = PHPExcel_IOFactory::createReader('Excel5');
     $objPHPExcel = $objReader->load($path);
 
@@ -174,7 +174,7 @@ $app->post('/acc/t_saldo_awal_piutang/importPiutangAwal', function ($request, $r
     if (!empty($_FILES)) {
         $tempPath = $_FILES['file']['tmp_name'];
         $newName = urlParsing($_FILES['file']['name']);
-        $inputFileName = "file/" . DIRECTORY_SEPARATOR . $newName;
+        $inputFileName = "acc/landaacc/file/" . DIRECTORY_SEPARATOR . $newName;
         move_uploaded_file($tempPath, $inputFileName);
         if (file_exists($inputFileName)) {
             try {

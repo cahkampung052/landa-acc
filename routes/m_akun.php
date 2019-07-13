@@ -138,7 +138,7 @@ $app->get('/acc/m_akun/exportSaldoAwal', function ($request, $response) {
     
     $akun = $db->select("*")->from("acc_m_akun")->where("is_deleted", "=", 0)->orderBy("kode")->findAll();
     
-    $path = 'file/format_saldo_awal.xls';
+    $path = 'acc/landaacc/file/format_saldo_awal.xls';
     $objReader = PHPExcel_IOFactory::createReader('Excel5');
     $objPHPExcel = $objReader->load($path);
 
@@ -187,7 +187,7 @@ $app->post('/acc/m_akun/importSaldoAwal', function ($request, $response) {
     if (!empty($_FILES)) {
         $tempPath = $_FILES['file']['tmp_name'];
         $newName = urlParsing($_FILES['file']['name']);
-        $inputFileName = "file/" . DIRECTORY_SEPARATOR . $newName;
+        $inputFileName = "acc/landaacc/file/" . DIRECTORY_SEPARATOR . $newName;
         move_uploaded_file($tempPath, $inputFileName);
         if (file_exists($inputFileName)) {
             try {
