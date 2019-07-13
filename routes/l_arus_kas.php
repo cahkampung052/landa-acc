@@ -101,7 +101,7 @@ $app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
                 }
                 $gettransdetail = $sql->find();
                 $arr[$index]['saldo'] += intval($gettransdetail->debit) - intval($gettransdetail->kredit);
-                $data['total_saldo'] += $arr[$index]['saldo'];
+                $data['total_saldo'] += intval($gettransdetail->debit) - intval($gettransdetail->kredit);
             }
         }
 

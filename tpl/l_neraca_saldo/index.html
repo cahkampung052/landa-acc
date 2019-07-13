@@ -68,7 +68,7 @@
                                     <th>
                                         <b>AKUN</b>
                                     </th>
-                                    <th width="100">
+                                    <th colspan="2" style="text-align: center">
                                         <b>SALDO AWAL</b>
                                     </th>
                                     <th colspan="2" style="text-align: center">
@@ -81,7 +81,12 @@
                                 <tr>
                                     <th></th>
                                     <th></th>
-                                    <th></th>
+                                    <th width="100">
+                                        <b>DEBIT</b>
+                                    </th>
+                                    <th width="100">
+                                        <b>KREDIT</b>
+                                    </th>
                                     <th width="100">
                                         <b>DEBIT</b>
                                     </th>
@@ -100,16 +105,23 @@
                                 <tr ng-repeat="val in detail">
                                     <td>{{ val.kode }}</td>
                                     <td>{{ val.nama }}</td>
-                                    <td align="right" class="text-right">{{ val.saldo_awal| number }}</td>
+                                    <td align="right" class="text-right">{{ val.debit_awal| number }}</td>
+                                    <td align="right" class="text-right">{{ val.kredit_awal| number }}</td>
                                     <td align="right" class="text-right">{{ val.debit| number }}</td>
                                     <td align="right" class="text-right">{{ val.kredit| number }}</td>
-                                    <td align="right" class="text-right">{{ val.debit_akhir| number }}</td>
-                                    <td align="right" class="text-right">{{ val.kredit_akhir| number }}</td>
+                                    <td align="right" class="text-right">
+                                        <span ng-if="val.debit_akhir >= 0">{{val.debit_akhir| number}}</span>
+                                        <span ng-if="val.debit_akhir < 0">{{val.debit_akhir * -1| number}}</span>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <span ng-if="val.kredit_akhir >= 0">{{val.kredit_akhir| number}}</span>
+                                        <span ng-if="val.kredit_akhir < 0">{{val.kredit_akhir * -1| number}}</span>
+                                    </td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td align="right" class="text-center" colspan="2">
+                                    <td align="right" class="text-center" colspan="3">
                                         <b>Saldo Akhir</b>
                                     </td>
                                     <td></td>
@@ -119,7 +131,7 @@
                                     <td align="right" class="text-right">
                                         <b>{{ data.total_kredit| number }}</b>
                                     </td>
-                                    <td align="right" class="text-right" colspan="2">/* COMMENT */</td>
+                                    <td align="right" class="text-right" colspan="2"></td>
                                 </tr>
                             </tfoot>
                         </table>
