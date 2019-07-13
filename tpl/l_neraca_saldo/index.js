@@ -1,17 +1,14 @@
-app.controller('l_neracasaldoCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
-    var tableStateRef;
+app.controller('l_neracasaldoCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
     var control_link = "acc/l_neraca_saldo";
-    var master = 'Laporan Neraca Saldo';
-    $scope.master = master;
-    $scope.formTitle = '';
-    $scope.base_url = '';
     $scope.form = {};
-
-    $scope.form = {};
-    $scope.form.tanggal = {endDate: moment().add(1, 'M'), startDate: moment()};
-
-
-    $scope.view = function (is_export, is_print) {
+    $scope.form.tanggal = {
+        endDate: moment().add(1, 'M'),
+        startDate: moment()
+    };
+    /**
+     * Ambil data dari server
+     */
+    $scope.view = function(is_export, is_print) {
         $scope.mulai = moment($scope.form.tanggal.startDate).format('DD-MM-YYYY');
         $scope.selesai = moment($scope.form.tanggal.endDate).format('DD-MM-YYYY');
         var param = {
@@ -21,7 +18,7 @@ app.controller('l_neracasaldoCtrl', function ($scope, Data, $rootScope, $uibModa
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
         };
         if (is_export == 0 && is_print == 0) {
-            Data.get(control_link + '/laporan', param).then(function (response) {
+            Data.get(control_link + '/laporan', param).then(function(response) {
                 if (response.status_code == 200) {
                     $scope.data = response.data.data;
                     $scope.detail = response.data.detail;
@@ -33,8 +30,5 @@ app.controller('l_neracasaldoCtrl', function ($scope, Data, $rootScope, $uibModa
         } else {
             window.open("api/acc/l_neraca_saldo/laporan?" + $.param(param), "_blank");
         }
-
     };
-
-
 });

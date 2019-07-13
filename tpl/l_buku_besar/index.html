@@ -1,48 +1,46 @@
 <div class="animated fadeIn">
     <div ng-controller="l_bukubesarCtrl">
-        <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
+        <div class="card">
             <div class="card-header">
-                <strong>{{ master }}</strong>
+                <strong>Laporan Buku Besar</strong>
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
                     <div class="row mt-15px">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
-                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
-                                    </ui-select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view">
-                                        <ui-select-match placeholder="Pilih Akun">{{ $select.selected.nama }}</ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
-                                    </ui-select>
-                                </div>
-                            </div>
-                        </div>
                         <div class="col-md-12">
-                            <div class="form-group row">
-                                <div class="col-sm-12 content-center">
-                                    <button class="btn btn-primary btn-sm center" ng-click="view(0,0)">
-                                        <i class="fa fa-search"></i>
-                                        Tampilkan
-                                    </button>
+                            <form name="landaform" novalidate="">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select-match placeholder="Pilih Akun">{{ $select.selected.nama }}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary btn-sm center" ng-click="view(0,0)">
+                                                <i class="fa fa-search"></i>
+                                                Tampilkan
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>

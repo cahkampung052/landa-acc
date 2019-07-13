@@ -109,9 +109,9 @@
                     </div>
                 </form>
             </div>
-            <div class="card-footer">
+            <div class="card-footer" ng-show="listDetail.length>0 && is_show==true" >
                 <div class="pull-right">
-                    <button button-spinner="loading" class="btn btn-primary btn-sm" ng-click="prosesPenyusutan()" ng-disabled="loading" ng-show="listDetail.length>0 && is_show==true" type="submit">
+                    <button button-spinner="loading" class="btn btn-primary btn-sm" ng-click="prosesPenyusutan()" ng-disabled="loading" type="submit">
                         <i class="fa fa-refresh">
                         </i>
                         Proses

@@ -1,16 +1,7 @@
-app.controller('l_budgetingCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
-    var tableStateRef;
+app.controller('l_budgetingCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
     var control_link = "acc/l_budgeting";
-    var master = 'Laporan Budgeting';
-    $scope.formTitle = '';
-    $scope.displayed = [];
-    $scope.base_url = '';
     $scope.form = {};
-    $scope.is_edit = false;
-    $scope.is_view = false;
     $scope.form.tahun = new Date();
-    $scope.master = master;
-    
     /**
      * Ambil list semua akun
      */
@@ -20,12 +11,10 @@ app.controller('l_budgetingCtrl', function ($scope, Data, $rootScope, $uibModal,
             $scope.form.m_akun_id = $scope.listAkun[0];
         }
     });
-
     /**
      * Ambil laporan dari server
      */
     $scope.view = function(is_export, is_print) {
-        
         var param = {
             export: is_export,
             print: is_print,
@@ -47,5 +36,4 @@ app.controller('l_budgetingCtrl', function ($scope, Data, $rootScope, $uibModal,
             window.open("api/acc/l_budgeting/laporan?" + $.param(param), "_blank");
         }
     };
-    
 });
