@@ -90,8 +90,8 @@ $app->post('/acc/t_saldo_awal_hutang/saveHutang', function ($request, $response)
                         $insert = $db->update('acc_trans_detail', $detail2, ["reff_id" => $val['saldo_id'], "reff_type"=>"acc_saldo_hutang"]);
                         $insert = $db->update('acc_trans_detail', $detail_, ["reff_id" => $val['saldo_id'], "reff_type"=>"acc_saldo_hutang"]);
                     }else{
-                        $insert2 = $db->insert('acc_trans_detail', $detail2);
                         $insert2 = $db->insert('acc_trans_detail', $detail_);
+                        $insert2 = $db->insert('acc_trans_detail', $detail2);
                     }
                 }
             }
