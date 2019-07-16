@@ -169,8 +169,8 @@
                                         </tr>
                                         <tr ng-repeat="detail in val.detail">
                                             <td>
-                                                <span ng-if="detail.debit != 0">{{detail.nama}}</span>
-                                                <span ng-if="detail.debit == 0" style="margin-left: 50px">{{detail.nama}}</span>
+                                                <span ng-if="val.nama == 'Pendapatan'">{{detail.nama}}</span>
+                                                <span ng-if="val.nama == 'Beban'" style="margin-left: 50px">{{detail.nama}}</span>
                                             </td>
                                             <td class="text-right">
                                                 <span ng-if="detail.debit != 0">{{detail.debit | number}}</span>

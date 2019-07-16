@@ -90,6 +90,13 @@
                                 <div class="list-group bg-white">
                                     <div class="list-group-item">
                                         <label class="i-checks">
+                                            <input ng-disabled="is_view" ng-model="form.akses.setting_approval" type="checkbox"/>
+                                            <i></i>
+                                            Setting Approval
+                                        </label>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <label class="i-checks">
                                             <input ng-disabled="is_view" ng-model="form.akses.pengguna_akses" type="checkbox"/>
                                             <i></i>
                                             Hak Akses
@@ -225,6 +232,14 @@
                                             <input ng-disabled="is_view" ng-model="form.akses.pengajuan" type="checkbox"/>
                                             <i></i>
                                             Pengajuan Proposal
+                                        </label>
+
+                                    </div>
+                                    <div class="list-group-item">
+                                        <label class="i-checks">
+                                            <input ng-disabled="is_view" ng-model="form.akses.approveatasan" type="checkbox"/>
+                                            <i></i>
+                                            Approve Atasan
                                         </label>
 
                                     </div>

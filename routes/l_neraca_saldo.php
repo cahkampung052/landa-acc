@@ -63,6 +63,8 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
             $arr2['nama'] = $val->nama;
 
             $arr2['saldo_awal'] = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
+            $arr2['debit_awal'] = intval($getsaldoawal->debit);
+            $arr2['kredit_awal'] = intval($getsaldoawal->kredit);
 
             /*
              * ambil transdetail dari akun where tanggal <, >
