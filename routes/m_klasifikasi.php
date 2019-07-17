@@ -93,16 +93,20 @@ $app->post('/acc/m_klasifikasi/save', function ($request, $response) {
     $data['tipe'] = isset($data['tipe']) ? $data['tipe'] : '';
     $data['nama'] = isset($data['nama']) ? $data['nama'] : '';
     $data['parent_id'] = isset($data['parent_id']) ? $data['parent_id'] : '';
-    $validasi = validasi($data);
+    $data['is_tipe'] = 1;
+    if ($data['parent_id'] == 0 || $data['parent_id'] == '') {
+        $validasi = validasi($data, ['tipe' => 'required']);
+    } else {
+        $validasi = validasi($data);
+    }
     if ($validasi === true) {
-        $data['is_tipe'] = 1;
         $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '.' . $data['kode'];
-        if ($data['parent_id'] == 0) {
+        if ($data['parent_id'] == 0 || $data['parent_id'] == '') {
             $data['level'] = 1;
         } else {
             $data['level'] = setLevelTipeAkun($data['parent_id']);
             /**
-             * Update tipe akun di atasnya
+             * ambil tipe akun di atasnya
              */
             $getparent = $db->select('*')->from('acc_m_akun')->where('id', '=', $data['parent_id'])->find();
             $data['tipe'] = $getparent->tipe;
@@ -115,6 +119,11 @@ $app->post('/acc/m_klasifikasi/save', function ($request, $response) {
         } else {
             $model = $db->insert('acc_m_akun', $data);
         }
+        /**
+         * Update tipe akun dibawahnya
+         */
+        $childId =getChildId("acc_m_akun", $model->id);
+        $db->update("acc_m_akun", ["tipe" => $model->tipe], "id in (".implode(",", $childId).")");
         return successResponse($response, $model);
     } else {
         return unprocessResponse($response, $validasi);
@@ -129,6 +138,10 @@ $app->post('/acc/m_klasifikasi/trash', function ($request, $response) {
     $update['is_deleted'] = $data['is_deleted'];
     $update['tgl_nonaktif'] = date('Y-m-d');
     try {
+        $getChild = getChildId("acc_m_akun", $data['id']);
+        if(!empty($getChild) && $data['is_deleted'] == 1){
+            return unprocessResponse($response, ['Klasifikasi tidak dapat dihapus karena memiliki sub klasifikasi']);            
+        }
         $model = $db->update("acc_m_akun", $update, ['id' => $data['id']]);
         return successResponse($response, $model);
     } catch (Exception $e) {

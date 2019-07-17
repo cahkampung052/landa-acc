@@ -31,13 +31,14 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
      * Get kode akun induk
      */
     $scope.getakun = function(id) {
-        Data.get('acc/m_akun/getakun/' + id).then(function(data) {
-            $scope.form.kode_induk = data.data.data.kode;
-        });
+        if (id > 0) {
+            Data.get('acc/m_akun/getakun/' + id).then(function(data) {
+                $scope.form.kode_induk = data.data.data.kode;
+            });
+        }
     };
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
-        $scope.isLoading = true;
         var param = {};
         if (tableState.search.predicateObject) {
             param["filter"] = tableState.search.predicateObject;
@@ -45,7 +46,6 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
         Data.get(control_link + "/index", param).then(function(response) {
             $scope.displayed = response.data.list;
         });
-        $scope.isLoading = false;
     };
     /**
      * import
@@ -154,8 +154,13 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
             if (result.value) {
                 row.is_deleted = 1;
                 Data.post(control_link + '/trash', row).then(function(result) {
-                    $rootScope.alert("Berhasil", "Data berhasil dihapus", "success");
-                    $scope.cancel();
+                    if (result.status_code == 200) {
+                        $rootScope.alert("Berhasil", "Data berhasil dihapus", "success");
+                        $scope.cancel();
+                    } else {
+                        row.is_deleted = 0;
+                        $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+                    }
                 });
             }
         });

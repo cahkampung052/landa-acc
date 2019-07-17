@@ -69,21 +69,26 @@ function buildFlatTreeId($tree, $ids = [])
 /**
  * ubah child jadi flat array
  */
-function flatten($element)
+function flatten($arr)
 {
-    $flatArray = array();
-    foreach ($element as $key => $node) {
-        if (array_key_exists('child', $node)) {
-            $flatArray = array_merge($flatArray，flatten($node->chi));
-            unset($node->chi);
-            $flatArray[] = $node;
-        } else {
-            $flatArray[] = $node;
+    $result = [];
+    foreach ($arr as $item) {
+        $result[] = $item;
+        if (isset($item->children)) {
+            $result = array_merge($result, flatten($item->children));
         }
+        unset($item->children);
     }
-
-
-    return $flatArray;
+    return $result;
+}
+/**
+ * Ambil semua child
+ */
+function getChildFlat($array, $parentId)
+{
+    $tree = buildTree($array, $parentId);
+    $child = flatten($tree);
+    return $child;
 }
 /**
  * Ambil semua id child
@@ -94,25 +99,25 @@ function getChildId($tabelName, $parentId)
     $db->select("*")->from($tabelName)->where("is_deleted", "=", 0);
     $data = $db->findAll();
     $tree = buildTree($data, $parentId);
-    $child = buildFlatTreeId($tree);
-    // $child = flatten($tree);
+    // $child = buildFlatTreeId($tree);
     return $child;
 }
 /**
  * Ambil saldo awal
  */
-function getSaldo($akunId, $lokasiId, $tanggal){
+function getSaldo($akunId, $lokasiId, $tanggal)
+{
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $db->select("sum(debit) as debit, sum(kredit) as kredit")
         ->from("acc_trans_detail")
         ->where("m_akun_id", "=", $akunId);
-    if(!empty($lokasiId)){
-        if(is_array($lokasiId) && !empty($lokasiId)){
-            $db->customWhere("acc_trans_detail.m_lokasi_id in (".implode(",", $lokasiId).")","and");
-        }else{
+    if (!empty($lokasiId)) {
+        if (is_array($lokasiId) && !empty($lokasiId)) {
+            $db->customWhere("acc_trans_detail.m_lokasi_id in (".implode(",", $lokasiId).")", "and");
+        } else {
             $child   = getChildId("acc_m_lokasi", $lokasiId);
             $child[] = $lokasiId;
-            $db->customWhere("acc_trans_detail.m_lokasi_id in (".implode(",", $child).")","and");
+            $db->customWhere("acc_trans_detail.m_lokasi_id in (".implode(",", $child).")", "and");
         }
     }
     $model = $db->find();
