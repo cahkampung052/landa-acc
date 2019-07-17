@@ -26,6 +26,11 @@ function twigViewPath()
     $view = new \Slim\Views\Twig(config('MODUL_ACC_PATH') . '/view');
     return $view;
 }
+function twigView()
+{
+    $view = new \Slim\Views\Twig('views');
+    return $view;
+}
 /**
  * Buat nested tree
  */
