@@ -262,9 +262,12 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
             }
         }
         /**
-         * Simpan array trans detail ke database
+         * Simpan array trans detail ke database jika simpan dan kunci
          */
-        insertTransDetail($transDetail);
+        if($params['type_save'] == "kunci"){
+            insertTransDetail($transDetail);
+        }
+        
         return successResponse($response, $model);
     } else {
         return unprocessResponse($response, $validasi);

@@ -6,6 +6,7 @@ function validasi($data, $custom = array()) {
         'm_akun_id' => 'required',
         'tanggal' => 'required',
         'total' => 'required',
+        'ppn' => 'required'
     );
     GUMP::set_field_name("m_akun_id", "Keluar dari akun");
     GUMP::set_field_name("m_lokasi_id", "Lokasi");
@@ -184,8 +185,9 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
         $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
         $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
-        $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup, "type"=> ucfirst($val->typeSup)];
-    }
+        if($val->m_kontak_id != 0)
+            $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup, "type"=> ucfirst($val->typeSup)];
+    }   
 
     return successResponse($response, [
         'list' => $models,
@@ -201,6 +203,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
 
     $params = $request->getParams();
     $sql = $this->db;
+//    print_r($params);die();
     $validasi = validasi($params['form']);
     if ($validasi === true) {
         /**
@@ -227,7 +230,8 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $pengeluaran['m_kontak_id'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['id'] : '';
         $pengeluaran['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $pengeluaran['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
-        $pengeluaran['total'] = $params['form']['total'];
+        $pengeluaran['total'] = $params['form']['total'] - $params['form']['ppn'];
+        $pengeluaran['ppn'] = $params['form']['ppn'];
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $pengeluaran['no_urut'] = $params['form']['no_urut'];
             $pengeluaran['no_transaksi'] = $params['form']['no_transaksi'];
@@ -270,26 +274,45 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
                 $transDetail[$index]['kode'] = $model->no_transaksi;
                 $transDetail[$index]['reff_type'] = "acc_pengeluaran";
                 $transDetail[$index]['reff_id'] = $model->id;
+                $index++;
             }
-            $index++;
+            
         }
         /**
          * Masukkan ke dalam array trans detail
          */
+        /*
+         * ppn
+         */
+        $akunppn = getPemetaanAkun("PPN");
         $transDetail[$index]['m_lokasi_id'] = $model->m_lokasi_id;
-        $transDetail[$index]['m_akun_id'] = $model->m_akun_id;
+        $transDetail[$index]['m_akun_id'] = $akunppn;
         $transDetail[$index]['m_kontak_id'] = $model->m_kontak_id;
         $transDetail[$index]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
-        $transDetail[$index]['kredit'] = $model->total;
+        $transDetail[$index]['debit'] = $model->ppn;
         $transDetail[$index]['reff_type'] = "acc_pengeluaran";
         $transDetail[$index]['kode'] = $model->no_transaksi;
         $transDetail[$index]['keterangan'] = $model->keterangan;
         $transDetail[$index]['reff_id'] = $model->id;
+        /*
+         * header total
+         */
+        $transDetail[$index+1]['m_lokasi_id'] = $model->m_lokasi_id;
+        $transDetail[$index+1]['m_akun_id'] = $model->m_akun_id;
+        $transDetail[$index+1]['m_kontak_id'] = $model->m_kontak_id;
+        $transDetail[$index+1]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
+        $transDetail[$index+1]['kredit'] = $model->total + $model->ppn;
+        $transDetail[$index+1]['reff_type'] = "acc_pengeluaran";
+        $transDetail[$index+1]['kode'] = $model->no_transaksi;
+        $transDetail[$index+1]['keterangan'] = $model->keterangan;
+        $transDetail[$index+1]['reff_id'] = $model->id;
         
         /**
-         * Simpan array trans detail ke database
+         * Simpan array trans detail ke database jika simpan dan kunci
          */
-        insertTransDetail($transDetail);
+        if($params['type_save'] == "kunci"){
+            insertTransDetail($transDetail);
+        }
         return successResponse($response, $model);
     } else {
         return unprocessResponse($response, $validasi);

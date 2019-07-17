@@ -1,0 +1,156 @@
+<div>
+    <style type="text/css">
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+    <table style="margin-top:0px;">
+        <tr>
+<!--            <td>
+                <img src="<?= $logo ?>" align="left" width="146" height="105">
+            </td>-->
+            <td style="text-align: center">
+                <span style="font-size: 30px;"><b>UNIVERSITAS KATOLIK DARMA CENDIKA</b><br></span>
+                Jl. Dr. Ir. Soekarno (MERR) 201 - Surabaya
+            </td>
+        </tr>
+    </table>
+    <hr>
+    <table>
+        <tr>
+            <td>Nomor</td>
+            <td>:</td>
+            <td>&nbsp;{{data.no_proposal}}</td>
+        </tr>
+        <tr>
+            <td>Lampiran</td>
+            <td>:</td>
+        </tr>
+<!--        <tr>
+            <td>Jenis</td>
+            <td>:</td>
+            <td> <?= ($form->nota_dinas == 1) ? 'Nota Dinsa' : 'Proposal' ?></td>
+        </tr>-->
+        <tr>
+            <td>Hal</td>
+            <td>:</td>
+            <td>{{data.perihal}}</td>
+        </tr>
+    </table>
+    <table style="width: 100%;" cellpadding="10px">
+        <tr>
+            <td>A.</td>
+            <td>DASAR PENGAJUAN</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <table border="1" style="width: 100%;height: 100px;">
+                    <tr>
+                        <td style="vertical-align: top;padding: 5px;">
+                            {{data.dasar_pengajuan}}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>B.</td>
+            <td>DASAR PENGAJUAN</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width:3%">I.</td>
+                        <td style="width:30%">PERKIRAAN ANGGARAN</td>
+                        <td> : {{data.jumlah_perkiraan}}</td>
+                    </tr>
+                    <tr>
+                        <td>II.</td>
+                        <td colspan="2">DESKRIPSI BIAYA</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="2">
+                            <table border="1" style="width: 100%;" cellpadding="1px">
+                                <tr>
+                                    <th style="width: 50px;">No.</th>
+                                    <th>Uraian</th>
+                                    <th style="width: 80px;">Jumlah</th>
+                                    <th style="width: 120px;">Harga Satuan</th>
+                                    <th style="width: 120px;">Subtotal</th>
+                                </tr>
+                                {%for key, val in detail%}
+                                <tr>
+                                    <td style="text-align:center">{{key+1}}</td>
+                                    <td>{{val.keterangan}}</td>
+                                    <td style="text-align:center">{{val.jenis_satuan}}</td>
+                                    <td style="text-align:right">{{val.harga_satuan}}</td>
+                                    <td style="text-align:right">{{val.jenis_satuan * val.harga_satuan}}</td>
+                                </tr>
+                                {%endfor%}
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>C.</td>
+            <td>CATATAN</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <table border="1" style="width: 100%;height: 90px;">
+                    <tr>
+                        <td style="vertical-align: top;padding: 5px;">
+                            {{data.catatan}}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>D.</td>
+            <td>LEMBAR PERSETUJUAN</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>Surabaya, {{data.tanggal | date("d-m-Y")}}</td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td  colspan="3">
+                <table border="1" style="width: 100%;text-align: center;">
+                    <tr>
+                        <td style="width: 17%;">Pemohon</td>
+                        {%if data.butuhapproval == 1%}
+                        {%for key, val in acc%}
+                         <td>
+                            Disetujui oleh :<span style="text-align:left;"><br>{{val.sebagai}}</span>
+                        </td>
+                        {%endfor%}
+                        {%endif%}
+                    </tr>
+                    <tr>
+                        <td style="width: 17%;height: 90px;vertical-align: bottom;text-align: center;padding: 5px">
+                            ( {{data.created_formated}} )
+
+                        </td>
+                        {%if data.butuhapproval == 1%}
+                        {%for key, val in acc%}
+                        <td style="width: 30%;height: 150px;vertical-align: bottom;text-align: center;padding: 5px">
+                            ({{val.nama}})
+                        </td>
+                        {%endfor%}
+                        {%endif%}
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -127,6 +127,14 @@
                         <uib-tab heading="Formulir" index="0">
                             <div class="row">
                                 <div class="col-md-6">
+                                    <div class="col-md-12" ng-if="is_pengajuan">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-form-label-sm required">No Proposal</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" ng-disabled="true" class="form-control form-control-sm" ng-model="form.no_proposal" ng-disabled="is_view" required/>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
@@ -257,6 +265,20 @@
                                                             </div>
 
                                                             <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="is_view" ng-model="val.debit" ng-change="sumTotal()"/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <!--<td></td>-->
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td style="text-align: right"><b>PPN</b></td>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Rp</span>
+                                                            </div>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-model="form.ppn" ng-disabled="is_view" ng-change="sumTotal()"/>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -466,9 +488,13 @@
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
                     </button>
-                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form)">
+                    <button type="submit" class="btn btn-default btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form, 'draft')">
                         <i class="fa fa-save"></i>
-                        &nbsp;Simpan
+                        &nbsp;Simpan & Draft
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form, 'kunci')">
+                        <i class="fa fa-check"></i>
+                        &nbsp;Simpan & Kunci
                     </button>
                 </div>
             </div>

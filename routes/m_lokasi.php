@@ -20,8 +20,9 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
                 ->findAll();
     
     foreach($models as $key => $val){
+        $models[$key] = (array) $val;
         $spasi                            = ($val->level == 0) ? '' : str_repeat("···", $val->level);
-        $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
+        $models[$key]['nama_lengkap']       = $spasi . $val->kode . ' - ' . $val->nama;
         
     }
     
@@ -42,7 +43,7 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
     // exit();
     
     $db = $this->db;
-    $db->select("acc_m_lokasi.*, induk.kode as kodeInduk, induk.nama as namaInduk")
+    $db->select("acc_m_lokasi.*, induk.kode as kodeInduk, induk.nama as namaInduk, induk.kode_parent as kodeParent")
         ->from("acc_m_lokasi")
         ->join("left join", "acc_m_lokasi induk", "induk.id = acc_m_lokasi.parent_id")
         ->orderBy('acc_m_lokasi.kode_parent')
@@ -76,7 +77,7 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
     foreach($models as $key => $val){
         $spasi                            = ($val->level == 0) ? '' : str_repeat("···", $val->level);
         $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
-        $val->parent_id = ["id"=>$val->parent_id, "nama"=>$val->namaInduk, "kode"=>$val->kodeInduk, "level" => $val->level];
+        $val->parent_id = ["id"=>$val->parent_id, "nama"=>$val->namaInduk, "kode_parent"=>$val->kodeParent, "kode"=>$val->kodeInduk, "level" => $val->level];
         
     }
 //     print_r($models);exit();
@@ -99,7 +100,8 @@ $app->post('/acc/m_lokasi/save', function ($request, $response) {
 
     $validasi = validasi($params);
     if ($validasi === true) {
-        if(isset($params['parent_id']) && !empty($params['parent_id'])){
+        $parent_id = $params['parent_id'];
+        if(isset($params['parent_id']) && $params['parent_id']['id'] != 0){
             $params['level'] = $params['parent_id']['level'] + 1;
         }else{
             $params['level'] = 0;
@@ -109,16 +111,17 @@ $app->post('/acc/m_lokasi/save', function ($request, $response) {
             $params['parent_id'] = $params['parent_id']['id'];
             $model = $sql->update("acc_m_lokasi", $params, ["id" => $params['id']]);
         }else{
+            $params['parent_id'] = $params['parent_id']['id'];
             $model = $sql->insert("acc_m_lokasi", $params);
         }
-        
-        if(isset($params['parent_id']) && !empty($params['parent_id'])){
-                        $kode_parent = $params['parent_id']['kode_parent'];
-
+//        print_r($params);die();
+        if(isset($parent_id) && $parent_id['id'] != 0){
+            $kode_parent = $parent_id['kode_parent'];
             $data['kode_parent'] = $kode_parent . "." . $model->id;
         }else{
             $data['kode_parent'] = $model->id;
         }
+//        print_r($data);die();
         $models = $sql->update("acc_m_lokasi", $data, ["id"=> $model->id]);
             
         if ($model) {

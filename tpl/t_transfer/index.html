@@ -237,9 +237,13 @@
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
                     </button>
-                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek <= 3 || loading" ng-click="save(form)">
+                    <button type="submit" class="btn btn-default btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form, 'draft')">
                         <i class="fa fa-save"></i>
-                        &nbsp;Simpan
+                        &nbsp;Simpan & Draft
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form, 'kunci')">
+                        <i class="fa fa-check"></i>
+                        &nbsp;Simpan & Kunci
                     </button>
                 </div>
             </div>

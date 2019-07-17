@@ -204,3 +204,9 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
         return $total;
     }
 }
+
+function getPemetaanAkun($type){
+    $db = new Cahkampung\Landadb(config('DB')['db']);
+    $akun = $db->select("*")->from("acc_m_akun_peta")->where("type", "=", $type)->find();
+    return $akun->m_akun_id;
+}

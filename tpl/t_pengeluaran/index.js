@@ -1,4 +1,4 @@
-app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal, Upload, FileUploader) {
+app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal, Upload, FileUploader, $stateParams) {
     var tableStateRef;
     var control_link = "acc/t_pengeluaran";
     var master = 'Transaksi Pengeluaran';
@@ -9,6 +9,8 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     $scope.is_edit = false;
     $scope.is_view = false;
     $scope.urlfoto = "api/file/pengeluaran/";
+    $scope.listLokasi = [];
+    $scope.is_pengajuan = false;
 
     /*
      * Ambil akun kas
@@ -123,6 +125,50 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     /* sampe di sini*/
     
     /*
+     * cek jika ada param no_proposal
+     */
+    if (
+        typeof $stateParams.no_proposal != "undefined" &&
+        $stateParams.no_proposal != "" &&
+        $stateParams.no_proposal !== null
+    ) {
+        Data.get("acc/apppengajuan/getAll", {
+            no_proposal : $stateParams.no_proposal,
+            global: true
+        }).then(function(response) {
+            var data = response.data[0];
+            Data.get("acc/apppengajuan/view", {
+                t_pengajuan_id : data.id,
+                global: true
+            }).then(function(response) {
+                $scope.create();
+                $scope.is_pengajuan = true;
+                $scope.form.no_proposal = data.no_proposal;
+                $scope.form.m_lokasi_id = data.m_lokasi_id;
+                $scope.form.tanggal = new Date();
+                $scope.form.keterangan = data.perihal + " - " + data.dasar_pengajuan;
+                $scope.form.total = data.jumlah_perkiraan;
+                $scope.form.t_pengajuan_id = data.id;
+                $scope.listDetail = [];
+                angular.forEach(response.data, function(value, key){
+                    $scope.listDetail[key] = {
+                        m_akun_id: {
+                            id : $scope.akunDetail[0].id,
+                            kode : $scope.akunDetail[0].kode,
+                            nama : $scope.akunDetail[0].nama
+                        },
+                        keterangan : value.keterangan + " (" + value.jenis_satuan + "@" + value.harga_satuan + ")",
+                        debit : value.sub_total
+                    }
+                });
+                
+            });
+            
+        });
+    }
+
+    
+    /*
      * ambil detail pengeluaran
      */
     $scope.getDetail = function (id){
@@ -178,10 +224,11 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
      */
     $scope.sumTotal = function () {
         var totaldebit = 0;
+        var ppn = $scope.form.ppn !== undefined ? $scope.form.ppn : 0;
         angular.forEach($scope.listDetail, function (value, key) {
             totaldebit += parseInt(value.debit);
         });
-        $scope.form.total = totaldebit;
+        $scope.form.total = ppn + totaldebit;
     };
     
 
@@ -222,15 +269,12 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
         $scope.form.tanggal = new Date();
+        $scope.form.ppn = 0;
         $scope.listDetail = [{
             m_akun_id: {
                 id : $scope.akunDetail[0].id,
                 kode : $scope.akunDetail[0].kode,
                 nama : $scope.akunDetail[0].nama
-            },
-            m_lokasi_id: {
-                id : $scope.listLokasi[0].id,
-                nama : $scope.listLokasi[0].nama
             },
             debit : 0
         }];
@@ -261,6 +305,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     /** view */
     $scope.view = function (form) {
         $scope.is_edit = true;
+        $scope.is_pengajuan = false;
         $scope.is_view = true;
         $scope.is_disable = true;
         $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
@@ -274,10 +319,12 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     };
     
     /** save action */
-    $scope.save = function (form) {
+    $scope.save = function (form, type_save) {
+        console.log(form)
         var data = {
             form : form,
-            detail : $scope.listDetail
+            detail : $scope.listDetail,
+            type_save : type_save
         }
         
         Data.post(control_link + '/save', data).then(function (result) {

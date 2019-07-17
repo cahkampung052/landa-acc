@@ -214,8 +214,13 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
         }
         
         
+        /*
+         * Simpan array trans detail ke database jika simpan dan kunci
+         */
+        if($params['type_save'] == "kunci"){
+            insertTransDetail($transDetail);
+        }
         
-        insertTransDetail($transDetail);
         
         
         if ($model) {

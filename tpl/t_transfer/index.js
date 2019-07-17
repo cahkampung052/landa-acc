@@ -90,9 +90,10 @@ app.controller('transferCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         $scope.form = form;
     };
     /** save action */
-    $scope.save = function (form) {
+    $scope.save = function (form, type_save) {
         var data = {
             form: form,
+            type_save : type_save
         }
 
 

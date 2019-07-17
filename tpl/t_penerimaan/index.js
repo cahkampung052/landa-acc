@@ -248,10 +248,11 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
     /**
      * save action
      */
-    $scope.save = function(form) {
+    $scope.save = function(form, type_save) {
         var data = {
             form: form,
-            detail: $scope.listDetail
+            detail: $scope.listDetail,
+            type_save : type_save
         }
         Data.post(control_link + '/save', data).then(function(result) {
             if (result.status_code == 200) {
