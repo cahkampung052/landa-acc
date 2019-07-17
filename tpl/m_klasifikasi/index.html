@@ -1,15 +1,25 @@
 <div class="animated fadeIn">
     <div ng-controller="klasifikasiCtrl">
-        <div class="alert alert-info box-shadow">
-            <p>
-                <b>Harap Diperhatikan !</b>
-            </p>
-            <ol style="padding-left: 15px;">
-                <li>Klasifikasi akun terdiri dari 9 klasifikasi induk yang telah ditentukan oleh sistem</li>
-                <li>Anda hanya dapat mengubah nama pada 9 klasifikasi induk tersebut</li>
-                <li>klasifikasi induk kode 1 s/d 3 digunakan untuk laporan neraca</li>
-                <li>Sedangkan klasifikasi induk kode 4 s/d 9 digunakan untuk laporan laba / rugi</li>
-            </ol>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-info box-shadow">
+                    <p>
+                        <b>Harap Diperhatikan !</b>
+                    </p>
+                    <ol style="padding-left: 15px;">
+                        <li>
+                            Tipe
+                            <b>HARTA, KEWAJIBAN, MODAL</b>
+                            digunakan untuk laporan neraca
+                        </li>
+                        <li>
+                            Tipe
+                            <b>PENDAPATAN, BIAYA, BEBAN</b>
+                            digunakan untuk laporan laba rugi
+                        </li>
+                    </ol>
+                </div>
+            </div>
         </div>
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
@@ -19,14 +29,14 @@
                         <i class="fa fa-search"></i>
                         &nbsp;Pencarian
                     </button>
-                    <!--  <button accept=".xls" class="btn btn-success btn-sm" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
-                                            <i class="fa fa-upload"></i>
-                                            &nbsp;Import
-                                        </button>
-                                        <button class="btn btn-warning btn-sm" ng-click="export();">
-                                            <i class="fa fa-download"></i>
-                                            &nbsp;Unduh Format
-                                        </button> -->
+                    <button accept=".xls" class="btn btn-success btn-sm" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
+                        <i class="fa fa-upload"></i>
+                        &nbsp;Import
+                    </button>
+                    <button class="btn btn-warning btn-sm" ng-click="export();">
+                        <i class="fa fa-download"></i>
+                        &nbsp;Unduh Format
+                    </button>
                     <button class="btn btn-primary btn-sm" ng-click="create();">
                         <i class="fa fa-plus"></i>
                         &nbsp;Tambahkan Klasifikasi Akun Baru
@@ -66,6 +76,8 @@
                         <thead>
                             <tr>
                                 <th style="text-align: left;">Kode</th>
+                                <th style="text-align: left;">Tipe Klasifikasi</th>
+                                <th style="text-align: left;">Tipe Arus Kas</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -78,10 +90,12 @@
                                     <span ng-if="row.is_tipe == 0">{{ row.nama_lengkap }}</span>
                                     <span ng-if="row.is_deleted == 1">(dihapus pada {{ row.tgl_nonaktif| date: "dd MMM yyyy" }})</span>
                                 </td>
+                                <td>{{ row.tipe }}</td>
+                                <td>{{ row.tipe_arus }}</td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.is_deleted == 0 && row.id>9" ng-click="trash(row);"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
                                         <button type="button" class="btn btn-warning fa fa-refresh" ng-if="row.is_deleted == 1" ng-click="restore(row);"></button>
                                     </div>
                                 </td>
@@ -99,31 +113,39 @@
                 <form name="landaform" novalidate="">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group row" ng-if="form.id> 9 || !form.id">
+                            <div class="form-group row">
                                 <label class="col-sm-3 col-form-label-sm required">Induk</label>
                                 <div class="col-sm-9">
                                     <select class="form-control form-control-sm" ng-change="getakun(form.parent_id)" id="parent" ng-disabled="is_view" ng-model="form.parent_id">
-                                        <option>- Pilih Induk -</option>
+                                        <option value="">- Pilih Akun Induk -</option>
+                                        <option value="0">.: Gunakan Sebagai Induk :.</option>
                                         <option ng-repeat="value in parent" ng-selected="value.id == form.parent_id" ng-value="{{ value.id }}">{{ value.kode }} - {{ value.nama }}</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group row" ng-if="form.id  <= 9">
+                            <div class="form-group row" ng-if="form.parent_id == 0">
                                 <label class="col-sm-3 col-form-label-sm required">Tipe</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control form-control-sm" ng-model="form.tipe" ng-disabled="true"/>
+                                    <select class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.tipe">
+                                        <option value="">- Pilih Tipe -</option>
+                                        <option value="HARTA">HARTA</option>
+                                        <option value="KEWAJIBAN">KEWAJIBAN</option>
+                                        <option value="MODAL">MODAL</option>
+                                        <option value="PENDAPATAN">PENDAPATAN</option>
+                                        <option value="BIAYA">BIAYA</option>
+                                        <option value="BEBAN">BEBAN</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label-sm required">Kode Akun</label>
                                 <div class="col-sm-9">
-                                    <div class="input-group input-group-sm" ng-if="form.id > 9 || !form.id">
-                                        <div class="input-group-prepend">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend" ng-if="form.parent_id> 0">
                                             <span class="input-group-text">{{ form.kode_induk }}</span>
                                         </div>
                                         <input type="text" class="form-control form-control-sm angka align-left" ng-model="form.kode" ng-disabled="is_view"/>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm angka align-left" ng-model="form.kode" ng-disabled="true" ng-if="form.id <= 9"/>
                                 </div>
                             </div>
                         </div>
