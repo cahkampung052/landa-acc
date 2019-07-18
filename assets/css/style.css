@@ -25,24 +25,24 @@ td, th {
     border: none;
 }
 .table-laporan tr {
-    background-color: #e3f1f31f;
+    background-color: #3fa8d82e;
     border-bottom: none;
 }
 .table-laporan td {
     border: none !important;
 }
 .table-laporan tbody tr:nth-of-type(odd) {
-    background-color: rgba(57, 143, 163, 0.12);
+    background-color: #e3f1f31f;
 }
 .table-laporan thead tr {
-    background-color: #398fa3;
+    background-color: #3798C4;
     color: white;
 }
 .table-laporan tbody tr th {
-    background-color: #398fa3;
+    background-color: #3798C4;
     color: white;
 }
 .table-laporan tfoot tr {
-    background-color: #398fa3;
+    background-color: #3798C4;
     color: white;
 }

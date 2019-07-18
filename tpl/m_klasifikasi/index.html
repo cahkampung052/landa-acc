@@ -24,16 +24,16 @@
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
                 <strong class="d-md-down-none">{{ master }}</strong>
-                <div class="btn-group pull-right mt-5px" role="group">
-                    <button class="btn btn-secondary btn-sm" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
+                <div class="pull-right mt-5px" role="group">
+                    <button class="btn btn-transparan btn-sm" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
                         <i class="fa fa-search"></i>
                         &nbsp;Pencarian
                     </button>
-                    <button accept=".xls" class="btn btn-success btn-sm" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
+                    <button accept=".xls" class="btn btn-transparan btn-sm" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
                         <i class="fa fa-upload"></i>
                         &nbsp;Import
                     </button>
-                    <button class="btn btn-warning btn-sm" ng-click="export();">
+                    <button class="btn btn-transparan btn-sm" ng-click="export();">
                         <i class="fa fa-download"></i>
                         &nbsp;Unduh Format
                     </button>
