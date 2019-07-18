@@ -18,15 +18,15 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
                 ->orderBy('acc_m_lokasi.kode_parent')
                 ->where("is_deleted", "=", 0)
                 ->findAll();
-    
-    foreach ($models as $key => $val) {
+     $arr = getChildFlat($models, 0);
+    foreach ($arr as $key => $val) {
         $spasi                            = ($val->level == 0) ? '' : str_repeat("···", $val->level);
 
         $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
     }
     
     return successResponse($response, [
-      'list'        => $models
+      'list'        => $arr
     ]);
 });
 
@@ -35,7 +35,7 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
     $params = $request->getParams();
    
     $db = $this->db;
-    $db->select("acc_m_lokasi.*, induk.kode as kodeInduk, induk.nama as namaInduk, induk.kode_parent as kodeParent")
+    $db->select("acc_m_lokasi.*, induk.kode as kodeInduk, induk.nama as namaInduk, induk.kode_parent as kodeParent, induk.level as levelInduk")
         ->from("acc_m_lokasi")
         ->join("left join", "acc_m_lokasi induk", "induk.id = acc_m_lokasi.parent_id")
         ->where("acc_m_lokasi.is_deleted", "=", 0);
@@ -58,7 +58,7 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
     foreach ($arr as $key => $val) {
         $spasi                            = ($val->level == 0) ? '' : str_repeat("---", $val->level);
         $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
-        $val->parent_id = ["id"=>$val->parent_id, "nama"=>$val->namaInduk, "kode"=>$val->kodeInduk, "level" => $val->level_induk];
+        $val->parent_id = ["id"=>$val->parent_id, "nama"=>$val->namaInduk, "kode"=>$val->kodeInduk, 'level' => $val->levelInduk];
     }
     
     return successResponse($response, [
@@ -89,15 +89,8 @@ $app->post('/acc/m_lokasi/save', function ($request, $response) {
             $params['parent_id'] = $params['parent_id']['id'];
             $model = $sql->insert("acc_m_lokasi", $params);
         }
-//        print_r($params);die();
-        if(isset($parent_id) && $parent_id['id'] != 0){
-            $kode_parent = $parent_id['kode_parent'];
-            $data['kode_parent'] = $kode_parent . "." . $model->id;
-        } else {
-            $data['kode_parent'] = $model->id;
-        }
-//        print_r($data);die();
-        $models = $sql->update("acc_m_lokasi", $data, ["id"=> $model->id]);
+
+        $models = $sql->update("acc_m_lokasi", $params, ["id"=> $model->id]);
             
         if ($model) {
             return successResponse($response, $model);
