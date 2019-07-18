@@ -18,15 +18,15 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
                 ->orderBy('acc_m_lokasi.kode_parent')
                 ->where("is_deleted", "=", 0)
                 ->findAll();
-    
-    foreach ($models as $key => $val) {
+     $arr = getChildFlat($models, 0);
+    foreach ($arr as $key => $val) {
         $spasi                            = ($val->level == 0) ? '' : str_repeat("···", $val->level);
 
         $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
     }
     
     return successResponse($response, [
-      'list'        => $models
+      'list'        => $arr
     ]);
 });
 
@@ -95,15 +95,8 @@ $app->post('/acc/m_lokasi/save', function ($request, $response) {
             $params['parent_id'] = $params['parent_id']['id'];
             $model = $sql->insert("acc_m_lokasi", $params);
         }
-//        print_r($params);die();
-        if(isset($parent_id) && $parent_id['id'] != 0){
-            $kode_parent = $parent_id['kode_parent'];
-            $data['kode_parent'] = $kode_parent . "." . $model->id;
-        } else {
-            $data['kode_parent'] = $model->id;
-        }
-//        print_r($data);die();
-        $models = $sql->update("acc_m_lokasi", $data, ["id"=> $model->id]);
+
+        $models = $sql->update("acc_m_lokasi", $params, ["id"=> $model->id]);
             
         if ($model) {
             return successResponse($response, $model);
