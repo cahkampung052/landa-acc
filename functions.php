@@ -99,7 +99,7 @@ function getChildId($tabelName, $parentId)
     $db->select("*")->from($tabelName)->where("is_deleted", "=", 0);
     $data = $db->findAll();
     $tree = buildTree($data, $parentId);
-    // $child = buildFlatTreeId($tree);
+     $child = buildFlatTreeId($tree);
     return $child;
 }
 /**
@@ -154,6 +154,16 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             ->findAll();
     $arr = [];
     $total = 0;
+    
+    /*
+     * ambil akun pengecualian
+     */
+    $akunPengecualian = getPengecualianAkun();
+    $arrPengecualian = [];
+    foreach($akunPengecualian->pengecualian_labarugi as $a => $b){
+        array_push($arrPengecualian, $b->m_akun_id->id);
+    }
+    
     /*
      * proses perulangan
      */
@@ -164,6 +174,12 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
          * ambil child akun
          */
         $akunId = getChildId("acc_m_akun", $akun->id);
+        foreach($arrPengecualian as $w => $x){
+            foreach($akunId as $y => $z){
+                if($z == $x)
+                    unset ($akunId[$y]);
+            }
+        }
         $getakun = $sql->select("*")
                 ->from("acc_m_akun")
                 ->customWhere("id IN(" . implode(',', $akunId) . ")")
@@ -214,4 +230,16 @@ function getPemetaanAkun($type){
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $akun = $db->select("*")->from("acc_m_akun_peta")->where("type", "=", $type)->find();
     return $akun->m_akun_id;
+}
+
+function getPengecualianAkun(){
+    $db   = new Cahkampung\Landadb(config('DB')['db']);
+    $data = $db->select("*")
+            ->from("acc_m_setting")
+            ->find();
+    
+    $data->pengecualian_neraca = json_decode($data->pengecualian_neraca);
+    $data->pengecualian_labarugi = json_decode($data->pengecualian_labarugi);
+    
+    return $data;
 }

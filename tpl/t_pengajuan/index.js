@@ -1,4 +1,4 @@
-app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope) {
+app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope,$uibModal) {
     /**
      * Inialisasi
      */
@@ -129,6 +129,8 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope) {
         $scope.form.butuhapproval = 1;
         $scope.listDetail = [{}];
         $scope.listAcc = {};
+        $scope.editorData = "<p>asdasdsadsad</p>"
+        console.log($scope.editorData)
     };
     
     $scope.copy = function (form) {
@@ -218,5 +220,41 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope) {
     
     $scope.print = function (row) {
         window.open("api/acc/apppengajuan/printPengajuan?" + $.param(row), "_blank");
+    }
+    
+    
+/**
+     * Modal setting pengecualian
+     */
+    $scope.modalSetting = function() {
+        var modalInstance = $uibModal.open({
+            templateUrl: "api/acc/landaacc/tpl/t_pengajuan/modal.html",
+            controller: "settingPrintCtrl",
+            size: "lg",
+            backdrop: "static",
+            keyboard: false,
+        });
+        modalInstance.result.then(function(response) {
+            if (response.data == undefined) {} else {}
+        });
+    }
+    
+});
+
+app.controller("settingPrintCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope) {
+    
+    Data.get("acc/apppengajuan/getTemplate").then(function(response){
+        $scope.editorData = response.data;
+    });
+    
+    
+    $scope.close = function() {
+        $uibModalInstance.close({
+            'data': undefined
+        });
+    };
+    
+    $scope.getValue = function (ckeditor) {
+        console.log(ckeditor)
     }
 });

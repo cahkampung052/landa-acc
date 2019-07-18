@@ -202,7 +202,7 @@ $app->post('/acc/m_klasifikasi/import', function ($request, $response) {
  * export
  */
 $app->get('/acc/m_klasifikasi/export', function ($request, $response) {
-    $inputFileName = 'acc/landaacc/upload/format_tipeakun.xls';
+    $inputFileName = 'acc/landaacc/file/format_tipeakun.xls';
     $objReader = PHPExcel_IOFactory::createReader('Excel5');
     $objPHPExcel = $objReader->load($inputFileName);
     header("Content-type: application/vnd.ms-excel");

@@ -11,9 +11,12 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         tableStateRef = tableState;
         $scope.isLoading = true;
         var offset = tableState.pagination.start || 0;
-        var limit = tableState.pagination.number || 1000;
+        var limit = tableState.pagination.number || 10;
         /** set offset and limit */
-        var param = {};
+        var param = {
+            offset : offset,
+            limit : limit
+        };
         /** set sort and order */
         if (tableState.sort.predicate) {
             param['sort'] = tableState.sort.predicate;

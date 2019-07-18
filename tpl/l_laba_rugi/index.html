@@ -3,7 +3,7 @@
         <div class="card">
             <div class="card-header">
                 <strong>Laporan Laba Rugi</strong>
-                <button class="btn btn-default btn-sm pull-right" >
+                <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()" ng-if="user.akses.pengecualian_labarugi">
                     <i class="fa fa-gear"></i>
                     Setting Pengecualian
                 </button>

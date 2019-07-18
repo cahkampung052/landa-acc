@@ -15,7 +15,11 @@
                     <button class="btn btn-primary btn-sm" ng-click="create();">
                         <i class="fa fa-plus"></i>
                         &nbsp;Buat Pengajuan Baru
+                    </button><button class="btn btn-secondary btn-sm" ng-click="modalSetting();">
+                        <i class="fa fa-gear"></i>
+                        &nbsp;Setting Print
                     </button>
+                    
                 </div>
             </div>
             <div class="card-body p-0px">
@@ -131,6 +135,7 @@
                             <div class="form-group row col-md-12">
                                 <label class="col-sm-3 col-form-label-sm">Catatan</label>
                                 <div class="col-sm-9">
+                                    <div ckeditor="true" ng-model="editorData"></div>
                                     <textarea ng-model="form.catatan" class="form-control form-control-sm" ng-disabled="is_view || is_update"></textarea>
                                 </div>
                             </div>

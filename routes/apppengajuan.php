@@ -288,19 +288,33 @@ $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response){
     $data = $request->getParams();
 //    echo "<pre>", print_r($data), "</pre>";die();
     $db = $this->db;
-    $db->select("*")->from("t_pengajuan_det")->where("t_pengajuan_id", "=", $data['id']);
+    $db->select("*")->from("acc_t_pengajuan_det")->where("t_pengajuan_id", "=", $data['id']);
     $detail = $db->findAll();
-    
-    $db->select("t_acc_pengajuan.*, acc_m_user.nama")->from("t_acc_pengajuan")->join("JOIN", "acc_m_user", "acc_m_user.id = t_acc_pengajuan.acc_m_user_id")->where("t_pengajuan_id", "=", $data['id']);
+    foreach($detail as $key => $val){
+        $val->no = $key+1 . ".";
+    }
+    $db->select("acc_approval_pengajuan.*, acc_m_user.nama")->from("acc_approval_pengajuan")->join("JOIN", "acc_m_user", "acc_m_user.id = acc_approval_pengajuan.acc_m_user_id")->where("t_pengajuan_id", "=", $data['id']);
     $acc = $db->findAll();
 //    echo "<pre>", print_r($acc), "</pre>";die();
+    $a = getPengecualianAkun();
+    $template = $a->print_pengajuan;
+    $template = str_replace("<tr><td>{start_detail}</td></tr>", "{%for key, val in detail%}", $template);
+    $template = str_replace("<tr><td>{end}</td></tr>", "{%endfor%}", $template);
+    $template = str_replace("<td>{start_acc}</td>", "{%for key, val in acc%}", $template);
+    $template = str_replace("<td>{end}</td>", "{%endfor%}", $template);
     $view = twigViewPath();
-        $content = $view->fetch('laporan/pengajuan.html', [
+        $content = $view->fetchFromString($template, [
             "data" => $data,
             "detail" => (array) $detail,
             "acc" => (array) $acc
 //            "css" => modulUrl() . '/assets/css/style.css',
         ]);
         echo $content;
-        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+//        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+});
+
+$app->get("/acc/apppengajuan/getTemplate", function ($request, $response){
+    $a = getPengecualianAkun();
+    return successResponse($response, $a->print_pengajuan);
+//        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
 });

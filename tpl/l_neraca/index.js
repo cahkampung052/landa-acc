@@ -1,4 +1,4 @@
-app.controller('l_neracaCtrl', function($scope, Data, $rootScope) {
+app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
     var control_link = "acc/l_neraca";
     $scope.form = {};
     $scope.form.tanggal = new Date();
@@ -26,5 +26,93 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope) {
         } else {
             window.open("api/acc/l_neraca/laporan?" + $.param(param), "_blank");
         }
+    };
+    
+    /**
+     * Modal setting pengecualian
+     */
+    $scope.modalSetting = function() {
+        var modalInstance = $uibModal.open({
+            templateUrl: "api/acc/landaacc/tpl/l_neraca/modal.html",
+            controller: "settingNeracaCtrl",
+            size: "md",
+            backdrop: "static",
+            keyboard: false,
+        });
+        modalInstance.result.then(function(response) {
+            if (response.data == undefined) {} else {}
+        });
+    }
+    
+});
+
+app.controller("settingNeracaCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope) {
+    
+    $scope.listAkun = [];
+    
+    Data.get('acc/m_akun/getPengecualian').then(function(response){
+        $scope.listAkun = response.data.pengecualian_neraca;
+    });
+    
+    Data.get('acc/m_akun/akunDetail').then(function(data) {
+        $scope.akunDetail = data.data.list;
+    });
+    /**
+     * Tambah detail
+     */
+    $scope.addDetail = function(val) {
+        var comArr = $(".tabletr").last().index() + 1
+        var newDet = {
+            m_akun_id: {
+                id: $scope.akunDetail[0].id,
+                kode: $scope.akunDetail[0].kode,
+                nama: $scope.akunDetail[0].nama
+            },
+        };
+        console.log(val)
+        if(val != null){
+            val.splice(comArr, 0, newDet);
+        }else{
+            $scope.listAkun = [];
+            $scope.listAkun[0] = {
+                m_akun_id: {
+                    id: $scope.akunDetail[0].id,
+                    kode: $scope.akunDetail[0].kode,
+                    nama: $scope.akunDetail[0].nama
+                },
+            }
+        }
+        
+    };
+    /**
+     * Hapus detail
+     */
+    $scope.removeDetail = function(val, paramindex) {
+        var comArr = eval(val);
+        val.splice(paramindex, 1);
+    };
+    
+    $scope.save = function() {
+            
+            var params = {
+                type : "neraca",
+                data : $scope.listAkun
+            }
+            
+            Data.post('acc/m_akun/savePengecualian', params).then(function(result) {
+                if (result.status_code == 200) {
+                    $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                    $uibModalInstance.close({
+                        'data': result.data
+                    });
+                } else {
+                    $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+                }
+            });
+    };
+    $scope.close = function() {
+        $uibModalInstance.close({
+            'data': undefined
+        });
     };
 });

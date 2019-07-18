@@ -567,3 +567,30 @@ $app->get('/acc/m_akun/getakun/{id}', function ($request, $response) {
         ->find();
     return successResponse($response, ['data' => $data]);
 });
+
+/*
+ * pengecualian akun untuk neraca
+ */
+$app->get("/acc/m_akun/getPengecualian", function($request, $response){
+    $data = getPengecualianAkun();
+    return successResponse($response, $data);
+});
+$app->post("/acc/m_akun/savePengecualian", function($request, $response){
+    $db   = $this->db;
+    
+    $params = $request->getParams();
+    if($params['type'] == "neraca"){
+        $data["pengecualian_neraca"] = json_encode($params['data']);
+    }
+    if($params['type'] == "labarugi"){
+        $data["pengecualian_labarugi"] = json_encode($params['data']);
+    }
+    
+    
+    try {
+        $models = $db->update('acc_m_setting', $data, ["id"=> 1]);
+        return successResponse($response, []);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["Terjadi Kesalahan pada server"]);
+    }
+});

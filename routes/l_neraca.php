@@ -41,7 +41,34 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $idHarta = getChildId("acc_m_akun", 1);
     $idKewajiban = getChildId("acc_m_akun", 2);
     $idModal = getChildId("acc_m_akun", 3);
-
+    
+    /*
+     * ambil akun pengecualian
+     */
+    $akunPengecualian = getPengecualianAkun();
+    $arrPengecualian = [];
+    foreach($akunPengecualian->pengecualian_neraca as $a => $b){
+        array_push($arrPengecualian, $b->m_akun_id->id);
+    }
+    
+    /*
+     * cek akun pengecualian (jika sama, unset)
+     */
+    foreach($arrPengecualian as $w => $x){
+        foreach($idHarta as $y => $z){
+            if($z == $x)
+                unset ($idHarta[$y]);
+        }
+        foreach($idKewajiban as $y => $z){
+            if($z == $x)
+                unset ($idKewajiban[$y]);
+        }
+        foreach($idModal as $y => $z){
+            if($z == $x)
+                unset ($idModal[$y]);
+        }
+    }
+    
     /*
      * proses harta
      */

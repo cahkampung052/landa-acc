@@ -268,7 +268,7 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     $scope.save = function (form, type_save) {
         var data = {
             form : form,
-            detail : $scope.listDetail
+            detail : $scope.listDetail,
             type_save : type_save
         }
         

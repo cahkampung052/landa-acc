@@ -82,15 +82,15 @@
                                     <th style="width: 120px;">Harga Satuan</th>
                                     <th style="width: 120px;">Subtotal</th>
                                 </tr>
-                                {%for key, val in detail%}
+                                <tr><td>{start_detail}</td></tr>
                                 <tr>
-                                    <td style="text-align:center">{{key+1}}</td>
+                                    <td style="text-align:center">{{val.no}}</td>
                                     <td>{{val.keterangan}}</td>
                                     <td style="text-align:center">{{val.jenis_satuan}}</td>
                                     <td style="text-align:right">{{val.harga_satuan}}</td>
                                     <td style="text-align:right">{{val.jenis_satuan * val.harga_satuan}}</td>
                                 </tr>
-                                {%endfor%}
+                                <tr><td>{end}</td></tr>
                             </table>
                         </td>
                     </tr>
@@ -128,26 +128,22 @@
                 <table border="1" style="width: 100%;text-align: center;">
                     <tr>
                         <td style="width: 17%;">Pemohon</td>
-                        {%if data.butuhapproval == 1%}
-                        {%for key, val in acc%}
+                        <td>{start_acc}</td>
                          <td>
                             Disetujui oleh :<span style="text-align:left;"><br>{{val.sebagai}}</span>
                         </td>
-                        {%endfor%}
-                        {%endif%}
+                        <td>{end}</td>
                     </tr>
                     <tr>
                         <td style="width: 17%;height: 90px;vertical-align: bottom;text-align: center;padding: 5px">
                             ( {{data.created_formated}} )
 
                         </td>
-                        {%if data.butuhapproval == 1%}
-                        {%for key, val in acc%}
+                        <td>{start_acc}</td>
                         <td style="width: 30%;height: 150px;vertical-align: bottom;text-align: center;padding: 5px">
                             ({{val.nama}})
                         </td>
-                        {%endfor%}
-                        {%endif%}
+                        <td>{end}</td>
                     </tr>
                 </table>
             </td>

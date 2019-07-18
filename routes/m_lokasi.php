@@ -35,7 +35,7 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
     $params = $request->getParams();
    
     $db = $this->db;
-    $db->select("acc_m_lokasi.*, induk.kode as kodeInduk, induk.nama as namaInduk, induk.kode_parent as kodeParent")
+    $db->select("acc_m_lokasi.*, induk.kode as kodeInduk, induk.nama as namaInduk, induk.kode_parent as kodeParent, induk.level as level_induk")
         ->from("acc_m_lokasi")
         ->join("left join", "acc_m_lokasi induk", "induk.id = acc_m_lokasi.parent_id")
         ->where("acc_m_lokasi.is_deleted", "=", 0);
@@ -51,7 +51,7 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
         }
     }
 
-    $models    = $db->findAll();
+    $models    = $db->orderBy("kode_parent")->findAll();
 
     $arr = getChildFlat($models, 0);
     
@@ -59,6 +59,12 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
         $spasi                            = ($val->level == 0) ? '' : str_repeat("---", $val->level);
         $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
         $val->parent_id = ["id"=>$val->parent_id, "nama"=>$val->namaInduk, "kode"=>$val->kodeInduk, "level" => $val->level_induk];
+    
+        /*
+         * cek child
+         */
+        $val->child = count(getChildFlat($models, $val->id));
+        
     }
     
     return successResponse($response, [
@@ -113,26 +119,10 @@ $app->post('/acc/m_lokasi/save', function ($request, $response) {
 $app->post('/acc/m_lokasi/trash', function ($request, $response) {
     $data = $request->getParams();
     $db   = $this->db;
-
-//    $cek_komponenGaji = $db->select('*')
-//    ->from('m_komponen_gaji')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_komponenGaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Master Komponen Gaji']);
-//    }
-
-//    $cek_Gaji = $db->select('*')
-//    ->from('t_penggajian')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_Gaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi Penggajian']);
-//    }
-
-    $model = $db->update("acc_m_lokasi", $data, array('id' => $data['id']));
+    $model = false;
+    if($data['id'] != 1){
+        $model = $db->update("acc_m_lokasi", $data, array('id' => $data['id']));
+    }
     if ($model) {
         return successResponse($response, $model);
     } else {
@@ -144,35 +134,12 @@ $app->post('/acc/m_lokasi/delete', function ($request, $response) {
     $data = $request->getParams();
     $db   = $this->db;
 
-//    $cek = $db->select("*")
-//    ->from("acc_trans_detail")
-//    ->where("m_akun_id", "=", $request->getAttribute('id'))
-//    ->find();
-//
-//    if ($cek) {
-//        return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi']);
-//    }
-//
-//    $cek_komponenGaji = $db->select('*')
-//    ->from('m_komponen_gaji')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_komponenGaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Master Komponen Gaji']);
-//    }
-//
-//    $cek_Gaji = $db->select('*')
-//    ->from('t_penggajian')
-//    ->where('m_akun_id','=',$data['id'])
-//    ->find();
-//
-//    if (!empty($cek_Gaji)) {
-//       return unprocessResponse($response, ['Data Akun Masih Di Gunakan Pada Transaksi Penggajian']);
-//    }
-
-    $delete = $db->delete('acc_m_lokasi', array('id' => $data['id']));
-    if ($delete) {
+    $model = false;
+    if($data['id'] != 1){
+        $model = $db->delete('acc_m_lokasi', array('id' => $data['id']));
+    }
+    
+    if ($model) {
         return successResponse($response, ['data berhasil dihapus']);
     } else {
         return unprocessResponse($response, ['data gagal dihapus']);

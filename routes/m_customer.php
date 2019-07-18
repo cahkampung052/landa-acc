@@ -37,12 +37,13 @@ $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
 $app->get('/acc/m_customer/index', function ($request, $response) {
     $params = $request->getParams();
     $offset   = isset($params['offset']) ? $params['offset'] : 0;
-    $limit    = isset($params['limit']) ? $params['limit'] : 20;
+    $limit    = isset($params['limit']) ? $params['limit'] : 10;
     $db = $this->db;
     $db->select("*")
         ->from("acc_m_kontak")
         ->where("type", "=", "customer")
         ->orderBy('acc_m_kontak.nama');
+    
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
         foreach ($filter as $key => $val) {
