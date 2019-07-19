@@ -3,42 +3,38 @@
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
                 <strong class="d-md-down-none">Master Akun</strong>
-                <div class="btn-group pull-right mt-5px" role="group">
-                    <button class="btn btn-secondary btn-sm" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
-                        <i class="fa fa-search"></i>
-                        &nbsp;Pencarian
+                <div class="pull-right mt-5px" role="group">
+                    <button accept=".xls" class="btn btn-transparan btn-sm" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
+                        <i class="fa fa-upload"></i>
+                        &nbsp;Import
                     </button>
-                    <!--  <button accept=".xls" class="btn btn-success btn-sm" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
-                                            <i class="fa fa-upload"></i>
-                                            &nbsp;Import
-                                        </button>
-                                        <button class="btn btn-warning btn-sm" ng-click="export();">
-                                            <i class="fa fa-download"></i>
-                                            &nbsp;Unduh Format
-                                        </button> -->
+                    <button class="btn btn-transparan btn-sm" ng-click="export();">
+                        <i class="fa fa-download"></i>
+                        &nbsp;Unduh Format
+                    </button>
                     <button class="btn btn-primary btn-sm" ng-click="create();">
                         <i class="fa fa-plus"></i>
-                        &nbsp;Tambahkan Akun Baru
+                        &nbsp;Buat Akun Baru
                     </button>
                 </div>
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
-                    <div class="row mt-15px" ng-show="!isCollapsed">
+                    <div class="row mt-15px">
                         <div class="col-md-12">
                             <div class="alert alert-secondary">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row mb-0px">
-                                        <label for="kode" class="col-sm-1 col-form-label-sm mb-0px">Kode</label>
-                                        <div class="col-sm-3">
+                                        <label for="kode" class="col-md-1 col-form-label-sm mb-0px">Kode</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control form-control-sm" st-search="kode" id="kode" placeholder="Kode"/>
                                         </div>
-                                        <label for="nama" class="col-sm-1 col-form-label-sm mb-0px">Nama</label>
-                                        <div class="col-sm-3">
+                                        <label for="nama" class="col-md-1 col-form-label-sm mb-0px">Nama</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control form-control-sm" st-search="nama" id="nama" placeholder="Nama"/>
                                         </div>
-                                        <label class="col-sm-1 col-form-label-sm mb-0px">Status</label>
-                                        <div class="col-sm-2">
+                                        <label class="col-md-1 col-form-label-sm mb-0px">Status</label>
+                                        <div class="col-md-2">
                                             <select class="form-control form-control-sm" st-search="is_deleted">
                                                 <option value="0">Aktif</option>
                                                 <option value="1">Terhapus</option>
@@ -99,8 +95,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Akun</label>
-                                <div class="col-sm-9">
+                                <label class="col-md-3 col-form-label-sm required">Akun</label>
+                                <div class="col-md-9">
                                     <select class="form-control form-control-sm" ng-change="getakun(form.parent_id)" id="parent" ng-disabled="is_view" ng-model="form.parent_id">
                                         <option value="">- Pilih Akun -</option>
                                         <option ng-repeat="value in dataakun" ng-selected="value.id == form.parent_id" ng-value="{{ value.id }}">{{ value.kode }} - {{ value.nama }}</option>
@@ -110,8 +106,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Kode Akun</label>
-                                <div class="col-sm-9">
+                                <label class="col-md-3 col-form-label-sm required">Kode Akun</label>
+                                <div class="col-md-9">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ form.kode_induk }}</span>
@@ -123,16 +119,16 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Nama Akun</label>
-                                <div class="col-sm-9">
+                                <label class="col-md-3 col-form-label-sm required">Nama Akun</label>
+                                <div class="col-md-9">
                                     <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view" required/>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group row">
-                                <label class="col-sm-6 col-form-label-sm required">Set Akun Kas</label>
-                                <div class="col-sm-6">
+                                <label class="col-md-6 col-form-label-sm required">Set Akun Kas</label>
+                                <div class="col-md-6">
                                     <div class="btn-group">
                                         <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.is_kas" ng-disabled="is_view" uib-btn-radio="1">Ya</label>
                                         <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.is_kas" ng-disabled="is_view" uib-btn-radio="0">Tidak</label>
@@ -142,8 +138,8 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group row">
-                                <label class="col-sm-6 col-form-label-sm required">Saldo Normal</label>
-                                <div class="col-sm-6">
+                                <label class="col-md-6 col-form-label-sm required">Saldo Normal</label>
+                                <div class="col-md-6">
                                     <div class="btn-group">
                                         <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.saldo_normal" ng-disabled="is_view" uib-btn-radio="1">Debit</label>
                                         <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.saldo_normal" ng-disabled="is_view" uib-btn-radio="-1">Kredit</label>

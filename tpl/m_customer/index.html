@@ -4,33 +4,29 @@
             <div class="card-header">
                 <strong class="d-md-down-none">{{ master }}</strong>
                 <div class="btn-group pull-right mt-5px" role="group">
-                    <button class="btn btn-secondary btn-sm" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
-                        <i class="fa fa-search"></i>
-                        &nbsp;Pencarian
-                    </button>
                     <button class="btn btn-primary btn-sm" ng-click="create();">
                         <i class="fa fa-plus"></i>
-                        &nbsp;Tambahkan Customer Baru
+                        &nbsp;Buat Customer Baru
                     </button>
                 </div>
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
-                    <div class="row mt-15px" ng-show="!isCollapsed">
+                    <div class="row mt-15px">
                         <div class="col-md-12">
                             <div class="alert alert-secondary">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row mb-0px">
-                                        <label for="nama" class="col-sm-1 col-form-label-sm mb-0px">Nama</label>
-                                        <div class="col-sm-3">
+                                        <label for="nama" class="col-md-1 col-form-label-sm mb-0px">Nama</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control form-control-sm" st-search="nama" id="nama" placeholder="Nama"/>
                                         </div>
-                                        <label for="nama" class="col-sm-1 col-form-label-sm mb-0px">Telp</label>
-                                        <div class="col-sm-3">
+                                        <label for="nama" class="col-md-1 col-form-label-sm mb-0px">Telp</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control form-control-sm" st-search="tlp" id="telp" placeholder="Telp"/>
                                         </div>
-                                        <label class="col-sm-1 col-form-label-sm mb-0px">Status</label>
-                                        <div class="col-sm-2">
+                                        <label class="col-md-1 col-form-label-sm mb-0px">Status</label>
+                                        <div class="col-md-2">
                                             <select class="form-control form-control-sm" st-search="is_deleted">
                                                 <option value="0">Aktif</option>
                                                 <option value="1">Terhapus</option>
@@ -81,38 +77,30 @@
                 <form name="landaform" novalidate="">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm required">Nama Customer</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view" required/>
-                                    </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label-sm required">Nama Customer</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view" required/>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">Email</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control form-control-sm" ng-model="form.email" ng-disabled="is_view" required/>
-                                    </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label-sm">Email</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control form-control-sm" ng-model="form.email" ng-disabled="is_view" required/>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">No Telepon</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control form-control-sm angka" ng-model="form.tlp" ng-disabled="is_view" required/>
-                                    </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label-sm">No Telepon</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control form-control-sm angka" ng-model="form.tlp" ng-disabled="is_view" required/>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label-sm">Alamat</label>
-                                    <div class="col-sm-9">
-                                        <textarea style="height:120px" class="form-control form-control-sm" ng-model="form.alamat" ng-disabled="is_view" required/></textarea>
-                                    </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label-sm">Alamat</label>
+                                <div class="col-md-9">
+                                    <textarea style="height:120px" class="form-control form-control-sm" ng-model="form.alamat" ng-disabled="is_view" required/></textarea>
                                 </div>
                             </div>
                         </div>
@@ -120,12 +108,12 @@
                 </form>
             </div>
             <div class="card-footer">
-                <div class="pull-right">
+                <div class="btn-group pull-right">
                     <button type="submit" class="btn btn-secondary btn-sm" ng-click="cancel()">
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
                     </button>
-                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek   <= 3 || loading" ng-click="save(form)">
+                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek    <= 3 || loading" ng-click="save(form)">
                         <i class="fa fa-save"></i>
                         &nbsp;Simpan
                     </button>

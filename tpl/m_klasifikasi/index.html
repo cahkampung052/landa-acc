@@ -25,10 +25,6 @@
             <div class="card-header">
                 <strong class="d-md-down-none">{{ master }}</strong>
                 <div class="pull-right mt-5px" role="group">
-                    <button class="btn btn-transparan btn-sm" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
-                        <i class="fa fa-search"></i>
-                        &nbsp;Pencarian
-                    </button>
                     <button accept=".xls" class="btn btn-transparan btn-sm" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
                         <i class="fa fa-upload"></i>
                         &nbsp;Import
@@ -39,27 +35,27 @@
                     </button>
                     <button class="btn btn-primary btn-sm" ng-click="create();">
                         <i class="fa fa-plus"></i>
-                        &nbsp;Tambahkan Klasifikasi Akun Baru
+                        &nbsp;Buat Klasifikasi Akun Baru
                     </button>
                 </div>
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
-                    <div class="row mt-15px" ng-show="!isCollapsed">
+                    <div class="row mt-15px">
                         <div class="col-md-12">
                             <div class="alert alert-secondary">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row mb-0px">
-                                        <label for="kode" class="col-sm-1 col-form-label-sm mb-0px">Kode</label>
-                                        <div class="col-sm-3">
+                                        <label for="kode" class="col-md-1 col-form-label-sm mb-0px">Kode</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control form-control-sm" st-search="kode" id="kode" placeholder="Kode"/>
                                         </div>
-                                        <label for="nama" class="col-sm-1 col-form-label-sm mb-0px">Nama</label>
-                                        <div class="col-sm-3">
+                                        <label for="nama" class="col-md-1 col-form-label-sm mb-0px">Nama</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control form-control-sm" st-search="nama" id="nama" placeholder="Nama"/>
                                         </div>
-                                        <label class="col-sm-1 col-form-label-sm mb-0px">Status</label>
-                                        <div class="col-sm-2">
+                                        <label class="col-md-1 col-form-label-sm mb-0px">Status</label>
+                                        <div class="col-md-2">
                                             <select class="form-control form-control-sm" st-search="is_deleted">
                                                 <option value="0">Aktif</option>
                                                 <option value="1">Terhapus</option>
@@ -114,8 +110,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Induk</label>
-                                <div class="col-sm-9">
+                                <label class="col-md-3 col-form-label-sm required">Induk</label>
+                                <div class="col-md-9">
                                     <select class="form-control form-control-sm" ng-change="getakun(form.parent_id)" id="parent" ng-disabled="is_view" ng-model="form.parent_id">
                                         <option value="">- Pilih Akun Induk -</option>
                                         <option value="0">.: Gunakan Sebagai Induk :.</option>
@@ -124,8 +120,8 @@
                                 </div>
                             </div>
                             <div class="form-group row" ng-if="form.parent_id == 0">
-                                <label class="col-sm-3 col-form-label-sm required">Tipe</label>
-                                <div class="col-sm-9">
+                                <label class="col-md-3 col-form-label-sm required">Tipe</label>
+                                <div class="col-md-9">
                                     <select class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.tipe">
                                         <option value="">- Pilih Tipe -</option>
                                         <option value="HARTA">HARTA</option>
@@ -138,8 +134,8 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Kode Akun</label>
-                                <div class="col-sm-9">
+                                <label class="col-md-3 col-form-label-sm required">Kode Akun</label>
+                                <div class="col-md-9">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend" ng-if="form.parent_id> 0">
                                             <span class="input-group-text">{{ form.kode_induk }}</span>
@@ -151,14 +147,14 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Nama Klasifikasi</label>
-                                <div class="col-sm-9">
+                                <label class="col-md-3 col-form-label-sm required">Nama Klasifikasi</label>
+                                <div class="col-md-9">
                                     <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view"/>
                                 </div>
                             </div>
                             <div class="form-group row" ng-if="form.id> 9 || !form.id">
-                                <label class="col-sm-3 col-form-label-sm">Tipe Arus Kas</label>
-                                <div class="col-sm-9">
+                                <label class="col-md-3 col-form-label-sm">Tipe Arus Kas</label>
+                                <div class="col-md-9">
                                     <select class="form-control form-control-sm" id="tipearus" ng-disabled="is_view" ng-model="form.tipe_arus">
                                         <option value="">- Tidak Digunakan Sebagai Arus Kas -</option>
                                         <option value="Aktivitas Operasi">Aktivitas Operasi</option>
@@ -172,7 +168,7 @@
                 </form>
             </div>
             <div class="card-footer">
-                <div class="pull-right">
+                <div class="btn-group pull-right">
                     <button type="submit" class="btn btn-secondary btn-sm" ng-click="cancel()">
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
