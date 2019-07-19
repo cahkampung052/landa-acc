@@ -286,7 +286,6 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
  */
 $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response){
     $data = $request->getParams();
-//    echo "<pre>", print_r($data), "</pre>";die();
     $db = $this->db;
     $db->select("*")->from("acc_t_pengajuan_det")->where("t_pengajuan_id", "=", $data['id']);
     $detail = $db->findAll();

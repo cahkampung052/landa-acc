@@ -230,7 +230,7 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope,$uibModal) {
         var modalInstance = $uibModal.open({
             templateUrl: "api/acc/landaacc/tpl/t_pengajuan/modal.html",
             controller: "settingPrintCtrl",
-            size: "lg",
+            size: "xl",
             backdrop: "static",
             keyboard: false,
         });
