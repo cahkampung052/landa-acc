@@ -52,6 +52,7 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope,$uibModal) {
         if (tableState.search.predicateObject) {
             param["filter"] = tableState.search.predicateObject;
         }
+        param["type"] = "pengajuan";
         Data.get("acc/apppengajuan/index", param).then(function (response) {
             $scope.displayed = response.data.list;
             tableState.pagination.numberOfPages = Math.ceil(
@@ -91,10 +92,10 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope,$uibModal) {
             if(value.harga_satuan === undefined){
                 value.harga_satuan = 0;
             }
-            if(value.jenis_satuan === undefined){
-                value.jenis_satuan = 0;
+            if(value.jumlah === undefined){
+                value.jumlah = 0;
             }
-            value.sub_total = parseInt(value.harga_satuan) * parseInt(value.jenis_satuan);
+            value.sub_total = parseInt(value.harga_satuan) * parseInt(value.jumlah);
             jumlah_perkiraan += value.sub_total;
         });
         $scope.form.jumlah_perkiraan = jumlah_perkiraan;

@@ -99,7 +99,11 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     };
     $scope.trash = function (row) {
         var data = angular.copy(row);
-        Swal.fire({
+        console.log(row)
+        if(row.child != 0){
+            $rootScope.alert("Terjadi Kesalahan", "Data tidak bisa dihapus", "error");
+        }else{
+            Swal.fire({
             title: "Peringatan ! ",
             text: "Apakah Anda Yakin Ingin Menghapus Data Ini",
             type: "warning",
@@ -117,6 +121,8 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
                 });
             }
         });
+        }
+        
     };
     $scope.restore = function (row) {
         var data = angular.copy(row);

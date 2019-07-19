@@ -10,28 +10,52 @@
                     </button>
                     <button class="btn btn-primary btn-sm" ng-click="create();">
                         <i class="fa fa-plus"></i>
-                        &nbsp;Tambahkan Transfer Baru
+                        &nbsp;Buat Transfer Baru
                     </button>
 
                 </div>
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
-                    <div class="row mt-15px" ng-show="!isCollapsed">
+                    <div class="row mt-15px">
                         <div class="col-md-12">
                             <div class="alert alert-secondary">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row mb-0px">
-                                        <label class="col-sm-1 col-form-label-sm mb-0px">Lokasi</label>
+                                        <label for="nama" class="col-sm-2 col-form-label-sm mb-0px">No Transaksi</label>
                                         <div class="col-sm-2">
-                                            <select class="form-control form-control-sm" st-search="m_lokasi_id">
+                                            <input type="text" class="form-control form-control-sm" st-search="no_transaksi" id="no_transaksi" placeholder="No Transaksi"/>
+                                        </div>
+                                    
+                                    <label class="col-sm-2 col-form-label-sm mb-0px">Akun Asal</label>
+                                        <div class="col-sm-2">
+                                            <select class="form-control form-control-sm" st-search="m_akun_asal_id">
+                                                <option value="">- Semua Akun -</option>
+                                                <option ng-repeat="val in akun" ng-value="val.id">{{val.nama}}</option>
+                                            </select>
+                                        </div>
+                                    <label class="col-sm-2 col-form-label-sm mb-0px">Akun tujuan</label>
+                                        <div class="col-sm-2">
+                                            <select class="form-control form-control-sm" st-search="m_akun_tujuan_id">
+                                                <option value="">- Semua Akun -</option>
+                                                <option ng-repeat="val in akun" ng-value="val.id">{{val.nama}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mt-15px">
+                                        <label class="col-sm-2 col-form-label-sm mb-0px">Lokasi Asal</label>
+                                        <div class="col-sm-2">
+                                            <select class="form-control form-control-sm" st-search="m_lokasi_asal_id">
                                                 <option value="">- Semua Lokasi -</option>
                                                 <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama}}</option>
                                             </select>
                                         </div>
-                                        <label for="nama" class="col-sm-1 col-form-label-sm mb-0px">No Transaksi</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" class="form-control form-control-sm" st-search="no_transaksi" id="no_transaksi" placeholder="No Transaksi"/>
+                                    <label class="col-sm-2 col-form-label-sm mb-0px">Lokasi Tujuan</label>
+                                        <div class="col-sm-2">
+                                            <select class="form-control form-control-sm" st-search="m_lokasi_tujuan_id">
+                                                <option value="">- Semua Lokasi -</option>
+                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama}}</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </form>
@@ -70,6 +94,9 @@
                                 <th style="text-align: left;">
                                     Dibuat Oleh
                                 </th>
+                                 <th style="text-align: left;">
+                                    Status
+                                </th>
                                 <th>
                                 </th>
                             </tr>
@@ -101,10 +128,13 @@
                                 <td style="text-align: left;">
                                     {{row.namaUser}}
                                 </td>
+                                <td style="text-align: left;">
+                                    {{row.status}}
+                                </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
-                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="row.tanggal >= tanggal_setting"  ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.tanggal >= tanggal_setting" ng-click="delete(row);"></button>
+                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft' && row.tanggal >= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_update)"  ng-click="update(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="(row.status == 'Draft' && row.tanggal >= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_delete)" ng-click="delete(row);"></button>
                                     </div>
                                 </td>
                             </tr>
@@ -182,10 +212,10 @@
                         <div class="col-md-12">
                             <h6 class="tittle-header">Detail</h6>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Nominal</label>
-                                <div class="col-sm-9">
+                                <label class="col-sm-4 col-form-label-sm required">Nominal</label>
+                                <div class="col-sm-8">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
@@ -197,10 +227,10 @@
 
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Tanggal</label>
-                                <div class="col-sm-9">
+                                <label class="col-sm-4 col-form-label-sm required">Tanggal</label>
+                                <div class="col-sm-8">
                                     <div class="input-group">
                                         <input type="text" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" datepicker-options="options" ng-disabled="is_view"/>
                                         <div class="input-group-prepend">
@@ -212,10 +242,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label-sm">Keterangan</label>
-                                <div class="col-sm-8">
+                                <label class="col-sm-2 col-form-label-sm">Keterangan</label>
+                                <div class="col-sm-10">
                                     <textarea class="form-control" ng-model="form.keterangan"></textarea>
                                 </div>
                             </div>
@@ -232,16 +262,16 @@
                 </form>
             </div>
             <div class="card-footer">
-                <div class="pull-right">
+                <div class="pull-right btn btn-group">
                     <button type="submit" class="btn btn-secondary btn-sm" ng-click="cancel()">
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
                     </button>
-                    <button type="submit" class="btn btn-default btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form, 'draft')">
+                    <button type="submit" class="btn btn-success btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form, 'draft')">
                         <i class="fa fa-save"></i>
-                        &nbsp;Simpan & Draft
+                        &nbsp;Simpan Draft
                     </button>
-                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form, 'kunci')">
+                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form, 'terpostting')">
                         <i class="fa fa-check"></i>
                         &nbsp;Simpan & Kunci
                     </button>

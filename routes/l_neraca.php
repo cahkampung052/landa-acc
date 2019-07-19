@@ -45,7 +45,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     /*
      * ambil akun pengecualian
      */
-    $akunPengecualian = getPengecualianAkun();
+    $akunPengecualian = getMasterSetting();
     $arrPengecualian = [];
     foreach($akunPengecualian->pengecualian_neraca as $a => $b){
         array_push($arrPengecualian, $b->m_akun_id->id);

@@ -98,7 +98,7 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
         $models[$key]['m_akun_tujuan_id'] = ["id" => $val->idTujuan, "nama" => $val->namaTujuan, "kode" => $val->kodeTujuan];
         $models[$key]['m_lokasi_asal_id'] = ["id" => $val->m_lokasi_asal_id, "nama" => $val->namaLokAsal, "kode" => $val->kodeLokAsal];
         $models[$key]['m_lokasi_tujuan_id'] = ["id" => $val->m_lokasi_tujuan_id, "nama" => $val->namaLokTujuan, "kode" => $val->kodeLokTujuan];
-        
+        $models[$key]['status'] = ucfirst($val->status);
     }
 //     print_r($models);exit();
 //    die();
@@ -143,6 +143,7 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
         $insert['m_akun_tujuan_id'] = $data['form']['m_akun_tujuan_id']['id'];
         $insert['tanggal'] = date("Y-m-d h:i:s",strtotime($data['form']['tanggal']));
         $insert['total'] = $data['form']['total'];
+        $insert['status'] = $data['form']['status'];
         $insert['keterangan'] = (isset($data['form']['keterangan']) && !empty($data['form']['keterangan']) ? $data['form']['keterangan'] : '');
 //        print_r($insert);die();
         if (isset($data['form']['id']) && !empty($data['form']['id'])) {
@@ -217,7 +218,7 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
         /*
          * Simpan array trans detail ke database jika simpan dan kunci
          */
-        if($params['type_save'] == "kunci"){
+        if($data['form']['status'] == "terposting"){
             insertTransDetail($transDetail);
         }
         

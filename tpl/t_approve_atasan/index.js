@@ -31,6 +31,7 @@ app.controller("tapprovalCtrl", function($scope, Data, $rootScope) {
         if (tableState.search.predicateObject) {
             param["filter"] = tableState.search.predicateObject;
         }
+        param["type"] = "approve";
         Data.get("acc/apppengajuan/index", param).then(function(response) {
             $scope.displayed = response.data.list;
             tableState.pagination.numberOfPages = Math.ceil(

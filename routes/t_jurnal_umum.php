@@ -37,7 +37,7 @@ $app->post('/acc/t_jurnal_umum/upload/{folder}', function ($request, $response) 
 
         if ($params['id'] == "undefined" || empty($params['id'])) {
             $pengeluaran_id = $sql->find("select * from acc_jurnal order by id desc");
-            $pid = (isset($pengeluaran_id->id)) ? $pengeluaran_id->id + 1 : 1;
+            $pid = (isset($pengeluaran_id->id)) ? $pengeluaran_id->id : 1;
         } else {
             $pid = $params['id'];
         }
@@ -71,7 +71,7 @@ $app->post('/acc/t_jurnal_umum/upload/{folder}', function ($request, $response) 
 $app->get('/acc/t_jurnal_umum/listgambar/{id}', function ($request, $response) {
     $id = $request->getAttribute('id');
     $sql = $this->db;
-    $model = $sql->findAll("select * from acc_dokumen_foto where acc_jurnal_id={$id}");
+    $model = $sql->findAll("select * from acc_dokumen_foto where acc_jurnal_id=$id");
     return successResponse($response, ["model" => $model, "url" => "api/file/jurnal-umum/" . date("Y") . "/" . str_replace("0", "", date("m")) . "/"]);
 });
 
@@ -170,6 +170,8 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
         $models[$key]['tanggal_formated'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
         $models[$key]['m_lokasi_id'] = ["id" => $val->idLokasi, "kode" => $val->kodeLokasi, "nama" => $val->namaLokasi];
+        $models[$key]['status'] = ucfirst($val->status);
+        
     }
 
     return successResponse($response, [
@@ -209,6 +211,7 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
         $jurnal['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $jurnal['total_debit'] = $params['form']['total_debit'];
         $jurnal['total_kredit'] = $params['form']['total_kredit'];
+        $jurnal['status'] = $params['form']['status'];
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $jurnal['no_urut'] = $params['form']['no_urut'];
             $jurnal['no_transaksi'] = $params['form']['no_transaksi'];
@@ -256,7 +259,7 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
         /**
          * Simpan array trans detail ke database jika simpan dan kunci
          */
-        if($params['type_save'] == "kunci"){
+        if($params['form']['status'] == "terposting"){
             insertTransDetail($transDetail);
         }
         

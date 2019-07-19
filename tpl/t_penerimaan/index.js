@@ -153,6 +153,15 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         });
         $scope.form.total = totalkredit;
     };
+    
+    /*
+     * empty ui-select
+     */
+    $scope.emptyUi = function (ui) {
+        console.log(ui)
+        $scope.form.m_kontak_id = [];
+    }
+    
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -249,10 +258,10 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
      * save action
      */
     $scope.save = function(form, type_save) {
+        form["status"] = type_save;
         var data = {
             form: form,
             detail: $scope.listDetail,
-            type_save : type_save
         }
         Data.post(control_link + '/save', data).then(function(result) {
             if (result.status_code == 200) {

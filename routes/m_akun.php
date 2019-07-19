@@ -548,10 +548,7 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
  */
 $app->get('/acc/m_akun/getTanggalSetting', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")
-            ->from("acc_m_setting")
-            ->orderBy("id DESC")
-            ->find();
+    $models = getMasterSetting();
     $models->tanggal = date('Y-m-d H:i:s', strtotime($models->tanggal));
     return successResponse($response, $models);
 });
@@ -572,7 +569,7 @@ $app->get('/acc/m_akun/getakun/{id}', function ($request, $response) {
  * pengecualian akun untuk neraca
  */
 $app->get("/acc/m_akun/getPengecualian", function($request, $response){
-    $data = getPengecualianAkun();
+    $data = getMasterSetting();
     return successResponse($response, $data);
 });
 $app->post("/acc/m_akun/savePengecualian", function($request, $response){
