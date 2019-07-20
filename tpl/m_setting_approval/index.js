@@ -35,16 +35,16 @@ app.controller("msettingapprovalCtrl", function ($scope, Data, $rootScope) {
         if (tableState.search.predicateObject) {
             param["filter"] = tableState.search.predicateObject;
         }
-        Data.get("appapproval/index", param).then(function (response) {
+        Data.get("acc/appapproval/index", param).then(function (response) {
             $scope.displayed = response.data.list;
-            tableState.pagination.numberOfPages = Math.ceil(
-                    response.data.totalItems / limit
-                    );
+//            tableState.pagination.numberOfPages = Math.ceil(
+//                    response.data.totalItems / limit
+//                    );
         });
         $scope.isLoading = false;
     };
     $scope.getDetail = function (id) {
-        Data.get("appapproval/view?m_setting_approval_id=" + id).then(function (response) {
+        Data.get("acc/appapproval/view?m_setting_approval_id=" + id).then(function (response) {
             $scope.listDetail = response.data;
         });
     };
@@ -103,7 +103,7 @@ app.controller("msettingapprovalCtrl", function ($scope, Data, $rootScope) {
             data: form,
             detail: $scope.listDetail
         }
-        Data.post("appapproval/save", form).then(function (result) {
+        Data.post("acc/appapproval/save", form).then(function (result) {
             if (result.status_code == 200) {
                 $scope.form.id = result.data.id;
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
@@ -123,7 +123,7 @@ app.controller("msettingapprovalCtrl", function ($scope, Data, $rootScope) {
     $scope.delete = function (row) {
         if (confirm("Apa anda yakin akan Menghapus item ini ?")) {
             row.is_deleted = 0;
-            Data.post("appapproval/hapus", row).then(function (result) {
+            Data.post("acc/appapproval/hapus", row).then(function (result) {
                 $scope.displayed.splice($scope.displayed.indexOf(row), 1);
             });
         }

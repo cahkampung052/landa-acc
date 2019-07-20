@@ -6,7 +6,6 @@ function validasi($data, $custom = array()) {
         'm_akun_id' => 'required',
         'tanggal' => 'required',
         'total' => 'required',
-        'ppn' => 'required'
     );
     GUMP::set_field_name("m_akun_id", "Keluar dari akun");
     GUMP::set_field_name("m_lokasi_id", "Lokasi");
@@ -187,6 +186,8 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
         if($val->m_kontak_id != 0)
             $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup, "type"=> ucfirst($val->typeSup)];
+    
+        $models[$key]['status'] = ucfirst($val->status);
     }   
 
     return successResponse($response, [
@@ -232,10 +233,11 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $pengeluaran['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $pengeluaran['total'] = $params['form']['total'] - $params['form']['ppn'];
         $pengeluaran['ppn'] = $params['form']['ppn'];
+        $pengeluaran['status'] = $params['form']['status'];
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $pengeluaran['no_urut'] = $params['form']['no_urut'];
             $pengeluaran['no_transaksi'] = $params['form']['no_transaksi'];
-            $model = $sql->update("acc_pemasukan", $pengeluaran, ["id" => $params['form']['id']]);
+            $model = $sql->update("acc_pengeluaran", $pengeluaran, ["id" => $params['form']['id']]);
             /**
              * Hapus pengeluaran detail
              */
@@ -310,7 +312,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         /**
          * Simpan array trans detail ke database jika simpan dan kunci
          */
-        if($params['type_save'] == "kunci"){
+        if($params['form']['status'] == "terposting"){
             insertTransDetail($transDetail);
         }
         return successResponse($response, $model);

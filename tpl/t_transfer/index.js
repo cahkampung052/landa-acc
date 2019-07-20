@@ -88,12 +88,13 @@ app.controller('transferCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         $scope.is_disable = true;
         $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
+        $scope.form.tanggal = new Date(form.tanggal);
     };
     /** save action */
     $scope.save = function (form, type_save) {
+        form["status"] = type_save;
         var data = {
             form: form,
-            type_save : type_save
         }
 
 

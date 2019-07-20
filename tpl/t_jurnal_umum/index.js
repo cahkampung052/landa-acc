@@ -266,10 +266,10 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     
     /** save action */
     $scope.save = function (form, type_save) {
+        form["status"] = type_save;
         var data = {
             form : form,
             detail : $scope.listDetail,
-            type_save : type_save
         }
         
         Data.post(control_link + '/save', data).then(function (result) {

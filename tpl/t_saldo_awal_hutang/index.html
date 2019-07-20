@@ -36,7 +36,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="table-responsive">
+                <div class="">
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -47,7 +47,7 @@
                                 <!-- <th style="text-align: left;">
                                                                                                     Nama
                                                                                                 </th> -->
-                                <th style="text-align: left;" width="300">Akun Hutang</th>
+                                <th style="text-align: left;" width="300px">Akun Hutang</th>
                                 <th style="text-align: left;" width="200">Nominal</th>
                             </tr>
                         </thead>
@@ -57,7 +57,7 @@
                                 <!--  <td style="text-align: left;">
                                                                                                     {{row.tipe}}
                                                                                                 </td> -->
-                                <td style="text-align: left;">
+                                <td style="text-align: left;" width="300px">
                                         <ui-select class="ui-select-sm ui-select-container" ng-model="row.m_akun_id" theme="bootstrap" ng-disabled="is_view">
                                             <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
                                             <ui-select-choices repeat="val in listAkun | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>

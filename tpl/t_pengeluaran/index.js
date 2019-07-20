@@ -320,11 +320,10 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     
     /** save action */
     $scope.save = function (form, type_save) {
-        console.log(form)
+        form["status"] = type_save;
         var data = {
             form : form,
             detail : $scope.listDetail,
-            type_save : type_save
         }
         
         Data.post(control_link + '/save', data).then(function (result) {

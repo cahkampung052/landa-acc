@@ -163,6 +163,13 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     }
     $models = $db->findAll();
     $totalItem = $db->count();
+    
+    /*
+     * ambil master setting
+     */
+    $setting = getMasterSetting();
+    
+    
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
         $models[$key]['tanggal'] = date("Y-m-d", $val->modified_at);
@@ -171,6 +178,9 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
         $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaCus, "type"=>ucfirst($val->typeCus)];
+        $models[$key]['status'] = ucfirst($val->status);
+        $models[$key]['tanggal_setting'] = $setting->tanggal;
+        
     }
     return successResponse($response, [
         'list' => $models,
@@ -207,6 +217,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $penerimaan['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $penerimaan['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $penerimaan['total'] = $params['form']['total'];
+        $penerimaan['status'] = $params['form']['status'];
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $penerimaan['no_urut'] = $params['form']['no_urut'];
             $penerimaan['no_transaksi'] = $params['form']['no_transaksi'];
@@ -264,7 +275,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         /**
          * Simpan array trans detail ke database jika simpan dan kunci
          */
-        if($params['type_save'] == "kunci"){
+        if($params['form']['status'] == "terposting"){
             insertTransDetail($transDetail);
         }
         

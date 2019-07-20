@@ -150,15 +150,18 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      */
     $klasifikasi = $sql->select("*")
             ->from("acc_m_akun")
-            ->customWhere("id IN (4, 5, 6, 7, 8, 9)")
+            ->customWhere("tipe IN ('PENDAPATAN', 'BIAYA', 'BEBAN')")
+            ->where("is_tipe", "=", 1)
+            ->where("level", "=", 1)
             ->findAll();
+    print_r($klasifikasi);die();
     $arr = [];
     $total = 0;
     
     /*
      * ambil akun pengecualian
      */
-    $akunPengecualian = getPengecualianAkun();
+    $akunPengecualian = getMasterSetting();
     $arrPengecualian = [];
     foreach($akunPengecualian->pengecualian_labarugi as $a => $b){
         array_push($arrPengecualian, $b->m_akun_id->id);
@@ -232,7 +235,7 @@ function getPemetaanAkun($type){
     return $akun->m_akun_id;
 }
 
-function getPengecualianAkun(){
+function getMasterSetting(){
     $db   = new Cahkampung\Landadb(config('DB')['db']);
     $data = $db->select("*")
             ->from("acc_m_setting")
