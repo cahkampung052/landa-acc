@@ -123,7 +123,9 @@ $app->post('/acc/m_klasifikasi/save', function ($request, $response) {
          * Update tipe akun dibawahnya
          */
         $childId =getChildId("acc_m_akun", $model->id);
-        $db->update("acc_m_akun", ["tipe" => $model->tipe], "id in (".implode(",", $childId).")");
+        if(!empty($childId)){
+        $db->update("acc_m_akun", ["tipe" => $model->tipe], "id in (".implode(",", $childId).")");            
+        }
         return successResponse($response, $model);
     } else {
         return unprocessResponse($response, $validasi);
