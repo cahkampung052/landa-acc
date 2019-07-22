@@ -51,7 +51,7 @@ $app->get('/acc/m_lokasi/index', function ($request, $response) {
         }
     }
 
-    $models    = $db->orderBy("kode_parent")->findAll();
+    $models    = $db->findAll();
 
     $arr = getChildFlat($models, 0);
     
