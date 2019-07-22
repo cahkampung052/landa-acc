@@ -92,7 +92,7 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
     foreach($models as $key => $val){
         $models[$key] = (array) $val;
         $models[$key]['tanggal'] = date("Y-m-d h:i:s", strtotime($val->tanggal));
-        $models[$key]['tanggal_formated'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
+        $models[$key]['tanggal_formated'] = date("d-m-Y", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i:s",$val->created_at);
         $models[$key]['m_akun_asal_id'] = ["id" => $val->idAsal, "nama" => $val->namaAsal, "kode" => $val->kodeAsal];
         $models[$key]['m_akun_tujuan_id'] = ["id" => $val->idTujuan, "nama" => $val->namaTujuan, "kode" => $val->kodeTujuan];

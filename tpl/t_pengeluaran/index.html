@@ -2,9 +2,22 @@
     <div ng-controller="pengeluaranCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong class="d-md-down-none">{{master}}</strong>
-                <div class="btn-group pull-right mt-5px" role="group">
-                    <button class="btn btn-primary btn-sm" ng-click="create();">
+                <strong class="">{{master}}</strong>
+                <div class="btn-group pull-right mt-5px d-lg-none" role="group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item" ng-click="create();" ng-if="user.akses.pengeluaran_create">
+                                <i class="fa fa-plus"></i>
+                                &nbsp;Buat Pengeluaran Baru
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
+                    <button class="btn btn-primary btn-sm" ng-click="create();" ng-if="user.akses.pengeluaran_create">
                         <i class="fa fa-plus"></i>
                         &nbsp;Buat Pengeluaran Baru
                     </button>
@@ -23,7 +36,7 @@
                                         <div class="col-sm-2">
                                             <select class="form-control form-control-sm" st-search="m_lokasi_id">
                                                 <option value="">- Semua Lokasi -</option>
-                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama}}</option>
+                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama_lengkap}}</option>
 
                                             </select>
                                         </div>
@@ -148,7 +161,7 @@
                                                 <ui-select-match placeholder="Pilih Lokasi">
                                                     {{ $select.selected.kode + " - " + $select.selected.nama}}
                                                 </ui-select-match>
-                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.nama_lengkap}}</ui-select-choices>
                                             </ui-select>
                                         </div>
                                     </div>
@@ -495,7 +508,7 @@
                     </button>
                     <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form, 'terposting')">
                         <i class="fa fa-check"></i>
-                        &nbsp;Simpan & Kunci
+                        &nbsp;Simpan & Posting
                     </button>
                 </div>
             </div>

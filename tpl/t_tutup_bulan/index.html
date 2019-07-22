@@ -3,8 +3,25 @@
     <div ng-controller="tutupbulanCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong class="d-md-down-none">{{master}}</strong>
-                <div class="btn-group pull-right mt-5px" role="group">
+                <strong class="">{{master}}</strong>
+                <div class="btn-group pull-right mt-5px d-lg-none" role="group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
+                                <i class="fa fa-search"></i>
+                                &nbsp;Pencarian
+                            </button>
+                            <button class="dropdown-item" ng-click="create();">
+                                <i class="fa fa-plus"></i>
+                                &nbsp;Buat Jurnal Umum Baru
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
                     <button class="btn btn-secondary btn-sm" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
                         <i class="fa fa-search"></i>
                         &nbsp;Pencarian
@@ -64,7 +81,7 @@
                                 </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="permission && $index == displayed.length-1" ng-click="delete(row);"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="permission && $index == displayed.length - 1" ng-click="delete(row);"></button>
                                     </div>
                                 </td>
                             </tr>
@@ -176,7 +193,7 @@
                                                 <td align="right" class="text-right">
                                                     {{val.debit_awal| number}}
                                                 </td>
-                                                 <td align="right" class="text-right">
+                                                <td align="right" class="text-right">
                                                     {{val.kredit_awal| number}}
                                                 </td>
                                                 <td align="right" class="text-right">

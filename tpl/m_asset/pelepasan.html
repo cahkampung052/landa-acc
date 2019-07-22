@@ -7,10 +7,24 @@
     <div ng-controller="PelepasanCtrl">
         <div class="card" ng-if="!is_edit" st-pipe="callServer" st-table="displayed">
             <div class="card-header">
-                <strong class="d-md-down-none">
+                <strong class="">
                     {{master}}
                 </strong>
-                <div class="btn-group pull-right mt-5px" role="group">
+                <div class="btn-group pull-right mt-5px d-lg-none" role="group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item" ng-click="isCollapsed = !isCollapsed" ng-init="isCollapsed = true">
+                                <i class="fa fa-search">
+                                </i>
+                                Pencarian
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
                     <button class="btn btn-secondary btn-sm" ng-click="isCollapsed = !isCollapsed" ng-init="isCollapsed = true">
                         <i class="fa fa-search">
                         </i>
@@ -172,13 +186,13 @@
                                             <div class="col-sm-12">
                                                 <ui-select class="w100" ng-disabled="true" ng-model="form.lokasi" theme="bootstrap">
                                                     <ui-select-match placeholder="Pilih Lokasi">
-                                                        {{ $select.selected.nama }}
+                                                        {{ $select.selected.nama}}
                                                     </ui-select-match>
                                                     <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">
-                                                        {{ lb.nama }}
+                                                        {{ lb.nama}}
                                                     </ui-select-choices>
                                                 </ui-select>
-                                                <input class="form-control form-control-sm mt-2" name="" ng-model="form.nama_lokasi" ng-show="form.lokasi.id==-1" placeholder="Lainya" type="text">
+                                                <input class="form-control form-control-sm mt-2" name="" ng-model="form.nama_lokasi" ng-show="form.lokasi.id == -1" placeholder="Lainya" type="text">
                                                 </input>
                                             </div>
                                         </div>
@@ -214,10 +228,10 @@
                                             <div class="col-sm-12">
                                                 <ui-select class="w100" ng-disabled="true" ng-model="form.umur" on-select="setTahun(form.umur.persentase)" theme="bootstrap">
                                                     <ui-select-match placeholder="Pilih Umur Ekonomis">
-                                                        {{ $select.selected.nama }} | {{ $select.selected.tahun }} tahun
+                                                        {{ $select.selected.nama}} | {{ $select.selected.tahun}} tahun
                                                     </ui-select-match>
                                                     <ui-select-choices position="down" repeat="lb in listUmur| filter :$select.search">
-                                                        {{ lb.nama }} | {{ lb.tahun }} tahun
+                                                        {{ lb.nama}} | {{ lb.tahun}} tahun
                                                     </ui-select-choices>
                                                 </ui-select>
                                             </div>
@@ -309,7 +323,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12" ng-show="form.jenis_pelepasan=='Dijual'">
+                            <div class="col-md-12" ng-show="form.jenis_pelepasan == 'Dijual'">
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label-sm required">
                                         Nilai Pelepasan
@@ -336,7 +350,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12" ng-show="form.jenis_pelepasan=='Dijual'" >
+                            <div class="col-md-12" ng-show="form.jenis_pelepasan == 'Dijual'" >
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label-sm required">
                                         Akun Kas / Piutang
@@ -344,10 +358,10 @@
                                     <div class="col-sm-8">
                                         <ui-select class="w100" ng-disabled="is_view" ng-model="form.akun_kas_pelepasan" theme="bootstrap">
                                             <ui-select-match placeholder="Pilih Akun">
-                                                {{ $select.selected.nama }}
+                                                {{ $select.selected.nama}}
                                             </ui-select-match>
                                             <ui-select-choices position="down" repeat="lb in listakun| filter :$select.search">
-                                                {{ lb.nama }}
+                                                {{ lb.nama}}
                                             </ui-select-choices>
                                         </ui-select>
                                     </div>
@@ -356,16 +370,16 @@
                             <div class="col-md-12" >
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label-sm required">
-                                        <span ng-show="form.jenis_pelepasan=='Hilang/Dibuang'">Akun Rugi</span>
-                                        <span ng-show="form.jenis_pelepasan=='Dijual'">Akun Laba / Rugi</span>
+                                        <span ng-show="form.jenis_pelepasan == 'Hilang/Dibuang'">Akun Rugi</span>
+                                        <span ng-show="form.jenis_pelepasan == 'Dijual'">Akun Laba / Rugi</span>
                                     </label>
                                     <div class="col-sm-8">
                                         <ui-select class="w100" ng-disabled="is_view" ng-model="form.akun_laba_rugi" theme="bootstrap">
                                             <ui-select-match placeholder="Pilih Akun">
-                                                {{ $select.selected.nama }}
+                                                {{ $select.selected.nama}}
                                             </ui-select-match>
                                             <ui-select-choices position="down" repeat="lb in listakun| filter :$select.search">
-                                                {{ lb.nama }}
+                                                {{ lb.nama}}
                                             </ui-select-choices>
                                         </ui-select>
                                     </div>

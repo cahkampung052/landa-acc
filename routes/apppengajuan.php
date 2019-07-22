@@ -297,6 +297,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
  */
 $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response){
     $data = $request->getParams();
+    
     $db = $this->db;
     $db->select("*")->from("acc_t_pengajuan_det")->where("t_pengajuan_id", "=", $data['id']);
     $detail = $db->findAll();
@@ -305,7 +306,7 @@ $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response){
     }
     $db->select("acc_approval_pengajuan.*, acc_m_user.nama")->from("acc_approval_pengajuan")->join("JOIN", "acc_m_user", "acc_m_user.id = acc_approval_pengajuan.acc_m_user_id")->where("t_pengajuan_id", "=", $data['id']);
     $acc = $db->findAll();
-//    echo "<pre>", print_r($acc), "</pre>";die();
+//    echo "<pre>", print_r($data), "</pre>";die();
     $a = getMasterSetting();
     $template = $a->print_pengajuan;
     $template = str_replace("<tr><td>{start_detail}</td></tr>", "{%for key, val in detail%}", $template);
@@ -320,7 +321,7 @@ $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response){
 //            "css" => modulUrl() . '/assets/css/style.css',
         ]);
         echo $content;
-//        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
 });
 
 $app->get("/acc/apppengajuan/getTemplate", function ($request, $response){

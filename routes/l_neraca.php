@@ -17,7 +17,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $filter = $params;
     $db = $this->db;
 
-    /** 
+    /**
      * tanggal
      */
     $tanggal = new DateTime($filter['tanggal']);
@@ -36,42 +36,18 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $akunLabaRugi = isset($labarugi->m_akun_id) ? $labarugi->m_akun_id : 0;
 
     /*
-     * ambil child dari harta, kewajiban, modal
-     */
-    $idHarta = getChildId("acc_m_akun", 1);
-    $idKewajiban = getChildId("acc_m_akun", 2);
-    $idModal = getChildId("acc_m_akun", 3);
-    
-    /*
      * ambil akun pengecualian
      */
     $akunPengecualian = getMasterSetting();
     $arrPengecualian = [];
-    if(is_array($akunPengecualian)){
-        foreach($akunPengecualian->pengecualian_neraca as $a => $b){
+    if (is_array($akunPengecualian) && !empty($akunPengecualian)) {
+        foreach ($akunPengecualian->pengecualian_neraca as $a => $b) {
             array_push($arrPengecualian, $b->m_akun_id->id);
         }
     }
+
     
-    
-    /*
-     * cek akun pengecualian (jika sama, unset)
-     */
-    foreach($arrPengecualian as $w => $x){
-        foreach($idHarta as $y => $z){
-            if($z == $x)
-                unset ($idHarta[$y]);
-        }
-        foreach($idKewajiban as $y => $z){
-            if($z == $x)
-                unset ($idKewajiban[$y]);
-        }
-        foreach($idModal as $y => $z){
-            if($z == $x)
-                unset ($idModal[$y]);
-        }
-    }
-    
+
     /*
      * proses harta
      */
@@ -86,10 +62,15 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             ")
             ->from("acc_m_akun")
             ->groupBy("acc_m_akun.id")
-            ->orderBy("acc_m_akun.kode")
-            ->customWhere("acc_m_akun.id IN(" . implode(",", $idHarta) . ")");
+            ->orderBy("acc_m_akun.kode");
+            if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
+                $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
+            }
+            $db->where("tipe", "=", "HARTA")
+                ->where("parent_id", "!=", 0);
 
     $modelHarta = $db->findAll();
+//    die();
     $totalHarta = 0;
     $totalSub = 0;
     $arrHarta = [];
@@ -101,7 +82,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
 
-        if($val->id == $akunLabaRugi){
+        if ($val->id == $akunLabaRugi) {
             $saldoAwal += $totalLabaRugi;
         }
 
@@ -153,8 +134,12 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         ")
             ->from("acc_m_akun")
             ->groupBy("acc_m_akun.id")
-            ->orderBy("acc_m_akun.kode")
-            ->customWhere("acc_m_akun.id IN(" . implode(",", $idKewajiban) . ")");
+            ->orderBy("acc_m_akun.kode");
+            if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
+                $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
+            }
+            $db->where("tipe", "=", "KEWAJIBAN")
+                ->where("parent_id", "!=", 0);
 
     $modelKewajiban = $db->findAll();
     $totalKewajiban = 0;
@@ -167,7 +152,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
 
-        if($val->id == $akunLabaRugi){
+        if ($val->id == $akunLabaRugi) {
             $saldoAwal += $totalLabaRugi;
         }
 
@@ -179,7 +164,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             if ($val->is_tipe == 1) {
                 $id = $val->id;
                 $arrKewajiban[$id]['kode'] = $val->kode;
-                $arrKewajiban[$id]['nama'] = $val->kode ." - ". $val->nama;
+                $arrKewajiban[$id]['nama'] = $val->kode . " - " . $val->nama;
             } else {
                 $arrKewajiban[$val->parent_id]['detail'][] = (array) $val;
                 $arrKewajiban[$val->parent_id]['total'] = (isset($arrKewajiban[$val->parent_id]['total']) ? $arrKewajiban[$val->parent_id]['total'] : 0) + $val->saldo;
@@ -218,21 +203,25 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         ")
             ->from("acc_m_akun")
             ->groupBy("acc_m_akun.id")
-            ->orderBy("acc_m_akun.kode")
-            ->customWhere("acc_m_akun.id IN(" . implode(",", $idModal) . ")");
+            ->orderBy("acc_m_akun.kode");
+            if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
+                $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
+            }
+            $db->where("tipe", "=", "MODAL")
+                ->where("parent_id", "!=", 0);
 
     $modelModal = $db->findAll();
 
     /*
-    * panggil function saldo laba rugi, karena digunakan juga di laporan neraca
-    */
+     * panggil function saldo laba rugi, karena digunakan juga di laporan neraca
+     */
     $labarugi = getLabaRugi($tanggal);
     $arr = $labarugi['data'];
     $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
     $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
     $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
     $saldo_labarugi = $pendapatan - $biaya - $beban;
-   
+
     $totalModal = 0;
     $arrModal = [];
     foreach ($modelModal as $key => $val) {
@@ -243,7 +232,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
 
-        if($val->id == $akunLabaRugi){
+        if ($val->id == $akunLabaRugi) {
             $saldoAwal += $totalLabaRugi;
         }
 
@@ -366,7 +355,6 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         ]);
     }
 });
-
 
 
 

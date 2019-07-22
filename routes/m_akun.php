@@ -390,74 +390,12 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
  */
 $app->get('/acc/m_akun/export', function ($request, $response) {
     $db = $this->db;
-    $model = $db->findAll("select * from acc_m_akun where is_deleted = 0 and is_tipe=1 order by kode asc");
-    $data_model = [];
-    $data_kode  = [];
-    foreach ($model as $key => $val) {
-        $data_model[$key]         = (array) $val;
-        $data_model[$key]['kode'] = $val->kode;
-        $data_model[$key]['nama'] = $val->nama;
-        $data_model[$key]['tipe'] = $val->tipe;
-        $data_kode[]              = $val->kode;
-    }
-    $data_contoh = [];
-    foreach ($data_kode as $key => $val) {
-        $data_contoh[$key]['kode'] = $val . "-01";
-        $data_contoh[$key]['nama'] = "nama akun turunan";
-        $data_contoh[$key]['tipe'] = "";
-    }
-    $array_gabung = array_merge($data_model, $data_contoh);
-    //Shorting
-    $kode_short = [];
-    foreach ($array_gabung as $val) {
-        $kode_short[] = $val['kode'];
-    }
-    array_multisort($kode_short, SORT_ASC, $array_gabung);
+    
     //load themeplate
-    $path        = 'acc/landaacc/upload/format_akun.xls';
+    $path        = 'acc/landaacc/file/format_masterakun.xls';
     $objReader   = PHPExcel_IOFactory::createReader('Excel5');
     $objPHPExcel = $objReader->load($path);
-    $row = 1;
-    foreach ($array_gabung as $key => $val) {
-        $row++;
-        if (isset($val['id'])) {
-            $objPHPExcel->getActiveSheet()->getStyle('A' . $row . ':C' . $row)->applyFromArray(
-                [
-                    'alignment' => [
-                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
-                    ],
-                    'font'      => [
-                        'bold' => true,
-                    ],
-                    'borders'   => [
-                        'allborders' => [
-                            'style' => PHPExcel_Style_Border::BORDER_THIN,
-                        ],
-                    ],
-                ]
-            );
-        } else {
-            $objPHPExcel->getActiveSheet()->getStyle('A' . $row . ':C' . $row)->applyFromArray(
-                [
-                    'alignment' => [
-                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
-                    ],
-                    'borders'   => [
-                        'allborders' => [
-                            'style' => PHPExcel_Style_Border::BORDER_THIN,
-                        ],
-                    ],
-                ]
-            );
-            $objPHPExcel->getActiveSheet()->mergeCells('B' . $row . ':C' . $row);
-        }
-        $objPHPExcel->getActiveSheet()
-            ->setCellValue('A' . $row, $val['kode'])
-            ->setCellValue('B' . $row, $val['nama'])
-            ->setCellValue('C' . $row, $val['tipe'])
-            ->getRowDimension($row)
-            ->setRowHeight(20);
-    }
+    
     header("Content-type: application/vnd.ms-excel");
     header("Content-Disposition: attachment;Filename=format_akun.xls");
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
@@ -533,6 +471,35 @@ $app->get('/acc/m_akun/akunKas', function ($request, $response) {
             ->findAll();
     return successResponse($response, ['list' => $models]);
 });
+
+/*
+ * Ambil akun hutang
+ */
+$app->get('/acc/m_akun/akunHutang', function ($request, $response){
+    $db = $this->db;
+    $models = $db->select("*")->from("acc_m_akun")
+            ->customWhere("nama LIKE '%UTANG%'")
+            ->where("is_tipe", "=", 0)
+            ->where("is_deleted", "=", 0)
+            
+            ->findAll();
+    return successResponse($response, ['list' => $models]);
+});
+
+/*
+ * Ambil akun hutang
+ */
+$app->get('/acc/m_akun/akunPiutang', function ($request, $response){
+    $db = $this->db;
+    $models = $db->select("*")->from("acc_m_akun")
+            ->customWhere("nama LIKE '%PIUTANG%'")
+            ->where("is_tipe", "=", 0)
+            ->where("is_deleted", "=", 0)
+            
+            ->findAll();
+    return successResponse($response, ['list' => $models]);
+});
+
 /**
  * Ambil akun saja tanpa klasifikasinya
  */

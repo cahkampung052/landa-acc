@@ -170,9 +170,12 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      */
     $akunPengecualian = getMasterSetting();
     $arrPengecualian = [];
-    foreach($akunPengecualian->pengecualian_labarugi as $a => $b){
-        array_push($arrPengecualian, $b->m_akun_id->id);
+    if(is_array($akunPengecualian) && !empty($akunPengecualian)){
+        foreach($akunPengecualian->pengecualian_labarugi as $a => $b){
+            array_push($arrPengecualian, $b->m_akun_id->id);
+        }
     }
+    
     
     /*
      * proses perulangan
@@ -184,10 +187,12 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
          * ambil child akun
          */
         $akunId = getChildId("acc_m_akun", $akun->id);
-        foreach($arrPengecualian as $w => $x){
-            foreach($akunId as $y => $z){
-                if($z == $x)
-                    unset ($akunId[$y]);
+        if(is_array($akunPengecualian) && !empty($akunPengecualian)){
+            foreach($arrPengecualian as $w => $x){
+                foreach($akunId as $y => $z){
+                    if($z == $x)
+                        unset ($akunId[$y]);
+                }
             }
         }
         $getakun = $sql->select("*")

@@ -82,7 +82,7 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
 //                ->where('acc_trans_detail.m_akun_id', '=', $val->id)
                 ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
                 ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end)
-                ->orderBy("acc_trans_detail.id ASC, acc_trans_detail.tanggal ASC");
+                ->orderBy("acc_trans_detail.tanggal ASC,acc_trans_detail.id ASC");
 
         $gettransdetail = $sql->findAll();
         foreach ($gettransdetail as $keys => $vals) {
@@ -117,14 +117,16 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
 //        print_r($arr);die();
 
         $kode = "";
+        $namaLokasi = "";
         foreach ($arr as $key => $val) {
-            if ($val['kode'] == $kode && $val['kode'] != "") {
+            if ($val['kode'] == $kode && $val['kode'] != "" && $val['namaLokasi'] == $namaLokasi && $val['namaLokasi'] != "") {
                 $arr[$key]['kode'] = "";
                 $arr[$key]['kodeLokasi'] = "";
                 $arr[$key]['namaLokasi'] = "";
                 $arr[$key]['tanggal'] = "";
             } else {
                 $kode = $val['kode'];
+                $namaLokasi = $val['namaLokasi'];
             }
         }
 

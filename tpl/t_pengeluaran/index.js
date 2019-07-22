@@ -268,7 +268,10 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-        $scope.form.tanggal = new Date();
+        $scope.form.tanggal = new Date($scope.tanggal_setting);
+        if(new Date() >= new Date($scope.tanggal_setting)){
+            $scope.form.tanggal = new Date();
+        }
         $scope.form.ppn = 0;
         $scope.listDetail = [{
             m_akun_id: {

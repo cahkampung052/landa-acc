@@ -5,7 +5,19 @@
                 <strong>
                     Penyusutan Asset
                 </strong>
-                <button class="btn btn-success fa fa-list float-right" ng-click="show_riwayat(true)"> List Riwayat Penyusutan</button>
+                <div class="btn-group pull-right mt-5px d-lg-none" role="group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item" ng-click="show_riwayat(true)"> List Riwayat Penyusutan</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
+                    <button class="btn btn-success fa fa-list float-right" ng-click="show_riwayat(true)"> List Riwayat Penyusutan</button>
+                </div>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
@@ -34,10 +46,10 @@
                                             <div class="col-sm-8">
                                                 <ui-select class="w100" ng-disabled="is_view" ng-model="filter.lokasi" on-select="is_show==false" theme="bootstrap">
                                                     <ui-select-match placeholder="Pilih Lokasi">
-                                                        {{ $select.selected.nama }}
+                                                        {{ $select.selected.nama +" - "+ $select.selected.nama }}
                                                     </ui-select-match>
                                                     <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">
-                                                        {{ lb.nama }}
+                                                        {{ lb.nama_lengkap }}
                                                     </ui-select-choices>
                                                 </ui-select>
                                             </div>

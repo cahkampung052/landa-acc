@@ -97,22 +97,21 @@ $app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
 //                print_r($akunId);
             foreach ($akunId as $det => $detail) {
 //                $arr[$val->tipe_arus][$index]['detail'][$det] = (array) $detail;
-                $sql->select("SUM(debit) as debit, SUM(kredit) as kredit, acc_m_akun.saldo_normal")
+                $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
                         ->from("acc_trans_detail")
-                        ->join("join", "acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
                         ->where('m_akun_id', '=', $detail)
                         ->andWhere('date(tanggal)', '<', $tanggal_start);
                 if (isset($params['m_lokasi_id']['id']) && !empty($params['m_lokasi_id']['id'])) {
                     $sql->andWhere('m_lokasi_id', '=', $params['m_lokasi_id']['id']);
                 }
                 $getsaldoawal = $sql->find();
-                $saldo_awal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit));
+                $saldo_awal = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
                 
                 if ($detail == $akunLabaRugi) {
-                    $saldo_awal += $totalLabaRugi * $getsaldoawal->saldo_normal;
+                    $saldo_awal += $totalLabaRugi;
                 }
 //
-                $sql->select("SUM(debit) as debit, SUM(kredit) as kredit, acc_m_akun.kode, acc_m_akun.nama, acc_m_akun.id as idAkun, acc_m_akun.tipe, acc_m_akun.saldo_normal")
+                $sql->select("SUM(debit) as debit, SUM(kredit) as kredit, acc_m_akun.kode, acc_m_akun.nama, acc_m_akun.id as idAkun, acc_m_akun.tipe")
                         ->from("acc_trans_detail")
                         ->join("JOIN", "acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
                         ->where('acc_trans_detail.m_akun_id', '=', $detail)
@@ -123,7 +122,7 @@ $app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
                 }
                 $gettransdetail = $sql->find();
 
-                $saldo_periode = (intval($gettransdetail->debit) - intval($gettransdetail->kredit));
+                $saldo_periode = intval($gettransdetail->debit) - intval($gettransdetail->kredit);
 
                 $arr[$val->tipe_arus][$index]['detail'][$det]['id'] = $gettransdetail->idAkun;
                 $arr[$val->tipe_arus][$index]['detail'][$det]['nama'] = $gettransdetail->kode . " - " . $gettransdetail->nama;

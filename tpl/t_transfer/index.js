@@ -66,7 +66,10 @@ app.controller('transferCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-        $scope.form.tanggal = new Date();
+        $scope.form.tanggal = new Date($scope.tanggal_setting);
+        if(new Date() >= new Date($scope.tanggal_setting)){
+            $scope.form.tanggal = new Date();
+        }
         $scope.listDetail = [{}];
     };
     /** update */
