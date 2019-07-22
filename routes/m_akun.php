@@ -304,6 +304,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
              */
             $akun         = $sql->find("select * from acc_m_akun where id = '" . $data['parent_id'] . "'");
             $data['tipe'] = isset($akun->tipe) ? $akun->tipe : '';
+            $data['tipe_arus'] = isset($akun->tipe_arus) ? $akun->tipe_arus : '';
         }
         /**
          * Simpan ke database

@@ -47,9 +47,12 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
      */
     $akunPengecualian = getMasterSetting();
     $arrPengecualian = [];
-    foreach($akunPengecualian->pengecualian_neraca as $a => $b){
-        array_push($arrPengecualian, $b->m_akun_id->id);
+    if(is_array($akunPengecualian)){
+        foreach($akunPengecualian->pengecualian_neraca as $a => $b){
+            array_push($arrPengecualian, $b->m_akun_id->id);
+        }
     }
+    
     
     /*
      * cek akun pengecualian (jika sama, unset)
@@ -220,10 +223,16 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
 
     $modelModal = $db->findAll();
 
-    $arr = getLabaRugi($tanggal);
-    
-
-    $saldo_labarugi = $arr[0]['total']-$arr[1]['total']-$arr[2]['total']-$arr[3]['total']+$arr[4]['total']-$arr[5]['total'];
+    /*
+    * panggil function saldo laba rugi, karena digunakan juga di laporan neraca
+    */
+    $labarugi = getLabaRugi($tanggal);
+    $arr = $labarugi['data'];
+    $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
+    $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
+    $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
+    $saldo_labarugi = $pendapatan - $biaya - $beban;
+   
     $totalModal = 0;
     $arrModal = [];
     foreach ($modelModal as $key => $val) {

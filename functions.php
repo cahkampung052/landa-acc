@@ -99,7 +99,7 @@ function getChildId($tabelName, $parentId)
     $db->select("*")->from($tabelName)->where("is_deleted", "=", 0);
     $data = $db->findAll();
     $tree = buildTree($data, $parentId);
-     $child = buildFlatTreeId($tree);
+    $child = buildFlatTreeId($tree);
     return $child;
 }
 /**
@@ -154,10 +154,17 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             ->where("is_tipe", "=", 1)
             ->where("level", "=", 1)
             ->findAll();
-    print_r($klasifikasi);die();
     $arr = [];
     $total = 0;
     
+    /*
+     * deklarasi total per tipe
+     */
+    $total_ = [];
+    foreach($klasifikasi as $key => $val){
+        $total_[$val->tipe] = 0;
+    }
+//    print_r($total);die();
     /*
      * ambil akun pengecualian
      */
@@ -213,6 +220,8 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
                     $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'] = (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
                     $arr[$index]['total'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
                     $arr[$index]['detail'][$val->parent_id]['nominal'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
+                    
+                    $total_[$val->tipe] += $arr[$index]['total'];
                 }
                 if ($akun->tipe == "HARTA" || $akun->tipe == "PENDAPATAN LAIN") {
                     $total += (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
@@ -222,8 +231,11 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             }
         }
     }
+    
+//    print_r($total_);die();
+    
     if ($array) {
-        return $arr;
+        return ["data"=>$arr, "total"=>$total_];
     } else {
         return $total;
     }
