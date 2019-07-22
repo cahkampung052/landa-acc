@@ -46,10 +46,10 @@
                                             <div class="col-sm-8">
                                                 <ui-select class="w100" ng-disabled="is_view" ng-model="filter.lokasi" on-select="is_show==false" theme="bootstrap">
                                                     <ui-select-match placeholder="Pilih Lokasi">
-                                                        {{ $select.selected.nama }}
+                                                        {{ $select.selected.nama +" - "+ $select.selected.nama }}
                                                     </ui-select-match>
                                                     <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">
-                                                        {{ lb.nama }}
+                                                        {{ lb.nama_lengkap }}
                                                     </ui-select-choices>
                                                 </ui-select>
                                             </div>

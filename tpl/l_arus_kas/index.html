@@ -18,8 +18,8 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
-                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
+                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                             </ui-select>
                                         </div>
                                     </div>
@@ -57,7 +57,7 @@
                         <div class="col-md-12">
                             <center>
                                 <h2 class="header-laporan">LAPORAN ARUS KAS</h2>
-                                Lokasi : {{ data.lokasi }}
+                                Lokasi : {{ data.lokasi}}
                                 <br/>
                                 Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
                                 <br/>
@@ -79,15 +79,55 @@
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody ng-repeat="val in detail">
+                            <tbody>
                                 <tr>
                                     <td align="left" style="vertical-align: top" colspan="2">
-                                        <b>{{ val.nama }}</b>
+                                        <b>Aktivitas Operasi</b>
                                     </td>
                                 </tr>
+                            </tbody>
+                            <tbody ng-repeat="(key, val) in detail['Aktivitas Operasi']">
+
                                 <tr>
-                                    <td align="left" style="vertical-align: top">{{ val.nama }}</td>
-                                    <td align="right" class="text-right" style="vertical-align: top">{{ val.saldo| number }}</td>
+                                    <td align="left" style="vertical-align: top; font-weight: bold" colspan="2">{{ val.kode + " - " + val.nama}}</td>
+                                </tr>
+                                <tr ng-repeat="vals in val.detail">
+                                    <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
+                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td align="left" style="vertical-align: top" colspan="2">
+                                        <b>Investasi</b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody ng-repeat="(key, val) in detail['Investasi']">
+
+                                <tr>
+                                    <td align="left" style="vertical-align: top; font-weight: bold" colspan="2">{{ val.kode + " - " + val.nama}}</td>
+                                </tr>
+                                <tr ng-repeat="vals in val.detail">
+                                    <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
+                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td align="left" style="vertical-align: top" colspan="2">
+                                        <b>Pendanaan</b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody ng-repeat="(key, val) in detail['Pendanaan']">
+
+                                <tr>
+                                    <td align="left" style="vertical-align: top; font-weight: bold" colspan="2">{{ val.kode + " - " + val.nama}}</td>
+                                </tr>
+                                <tr ng-repeat="vals in val.detail">
+                                    <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
+                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
                                 </tr>
                             </tbody>
                             <tfoot>
@@ -104,7 +144,7 @@
                                         <b>Saldo Awal</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b>{{ data.total_saldo| number }}</b>
+                                        <b>{{ data.saldo_awal| number }}</b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -112,7 +152,7 @@
                                         <b>Saldo Akhir</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b>{{  }}</b>
+                                        <b>{{ data.saldo_akhir | number }}</b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -120,7 +160,7 @@
                                         <b>Penurunan / Kenaikan Kas</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b>{{ data.total_saldo - data.saldo_awal| number }}</b>
+                                        <b>{{ data.saldo_akhir - data.saldo_awal| number }}</b>
                                     </td>
                                 </tr>
                             </tfoot>

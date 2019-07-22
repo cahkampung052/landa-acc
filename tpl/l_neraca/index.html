@@ -71,24 +71,24 @@
                     <table class="table table-hover table-laporan" style="border-collapse: collapse;">
                         <tbody>
                             <tr>
-                                <th colspan="3">
+                                <th colspan="2">
                                     <span class="text-blue-neraca">Harta</span>
                                 </th>
                             </tr>
                         </tbody>
                         <tbody ng-repeat="val in data.modelHarta.list">
                             <tr>
-                                <td colspan="3" style="padding-left: 25px!important;">
+                                <td colspan="2" style="padding-left: 25px!important;">
                                     <span style="color: #0055ef;">{{ val.nama }}</span>
                                 </td>
                             </tr>
                             <tr ng-repeat="row in val.detail">
-                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important; width: 195px;">{{ row.kode }}</td>
-                                <td ng-if="row.is_tipe == 0" style="text-align: left;">{{ row.nama }}</td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode +" - "+ row.nama}}</td>
+                                
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="padding-left: 25px!important;">
+                                <td style="padding-left: 25px!important;">
                                     <span style="color: #0055ef;padding-left: 20px!important">Total {{ val.nama }}</span>
                                 </td>
                                 <td style="text-align: right">
@@ -98,7 +98,7 @@
                         </tbody>
                         <tbody>
                             <tr>
-                                <th colspan="2">
+                                <th>
                                     <span class="text-black-neraca">Total Harta</span>
                                 </th>
                                 <th style="text-align: right">
@@ -108,64 +108,23 @@
                         </tbody>
                         <tbody>
                             <tr>
-                                <th colspan="3">
+                                <th colspan="2">
                                     <span class="text-blue-neraca">Kewajiban</span>
                                 </th>
                             </tr>
                         </tbody>
                         <tbody ng-repeat="val in data.modelKewajiban.list">
                             <tr>
-                                <td colspan="3" style="padding-left: 25px!important;">
-                                    <span style="color: #0055ef;">{{ val.kode +" - "+ val.nama }}</span>
+                                <td colspan="2" style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef;">{{ val.nama }}</span>
                                 </td>
                             </tr>
                             <tr ng-repeat="row in val.detail">
-                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important; width: 195px;">{{ row.kode }}</td>
-                                <td ng-if="row.is_tipe == 0" style="text-align: left;">{{ row.nama }}</td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode +" - "+ row.nama}}</td>
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="padding-left: 25px!important;">
-                                    <span style="color: #0055ef;padding-left: 20px!important">Total {{ val.kode +" - "+ val.nama }}</span>
-                                </td>
-                                <td style="text-align: right">
-                                    <span style="color: #0055ef;">{{ val.total| number }}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tbody>
-                            <tr>
-                                <th colspan="2">
-                                    <span class="text-blue-neraca">Total Kewajiban</span>
-                                </th>
-                                <th style="text-align: right">
-                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ data.modelKewajiban.total| number }}</span>
-                                </th>
-                            </tr>
-                        </tbody>
-                        <tbody>
-                            <tr>
-                                <th colspan="3">
-                                    <span class="text-blue-neraca">Modal</span>
-                                </th>
-                            </tr>
-                        </tbody>
-                        <tbody ng-repeat="val in data.modelModal.list">
-                            <tr>
-                                <td colspan="3" style="padding-left: 25px!important;">
-                                    <span style="color: #0055ef;">{{ val.kode +" - "+ val.nama }}</span>
-                                </td>
-                            </tr>
-                            <tr ng-repeat="row in val.detail">
-                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important; width: 195px;">{{ row.kode }}</td>
-                                <td ng-if="row.is_tipe == 0" style="text-align: left;">
-                                    {{ row.nama }}
-                                    <span>{{ row.laba }}</span>
-                                </td>
-                                <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="padding-left: 25px!important;">
+                                <td style="padding-left: 25px!important;">
                                     <span style="color: #0055ef;padding-left: 20px!important">Total {{ val.nama }}</span>
                                 </td>
                                 <td style="text-align: right">
@@ -175,7 +134,43 @@
                         </tbody>
                         <tbody>
                             <tr>
+                                <th>
+                                    <span class="text-blue-neraca">Total Kewajiban</span>
+                                </th>
+                                <th style="text-align: right">
+                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ data.modelKewajiban.total| number }}</span>
+                                </th>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
                                 <th colspan="2">
+                                    <span class="text-blue-neraca">Modal</span>
+                                </th>
+                            </tr>
+                        </tbody>
+                        <tbody ng-repeat="val in data.modelModal.list">
+                            <tr>
+                                <td colspan="2" style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef;">{{ val.nama }}</span>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="row in val.detail">
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode +" - "+ row.nama}}</td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef;padding-left: 20px!important">Total {{ val.nama }}</span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span style="color: #0055ef;">{{ val.total| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <th>
                                     <span class="text-blue-neraca">Total Modal</span>
                                 </th>
                                 <th style="text-align: right">
@@ -185,7 +180,7 @@
                         </tbody>
                         <tbody>
                             <tr>
-                                <th colspan="2">
+                                <th >
                                     <span class="text-black-neraca">Total Kewajiban dan Modal</span>
                                 </th>
                                 <th style="text-align: right">

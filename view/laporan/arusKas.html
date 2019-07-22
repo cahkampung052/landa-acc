@@ -23,10 +23,9 @@
         <br/>
         <div>
 
-            <div class="table-responsive">
-                <table class="table table-striped table-hover table-laporan" style="border-collapse: collapse;">
-                    <thead>
-                        <tr>
+            <div class="">
+                <table class="table table-striped table-laporan" style="border-collapse: collapse;">
+                        <tr class="non-body">
 
                             <th>
                                 <b>
@@ -40,76 +39,102 @@
                                 </b>
                             </th>
                         </tr>
-                    </thead>
-                    {%for key, val in detail%}
-                    <tbody>
 
+                    <tbody>
                         <tr>
                             <td align="left" style="vertical-align: top" colspan="2">
-                                <b>{{val.nama}}</b>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="left" style="vertical-align: top">
-                                {{val.nama}}
-                            </td>
-
-                            <td align="right" class="text-right" style="vertical-align: top">
-                                {{val.saldo}}
+                                <b>Pendanaan</b>
                             </td>
                         </tr>
                     </tbody>
+                    {%for key, val in detail['Aktivitas Operasi']%}
+                    <tbody>
+
+                        <tr>
+                            <td align="left" style="vertical-align: top; font-weight: bold" colspan="2">{{ val.kode }} - {{ val.nama }}</td>
+                        </tr>
+                        {%for vals in val.detail%}
+                        <tr>
+                            <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
+                            <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo}}</td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
                     {%endfor%}
-                    <tfoot>
+                    <tbody>
                         <tr>
+                            <td align="left" style="vertical-align: top" colspan="2">
+                                <b>Investasi</b>
+                            </td>
+                        </tr>
+                    </tbody>
+                    {%for key, val in detail['Investasi']%}
+                    <tbody>
+
+                        <tr>
+                            <td align="left" style="vertical-align: top; font-weight: bold" colspan="2">{{ val.kode }} - {{ val.nama }}</td>
+                        </tr>
+                        {%for vals in val.detail%}
+                        <tr>
+                            <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
+                            <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo}}</td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                    {%endfor%}
+                    <tbody>
+                        <tr>
+                            <td align="left" style="vertical-align: top" colspan="2">
+                                <b>Pendanaan</b>
+                            </td>
+                        </tr>
+                    </tbody>
+                    {%for key, val in detail['Pendanaan']%}
+                    <tbody>
+
+                        <tr>
+                            <td align="left" style="vertical-align: top; font-weight: bold" colspan="2">{{ val.kode }} - {{ val.nama }}</td>
+                        </tr>
+                        {%for vals in val.detail%}
+                        <tr>
+                            <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
+                            <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo}}</td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                    {%endfor%}
+                        <tr class="non-body">
                             <td align="left">
-                                <b>
-                                    Total Arus Kas
-                                </b>
+                                <b>Total Arus Kas</b>
                             </td>
                             <td align="right" class="text-right">
-                                <b>
-                                    {{data.total_saldo}}
-                                </b>
+                                <b>{{ data.total_saldo }}</b>
                             </td>
                         </tr>
-                        <tr>
-                            <td align="left" >
-                                <b>
-                                    Saldo Awal
-                                </b>
+                        <tr class="non-body">
+                            <td align="left">
+                                <b>Saldo Awal</b>
                             </td>
                             <td align="right" class="text-right">
-                                <b>
-                                    {{data.total_saldo}}
-                                </b>
+                                <b>{{ data.saldo_awal }}</b>
                             </td>
                         </tr>
-                        <tr>
-                            <td align="left" >
-                                <b>
-                                    Saldo Akhir
-                                </b>
+                        <tr class="non-body">
+                            <td align="left">
+                                <b>Saldo Akhir</b>
                             </td>
                             <td align="right" class="text-right">
-                                <b>
-                                    
-                                </b>
+                                <b>{{ data.saldo_akhir }}</b>
                             </td>
                         </tr>
-                        <tr>
-                            <td align="left" >
-                                <b>
-                                    Penurunan / Kenaikan Kas
-                                </b>
+                        <tr class="non-body">
+                            <td align="left">
+                                <b>Penurunan / Kenaikan Kas</b>
                             </td>
                             <td align="right" class="text-right">
-                                <b>
-                                    {{data.total_saldo - data.saldo_awal}}
-                                </b>
+                                <b>{{ data.saldo_akhir - data.saldo_awal }}</b>
                             </td>
                         </tr>
-                    </tfoot>
                 </table>
             </div>
         </div>

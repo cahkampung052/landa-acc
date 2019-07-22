@@ -23,7 +23,7 @@
                                         <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
                                                 <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
                                             </ui-select>
                                         </div>
                                     </div>
@@ -108,16 +108,16 @@
                             <tbody>
                                 <tr>
                                     <td align="right" colspan="2">
-                                        <b style="color:green; font-size: 18px" ng-if="totalsemua >= 0">
+                                        <b style="color:green; font-size: 18px" ng-if="data.total >= 0">
                                             LABA
                                         </b>
-                                        <b style="color:red; font-size: 18px" ng-if="totalsemua < 0">RUGI</b>
+                                        <b style="color:red; font-size: 18px" ng-if="data.total < 0">RUGI</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b style="color: green; font-size: 18px" ng-if="totalsemua >= 0">
-                                            {{ totalsemua | number }}
+                                        <b style="color: green; font-size: 18px" ng-if="data.total >= 0">
+                                            {{ data.total | number }}
                                         </b>
-                                        <b style="color:red; font-size: 18px" ng-if="totalsemua < 0">{{ totalsemua*-1 | number }}</b>
+                                        <b style="color:red; font-size: 18px" ng-if="data.total < 0">{{ data.total*-1 | number }}</b>
                                     </td>
                                 </tr>
                             </tbody>

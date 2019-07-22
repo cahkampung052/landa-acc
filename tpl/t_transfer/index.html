@@ -9,7 +9,7 @@
                             Menu
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <button class="dropdown-item" ng-click="create();">
+                            <button class="dropdown-item" ng-click="create();" ng-if="user.akses.transfer_kas_create">
                                 <i class="fa fa-plus"></i>
                                 &nbsp;Buat Transfer Baru
                             </button>
@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
-                    <button class="btn btn-primary btn-sm" ng-click="create();">
+                    <button class="btn btn-primary btn-sm" ng-click="create();" ng-if="user.akses.transfer_kas_create">
                         <i class="fa fa-plus"></i>
                         &nbsp;Buat Transfer Baru
                     </button>
@@ -56,14 +56,14 @@
                                         <div class="col-sm-2">
                                             <select class="form-control form-control-sm" st-search="m_lokasi_asal_id">
                                                 <option value="">- Semua Lokasi -</option>
-                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama}}</option>
+                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama_lengkap}}</option>
                                             </select>
                                         </div>
                                     <label class="col-sm-2 col-form-label-sm mb-0px">Lokasi Tujuan</label>
                                         <div class="col-sm-2">
                                             <select class="form-control form-control-sm" st-search="m_lokasi_tujuan_id">
                                                 <option value="">- Semua Lokasi -</option>
-                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama}}</option>
+                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama_lengkap}}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -126,7 +126,7 @@
                                     {{row.namaTujuan}}
                                 </td>
                                 <td style="text-align: left;">
-                                    {{row.total}}
+                                    {{row.total | currency}}
                                 </td>
                                 <td style="text-align: left;">
                                     {{row.tanggal_formated}}
@@ -174,7 +174,7 @@
                                         <ui-select-match placeholder="Pilih Lokasi">
                                             {{ $select.selected.kode + " - " + $select.selected.nama}}
                                         </ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
+                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.nama_lengkap}}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -200,7 +200,7 @@
                                         <ui-select-match placeholder="Pilih Lokasi">
                                             {{ $select.selected.kode + " - " + $select.selected.nama}}
                                         </ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
+                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.nama_lengkap}}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -255,7 +255,7 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label-sm">Keterangan</label>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control" ng-model="form.keterangan"></textarea>
+                                    <input type="text" class="form-control form-control-sm" ng-model="form.keterangan">
                                 </div>
                             </div>
                         </div>
@@ -282,7 +282,7 @@
                     </button>
                     <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="form.total_debit != form.total_kredit || loading" ng-click="save(form, 'terposting')">
                         <i class="fa fa-check"></i>
-                        &nbsp;Simpan & Kunci
+                        &nbsp;Simpan & Posting
                     </button>
                 </div>
             </div>

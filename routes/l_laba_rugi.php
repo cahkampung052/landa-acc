@@ -48,7 +48,12 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
         /*
          * panggil function saldo laba rugi, karena digunakan juga di laporan neraca
          */
-        $arr = getLabaRugi($tanggal_start, $tanggal_end, $params['m_lokasi_id']);
+        $labarugi = getLabaRugi($tanggal_start, $tanggal_end, $params['m_lokasi_id']);
+        $arr = $labarugi['data'];
+        $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
+        $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
+        $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
+        $data['total'] = $pendapatan - $biaya - $beban;
         
         if (isset($params['export']) && $params['export'] == 1) {
             $view = twigViewPath();

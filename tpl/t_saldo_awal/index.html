@@ -45,7 +45,7 @@
                                     <div class="col-sm-3">
                                         <ui-select class="ui-select-sm ui-select-container" ng-change="view(form)" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view" ng-change="getHutang(form)">
                                             <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
-                                            <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
+                                            <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                         </ui-select>
                                     </div>
                                 </div>
@@ -75,7 +75,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.debit"ng-disabled="is_view || (row.kredit != 0 && row.kredit != undefined)" ng-blur="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.debit"ng-disabled="is_view || (row.kredit != 0 && row.kredit != undefined) || row.saldo_normal == -1" ng-blur="sumTotal()"/>
                                     </div>
                                 </td>
                                 <td style="text-align: left;">
@@ -83,7 +83,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.kredit"ng-disabled="is_view || (row.debit != 0 && row.debit != undefined)" ng-blur="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.kredit"ng-disabled="is_view || (row.debit != 0 && row.debit != undefined) || row.saldo_normal == 1" ng-blur="sumTotal()"/>
                                     </div>
                                 </td>
                             </tr>

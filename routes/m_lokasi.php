@@ -20,8 +20,7 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
                 ->findAll();
      $arr = getChildFlat($models, 0);
     foreach ($arr as $key => $val) {
-        $spasi                            = ($val->level == 0) ? '' : str_repeat("···", $val->level);
-
+        $spasi                            = ($val->level == 0) ? '' : str_repeat("---", $val->level);
         $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
     }
     

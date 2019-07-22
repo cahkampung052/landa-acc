@@ -180,7 +180,7 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
         $models[$key]['tanggal'] = date("Y-m-d", $val->modified_at);
-        $models[$key]['tanggal_formated'] = date("d-m-Y h:i:s", strtotime($val->tanggal));
+        $models[$key]['tanggal_formated'] = date("d-m-Y", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
         $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
@@ -286,16 +286,19 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         /*
          * ppn
          */
-        $akunppn = getPemetaanAkun("PPN");
-        $transDetail[$index]['m_lokasi_id'] = $model->m_lokasi_id;
-        $transDetail[$index]['m_akun_id'] = $akunppn;
-        $transDetail[$index]['m_kontak_id'] = $model->m_kontak_id;
-        $transDetail[$index]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
-        $transDetail[$index]['debit'] = $model->ppn;
-        $transDetail[$index]['reff_type'] = "acc_pengeluaran";
-        $transDetail[$index]['kode'] = $model->no_transaksi;
-        $transDetail[$index]['keterangan'] = $model->keterangan;
-        $transDetail[$index]['reff_id'] = $model->id;
+        if($model->ppn > 0){
+            $akunppn = getPemetaanAkun("PPN");
+            $transDetail[$index]['m_lokasi_id'] = $model->m_lokasi_id;
+            $transDetail[$index]['m_akun_id'] = $akunppn;
+            $transDetail[$index]['m_kontak_id'] = $model->m_kontak_id;
+            $transDetail[$index]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
+            $transDetail[$index]['debit'] = $model->ppn;
+            $transDetail[$index]['reff_type'] = "acc_pengeluaran";
+            $transDetail[$index]['kode'] = $model->no_transaksi;
+            $transDetail[$index]['keterangan'] = $model->keterangan;
+            $transDetail[$index]['reff_id'] = $model->id;
+        }
+        
         /*
          * header total
          */

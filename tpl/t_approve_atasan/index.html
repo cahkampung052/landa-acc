@@ -182,6 +182,7 @@
                                         <th class="align-left">Keterangan</th>
                                         <th class="align-left" width="100">Jenis Satuan</th>
                                         <th class="align-left" width="150">Harga Satuan</th>
+                                        <th class="align-left" width="150">Jumlah</th>
                                         <th class="align-left" width="150">Sub Total</th>
 
                                     </tr>
@@ -207,6 +208,9 @@
                                             </div>
                                         </td>
                                         <td class="align-left">
+                                            <input type="text" class="form-control form-control-sm angka rp" maxlength="11" ng-model="v.jumlah" ng-change="sumTotal()" ng-disabled="is_view"/>
+                                        </td>
+                                        <td class="align-left">
                                             <div class="input-group input-group-sm">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">Rp</span>
@@ -217,7 +221,7 @@
 
                                     </tr>
                                     <tr>
-                                        <td colspan="3"></td>
+                                        <td colspan="4"></td>
                                         <td>Jumlah Uang</td>
                                         <td>
                                             <div class="input-group input-group-sm">

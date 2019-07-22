@@ -16,7 +16,7 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
         $scope.listLokasi = response.data.list;
     });
 
-    Data.get('acc/m_akun/akunDetail').then(function (response) {
+    Data.get('acc/m_akun/akunHutang').then(function (response) {
         $scope.listAkun = response.data.list;
     });
     

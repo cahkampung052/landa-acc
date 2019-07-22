@@ -391,7 +391,7 @@ $app->get('/acc/m_akun/export', function ($request, $response) {
     $db = $this->db;
     
     //load themeplate
-    $path        = 'acc/landaacc/file/format_akun.xls';
+    $path        = 'acc/landaacc/file/format_masterakun.xls';
     $objReader   = PHPExcel_IOFactory::createReader('Excel5');
     $objPHPExcel = $objReader->load($path);
     
@@ -470,6 +470,35 @@ $app->get('/acc/m_akun/akunKas', function ($request, $response) {
             ->findAll();
     return successResponse($response, ['list' => $models]);
 });
+
+/*
+ * Ambil akun hutang
+ */
+$app->get('/acc/m_akun/akunHutang', function ($request, $response){
+    $db = $this->db;
+    $models = $db->select("*")->from("acc_m_akun")
+            ->customWhere("nama LIKE '%UTANG%'")
+            ->where("is_tipe", "=", 0)
+            ->where("is_deleted", "=", 0)
+            
+            ->findAll();
+    return successResponse($response, ['list' => $models]);
+});
+
+/*
+ * Ambil akun hutang
+ */
+$app->get('/acc/m_akun/akunPiutang', function ($request, $response){
+    $db = $this->db;
+    $models = $db->select("*")->from("acc_m_akun")
+            ->customWhere("nama LIKE '%PIUTANG%'")
+            ->where("is_tipe", "=", 0)
+            ->where("is_deleted", "=", 0)
+            
+            ->findAll();
+    return successResponse($response, ['list' => $models]);
+});
+
 /**
  * Ambil akun saja tanpa klasifikasinya
  */

@@ -79,7 +79,7 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
      * export
      */
     $scope.export = function() {
-        window.location = 'api/acc/m_klasifikasi/export';
+        window.location = 'api/acc/m_akun/export';
     };
     /**
      * create

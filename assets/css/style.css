@@ -46,3 +46,8 @@ td, th {
     background-color: #3798C4;
     color: white;
 }
+
+.non-body {
+    background-color: #3798C4!important;
+    color: white;
+}

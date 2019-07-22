@@ -11,6 +11,12 @@ app.controller("aksesCtrl", function($scope, Data, $rootScope) {
     /**
      * End inialisasi
      */
+    
+    Data.get("acc/m_lokasi/getLokasi").then(function(result){
+        console.log(result)
+        $scope.listLokasi = result.data.list;
+    });
+    
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -43,17 +49,18 @@ app.controller("aksesCtrl", function($scope, Data, $rootScope) {
     $scope.update = function(form) {
         $scope.is_edit = true;
         $scope.is_view = false;
-        $scope.formtittle = "Edit Data : " + form.username;
+        $scope.formtittle = "Edit Data : " + form.nama;
         $scope.form = form;
     };
     $scope.view = function(form) {
         $scope.is_edit = true;
         $scope.is_view = true;
-        $scope.formtittle = "Lihat Data : " + form.username;
+        $scope.formtittle = "Lihat Data : " + form.nama;
         $scope.form = form;
     };
     $scope.save = function(form) {
         $scope.loading = true;
+        console.log(form)
         Data.post("acc/appakses/save", form).then(function(result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
