@@ -154,7 +154,6 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             ->where("is_tipe", "=", 1)
             ->where("level", "=", 1)
             ->findAll();
-    print_r($klasifikasi);die();
     $arr = [];
     $total = 0;
     

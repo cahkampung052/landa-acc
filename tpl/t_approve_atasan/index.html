@@ -2,8 +2,22 @@
     <div ng-controller="tapprovalCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong class="d-md-down-none">{{master}}</strong>
-                <div class="btn-group pull-right mt-5px" role="group">
+                <strong class="">{{master}}</strong>
+                <div class="btn-group pull-right mt-5px d-lg-none" role="group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item" ng-click="isCollapsed = !isCollapsed" ng-init="isCollapsed = true">
+                                <i class="fa fa-search">
+                                </i>
+                                Pencarian
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
                     <button class="btn btn-secondary btn-sm" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
                         <i class="fa fa-search"></i>
                         &nbsp;Pencarian

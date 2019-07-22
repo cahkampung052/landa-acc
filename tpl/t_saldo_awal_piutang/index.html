@@ -2,8 +2,25 @@
     <div ng-controller="saldoawalpiutangCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong class="d-md-down-none">{{ master }}</strong>
-                <div class="pull-right mt-5px" role="group">
+                <strong class="">{{ master }}</strong>
+                <div class="btn-group pull-right mt-5px d-lg-none" role="group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item" ng-click="export()">
+                                <i class="fa fa-download"></i>
+                                &nbsp;Unduh Format
+                            </button>
+                            <button accept=".xls" class="dropdown-item" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
+                                <i class="fa fa-upload"></i>
+                                &nbsp;Import
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="pull-right mt-5px d-md-down-none" role="group">
                     <button class="btn btn-transparan btn-sm" ng-click="export()">
                         <i class="fa fa-download"></i>
                         &nbsp;Unduh Format

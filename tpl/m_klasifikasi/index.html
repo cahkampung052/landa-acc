@@ -23,16 +23,26 @@
         </div>
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong>{{ master }}</strong>
+                <strong>{{ master}}</strong>
                 <div class="btn-group pull-right mt-5px d-lg-none" role="group">
                     <div class="dropdown">
-                      <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-list"></i>
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">Pencarian</a>
-                        <a class="dropdown-item" ng-click="create();">Tambahkan Hak Akses Baru</a>
-                      </div>
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button accept=".xls" class="dropdown-item" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
+                                <i class="fa fa-upload"></i>
+                                &nbsp;Import
+                            </button>
+                            <button class="dropdown-item" ng-click="export();">
+                                <i class="fa fa-download"></i>
+                                &nbsp;Unduh Format
+                            </button>
+                            <button class="dropdown-item" ng-click="create();">
+                                <i class="fa fa-plus"></i>
+                                &nbsp;Buat Klasifikasi Akun Baru
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="pull-right mt-5px d-md-down-none" role="group">
@@ -92,13 +102,13 @@
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
                                 <td style="text-align: left;">
                                     <span ng-if="row.is_tipe == 1">
-                                        <b>{{ row.nama_lengkap }}</b>
+                                        <b>{{ row.nama_lengkap}}</b>
                                     </span>
-                                    <span ng-if="row.is_tipe == 0">{{ row.nama_lengkap }}</span>
+                                    <span ng-if="row.is_tipe == 0">{{ row.nama_lengkap}}</span>
                                     <span ng-if="row.is_deleted == 1">(dihapus pada {{ row.tgl_nonaktif| date: "dd MMM yyyy" }})</span>
                                 </td>
-                                <td>{{ row.tipe }}</td>
-                                <td>{{ row.tipe_arus }}</td>
+                                <td>{{ row.tipe}}</td>
+                                <td>{{ row.tipe_arus}}</td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
@@ -114,7 +124,7 @@
         </div>
         <div class="card" ng-if="is_edit">
             <div class="card-header">
-                <strong>{{ formtitle }}</strong>
+                <strong>{{ formtitle}}</strong>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
@@ -126,7 +136,7 @@
                                     <select class="form-control form-control-sm" ng-change="getakun(form.parent_id)" id="parent" ng-disabled="is_view" ng-model="form.parent_id">
                                         <option value="">- Pilih Akun Induk -</option>
                                         <option value="0">.: Gunakan Sebagai Induk :.</option>
-                                        <option ng-repeat="value in parent" ng-selected="value.id == form.parent_id" ng-value="{{ value.id }}">{{ value.kode }} - {{ value.nama }}</option>
+                                        <option ng-repeat="value in parent" ng-selected="value.id == form.parent_id" ng-value="{{ value.id}}">{{ value.kode}} - {{ value.nama}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -148,8 +158,8 @@
                                 <label class="col-md-3 col-form-label-sm required">Kode Akun</label>
                                 <div class="col-md-9">
                                     <div class="input-group input-group-sm">
-                                        <div class="input-group-prepend" ng-if="form.parent_id> 0">
-                                            <span class="input-group-text">{{ form.kode_induk }}</span>
+                                        <div class="input-group-prepend" ng-if="form.parent_id > 0">
+                                            <span class="input-group-text">{{ form.kode_induk}}</span>
                                         </div>
                                         <input type="text" class="form-control form-control-sm angka align-left" ng-model="form.kode" ng-disabled="is_view"/>
                                     </div>
@@ -163,7 +173,7 @@
                                     <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view"/>
                                 </div>
                             </div>
-                            <div class="form-group row" ng-if="form.id> 9 || !form.id">
+                            <div class="form-group row" ng-if="form.id > 9 || !form.id">
                                 <label class="col-md-3 col-form-label-sm">Tipe Arus Kas</label>
                                 <div class="col-md-9">
                                     <select class="form-control form-control-sm" id="tipearus" ng-disabled="is_view" ng-model="form.tipe_arus">

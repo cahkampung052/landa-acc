@@ -2,15 +2,33 @@
     <div ng-controller="msettingapprovalCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong class="d-md-down-none">Daftar msettingapproval</strong>
-                <div class="btn-group pull-right mt-5px" role="group">
+                <strong class="">Master Setting Approval</strong>
+                <div class="btn-group pull-right mt-5px d-lg-none" role="group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item" ng-click="isCollapsed = !isCollapsed" ng-init="isCollapsed = true">
+                                <i class="fa fa-search">
+                                </i>
+                                Pencarian
+                            </button>
+                            <button class="dropdown-item" ng-click="create();">
+                                <i class="fa fa-plus"></i>
+                                &nbsp;Buat Setting Approval Baru
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
                     <button class="btn btn-secondary btn-sm" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
                         <i class="fa fa-search"></i>
                         &nbsp;Pencarian
                     </button>
                     <button class="btn btn-primary btn-sm" ng-click="create();">
                         <i class="fa fa-plus"></i>
-                        &nbsp;Buat Baru
+                        &nbsp;Buat Setting Approval Baru
                     </button>
                 </div>
             </div>
@@ -89,7 +107,7 @@
                                     <input type="text" class="form-control form-control-sm" ng-model="form.min" maxlength="20" ng-disabled="is_view"/>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-md-6">
                             <div class="form-group row">
@@ -115,7 +133,7 @@
                                         <th class="align-left">User</th>
                                         <th class="align-left">Sebagai</th>
                                         <th class="align-left">Level</th>
-                                        
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -124,19 +142,19 @@
                                             <button type="button" class="btn btn-danger fa fa-minus" ng-click="removeDetail(listDetail, $index)" ng-disabled="is_view"></button>
                                         </td>
                                         <td class="align-left">
-                                            <ui-select class="ui-select-sm ui-select-container" ng-model="v.acc_m_user_id" theme="bootstrap" ng-disabled="is_view">
-                                                    <ui-select-match placeholder="Pilih User">{{ $select.selected.nama }}</ui-select-match>
-                                                    <ui-select-choices position="down" repeat="val in listUser | filter : $select.search">{{ val.nama }}</ui-select-choices>
-                                                </ui-select>
-                                        </td>
-                                        <td class="align-left">
-                                            <input type="text" class="form-control form-control-sm" maxlength="255" ng-model="v.sebagai" ng-disabled="is_view"/>
-                                        </td>
-                                        <td class="align-left">
-                                            <input type="text" class="form-control form-control-sm" maxlength="11" ng-model="v.level" ng-disabled="is_view"/>
-                                        </td>
-                                        
-                                    </tr>
+                                <ui-select class="ui-select-sm ui-select-container" ng-model="v.acc_m_user_id" theme="bootstrap" ng-disabled="is_view">
+                                    <ui-select-match placeholder="Pilih User">{{ $select.selected.nama}}</ui-select-match>
+                                    <ui-select-choices position="down" repeat="val in listUser | filter : $select.search">{{ val.nama}}</ui-select-choices>
+                                </ui-select>
+                                </td>
+                                <td class="align-left">
+                                    <input type="text" class="form-control form-control-sm" maxlength="255" ng-model="v.sebagai" ng-disabled="is_view"/>
+                                </td>
+                                <td class="align-left">
+                                    <input type="text" class="form-control form-control-sm" maxlength="11" ng-model="v.level" ng-disabled="is_view"/>
+                                </td>
+
+                                </tr>
                                 </tbody>
                             </table>
                         </div>

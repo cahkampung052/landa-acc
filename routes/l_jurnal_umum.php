@@ -117,14 +117,16 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
 //        print_r($arr);die();
 
         $kode = "";
+        $namaLokasi = "";
         foreach ($arr as $key => $val) {
-            if ($val['kode'] == $kode && $val['kode'] != "") {
+            if ($val['kode'] == $kode && $val['kode'] != "" && $val['namaLokasi'] == $namaLokasi && $val['namaLokasi'] != "") {
                 $arr[$key]['kode'] = "";
                 $arr[$key]['kodeLokasi'] = "";
                 $arr[$key]['namaLokasi'] = "";
                 $arr[$key]['tanggal'] = "";
             } else {
                 $kode = $val['kode'];
+                $namaLokasi = $val['namaLokasi'];
             }
         }
 

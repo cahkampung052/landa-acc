@@ -11,7 +11,7 @@ app.controller("tpertanggungjawabanCtrl", function ($scope, Data,$rootScope) {
     $scope.is_create = false;
     $scope.is_copy = false;
     $scope.loading = false;
-    var master = "Transaksi Pertanggungjawaban Pembayaran";
+    var master = "Transaksi Pembayaran";
     $scope.master = master;
     /**
      * Ambil semua lokasi

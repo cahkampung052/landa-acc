@@ -2,8 +2,29 @@
     <div ng-controller="akunCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong class="d-md-down-none">Master Akun</strong>
-                <div class="pull-right mt-5px" role="group">
+                <strong>Master Akun</strong>
+                <div class="btn-group pull-right mt-5px d-lg-none" role="group">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button accept=".xls" class="dropdown-item" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
+                                <i class="fa fa-upload"></i>
+                                &nbsp;Import
+                            </button>
+                            <button class="dropdown-item" ng-click="export();">
+                                <i class="fa fa-download"></i>
+                                &nbsp;Unduh Format
+                            </button>
+                            <button class="dropdown-item" ng-click="create();">
+                                <i class="fa fa-plus"></i>
+                                &nbsp;Buat Akun Baru
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="pull-right mt-5px d-md-down-none" role="group">
                     <button accept=".xls" class="btn btn-transparan btn-sm" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
                         <i class="fa fa-upload"></i>
                         &nbsp;Import
@@ -61,17 +82,17 @@
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
                                 <td style="text-align: left;">
                                     <span ng-if="row.is_tipe == 1">
-                                        <b>{{ row.nama_lengkap }}</b>
+                                        <b>{{ row.nama_lengkap}}</b>
                                     </span>
-                                    <span ng-if="row.is_tipe == 0">{{ row.nama_lengkap }}</span>
+                                    <span ng-if="row.is_tipe == 0">{{ row.nama_lengkap}}</span>
                                     <span ng-if="row.is_deleted == 1">(dihapus pada {{ row.tgl_nonaktif| date: "dd MMM yyyy" }})</span>
                                 </td>
                                 <td style="text-align: left;">
                                     <span ng-if="row.saldo_normal == 1 && row.is_tipe == 0">Debit</span>
-                                    <span ng-if="row.saldo_normal == -1 && row.is_tipe == 0">Kredit</span>
+                                    <span ng-if="row.saldo_normal == - 1 && row.is_tipe == 0">Kredit</span>
                                 </td>
                                 <td style="text-align: right;"><span ng-if="row.is_tipe == 0">{{ row.saldo|number }}</span></td>
-                                <td style="text-align: left;">{{ row.tipe_arus }}</td>
+                                <td style="text-align: left;">{{ row.tipe_arus}}</td>
                                 <td>
                                     <div class="btn-group pull-right" role="group" ng-show="row.is_tipe == 0">
                                         <button type="button" class="btn btn-success fa fa-briefcase" ng-if="row.is_deleted == 0" ng-click="modalBudget(row)"></button>
@@ -88,7 +109,7 @@
         </div>
         <div class="card" ng-if="is_edit">
             <div class="card-header">
-                <strong>{{ formtitle }}</strong>
+                <strong>{{ formtitle}}</strong>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
@@ -99,7 +120,7 @@
                                 <div class="col-md-9">
                                     <select class="form-control form-control-sm" ng-change="getakun(form.parent_id)" id="parent" ng-disabled="is_view" ng-model="form.parent_id">
                                         <option value="">- Pilih Akun -</option>
-                                        <option ng-repeat="value in dataakun" ng-selected="value.id == form.parent_id" ng-value="{{ value.id }}">{{ value.kode }} - {{ value.nama }}</option>
+                                        <option ng-repeat="value in dataakun" ng-selected="value.id == form.parent_id" ng-value="{{ value.id}}">{{ value.kode}} - {{ value.nama}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -110,7 +131,7 @@
                                 <div class="col-md-9">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">{{ form.kode_induk }}</span>
+                                            <span class="input-group-text">{{ form.kode_induk}}</span>
                                         </div>
                                         <input type="text" class="form-control form-control-sm angka" style="text-align: left" ng-model="form.kode" ng-disabled="is_view" required/>
                                     </div>
@@ -156,7 +177,7 @@
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
                     </button>
-                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek   <= 3 || loading" ng-click="save(form)">
+                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek <= 3 || loading" ng-click="save(form)">
                         <i class="fa fa-save"></i>
                         &nbsp;Simpan
                     </button>
