@@ -68,14 +68,14 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover table-laporan" style="border-collapse: collapse;">
-                        <tbody>
+                    <table class="table table-hover table-laporan-striped" style="border-collapse: collapse;">
+                        <thead>
                             <tr>
                                 <th colspan="2">
                                     <span class="text-blue-neraca">Harta</span>
                                 </th>
                             </tr>
-                        </tbody>
+                        </thead>
                         <tbody ng-repeat="val in data.modelHarta.list">
                             <tr>
                                 <td colspan="2" style="padding-left: 25px!important;">
@@ -96,7 +96,7 @@
                                 </td>
                             </tr>
                         </tbody>
-                        <tbody>
+                        <thead>
                             <tr>
                                 <th>
                                     <span class="text-black-neraca">Total Harta</span>
@@ -105,14 +105,14 @@
                                     <span class="text-black-neraca"  style="font-weight: bold;">{{ data.modelHarta.total| number }}</span>
                                 </th>
                             </tr>
-                        </tbody>
-                        <tbody>
+                        </thead>
+                        <thead>
                             <tr>
                                 <th colspan="2">
                                     <span class="text-blue-neraca">Kewajiban</span>
                                 </th>
                             </tr>
-                        </tbody>
+                        </thead>
                         <tbody ng-repeat="val in data.modelKewajiban.list">
                             <tr>
                                 <td colspan="2" style="padding-left: 25px!important;">
@@ -132,7 +132,7 @@
                                 </td>
                             </tr>
                         </tbody>
-                        <tbody>
+                        <thead>
                             <tr>
                                 <th>
                                     <span class="text-blue-neraca">Total Kewajiban</span>
@@ -141,14 +141,14 @@
                                     <span class="text-blue-neraca"  style="font-weight: bold;">{{ data.modelKewajiban.total| number }}</span>
                                 </th>
                             </tr>
-                        </tbody>
-                        <tbody>
+                        </thead>
+                        <thead>
                             <tr>
                                 <th colspan="2">
                                     <span class="text-blue-neraca">Modal</span>
                                 </th>
                             </tr>
-                        </tbody>
+                        </thead>
                         <tbody ng-repeat="val in data.modelModal.list">
                             <tr>
                                 <td colspan="2" style="padding-left: 25px!important;">
@@ -168,7 +168,7 @@
                                 </td>
                             </tr>
                         </tbody>
-                        <tbody>
+                        <thead>
                             <tr>
                                 <th>
                                     <span class="text-blue-neraca">Total Modal</span>
@@ -177,8 +177,8 @@
                                     <span class="text-blue-neraca"  style="font-weight: bold;">{{ data.modelModal.total| number }}</span>
                                 </th>
                             </tr>
-                        </tbody>
-                        <tbody>
+                        </thead>
+                        <thead>
                             <tr>
                                 <th >
                                     <span class="text-black-neraca">Total Kewajiban dan Modal</span>
@@ -187,7 +187,7 @@
                                     <span class="text-black-neraca" style="font-weight: bold;">{{ data.modelKewajibanModal.total| number }}</span>
                                 </th>
                             </tr>
-                        </tbody>
+                        </thead>
                     </table>
                 </div>
             </div>

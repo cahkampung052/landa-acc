@@ -104,6 +104,22 @@
                 </div>
             </div>
         </div>
+         <div class="col-md-12" ng-show="form.is_penyusutan == '1'">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label-sm ">
+                    Mulai penyusutan
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group input-group-sm">
+                        <input class="form-control form-control-sm" is-open="opened.tgl_mulai_penyusutan" ng-click="toggle($event, 'tgl_mulai_penyusutan')" ng-disabled="is_view || form.proses_penyusutan == 1" ng-model="form.tgl_mulai_penyusutan" type="text" uib-datepicker-popup="dd-MM-yyyy"/>
+                        <div class="input-group-text">
+                            <i class="icon icon-calendar">
+                            </i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-md-12" ng-show="form.is_penyusutan == '1'">
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label-sm required">

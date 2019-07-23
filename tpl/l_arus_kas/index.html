@@ -68,14 +68,14 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover table-laporan" style="border-collapse: collapse;">
+                        <table class="table table-hover table-laporan-striped" style="border-collapse: collapse;">
                             <thead>
                                 <tr>
                                     <th>
-                                        <b>AKUN</b>
+                                        <b>Akun</b>
                                     </th>
                                     <th width="100">
-                                        <b>Saldo Akhir</b>
+                                        <b>Saldo</b>
                                     </th>
                                 </tr>
                             </thead>
@@ -85,8 +85,48 @@
                                         <b>Aktivitas Operasi</b>
                                     </td>
                                 </tr>
+                                <tr ng-repeat-start="(key, val) in detail['Aktivitas Operasi']">
+                                    <td align="left" style="vertical-align: top; font-weight: bold" colspan="2">{{ val.kode + " - " + val.nama}}</td>
+                                </tr>  
+                                <tr ng-repeat="vals in val.detail">
+                                    <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
+                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
+                                </tr>
+                                <tr ng-repeat-end style="display: none;">
+                                    <td></td>
+                                </tr> 
+                                <tr>
+                                    <td align="left" style="vertical-align: top" colspan="2">
+                                        <b>Investasi</b>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat-start="(key, val) in detail['Investasi']">
+                                    <td align="left" style="vertical-align: top; font-weight: bold" colspan="2">{{ val.kode + " - " + val.nama}}</td>
+                                </tr>  
+                                <tr ng-repeat="vals in val.detail">
+                                    <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
+                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
+                                </tr>
+                                <tr ng-repeat-end style="display: none;">
+                                    <td></td>
+                                </tr> 
+                                <tr>
+                                    <td align="left" style="vertical-align: top" colspan="2">
+                                        <b>Pendanaan</b>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat-start="(key, val) in detail['Pendanaan']">
+                                    <td align="left" style="vertical-align: top; font-weight: bold" colspan="2">{{ val.kode + " - " + val.nama}}</td>
+                                </tr>  
+                                <tr ng-repeat="vals in val.detail">
+                                    <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
+                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
+                                </tr>
+                                <tr ng-repeat-end style="display: none;">
+                                    <td></td>
+                                </tr> 
                             </tbody>
-                            <tbody ng-repeat="(key, val) in detail['Aktivitas Operasi']">
+                            <!-- <tbody ng-repeat="(key, val) in detail['Aktivitas Operasi']">
 
                                 <tr>
                                     <td align="left" style="vertical-align: top; font-weight: bold" colspan="2">{{ val.kode + " - " + val.nama}}</td>
@@ -95,8 +135,8 @@
                                     <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
                                 </tr>
-                            </tbody>
-                            <tbody>
+                            </tbody> -->
+                            <!-- <tbody>
                                 <tr>
                                     <td align="left" style="vertical-align: top" colspan="2">
                                         <b>Investasi</b>
@@ -129,11 +169,11 @@
                                     <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
                                 </tr>
-                            </tbody>
+                            </tbody> -->
                             <tfoot>
                                 <tr>
                                     <td align="left">
-                                        <b>Total Arus Kas</b>
+                                        <b>Total Aktivitas Kas</b>
                                     </td>
                                     <td align="right" class="text-right">
                                         <b>{{ data.total_saldo| number }}</b>
@@ -141,7 +181,7 @@
                                 </tr>
                                 <tr>
                                     <td align="left">
-                                        <b>Saldo Awal</b>
+                                        <b>Saldo Awal Kas</b>
                                     </td>
                                     <td align="right" class="text-right">
                                         <b>{{ data.saldo_awal| number }}</b>
@@ -149,7 +189,7 @@
                                 </tr>
                                 <tr>
                                     <td align="left">
-                                        <b>Saldo Akhir</b>
+                                        <b>Saldo Kas Seharusnya</b>
                                     </td>
                                     <td align="right" class="text-right">
                                         <b>{{ data.saldo_akhir | number }}</b>
@@ -157,10 +197,18 @@
                                 </tr>
                                 <tr>
                                     <td align="left">
-                                        <b>Penurunan / Kenaikan Kas</b>
+                                        <b>Saldo Akhir Kenyataan</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b>{{ data.saldo_akhir - data.saldo_awal| number }}</b>
+                                        <b>{{ data.saldo_akhir_neraca | number }}</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <b>Selisih</b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <b>{{ data.saldo_akhir - data.saldo_akhir_neraca| number }}</b>
                                     </td>
                                 </tr>
                             </tfoot>
