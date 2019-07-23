@@ -63,6 +63,7 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
         $scope.form.tanggal = new Date();
+        $scope.form.tgl_mulai_penyusutan = new Date();
         $scope.form.is_penyusutan = 0;
         Data.get('acc/m_asset/generateKode').then(function (response) {
             $scope.form.kode = response.data;
@@ -78,8 +79,10 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal_beli);
+        if(form.tgl_mulai_penyusutan!=null){
+            $scope.form.tgl_mulai_penyusutan = new Date(form.tgl_mulai_penyusutan);
+        }
         $scope.form.harga = form.harga_beli;
-        console.log(form);
     };
     /** view */
     $scope.view = function (form) {
@@ -89,6 +92,9 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
         $scope.formtitle = master + " | Lihat Data : " + form.nama;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal_beli);
+        if(form.tgl_mulai_penyusutan!=null){
+            $scope.form.tgl_mulai_penyusutan = new Date(form.tgl_mulai_penyusutan);
+        }
         $scope.form.harga = form.harga_beli;
     };
     /** save action */

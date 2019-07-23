@@ -145,7 +145,8 @@ $app->get('/acc/m_asset/tampilPenyusutan', function ($request, $response) {
         ->where("status", "=", 'Aktif')
         ->where("is_penyusutan", "=", 1)
         ->where("lokasi_id", "=", $params['lokasi_id'])
-        ->where("periode_awal_penyusutan", "<", date("Y-m-t",strtotime($params['bulan'])))
+        ->where("tgl_mulai_penyusutan", "<", date("Y-m-t",strtotime($params['bulan'])))
+        // ->where("periode_awal_penyusutan", "<", date("Y-m-t",strtotime($params['bulan'])))
         ->where("periode_akhir_penyusutan", ">", date("Y-m-t",strtotime($params['bulan'])))
         ;
     $total = 0;
@@ -301,14 +302,14 @@ $app->get('/acc/m_asset/getDetailPenyusutan', function ($request, $response) {
     for ($i=$tahun; $i <= $batas_tahun ; $i++) {
         if ($i==$tahun) {
             $dt[$i]['saldo_awal'] = $models->harga_beli;
-            $dt[$i]['awal'] = date("t M Y",strtotime($models->tanggal_beli));
-            $dt[$i]['awal_default'] = date("Y-m-t",strtotime($models->tanggal_beli));
+            $dt[$i]['awal'] = date("t M Y",strtotime($models->tgl_mulai_penyusutan));
+            $dt[$i]['awal_default'] = date("Y-m-t",strtotime($models->tgl_mulai_penyusutan));
             
             if ($models->status=='Aktif') {
                 $dt[$i]['akhir'] = date("t M Y", strtotime($i."-12-01"));
                 $dt[$i]['akhir_default'] = date("Y-m-t", strtotime($i."-12-01"));
             }else{
-                $dt[$i]['awal_default'] = date("Y-m-d",strtotime($models->tanggal_beli));
+                $dt[$i]['awal_default'] = date("Y-m-d",strtotime($models->tgl_mulai_penyusutan));
                 $dt[$i]['akhir'] = date("t M Y", strtotime($i."-".$batas_bulan."-01"));
                 $dt[$i]['akhir_default'] = date("Y-m-t", strtotime($i."-".$batas_bulan."-01"));
             }
@@ -490,6 +491,7 @@ $app->post('/acc/m_asset/save', function ($request, $response) {
             $data["tahun"] = $data["umur"]["tahun"];
             $data["persentase"] = $data["umur"]["persentase"];
             $data["nilai_residu"] = $data["nilai_residu"];
+            $data["tgl_mulai_penyusutan"] = date("Y-m-d", strtotime($data["tgl_mulai_penyusutan"]));
         }
         $data["status"]       = "Aktif";
 
