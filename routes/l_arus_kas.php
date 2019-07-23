@@ -1,207 +1,159 @@
 <?php
 
-function validasi($data, $custom = array()) {
-    $validasi = array(
-//        'parent_id' => 'required',
-//        'kode'      => 'required',
-//        'nama'      => 'required',
-            // 'tipe' => 'required',
-    );
-//    GUMP::set_field_name("parent_id", "Akun");
-    $cek = validate($data, $validasi, $custom);
-    return $cek;
-}
-
 $app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
     $params = $request->getParams();
-
     $sql = $this->db;
-    $validasi = validasi($params);
-    if ($validasi === true) {
 
-        //tanggal awal
-        $tanggal_awal = new DateTime($params['startDate']);
-        $tanggal_awal->setTimezone(new DateTimeZone('Asia/Jakarta'));
+    //tanggal awal
+    $tanggal_awal = new DateTime($params['startDate']);
+    $tanggal_awal->setTimezone(new DateTimeZone('Asia/Jakarta'));
 
-        //tanggal akhir
-        $tanggal_akhir = new DateTime($params['endDate']);
-        $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
+    //tanggal akhir
+    $tanggal_akhir = new DateTime($params['endDate']);
+    $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
 
-        $tanggal_start = $tanggal_awal->format("Y-m-d");
-        $tanggal_end = $tanggal_akhir->format("Y-m-d");
+    $tanggal_start = $tanggal_awal->format("Y-m-d");
+    $tanggal_end = $tanggal_akhir->format("Y-m-d");
 
+    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['disiapkan'] = date("d-m-Y, H:i");
+    $data['lokasi'] = $params['nama_lokasi'];
 
-
-        $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
-        $data['disiapkan'] = date("d-m-Y, H:i");
-        $data['lokasi'] = $params['nama_lokasi'];
-
-        if (isset($params['m_lokasi_id'])) {
-            $lokasiId = getChildId("acc_m_lokasi", $params['m_lokasi_id']);
-            /*
-             * jika lokasi punya child
-             */
-            if (!empty($lokasiId)) {
-                $lokasiId[] = $params['m_lokasi_id'];
-                $lokasiId = implode(",", $lokasiId);
-            }
-            /*
-             * jika lokasi tidak punya child
-             */ else {
-                $lokasiId = $params['m_lokasi_id'];
-            }
+    if (isset($params['m_lokasi_id'])) {
+        $lokasiId = getChildId("acc_m_lokasi", $params['m_lokasi_id']);
+        /*
+         * jika lokasi punya child
+         */
+        if (!empty($lokasiId)) {
+            $lokasiId[] = $params['m_lokasi_id'];
+            $lokasiId = implode(",", $lokasiId);
         }
+        /*
+         * jika lokasi tidak punya child
+         */
+        else {
+            $lokasiId = $params['m_lokasi_id'];
+        }
+    }
 
-        $data['total_saldo'] = 0;
+    $data = [
+        "total_saldo" => 0,
+        "saldo_awal" => 0,
+        "saldo_akhir" => 0,
+    ];
 
-        $arr = [];
+    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['disiapkan'] = date("d-m-Y, H:i");
+    $data['lokasi'] = $params['nama_lokasi'];
 
-        $arr["Aktivitas Operasi"] = [];
-        $arr["Investasi"] = [];
-        $arr["Pendanaan"] = [];
+    $arr["Aktivitas Operasi"] = [];
+    $arr["Investasi"] = [];
+    $arr["Pendanaan"] = [];
 
-        
+    /**
+     * Ambil id akun kas
+     */
+    $kas = $sql->select("id")->from("acc_m_akun")->where("is_kas", "=", 1)->andWhere("is_deleted", "=", 0)->findAll();
+    $arrKas = [];
+    foreach ($kas as $key => $value) {
+        $arrKas[$value->id] = $value->id;
+    }
+
+    /**
+     * Ambil neraca sebelum periode
+     */
+    $neracaBefore = getSaldoNeraca(null, null, $tanggal_start);
+    foreach ($neracaBefore as $key => $value) {
+        if (in_array($key, $arrKas)) {
+            $data["saldo_awal"] += $value;
+        }
+    }
+
+    /**
+     * Ambil neraca sampai periode
+     */
+    $neracaAfter = getSaldoNeraca(null, null, $tanggal_end);
+    foreach ($neracaAfter as $key => $value) {
+        if (in_array($key, $arrKas)) {
+            $data["saldo_akhir_neraca"] += $value;
+        }
+    }
+
+    /**
+     * Ambil Semua Akun dengan tipe arus kas
+     */
+    $sql->select("acc_m_akun.*, induk.id as id_induk, induk.nama as nama_induk, induk.kode as kode_induk")
+        ->from("acc_m_akun")
+        ->leftJoin("acc_m_akun as induk", "induk.id = acc_m_akun.parent_id")
+        ->customWhere("induk.tipe_arus IN('Aktivitas Operasi', 'Investasi', 'Pendanaan')")
+        ->where("acc_m_akun.is_tipe", "=", 0)
+        ->where("acc_m_akun.is_deleted", "=", 0)
+        ->findAll();
+    $getakun = $sql->findAll();
+
+    foreach ($getakun as $key => $value) {
         /**
-        * Ambil laba / rugi
-        */
-        $totalLabaRugi = getLabaRugi("1970-01-01", $tanggal_end, null, false);
-
-       /**
-        * Ambil akun laba rugi
-        */
-        $labarugi = $sql->find("select * from acc_m_akun_peta where type = 'Laba Rugi Berjalan'");
-        $akunLabaRugi = isset($labarugi->m_akun_id) ? $labarugi->m_akun_id : 0;
-
-
-        /*
-         * ambil arus yg tipe arus
+         * Ambil saldo awal
          */
-        $getakun = $sql->select("*")
-                ->from("acc_m_akun")
-                ->customWhere("tipe_arus IN('Aktivitas Operasi', 'Investasi', 'Pendanaan')")
-                ->where("is_tipe", "=", 1)
-                ->where("is_deleted", "=", 0)
-                ->orderBy("kode")
-                ->findAll();
+        $saldoAwal = isset($neracaBefore[$value->id]) ? $neracaBefore[$value->id] : 0;
 
-
-//        print_r($getakun);
-//        die();
-        $index = 0;
-        foreach ($getakun as $key => $val) {
-            $arr[$val->tipe_arus][$index] = (array) $val;
-            /*
-             * ambil child akun
-             */
-            $akunId = getChildId("acc_m_akun", $val->id);
-//                print_r($akunId);
-            foreach ($akunId as $det => $detail) {
-//                $arr[$val->tipe_arus][$index]['detail'][$det] = (array) $detail;
-                $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                        ->from("acc_trans_detail")
-                        ->where('m_akun_id', '=', $detail)
-                        ->andWhere('date(tanggal)', '<', $tanggal_start);
-                if (isset($params['m_lokasi_id']['id']) && !empty($params['m_lokasi_id']['id'])) {
-                    $sql->andWhere('m_lokasi_id', '=', $params['m_lokasi_id']['id']);
-                }
-                $getsaldoawal = $sql->find();
-                $saldo_awal = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
-                
-                if ($detail == $akunLabaRugi) {
-                    $saldo_awal += $totalLabaRugi;
-                }
-//
-                $sql->select("SUM(debit) as debit, SUM(kredit) as kredit, acc_m_akun.kode, acc_m_akun.nama, acc_m_akun.id as idAkun, acc_m_akun.tipe")
-                        ->from("acc_trans_detail")
-                        ->join("JOIN", "acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-                        ->where('acc_trans_detail.m_akun_id', '=', $detail)
-                        ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
-                        ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
-                if (isset($params['m_lokasi_id']['id']) && !empty($params['m_lokasi_id']['id'])) {
-                    $sql->andWhere('acc_trans_detail.m_lokasi_id', '=', $params['m_lokasi_id']['id']);
-                }
-                $gettransdetail = $sql->find();
-
-                $saldo_periode = intval($gettransdetail->debit) - intval($gettransdetail->kredit);
-
-                $arr[$val->tipe_arus][$index]['detail'][$det]['id'] = $gettransdetail->idAkun;
-                $arr[$val->tipe_arus][$index]['detail'][$det]['nama'] = $gettransdetail->kode . " - " . $gettransdetail->nama;
-                if($gettransdetail->tipe == "HARTA"){
-                    $arr[$val->tipe_arus][$index]['detail'][$det]['saldo'] = ($saldo_periode - $saldo_awal) * -1;
-                    $data['total_saldo'] += ($saldo_periode - $saldo_awal) * -1;   
-                }else{
-                    $arr[$val->tipe_arus][$index]['detail'][$det]['saldo'] = ($saldo_periode - $saldo_awal);
-                    $data['total_saldo'] += ($saldo_periode - $saldo_awal); 
-                }
-                
-//                $index2++;
-            }
-            $index++;
-        }
-
-        /*
-         * get akun kas
+        /**
+         * Ambil saldo periode
          */
-        $kas = $sql->select("*")->from("acc_m_akun")->where("is_tipe", "=", 0)->where("is_kas", "=", 1)->findAll();
+        $saldoPeriode = isset($neracaAfter[$value->id]) ? $neracaAfter[$value->id] : 0;
 
-        $data['saldo_awal'] = 0;
-        $data['saldo_akhir'] = 0;
-        foreach ($kas as $key => $val) {
-            
-            /*
-             * saldo awal
-             */
-            $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                    ->from("acc_trans_detail")
-                    ->where('m_akun_id', '=', $val->id)
-                    ->andWhere('date(tanggal)', '<', $tanggal_start);
-            if (isset($params['m_lokasi_id']['id']) && !empty($params['m_lokasi_id']['id'])) {
-                $sql->andWhere('m_lokasi_id', '=', $params['m_lokasi_id']['id']);
-            }
-            $getsaldoawal = $sql->find();
-            $data['saldo_awal'] += intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
-
-            /*
-             * saldo akhir
-             */
-            $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                    ->from("acc_trans_detail")
-                    ->where('m_akun_id', '=', $val->id)
-                    ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
-                    ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
-            if (isset($params['m_lokasi_id']['id']) && !empty($params['m_lokasi_id']['id'])) {
-                $sql->andWhere('m_lokasi_id', '=', $params['m_lokasi_id']['id']);
-            }
-            $getsaldoawal = $sql->find();
-            $data['saldo_akhir'] += intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
-        }
-//        print_r($arr);
-//        die();
-//        $data['kas'] = $data['total_saldo'] - $data['saldo_awal'];
-
-        if (isset($params['export']) && $params['export'] == 1) {
-            $view = twigViewPath();
-            $content = $view->fetch('laporan/arusKas.html', [
-                "data" => $data,
-                "detail" => $arr,
-                "css" => modulUrl() . '/assets/css/style.css',
-            ]);
-            header("Content-type: application/vnd.ms-excel");
-            header("Content-Disposition: attachment;Filename=laporan-buku-besar.xls");
-            echo $content;
-        } else if (isset($params['print']) && $params['print'] == 1) {
-            $view = twigViewPath();
-            $content = $view->fetch('laporan/arusKas.html', [
-                "data" => $data,
-                "detail" => $arr,
-                "css" => modulUrl() . '/assets/css/style.css',
-            ]);
-            echo $content;
-            echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+        if ($value->tipe == "HARTA") {
+            $saldo = ($saldoPeriode - $saldoAwal) * -1;
+            $data['total_saldo'] += ($saldoPeriode - $saldoAwal) * -1;
         } else {
-            return successResponse($response, ["data" => $data, "detail" => $arr]);
+            $saldo = ($saldoPeriode - $saldoAwal);
+            $data['total_saldo'] += ($saldoPeriode - $saldoAwal);
         }
+
+        $arr[$value->tipe_arus][$value->parent_id]["nama"] = $value->nama_induk;
+        $arr[$value->tipe_arus][$value->parent_id]["kode"] = $value->kode_induk;
+        $arr[$value->tipe_arus][$value->parent_id]["id"] = $value->id_induk;
+        if($saldo > 0){
+            $arr[$value->tipe_arus][$value->parent_id]["detail"][] = [
+                "saldo" => $saldo,
+                "nama" => $value->kode." - ".$value->nama,
+            ];
+        }
+    }
+
+    /**
+     * Hapus akun yang tidak ada transaksi
+     */
+    foreach ($arr as $key => $value) {
+        foreach ($value as $k => $v) {
+            if(!isset($arr[$key][$k]['detail'])){
+                unset($arr[$key][$k]);
+            }
+        }
+    }
+
+    $data["saldo_akhir"] = $data["saldo_awal"] + $data["total_saldo"];
+
+    if (isset($params['export']) && $params['export'] == 1) {
+        $view = twigViewPath();
+        $content = $view->fetch('laporan/arusKas.html', [
+                "data" => $data,
+                "detail" => $arr,
+                "css" => modulUrl() . '/assets/css/style.css',
+            ]);
+        header("Content-type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment;Filename=laporan-buku-besar.xls");
+        echo $content;
+    } elseif (isset($params['print']) && $params['print'] == 1) {
+        $view = twigViewPath();
+        $content = $view->fetch('laporan/arusKas.html', [
+                "data" => $data,
+                "detail" => $arr,
+                "css" => modulUrl() . '/assets/css/style.css',
+            ]);
+        echo $content;
+        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
     } else {
-        return unprocessResponse($response, $validasi);
+        return successResponse($response, ["data" => $data, "detail" => $arr]);
     }
 });

@@ -14,22 +14,18 @@ td, th {
     margin-bottom: 15px;
     font-family: Verdana, Geneva, sans-serif;
 }
-.table-laporan {
-    width: 100%;
-    border-collapse: collapse;
-    border: none;
-}
-.table-laporan td, th {
-    padding: 5px;
-    font-size: 11px;
-    border: none;
-}
+/**
+ * Tabel Laporan
+ */
 .table-laporan tr {
     background-color: #3fa8d82e;
     border-bottom: none;
 }
 .table-laporan td {
     border: none !important;
+}
+.table-laporan tbody+tbody {
+    border-top: none;
 }
 .table-laporan tbody tr:nth-of-type(odd) {
     background-color: #e3f1f31f;
@@ -42,10 +38,91 @@ td, th {
     background-color: #3798C4;
     color: white;
 }
+.table-laporan tbody tr:hover {
+    background-color: #e3f1f31f;
+}
 .table-laporan tfoot tr {
     background-color: #3798C4;
     color: white;
 }
+.table-laporan-border tr {
+    background-color: #ffffff;
+    border-bottom: none;
+}
+.table-laporan-border td, .table-laporan-border th {
+    border: 1px solid #096894
+}
+.table-laporan-border tbody+tbody {
+    border-top: none;
+}
+.table-laporan-border thead tr th{
+    border-bottom: none;
+}
+.table-laporan-border thead tr {
+    background-color: #3798C4;
+    color: white;
+    border: 1px solid #096894;
+}
+.table-laporan-border tbody tr th {
+    color: white;
+    border: 1px solid #096894;
+}
+.table-laporan-border tbody tr:hover {
+    background-color: #e3f1f31f;
+}
+.table-laporan-border tfoot tr {
+    background-color: #3798C4;
+    color: white;
+}
+.table-laporan-striped tr {
+    background-color: #ffffff;
+    border: 1px solid #096894;
+}
+.table-laporan-striped tbody+tbody {
+    border-top: none;
+}
+.table-laporan-striped th, .table-laporan-striped td{
+    border-bottom: 1px solid #096894;
+    border-top: 1px solid #096894;
+}
+.table-laporan-striped thead tr th {
+    background-color: #3798C4;
+    color: white;
+    border-bottom: 1px solid #096894;
+}
+.table-laporan-striped tbody tr th {
+    color: white;
+}
+.table-laporan-striped tbody tr:hover {
+    background-color: #e3f1f31f;
+}
+.table-laporan-striped tfoot tr {
+    background-color: #3798C4;
+    color: white;
+}
+.header-laporan {
+    margin: 0px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.content-center {
+    text-align: center;
+}
+.header-laporan-wrapper {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    color: #525252;
+}
+.table-laporan thead tr th{
+    border-bottom: none;
+    border-top: none;
+    vertical-align: middle;
+    height: auto;
+}
+/**
+ * End tabel laporan
+ */
 
 .non-body {
     background-color: #3798C4!important;
