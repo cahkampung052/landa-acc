@@ -64,6 +64,7 @@ $app->post("/acc/appakses/save", function ($request, $response) {
     if ($validasi === true) {
         try {
             $data["akses"] = json_encode($data["akses"]);
+            
             if (isset($data["id"])) {
                 $model = $db->update("acc_m_roles", $data, ["id" => $data["id"]]);
             } else {

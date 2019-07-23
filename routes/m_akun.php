@@ -335,50 +335,107 @@ $app->post('/acc/m_akun/trash', function ($request, $response) {
     }
 });
 /**
- * Import akun
+ * import
  */
 $app->post('/acc/m_akun/import', function ($request, $response) {
     $db = $this->db;
     if (!empty($_FILES)) {
         $tempPath = $_FILES['file']['tmp_name'];
-        $newName  = urlParsing($_FILES['file']['name']);
-        $inputFileName = "./upload" . DIRECTORY_SEPARATOR . rand() . "_" . $newName;
+        $newName = urlParsing($_FILES['file']['name']);
+        $inputFileName = "./upload" . DIRECTORY_SEPARATOR . $newName;
         move_uploaded_file($tempPath, $inputFileName);
         if (file_exists($inputFileName)) {
             try {
                 $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
-                $objReader     = PHPExcel_IOFactory::createReader($inputFileType);
-                $objPHPExcel   = $objReader->load($inputFileName);
+                $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                $objPHPExcel = $objReader->load($inputFileName);
             } catch (Exception $e) {
                 die('Error loading file "' . pathinfo($inputFileName, PATHINFO_BASENAME) . '": ' . $e->getMessage());
             }
-            $sheet         = $objPHPExcel->getSheet(0);
-            $highestRow    = $sheet->getHighestRow();
+            
+            /*
+             * get parent_id
+             */
+            $parentId = [];
+            $parent = $db->select("kode")->from("acc_m_akun")->where("is_tipe", "=", 1)->findAll();
+            foreach($parent as $key => $val){
+                $parentId[] = $val->kode;
+            }
+            
+            
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow();
             $highestColumn = $sheet->getHighestColumn();
-            $id_parent     = 0;
-            $level         = 0;
-            $tipe          = '';
-            for ($row = 2; $row <= $highestRow; $row++) {
-                $kode = $objPHPExcel->getSheet(0)->getCell('A' . $row)->getValue();
+            for ($row = 11; $row <= $highestRow; $row++) {
+                $kode_induk = $objPHPExcel->getSheet(0)->getCell('D' . $row)->getValue();
+                if(isset($kode_induk) && !in_array($kode_induk, $parentId)){
+                    $parentId[] = $kode_induk;
+                }
+            }
+//            print_r($parentId);die();
+            for ($row = 11; $row <= $highestRow; $row++) {
+                $kode = $objPHPExcel->getSheet(0)->getCell('B' . $row)->getValue();
                 if (isset($kode)) {
-                    $cek_tipe_akun = $db->find("select * from acc_m_akun where is_tipe=1 and kode='{$kode}'");
-                    if (isset($cek_tipe_akun->id)) {
-                        $id_parent = $cek_tipe_akun->id;
-                        $level     = $cek_tipe_akun->level;
-                        $tipe      = $cek_tipe_akun->tipe;
+                    
+                    $data['kode'] = $kode;
+                    $data['nama'] = $objPHPExcel->getSheet(0)->getCell('C' . $row)->getValue();
+                    
+                    /*
+                     * ambil id dari kode induk
+                     */
+                    $kode_induk = $objPHPExcel->getSheet(0)->getCell('D' . $row)->getValue();
+                    if(isset($kode_induk)){
+                        $model = $db->select("*")->from("acc_m_akun")->where("kode", "=", $kode_induk)->find();
+                        if($model){
+                            $data['parent_id'] = $model->id;
+                            $data['level'] = $model->level + 1;
+                        }
+                    }
+                    $data['tipe'] = $objPHPExcel->getSheet(0)->getCell('E' . $row)->getValue();
+                    
+                    /*
+                     * tipe arus kas
+                     */
+                    $tipe_arus = $objPHPExcel->getSheet(0)->getCell('F' . $row)->getValue();
+                    if(isset($tipe_arus)){
+                        if($tipe_arus == "AO")
+                            $data['tipe_arus'] = "Aktvitas Operasi";
+                        else if($tipe_arus == "IN")
+                            $data['tipe_arus'] = "Investasi";
+                        else if($tipe_arus == "PD")
+                            $data['tipe_arus'] = "Pendanaan";
+                    }
+                    
+                    /*
+                     * saldo normal
+                     */
+                    $saldo_normal = $objPHPExcel->getSheet(0)->getCell('G' . $row)->getValue();
+                    if(isset($saldo_normal)){
+                        if($saldo_normal == "D")
+                            $data['saldo_normal'] = 1;
+                        else if($saldo_normal == "K")
+                            $data['saldo_normal'] = -1;
+                    }
+                    
+                    if(in_array($kode, $parentId))
+                        $data['is_tipe'] = 1;
+                    else
+                        $data['is_tipe'] = 0;
+                    
+                    
+                    $data['is_deleted'] = 0;
+                    $tes[] = $data;
+                    
+                    $cekkode = $db->select("*")->from("acc_m_akun")->where("kode", "=", $kode)->find();
+                    if ($cekkode) {
+                        $update = $db->update("acc_m_akun", $data, ["kode"=>$kode]);
                     } else {
-                        $data['kode']       = $kode;
-                        $data['nama']       = $objPHPExcel->getSheet(0)->getCell('B' . $row)->getValue();
-                        $data['is_tipe']    = 0;
-                        $data['tipe']       = $tipe;
-                        $data['level']      = $level + 1;
-                        $data['parent_id']  = $id_parent;
-                        $data['is_deleted'] = 0;
                         $insert = $db->insert("acc_m_akun", $data);
                     }
                 }
             }
             unlink($inputFileName);
+//            print_r($tes);die();
             return successResponse($response, 'data berhasil di import');
         } else {
             return unprocessResponse($response, 'data gagal di import');

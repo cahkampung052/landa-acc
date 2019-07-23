@@ -47,10 +47,6 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
 //    print_r($listAkun);die();
     foreach ($listAkun as $key => $value) {
         $listAkun[$key] = (array) $value;
-        /*
-         * deklarasi variable a, karena setiap bulan ada 2 nominal
-         */
-        $a = 1;
 
         /*
          * perulangan sebanyak 12 (bulan)
@@ -86,20 +82,21 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
              * isi nominal target dari budget
              */
             if (!$getBudget) {
-                $listAkun[$key]['detail'][$a]['nominal'] = 0;
+                $listAkun[$key]['detail'][$i]['target'] = 0;
             } else {
-                $listAkun[$key]['detail'][$a]['nominal'] = $getBudget->budget;
+                $listAkun[$key]['detail'][$i]['target'] = $getBudget->budget;
             }
 
             /*
              * isi nominal realisasi dari transdetail
              */
             if (!$getTransDetail || $getTransDetail->nominal == NULL) {
-                $listAkun[$key]['detail'][$a + 1]['nominal'] = 0;
+                $listAkun[$key]['detail'][$i]['realisasi'] = 0;
             } else {
-                $listAkun[$key]['detail'][$a + 1]['nominal'] = $getTransDetail->nominal;
+                $listAkun[$key]['detail'][$i]['realisasi'] = $getTransDetail->nominal;
             }
-            $a += 2;
+            
+            $listAkun[$key]['detail'][$i]['bulan'] = date('F', mktime(0, 0, 0, $i, 10));
         }
     }
 
@@ -135,7 +132,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/budgeting.html', [
             "data" => $data,
-            "detail" => $getAkun,
+            "detail" => $listAkun,
             "css" => modulUrl() . '/assets/css/style.css',
         ]);
         header("Content-type: application/vnd.ms-excel");
@@ -145,11 +142,11 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/budgeting.html', [
             "data" => $data,
-            "detail" => $getAkun,
+            "detail" => $listAkun,
             "css" => modulUrl() . '/assets/css/style.css',
         ]);
         echo $content;
-        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+//        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
     } else {
         return successResponse($response, ['detail' => $listAkun, 'data' => $data]);
     }

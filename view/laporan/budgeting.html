@@ -10,37 +10,36 @@
             <hr/>
         </div>
     </div>
-    <br>
-    <div class="table-responsive" >
-        <table class="table table-striped table-hover table-laporan" width="100%">
-            <thead>
-                <tr>
-                    <th style="text-align: left; vertical-align: middle" rowspan="2" width="30%">
-                        Nama
-                    </th>
-                    {% for key, val in data.bulan %}
-                    <th style="text-align: center" colspan="2">{{val.bulan}}</th>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    {% for key, val in data.setiapbulan %}
-                    <th>{{val.nama}}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-
-            <tbody >
-                {% for key, val in detail %}
-                <tr>
-                    <td style="text-align: left;">
-                        {{val.nama}}
-                    </td>
-                    {% for det, detail in val.detail %}
-                    <td align="right">{{detail.nominal}}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div>
+        {%for index, row in detail%}
+        {%if (index is even)%}
+        <div class="col-md-6" style="width: 48%; float: left; margin: 10px">
+         {%else%}
+         <div class="col-md-6" style="width: 48%; float: right; margin: 10px">
+        {%endif%}
+        
+            <table class="table table-striped table-hover table-laporan" width="100%">
+                <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <b>Nama Akun : </b> {{row.kode}} - {{row.nama}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left; vertical-align: middle">Bulan</th>
+                        <th style="text-align: center" width="200">Target</th>
+                        <th style="text-align: center" width="200">Realisasi</th>
+                    </tr>
+                    {%for det in row.detail%}
+                    <tr ng-repeat="det in row.detail">
+                        <td style="text-align: left;">{{ det.bulan}}</td>
+                        <td class="text-right">{{ det.target }}</td>
+                        <td class="text-right">{{ det.realisasi }}</td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+        {%endfor%}
     </div>
 </div>

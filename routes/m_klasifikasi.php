@@ -111,6 +111,9 @@ $app->post('/acc/m_klasifikasi/save', function ($request, $response) {
             $getparent = $db->select('*')->from('acc_m_akun')->where('id', '=', $data['parent_id'])->find();
             $data['tipe'] = $getparent->tipe;
         }
+        
+        $childId = getChildId("acc_m_akun", $data['id']);
+        
         /**
          * Simpan ke database
          */
@@ -119,12 +122,13 @@ $app->post('/acc/m_klasifikasi/save', function ($request, $response) {
         } else {
             $model = $db->insert('acc_m_akun', $data);
         }
+        
         /**
          * Update tipe akun dibawahnya
          */
         $childId =getChildId("acc_m_akun", $model->id);
         if(!empty($childId)){
-        $db->update("acc_m_akun", ["tipe" => $model->tipe], "id in (".implode(",", $childId).")");            
+            $db->update("acc_m_akun", ["tipe" => $model->tipe], "id in (".implode(",", $childId).")");            
         }
         return successResponse($response, $model);
     } else {
@@ -150,56 +154,7 @@ $app->post('/acc/m_klasifikasi/trash', function ($request, $response) {
         return unprocessResponse($response, ['Data Gagal Di Simpan']);
     }
 });
-/**
- * import
- */
-$app->post('/acc/m_klasifikasi/import', function ($request, $response) {
-    $db = $this->db;
-    if (!empty($_FILES)) {
-        $tempPath = $_FILES['file']['tmp_name'];
-        $newName = urlParsing($_FILES['file']['name']);
-        $inputFileName = "./upload" . DIRECTORY_SEPARATOR . $newName;
-        move_uploaded_file($tempPath, $inputFileName);
-        if (file_exists($inputFileName)) {
-            try {
-                $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
-                $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-                $objPHPExcel = $objReader->load($inputFileName);
-            } catch (Exception $e) {
-                die('Error loading file "' . pathinfo($inputFileName, PATHINFO_BASENAME) . '": ' . $e->getMessage());
-            }
-            $sheet = $objPHPExcel->getSheet(0);
-            $highestRow = $sheet->getHighestRow();
-            $highestColumn = $sheet->getHighestColumn();
-            for ($row = 2; $row <= $highestRow; $row++) {
-                $id = $objPHPExcel->getSheet(0)->getCell('A' . $row)->getValue();
-                $kode = $objPHPExcel->getSheet(0)->getCell('B' . $row)->getValue();
-                if (isset($kode) && isset($id)) {
-                    $db->select("*")->from("m_akun")->where("id", "=", $id);
-                    $data['id'] = $id;
-                    $data['kode'] = $kode;
-                    $data['nama'] = $objPHPExcel->getSheet(0)->getCell('C' . $row)->getValue();
-                    $data['tipe'] = $objPHPExcel->getSheet(0)->getCell('D' . $row)->getValue();
-                    $data['level'] = $objPHPExcel->getSheet(0)->getCell('E' . $row)->getValue();
-                    $data['parent_id'] = $objPHPExcel->getSheet(0)->getCell('F' . $row)->getValue();
-                    $data['is_tipe'] = 1;
-                    $data['is_deleted'] = 0;
-                    $tes[] = $data;
-                    $cekid = $db->select("*")->from("acc_m_akun")->where("id", "=", $id)->find();
-                    if ($cekid) {
-                        $update = $db->update("acc_m_akun", $data, ["id"=>$id]);
-                    } else {
-                        $insert = $db->insert("acc_m_akun", $data);
-                    }
-                }
-            }
-            unlink($inputFileName);
-            return successResponse($response, 'data berhasil di import');
-        } else {
-            return unprocessResponse($response, 'data gagal di import');
-        }
-    }
-});
+
 /**
  * export
  */

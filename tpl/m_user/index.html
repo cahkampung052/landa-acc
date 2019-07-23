@@ -140,7 +140,7 @@
                         <div class="col-md-12">
                             <h6 class="tittle-header">Detail Login</h6>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label-sm required">Username</label>
                                 <div class="col-sm-9">
@@ -148,7 +148,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group row">
                                <label class="col-sm-3 col-form-label-sm">Password</label>
                                 <div class="col-sm-9">
@@ -158,7 +158,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group row">
                                <label class="col-sm-3 col-form-label-sm required">Hak Akses</label>
                                 <div class="col-sm-9">
@@ -168,6 +168,17 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label for="nama" class="col-sm-3 col-form-label-sm mb-0px">Lokasi</label>
+                                    <div class="col-sm-9">
+                                        <ui-select multiple class="ui-select-sm ui-select-container" ng-model="form.lokasi" theme="bootstrap" ng-disabled="is_view">
+                                            <ui-select-match placeholder="Pilih Lokasi">{{ $item.kode + " - " + $item.nama}}</ui-select-match>
+                                            <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                </div>
                         </div>
                     </div>
                 </form>

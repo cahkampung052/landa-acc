@@ -13,9 +13,6 @@ app.controller('tutuptahunCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.listAkun = data.data.list;
     });
     
-    Data.get(control_link + '/tahun').then(function (response) {
-            $scope.listTahun = response.data;
-        });
     
     $scope.getDetail = function (form) {
         console.log("ya")
@@ -109,6 +106,7 @@ app.controller('tutuptahunCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.save = function (form) {
         
         form['hasil_lr'] = parseInt(form.debit)-parseInt(form.kredit);
+        form['tahun'] = moment(form.tahun).format('YYYY');
         console.log(form)
         
         

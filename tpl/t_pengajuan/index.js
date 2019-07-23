@@ -255,7 +255,18 @@ app.controller("settingPrintCtrl", function($state, $scope, Data, $uibModalInsta
         });
     };
     
-    $scope.getValue = function (ckeditor) {
-        console.log(ckeditor)
+    $scope.save = function () {
+        var params = [];
+        params['ckeditor'] = CKEDITOR.instances.editor1.getData();
+        console.log(params)
+        
+        Data.post("acc/apppengajuan/saveTemplate", params).then(function(result){
+            if (result.status_code == 200) {
+                $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                $scope.close();
+            } else {
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+            }
+        });
     }
 });

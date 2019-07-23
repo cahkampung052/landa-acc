@@ -16,6 +16,11 @@ app.controller("userCtrl", function($scope, Data, $rootScope) {
     /**
      * End inialisasi
      */
+    
+    Data.get("acc/m_lokasi/getAll").then(function(result){
+        $scope.listLokasi = result.data.list;
+    });
+    
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;

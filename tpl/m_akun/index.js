@@ -39,6 +39,34 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
         });
     };
     /**
+     * import
+     */
+    $scope.uploadFiles = function(file, errFiles) {
+        $scope.f = file;
+        $scope.errFile = errFiles && errFiles[0];
+        if (file) {
+            Data.get('site/url').then(function(data) {
+                file.upload = Upload.upload({
+                    url: data.data + 'acc/m_akun/import',
+                    data: {
+                        file: file
+                    }
+                });
+                file.upload.then(function(response) {
+                    var data = response.data;
+                    if (data.status_code == 200) {
+                        $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                        $scope.callServer(tableStateRef);
+                    } else {
+                        $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+                    }
+                });
+            });
+        } else {
+            $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+        }
+    };
+    /**
      * export
      */
     $scope.export = function() {

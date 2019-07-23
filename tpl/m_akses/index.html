@@ -96,17 +96,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                                <div class="form-group row">
-                                    <label for="nama" class="col-sm-2 col-form-label-sm mb-0px">Lokasi</label>
-                                    <div class="col-sm-3">
-                                        <ui-select multiple class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
-                                            <ui-select-match placeholder="Pilih Lokasi">{{ $item.kode + " - " + $item.nama}}</ui-select-match>
-                                            <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
-                                        </ui-select>
-                                    </div>
-                                </div>
-                        </div>
+                        
                     </div>
                     <div class="row">
                         <div class="col-md-4">

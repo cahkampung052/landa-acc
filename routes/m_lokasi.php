@@ -11,13 +11,38 @@ function validasi($data, $custom = array())
     return $cek;
 }
 
+$app->get('/acc/m_lokasi/getAll', function ($request, $response) {
+    $db = $this->db;
+    $db->select("*")
+        ->from("acc_m_lokasi")
+        ->orderBy('acc_m_lokasi.kode_parent')
+        ->where("is_deleted", "=", 0);
+    
+    $models = $db->findAll();
+     $arr = getChildFlat($models, 0);
+    foreach ($arr as $key => $val) {
+        $spasi                            = ($val->level == 0) ? '' : str_repeat("---", $val->level);
+        $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
+    }
+    
+    return successResponse($response, [
+      'list'        => $arr
+    ]);
+});
+
 $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")
-                ->from("acc_m_lokasi")
-                ->orderBy('acc_m_lokasi.kode_parent')
-                ->where("is_deleted", "=", 0)
-                ->findAll();
+    $db->select("*")
+        ->from("acc_m_lokasi")
+        ->orderBy('acc_m_lokasi.kode_parent')
+        ->where("is_deleted", "=", 0);
+    
+    if(isset($_SESSION['user']['lokasi']) && !empty($_SESSION['user']['lokasi'])){
+        $lokasi = getSessionLokasi();
+        $db->customWhere("id IN ($lokasi)", "AND");
+    }
+    
+    $models = $db->findAll();
      $arr = getChildFlat($models, 0);
     foreach ($arr as $key => $val) {
         $spasi                            = ($val->level == 0) ? '' : str_repeat("---", $val->level);

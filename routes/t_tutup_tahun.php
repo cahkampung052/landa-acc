@@ -163,10 +163,13 @@ $app->get('/acc/t_tutup_tahun/getDetail', function ($request, $response) {
 //    print_r($models);
 //    die();
 
-    $arr = getLabaRugi($params['tahun'] . "01-01", $params['tahun'] . "12-31");
-    $labarugi = $arr[0]['total'] - $arr[1]['total'] - $arr[2]['total'] - $arr[3]['total'] + $arr[4]['total'] - $arr[5]['total'];
+    $labarugi = getLabaRugi($params['tahun'] . "01-01", $params['tahun'] . "12-31");
+    $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
+    $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
+    $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
+    $totallabarugi = $pendapatan - $biaya - $beban;
 
-    $data['labarugimodal'] = $labarugi;
+    $data['labarugimodal'] = $totallabarugi;
     $data['labarugimodal2'] = $models[1]['labarugi'] - $models[0]['labarugi'];
 
 //    print_r($data);

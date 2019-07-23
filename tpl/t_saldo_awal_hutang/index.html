@@ -45,7 +45,7 @@
                                     <div class="col-md-3">
                                         <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view" ng-change="view(form)">
                                             <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode +" - "+$select.selected.nama }}</ui-select-match>
-                                            <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.kode +" - "+val.nama }}</ui-select-choices>
+                                            <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
                                         </ui-select>
                                     </div>
                                 </div>

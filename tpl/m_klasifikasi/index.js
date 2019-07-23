@@ -56,7 +56,7 @@ app.controller("klasifikasiCtrl", function($scope, Data, $rootScope, Upload) {
         if (file) {
             Data.get('site/url').then(function(data) {
                 file.upload = Upload.upload({
-                    url: data.data + 'acc/m_klasifikasi/import',
+                    url: data.data + 'acc/m_akun/import',
                     data: {
                         file: file
                     }

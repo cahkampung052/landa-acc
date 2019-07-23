@@ -77,6 +77,7 @@ $app->get("/acc/appuser/index", function ($request, $response) {
     $totalItem = $db->count();
     foreach ($models as $key => $val) {
         $val->m_roles_id = (string) $val->m_roles_id;
+        $val->lokasi = json_decode($val->lokasi);
     }
     return successResponse($response, ["list" => $models, "totalItems" => $totalItem]);
 });
@@ -107,6 +108,7 @@ $app->post("/acc/appuser/save", function ($request, $response) {
 
     if ($validasi === true) {
         try {
+            $data['lokasi'] = json_encode($data['lokasi']);
             if (isset($data["id"])) {
                 $model = $db->update("acc_m_user", $data, ["id" => $data["id"]]);
             } else {
@@ -129,6 +131,7 @@ $app->post("/acc/appuser/saveStatus", function ($request, $response) {
     $validasi = validasi($data);
     if ($validasi === true) {
         try {
+            $data["lokasi"] = json_encode($data["lokasi"]);
             $model = $db->update("acc_m_user", $data, ["id" => $data["id"]]);
             return successResponse($response, $model);
         } catch (Exception $e) {
