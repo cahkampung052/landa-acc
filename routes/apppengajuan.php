@@ -324,8 +324,23 @@ $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response){
         echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
 });
 
+
+/*
+ * template print
+ */
 $app->get("/acc/apppengajuan/getTemplate", function ($request, $response){
     $a = getMasterSetting();
     return successResponse($response, $a->print_pengajuan);
-//        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+});
+
+$app->post("/acc/apppengajuan/saveTemplate", function ($request, $response){
+    $data = $request->getParams();
+    $db = $this->db;
+    
+    try{
+        $model = $db->update("acc_m_setting", $data, ["id"=>1]);
+       return successResponse($response, $model);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
+    } 
 });

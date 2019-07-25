@@ -356,12 +356,37 @@ $app->get('/acc/t_pengeluaran/print', function ($request, $response) {
     }
     
     $data['tanggalsekarang'] = date("d-m-Y H:i");
-     $view = twigViewPath();
-        $content = $view->fetch('laporan/pengeluaran.html', [
+    $a = getMasterSetting();
+    $template = $a->print_pengeluaran;
+    $template = str_replace("<tr><td>{start_detail}</td></tr>", "{%for key, val in detail%}", $template);
+    $template = str_replace("<tr><td>{end}</td></tr>", "{%endfor%}", $template);
+//    echo json_encode($data);die();
+    $view = twigViewPath();
+        $content = $view->fetchFromString($template, [
             "data" => $data,
-            "detail" => $detail,
+            "detail" => (array) $detail,
         ]);
         echo $content;
         echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
     
+});
+
+/*
+ * template print
+ */
+$app->get("/acc/t_pengeluaran/getTemplate", function ($request, $response){
+    $a = getMasterSetting();
+    return successResponse($response, $a->print_pengeluaran);
+});
+
+$app->post("/acc/t_pengeluaran/saveTemplate", function ($request, $response){
+    $data = $request->getParams();
+    $db = $this->db;
+    
+    try{
+        $model = $db->update("acc_m_setting", $data, ["id"=>1]);
+       return successResponse($response, $model);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
+    } 
 });

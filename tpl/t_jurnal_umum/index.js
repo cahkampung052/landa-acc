@@ -326,4 +326,52 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         var data = angular.copy(row);
         window.open("api/acc/t_jurnal_umum/print?" + $.param(row), "_blank");
     };
+    
+    /**
+     * Modal setting template print
+     */
+    $scope.modalSetting = function() {
+        var modalInstance = $uibModal.open({
+            templateUrl: "api/acc/landaacc/tpl/t_jurnal_umum/modal.html",
+            controller: "settingPrintCtrl",
+            size: "xl",
+            backdrop: "static",
+            keyboard: false,
+        });
+        modalInstance.result.then(function(response) {
+            if (response.data == undefined) {} else {}
+        });
+    }
+    
+});
+
+app.controller("settingPrintCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope) {
+    
+    $scope.templateDefault = "";
+        Data.get("acc/t_jurnal_umum/getTemplate").then(function(response){
+        $scope.templateDefault = response.data;
+    });
+    
+    
+    $scope.close = function() {
+        $uibModalInstance.close({
+            'data': undefined
+        });
+    };
+    
+    $scope.save = function () {
+        var ckeditor_data = CKEDITOR.instances.editor1.getData();
+        var params = {
+            print_jurnal : ckeditor_data 
+        };
+        
+        Data.post("acc/t_jurnal_umum/saveTemplate", params).then(function(result){
+            if (result.status_code == 200) {
+                $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                $scope.close();
+            } else {
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+            }
+        });
+    }
 });

@@ -13,6 +13,10 @@
                                 <i class="fa fa-plus"></i>
                                 &nbsp;Buat Jurnal Umum Baru
                             </button>
+                            <button class="dropdown-item" ng-click="modalSetting();" ng-if="user.akses.jurnal_umum_template">
+                        <i class="fa fa-gear"></i>
+                        &nbsp;Setting Print
+                    </button>
                         </div>
                     </div>
                 </div>
@@ -21,7 +25,10 @@
                         <i class="fa fa-plus"></i>
                         &nbsp;Buat Jurnal Umum Baru
                     </button>
-
+                    <button class="btn btn-transparan btn-sm" ng-click="modalSetting();" ng-if="user.akses.jurnal_umum_template">
+                        <i class="fa fa-gear"></i>
+                        &nbsp;Setting Print
+                    </button>
                 </div>
             </div>
             <div class="card-body p-0px">

@@ -1,0 +1,51 @@
+<div class="modal-header">
+    <h5 class="modal-title">Default Template Print Jurnal</h5>
+    <button type="button" class="close" ng-click="close()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+
+        <div class="col-md-8">
+            <div ckeditor="" ng-model="templateDefault"></div>
+        </div>
+        <div class="col-md-4">
+            <h6>Variable tersedia : </h6>
+            <p>data.namaLokasi : Menampilkan nama lokasi
+            <br/>
+            data.kodeLokasi : Menampilkan kode lokasi
+            <br/>
+            data.no_transaksi : Menampilkan nomer transaksi
+            <br/>
+            data.tanggal_formated : Menampilkan tanggal transaksi
+            <br/>
+            data.tanggalsekarang : Menampilkan tanggal sekarang
+            <br/>
+            data.total : Menampilkan total dari detail
+            <br/>
+            data.status : Menampilkan status transaksi
+            <br/>
+            data.keterangan : Menampilkan keterangan transaksi
+            <br/>
+            data.namaUser : Menampilkan Pembuat transkasi
+            <br/>
+            data.namaAkun : Menampilkan nama akun yang dituju
+            <br/>
+            data.kodeAkun : Menampilkan kode akun yang dituju
+            <br/>
+            data.namaCus : Menampilkan nama pengirim
+            <br/>
+            data.typeCus : Menampilkan tipe pengirim
+            <br/>
+            <br/>
+            <b>Harap untuk tidak mengganti variable val</b></p>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-click="save()" ng-hide="is_view">
+        <i class="fa fa-save"></i>
+        Simpan
+    </button>
+</div>

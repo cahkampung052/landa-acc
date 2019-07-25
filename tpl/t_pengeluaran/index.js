@@ -224,11 +224,16 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
      */
     $scope.sumTotal = function () {
         var totaldebit = 0;
-        var ppn = $scope.form.ppn !== undefined ? $scope.form.ppn : 0;
         angular.forEach($scope.listDetail, function (value, key) {
             totaldebit += parseInt(value.debit);
         });
-        $scope.form.total = ppn + totaldebit;
+        console.log($scope.form.is_ppn)
+        $scope.form.subtotal = totaldebit;
+        if($scope.form.is_ppn)
+            $scope.form.ppn = (10/100)*totaldebit;
+        else
+            $scope.form.ppn = 0;
+        $scope.form.total = $scope.form.ppn + totaldebit;
     };
     
 
@@ -273,6 +278,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
             $scope.form.tanggal = new Date();
         }
         $scope.form.ppn = 0;
+        $scope.form.is_ppn = true;
         $scope.listDetail = [{
             m_akun_id: {
                 id : $scope.akunDetail[0].id,
@@ -294,6 +300,12 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.is_disable = true;
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
+        $scope.form.is_ppn = false;
+        if($scope.form.ppn > 0){
+            $scope.form.is_ppn = true;
+        }
+        $scope.form.subtotal = $scope.form.total;
+        $scope.form.total = $scope.form.total + $scope.form.ppn;
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
@@ -313,6 +325,12 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.is_disable = true;
         $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
+        $scope.form.is_ppn = false;
+        if($scope.form.ppn > 0){
+            $scope.form.is_ppn = true;
+        }
+        $scope.form.subtotal = $scope.form.total;
+        $scope.form.total = $scope.form.total + $scope.form.ppn;
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
@@ -388,4 +406,52 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         window.open("api/acc/t_pengeluaran/print?" + $.param(row), "_blank");
     };
     };
+
+    /**
+     * Modal setting template print
+     */
+    $scope.modalSetting = function() {
+        var modalInstance = $uibModal.open({
+            templateUrl: "api/acc/landaacc/tpl/t_pengeluaran/modal.html",
+            controller: "settingPrintCtrl",
+            size: "xl",
+            backdrop: "static",
+            keyboard: false,
+        });
+        modalInstance.result.then(function(response) {
+            if (response.data == undefined) {} else {}
+        });
+    }
+    
+});
+
+app.controller("settingPrintCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope) {
+    
+    $scope.templateDefault = "";
+        Data.get("acc/t_pengeluaran/getTemplate").then(function(response){
+        $scope.templateDefault = response.data;
+    });
+    
+    
+    $scope.close = function() {
+        $uibModalInstance.close({
+            'data': undefined
+        });
+    };
+    
+    $scope.save = function () {
+        var ckeditor_data = CKEDITOR.instances.editor1.getData();
+        var params = {
+            print_pengeluaran : ckeditor_data 
+        };
+        
+        Data.post("acc/t_pengeluaran/saveTemplate", params).then(function(result){
+            if (result.status_code == 200) {
+                $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                $scope.close();
+            } else {
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+            }
+        });
+    }
 });

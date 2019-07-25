@@ -75,7 +75,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.debit"ng-disabled="is_view || (row.kredit != 0 && row.kredit != undefined) || row.saldo_normal == -1" ng-blur="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.debit"ng-disabled="tutup || is_view || (row.kredit != 0 && row.kredit != undefined) || row.saldo_normal == -1" ng-blur="sumTotal()"/>
                                     </div>
                                 </td>
                                 <td style="text-align: left;">
@@ -83,7 +83,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.kredit"ng-disabled="is_view || (row.debit != 0 && row.debit != undefined) || row.saldo_normal == 1" ng-blur="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.kredit"ng-disabled="tutup || is_view || (row.debit != 0 && row.debit != undefined) || row.saldo_normal == 1" ng-blur="sumTotal()"/>
                                     </div>
                                 </td>
                             </tr>
@@ -109,7 +109,7 @@
                 </span>
             </div>
             <div class="col-md-10">
-                <button class="pull-right btn btn-sm btn-success" ng-click="save(form)" ng-disabled="totaldebit != totalkredit">
+                <button class="pull-right btn btn-sm btn-success" ng-click="save(form)" ng-disabled="totaldebit != totalkredit" ng-if="!tutup">
                     <i class="fa fa-save">&nbsp;</i>
                     Simpan
                 </button>

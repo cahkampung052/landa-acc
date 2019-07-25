@@ -379,7 +379,7 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     
                     $data['kode'] = $kode;
                     $data['nama'] = $objPHPExcel->getSheet(0)->getCell('C' . $row)->getValue();
-                    
+                    $data['level'] = 1;
                     /*
                      * ambil id dari kode induk
                      */

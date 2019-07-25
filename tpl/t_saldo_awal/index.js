@@ -11,10 +11,10 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
     $scope.form = {};
     $scope.form.tanggal = "";
     $scope.totalkredit = 0;
+    $scope.tutup = false;
 //    $scope.form.m_fakultas_id = 1;
 
     Data.get('acc/m_akun/getTanggalSetting').then(function(data) {
-        console.log(data.data.tanggal)
         var tanggal = new Date(data.data.tanggal)
         tanggal.setDate(tanggal.getDate() - 1)
         $scope.form.tanggal = tanggal
@@ -23,7 +23,14 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
     
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
             $scope.listLokasi = response.data.list;
-        });
+    });
+    
+    Data.get("acc/t_tutup_bulan/index", {filter:{jenis : "bulan"}}).then(function (response){
+       console.log(response)
+       if(response.data.list.length > 0){
+           $scope.tutup = true;
+       }
+    });
 
     $scope.sumTotal = function () {
         var totaldebit = 0;

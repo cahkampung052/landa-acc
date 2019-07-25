@@ -13,6 +13,10 @@
                                 <i class="fa fa-plus"></i>
                                 &nbsp;Buat Penerimaan Baru
                             </button>
+                            </button><button class="dropdown-item" ng-click="modalSetting();" ng-if="user.akses.penerimaan_template">
+                                <i class="fa fa-gear"></i>
+                                &nbsp;Setting Print
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -20,6 +24,10 @@
                     <button class="btn btn-primary btn-sm" ng-click="create();" ng-if="user.akses.penerimaan_create">
                         <i class="fa fa-plus"></i>
                         &nbsp;Buat Penerimaan Baru
+                    </button>
+                    <button class="btn btn-transparan btn-sm" ng-click="modalSetting();" ng-if="user.akses.penerimaan_template">
+                        <i class="fa fa-gear"></i>
+                        &nbsp;Setting Print
                     </button>
                 </div>
             </div>

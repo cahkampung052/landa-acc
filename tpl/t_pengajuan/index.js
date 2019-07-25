@@ -28,7 +28,6 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope,$uibModal) {
      */
     Data.get("/acc/appuser/getAll").then(function (response) {
         $scope.listUser = response.data;
-        console.log(response.data)
     });
     
     
@@ -223,9 +222,8 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope,$uibModal) {
         window.open("api/acc/apppengajuan/printPengajuan?" + $.param(row), "_blank");
     }
     
-    
-/**
-     * Modal setting pengecualian
+    /**
+     * Modal setting template print
      */
     $scope.modalSetting = function() {
         var modalInstance = $uibModal.open({
@@ -244,8 +242,9 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope,$uibModal) {
 
 app.controller("settingPrintCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope) {
     
-    Data.get("acc/apppengajuan/getTemplate").then(function(response){
-        $scope.editorData = response.data;
+    $scope.templateDefault = "";
+        Data.get("acc/apppengajuan/getTemplate").then(function(response){
+        $scope.templateDefault = response.data;
     });
     
     
@@ -256,9 +255,10 @@ app.controller("settingPrintCtrl", function($state, $scope, Data, $uibModalInsta
     };
     
     $scope.save = function () {
-        var params = [];
-        params['ckeditor'] = CKEDITOR.instances.editor1.getData();
-        console.log(params)
+        var ckeditor_data = CKEDITOR.instances.editor1.getData();
+        var params = {
+            print_pengajuan : ckeditor_data 
+        };
         
         Data.post("acc/apppengajuan/saveTemplate", params).then(function(result){
             if (result.status_code == 200) {
