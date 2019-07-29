@@ -193,7 +193,7 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
 
     $scope.detail_penyusutan = function(form){
       var modalInstance = $uibModal.open({
-          templateUrl: "api/acc/landaacc/tpl/m_asset/modal_detail_penyusutan.html",
+          templateUrl: $rootScope.pathModulAcc + "tpl/m_asset/modal_detail_penyusutan.html",
           controller: "penyusutanCtrl",
           size: "lg",
           backdrop: "static",

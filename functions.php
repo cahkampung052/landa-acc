@@ -293,7 +293,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      */
     $klasifikasi = $sql->select("*")
             ->from("acc_m_akun")
-            ->customWhere("tipe IN ('PENDAPATAN', 'BIAYA', 'BEBAN')")
+            ->customWhere("tipe IN ('PENDAPATAN', 'PENDAPATAN DI LUAR USAHA', 'BEBAN', 'BEBAN DI LUAR USAHA')")
             ->where("is_tipe", "=", 1)
             ->where("level", "=", 1)
             ->findAll();
