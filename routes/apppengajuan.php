@@ -272,7 +272,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
          * cek jika masih kurang approve
          */
         $db->select("*")
-            ->from("t_acc_pengajuan")
+            ->from("acc_approval_pengajuan")
             ->where("t_pengajuan_id", "=", $data["data"]["id"])
             ->where("acc_m_user_id", "=", $_SESSION["user"]["id"]);
         $approved = $db->where("status", "=", "approved")->count();
