@@ -1,7 +1,7 @@
 app.controller('penyusutanassetCtrl', function ($scope, Data, $rootScope) {
     var tableStateRef;
     var control_link = "acc/m_asset";
-    var master = 'Penyusutan Asset';
+    var master = 'Penyusutan Asset Tetap';
     $scope.formTitle = '';
     $scope.listDetail = [];
     $scope.base_url = '';

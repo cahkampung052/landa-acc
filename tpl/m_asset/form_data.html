@@ -65,11 +65,11 @@
         <div class="col-md-12">
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label-sm required">
-                    Lokasi
+                    Penanggung Jawab
                 </label>
                 <div class="col-sm-9">
                     <ui-select class="w100" ng-disabled="is_view || form.proses_penyusutan == 1" ng-model="form.lokasi" theme="bootstrap">
-                        <ui-select-match placeholder="Pilih Lokasi">
+                        <ui-select-match placeholder="Pilih Penanggung Jawab">
                             {{ $select.selected.nama +" - "+ $select.selected.nama }}
                         </ui-select-match>
                         <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">
@@ -154,7 +154,7 @@
         </div>
         <div class="col-md-12" ng-show="form.is_penyusutan == '1'">
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label-sm required">
+                <label class="col-sm-3 col-form-label-sm">
                     Nilai residu
                 </label>
                 <div class="col-sm-9">

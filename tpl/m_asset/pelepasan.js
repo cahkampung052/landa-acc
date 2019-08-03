@@ -1,7 +1,7 @@
 app.controller('PelepasanCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/m_asset";
-    var master = 'Pelepasan Asset';
+    var master = 'Pelepasan Asset Tetap';
     $scope.formTitle = '';
     $scope.displayed = [];
     $scope.base_url = '';

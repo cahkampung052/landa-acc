@@ -17,6 +17,19 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $filter = $params;
     $db = $this->db;
 
+    /*
+     * lokasi
+     */
+    if (isset($filter['m_lokasi_id']) && !empty($filter["m_lokasi_id"])) {
+        $lokasiId = getChildId("acc_m_lokasi", $filter['m_lokasi_id']);
+        if (!empty($lokasiId)) {
+            array_push($lokasiId, $filter['m_lokasi_id']);
+            $lokasiId = implode(",", $lokasiId);
+        } else {
+            $lokasiId = $filter['m_lokasi_id'];
+        }
+    }
+//    print_r($lokasiId);die();
     /**
      * tanggal
      */
@@ -46,7 +59,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         }
     }
 
-    
+
 
     /*
      * proses harta
@@ -63,11 +76,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             ->from("acc_m_akun")
             ->groupBy("acc_m_akun.id")
             ->orderBy("acc_m_akun.kode");
-            if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
-                $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
-            }
-            $db->where("tipe", "=", "HARTA")
-                ->where("parent_id", "!=", 0);
+    if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
+        $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
+    }
+    $db->where("tipe", "=", "HARTA")
+            ->where("parent_id", "!=", 0);
 
     $modelHarta = $db->findAll();
 //    die();
@@ -76,8 +89,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $arrHarta = [];
     foreach ($modelHarta as $key => $val) {
         $db->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                ->from("acc_trans_detail")
-                ->where('m_akun_id', '=', $val->id)
+                ->from("acc_trans_detail");
+        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+            $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
+        }
+        $db->where('m_akun_id', '=', $val->id)
                 ->andWhere('date(tanggal)', '<=', $tanggal);
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
@@ -135,19 +151,22 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             ->from("acc_m_akun")
             ->groupBy("acc_m_akun.id")
             ->orderBy("acc_m_akun.kode");
-            if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
-                $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
-            }
-            $db->where("tipe", "=", "KEWAJIBAN")
-                ->where("parent_id", "!=", 0);
+    if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
+        $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
+    }
+    $db->where("tipe", "=", "KEWAJIBAN")
+            ->where("parent_id", "!=", 0);
 
     $modelKewajiban = $db->findAll();
     $totalKewajiban = 0;
     $arrKewajiban = [];
     foreach ($modelKewajiban as $key => $val) {
         $db->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                ->from("acc_trans_detail")
-                ->where('m_akun_id', '=', $val->id)
+                ->from("acc_trans_detail");
+        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+            $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
+        }
+        $db->where('m_akun_id', '=', $val->id)
                 ->andWhere('date(tanggal)', '<=', $tanggal);
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
@@ -204,11 +223,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             ->from("acc_m_akun")
             ->groupBy("acc_m_akun.id")
             ->orderBy("acc_m_akun.kode");
-            if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
-                $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
-            }
-            $db->where("tipe", "=", "MODAL")
-                ->where("parent_id", "!=", 0);
+    if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
+        $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
+    }
+    $db->where("tipe", "=", "MODAL")
+            ->where("parent_id", "!=", 0);
 
     $modelModal = $db->findAll();
 
@@ -226,8 +245,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $arrModal = [];
     foreach ($modelModal as $key => $val) {
         $db->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                ->from("acc_trans_detail")
-                ->where('m_akun_id', '=', $val->id)
+                ->from("acc_trans_detail");
+        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+            $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
+        }
+        $db->where('m_akun_id', '=', $val->id)
                 ->andWhere('date(tanggal)', '<=', $tanggal);
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;

@@ -10,6 +10,7 @@ function validasi($data, $custom = array()) {
     $validasi = array(
         "min" => "required",
         "max" => "required",
+        "tipe" => "required"
     );
     $cek = validate($data, $validasi, $custom);
     return $cek;
@@ -78,6 +79,7 @@ $app->post("/acc/appapproval/save", function ($request, $response) {
             if (isset($data["detail"]) && !empty($data["detail"])) {
                 foreach ($data["detail"] as $key => $val) {
                     $detail["id"] = isset($val["id"]) ? $val["id"] : '';
+                    $detail["tipe"] = $data["data"]["tipe"];
                     $detail["min"] = $data["data"]["min"];
                     $detail["max"] = $data["data"]["max"];
                     $detail["acc_m_user_id"] = isset($val["acc_m_user_id"]['id']) ? $val["acc_m_user_id"]['id'] : '';

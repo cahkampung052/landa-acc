@@ -41,11 +41,11 @@
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label-sm mb-0 required">
-                                                Lokasi
+                                                Penanggung Jawab
                                             </label>
                                             <div class="col-sm-8">
                                                 <ui-select class="w100" ng-disabled="is_view" ng-model="filter.lokasi" on-select="is_show==false" theme="bootstrap">
-                                                    <ui-select-match placeholder="Pilih Lokasi">
+                                                    <ui-select-match placeholder="Pilih Penanggung Jawab">
                                                         {{ $select.selected.nama +" - "+ $select.selected.nama }}
                                                     </ui-select-match>
                                                     <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">
@@ -163,7 +163,7 @@
                                             
                                         </div>
                                         <label class="col-sm-1 col-form-label-sm mb-0px">
-                                            Lokasi
+                                            Penanggung Jawab
                                         </label>
                                         <div class="col-sm-2">
                                             
@@ -182,7 +182,7 @@
                                     Periode
                                 </th>
                                 <th style="text-align: left;">
-                                    Lokasi
+                                    Penanggung Jawab
                                 </th>
                                 <th style="text-align: left;">
                                     Dibuat oleh

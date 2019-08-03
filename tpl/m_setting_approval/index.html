@@ -29,6 +29,7 @@
                         <thead>
                             <tr>
                             <tr>
+                                <th class="align-left">Tipe</th>
                                 <th class="align-left">Min</th>
                                 <th class="align-left">Max</th>
                                 <th class="align-left">Jumlah Approval</th>
@@ -38,6 +39,7 @@
                         </thead>
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
+                                <td class="align-center">{{ row.tipe}}</td>
                                 <td class="align-left">{{ row.min}}</td>
                                 <td class="align-left">{{ row.max}}</td>
                                 <td class="align-left">{{ row.jumlah_approval}} Approval</td>
@@ -63,22 +65,27 @@
             <div class="card-body">
                 <form name="landaform" novalidate="">
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group row">
+                        <div class="form-group row col-md-6">
+                            <label class="col-sm-3 col-form-label-sm required">Tipe</label>
+                            <div class="col-sm-9">
+                                <div class="btn-group">
+                                    <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.tipe" ng-disabled="is_view" uib-btn-radio="'Budgeting'">Budgeting</label>
+                                    <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.tipe" ng-disabled="is_view" uib-btn-radio="'Non Budgeting'">Non Budgeting</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="form-group row col-md-6">
                                 <label class="col-sm-3 col-form-label-sm">Min</label>
                                 <div class="col-sm-9">
                                     <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" ng-model="form.min" maxlength="20" ng-disabled="is_view"/>
                                 </div>
-                            </div>
-
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group row">
+                        <div class="form-group row col-md-6">
                                 <label class="col-sm-3 col-form-label-sm">Max</label>
                                 <div class="col-sm-9">
                                     <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" ng-model="form.max" maxlength="20" ng-disabled="is_view"/>
                                 </div>
-                            </div>
                         </div>
                     </div>
                     <div class="row">

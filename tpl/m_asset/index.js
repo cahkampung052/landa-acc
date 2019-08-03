@@ -1,7 +1,7 @@
 app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/m_asset";
-    var master = 'Master Asset';
+    var master = 'Master Asset Tetap';
     $scope.formTitle = '';
     $scope.displayed = [];
     $scope.base_url = '';
@@ -39,18 +39,18 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
     Data.get(control_link + '/getAkun').then(function (response) {
         $scope.listakun = response.data.list;
     });
-    
-    Data.get('acc/m_lokasi/index', {filter:{is_deleted:0}}).then(function (response) {
+
+    Data.get('acc/m_lokasi/index', {filter: {is_deleted: 0}}).then(function (response) {
         $scope.listLokasi = response.data.list;
         // $scope.listLokasi.push({"id":-1,"nama":"Lainya" });
 
     });
 
-    Data.get('acc/m_umur_ekonomis/index', {filter:{is_deleted:0}}).then(function (response) {
+    Data.get('acc/m_umur_ekonomis/index', {filter: {is_deleted: 0}}).then(function (response) {
         $scope.listUmur = response.data.list;
     });
-    
-    $scope.setTahun = function(persentase){
+
+    $scope.setTahun = function (persentase) {
         $scope.form.persentase = persentase;
     }
 
@@ -79,7 +79,7 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal_beli);
-        if(form.tgl_mulai_penyusutan!=null){
+        if (form.tgl_mulai_penyusutan != null) {
             $scope.form.tgl_mulai_penyusutan = new Date(form.tgl_mulai_penyusutan);
         }
         $scope.form.harga = form.harga_beli;
@@ -92,29 +92,49 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
         $scope.formtitle = master + " | Lihat Data : " + form.nama;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal_beli);
-        if(form.tgl_mulai_penyusutan!=null){
+        if (form.tgl_mulai_penyusutan != null) {
             $scope.form.tgl_mulai_penyusutan = new Date(form.tgl_mulai_penyusutan);
         }
         $scope.form.harga = form.harga_beli;
+//        console.log(form)
     };
+    
+    /*
+     * copy asset
+     */
+    $scope.copy = function () {
+        $scope.is_edit = true;
+        $scope.is_view = false;
+        $scope.is_create = true;
+        $scope.is_disable = false;
+        $scope.formtitle = master + " | Tambah Data";
+        $scope.form.id = undefined;
+        $scope.form.kode = undefined;
+        $scope.form.no_serial = undefined;
+        console.log($scope.form)
+        Data.get('acc/m_asset/generateKode').then(function (response) {
+            $scope.form.kode = response.data;
+        });
+    }
+    
     /** save action */
     $scope.save = function (form) {
         Data.post(control_link + "/save", form).then(function (result) {
             if (result.status_code == 200) {
-                if (result.data.is_penyusutan==1) {
+                if (result.data.is_penyusutan == 1) {
                     $scope.update_penyusutan(result.data.id);
-                }else{
+                } else {
                     $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                     $scope.callServer(tableStateRef);
                     $scope.is_edit = false;
                 }
             } else {
-                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors) ,"error");
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
             }
         });
     };
-    $scope.update_penyusutan = function(id){
-        Data.get('acc/m_asset/getDetailPenyusutan', {id:id}).then(function(result) {
+    $scope.update_penyusutan = function (id) {
+        Data.get('acc/m_asset/getDetailPenyusutan', {id: id}).then(function (result) {
             $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
             $scope.callServer(tableStateRef);
             $scope.is_edit = false;
@@ -128,6 +148,7 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
         $scope.is_edit = false;
         $scope.is_view = false;
     };
+
     $scope.trash = function (row) {
         var data = angular.copy(row);
         Swal.fire({
@@ -191,43 +212,43 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
     };
 
 
-    $scope.detail_penyusutan = function(form){
-      var modalInstance = $uibModal.open({
-          templateUrl: $rootScope.pathModulAcc + "tpl/m_asset/modal_detail_penyusutan.html",
-          controller: "penyusutanCtrl",
-          size: "lg",
-          backdrop: "static",
-          keyboard: false,
-          resolve: {
-            form: form,
-          }
-      });
+    $scope.detail_penyusutan = function (form) {
+        var modalInstance = $uibModal.open({
+            templateUrl: $rootScope.pathModulAcc + "tpl/m_asset/modal_detail_penyusutan.html",
+            controller: "penyusutanCtrl",
+            size: "lg",
+            backdrop: "static",
+            keyboard: false,
+            resolve: {
+                form: form,
+            }
+        });
 
-      modalInstance.result.then(function(response) {
-        if(response.data == undefined){
-        } else {
-        }
-      });
+        modalInstance.result.then(function (response) {
+            if (response.data == undefined) {
+            } else {
+            }
+        });
     }
 });
 
 
-app.controller("penyusutanCtrl", function($state, $scope, Data, $uibModalInstance, form) {
+app.controller("penyusutanCtrl", function ($state, $scope, Data, $uibModalInstance, form) {
     $scope.form = form;
     $scope.listDetail = [];
 
-    $scope.getDetailPenyusutan = function(id){
+    $scope.getDetailPenyusutan = function (id) {
 
-        Data.get('acc/m_asset/getDetailPenyusutan', {id:id}).then(function(result) {
-          $scope.listDetail = result.data.list;
+        Data.get('acc/m_asset/getDetailPenyusutan', {id: id}).then(function (result) {
+            $scope.listDetail = result.data.list;
         });
     };
 
     $scope.getDetailPenyusutan(form.id);
 
 
-    $scope.close = function() {
-      $uibModalInstance.close({'data' : undefined });
+    $scope.close = function () {
+        $uibModalInstance.close({'data': undefined});
     };
 
 });

@@ -74,6 +74,7 @@ app.controller("msettingapprovalCtrl", function ($scope, Data, $rootScope) {
         $scope.is_create = true;
         $scope.formtittle = "Form Tambah Data";
         $scope.form = {};
+        $scope.form.tipe = "Budgeting";
         $scope.listDetail = [{
             acc_m_user_id: {
                 id: $scope.listUser[0].id,

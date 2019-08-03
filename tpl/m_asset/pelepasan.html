@@ -65,7 +65,7 @@
                                     Harga Beli
                                 </th>
                                 <th style="text-align: left;">
-                                    Lokasi
+                                    Penanggung Jawab
                                 </th>
                                 <th style="text-align: left;">
                                     Status
@@ -181,11 +181,11 @@
                                     <div class="col-md-12">
                                         <div class="form-group row">
                                             <label class="col-sm-12 col-form-label-sm ">
-                                                Lokasi
+                                                Penanggung Jawab
                                             </label>
                                             <div class="col-sm-12">
                                                 <ui-select class="w100" ng-disabled="true" ng-model="form.lokasi" theme="bootstrap">
-                                                    <ui-select-match placeholder="Pilih Lokasi">
+                                                    <ui-select-match placeholder="Pilih Penanggung Jawab">
                                                         {{ $select.selected.nama}}
                                                     </ui-select-match>
                                                     <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">

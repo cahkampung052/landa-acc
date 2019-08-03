@@ -24,6 +24,13 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope,$uibModal) {
     });
     
     /*
+     * Ambil akun untuk detail
+     */
+    Data.get('acc/m_akun/akunDetail').then(function(data) {
+        $scope.akunDetail = data.data.list;
+    });
+    
+    /*
      * ambil user
      */
     Data.get("/acc/appuser/getAll").then(function (response) {
@@ -127,10 +134,15 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope,$uibModal) {
         $scope.form = {};
         $scope.form.tanggal = new Date();
         $scope.form.butuhapproval = 1;
-        $scope.listDetail = [{}];
+        $scope.form.tipe = 'Budgeting';
+        $scope.listDetail = [{
+            m_akun_id: {
+                id : $scope.akunDetail[0].id,
+                kode : $scope.akunDetail[0].kode,
+                nama : $scope.akunDetail[0].nama
+            },
+        }];
         $scope.listAcc = {};
-        $scope.editorData = "<p>asdasdsadsad</p>"
-        console.log($scope.editorData)
     };
     
     $scope.copy = function (form) {

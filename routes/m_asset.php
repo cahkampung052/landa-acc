@@ -18,7 +18,6 @@ function validasi($data, $custom = array())
    GUMP::set_field_name("is_penyusutan", "Penyusutan");
    GUMP::set_field_name("umur", "Umur Ekonomis");
    GUMP::set_field_name("persentase", "Tarif Depresiasi");
-   GUMP::set_field_name("nilai_residu", "Nilai Residu");
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
@@ -495,8 +494,8 @@ $app->post('/acc/m_asset/save', function ($request, $response) {
         }
         $data["status"]       = "Aktif";
 
-        // echo json_encode($data); die();
-        if (isset($data["id"])) {
+//         echo json_encode($data); die();
+        if (isset($data["id"]) && !empty($data['id'])) {
             $model = $sql->update("acc_asset", $data, array('id' => $data['id']));
         } else {
             $model = $sql->insert("acc_asset", $data);

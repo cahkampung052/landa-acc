@@ -70,7 +70,9 @@
                                     <span ng-if="row.sisa_approval == 0" class="badge badge-success"> Terapprove</span>
                                 </td>-->
                                 <td>
-                                    <div class="btn-group pull-right" role="group">
+                                    <span ng-if="row.status == 'Rejected'">{{row.status}}</span>
+                                    <div class="btn-group pull-right" role="group" ng-if="row.status != 'Rejected'">
+                                        
                                         <button type="submit" class="btn btn-danger btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="save(row, 'rejected')" ng-if="row.levelapproval == row.level">
                                             <i class="fa fa-times"></i>
                                             &nbsp;Tolak
@@ -120,6 +122,15 @@
                             <label class="col-sm-3 col-form-label-sm">No Proposal</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control form-control-sm" ng-model="form.no_proposal" ng-disabled="true"/>
+                            </div>
+                        </div>
+                        <div class="form-group row col-md-6">
+                            <label class="col-sm-3 col-form-label-sm required">Tipe</label>
+                            <div class="col-sm-9">
+                                <div class="btn-group">
+                                    <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.tipe" ng-disabled="is_view" uib-btn-radio="'Budgeting'">Budgeting</label>
+                                    <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.tipe" ng-disabled="is_view" uib-btn-radio="'Non Budgeting'">Non Budgeting</label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row col-md-6">

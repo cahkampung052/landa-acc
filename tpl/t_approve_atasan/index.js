@@ -94,7 +94,7 @@ app.controller("tapprovalCtrl", function($scope, Data, $rootScope) {
             status : status,
             data : form
         }
-        if(status == 'close'){
+        if(status == 'rejected'){
             var foo = prompt('Alasan ditolak : ') 
             if (foo) {
                 param['catatan'] = foo;

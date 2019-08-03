@@ -89,7 +89,7 @@
                                     Tarif Depresiasi
                                 </th>
                                 <th style="text-align: left;">
-                                    Lokasi
+                                    Penanggung Jawab
                                 </th>
                                 <th style="text-align: center;">
                                     Status Asset
@@ -144,6 +144,10 @@
                 <strong>
                     {{ formtitle}}
                 </strong>
+                <button class="btn btn-transparan btn-sm pull-right" ng-click="copy();" ng-if="is_view">
+                        <i class="fa fa-file"></i>
+                        &nbsp;Salin Asset Tetap
+                    </button>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
