@@ -384,13 +384,15 @@ $app->get('/acc/m_asset/index', function ($request, $response) {
     $limit  = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_asset.*,acc_m_lokasi.nama as nm_lokasi,acc_m_lokasi.kode as kode_lokasi, acc_umur_ekonomis.nama as nama_umur, acc_umur_ekonomis.tahun as tahun_umur, acc_umur_ekonomis.persentase as persentase_umur, akun_asset.nama as nm_akun_asset, akun_akumulasi.nama as nm_akun_akumulasi, akun_beban.nama as nm_akun_beban, acc_riw_penyusutan_dt.id as id_penyusutan")
+    $db->select("acc_asset.*,acc_m_lokasi.nama as nm_lokasi,acc_m_lokasi.kode as kode_lokasi, acc_umur_ekonomis.nama as nama_umur, acc_umur_ekonomis.tahun as tahun_umur, acc_umur_ekonomis.persentase as persentase_umur, akun_asset.nama as nm_akun_asset, akun_akumulasi.nama as nm_akun_akumulasi, akun_beban.nama as nm_akun_beban, akun_laba_rugi.nama as nm_akun_laba_rugi,akun_kas_pelepasan.nama as nm_akun_kas_pelepasan, acc_riw_penyusutan_dt.id as id_penyusutan")
         ->from("acc_asset")
         ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_asset.lokasi_id")
         ->leftJoin("acc_umur_ekonomis", "acc_umur_ekonomis.id = acc_asset.umur_ekonomis")
         ->leftJoin("acc_m_akun akun_asset", "akun_asset.id = acc_asset.akun_asset_id")
         ->leftJoin("acc_m_akun akun_akumulasi", "akun_akumulasi.id = acc_asset.akun_akumulasi_id")
         ->leftJoin("acc_m_akun akun_beban", "akun_beban.id = acc_asset.akun_beban_id")
+        ->leftJoin("acc_m_akun akun_laba_rugi", "akun_laba_rugi.id = acc_asset.akun_laba_rugi_id")
+        ->leftJoin("acc_m_akun akun_kas_pelepasan", "akun_kas_pelepasan.id = acc_asset.akun_kas_pelepasan_id")
         ->leftJoin("acc_riw_penyusutan_dt", "acc_riw_penyusutan_dt.asset_id = acc_asset.id")
         ->groupBy("acc_asset.id")
         ->orderBy('acc_asset.id DESC');
@@ -421,6 +423,16 @@ $app->get('/acc/m_asset/index', function ($request, $response) {
 
     $models    = $db->findAll();
     $totalItem = $db->count();
+
+    //nilai buku terakhir
+    $getPenyusutan  = $db->select("sum(penyusutan_perbulan) as total_penyusutan,asset_id")
+        ->from("acc_riw_penyusutan_dt")
+        ->groupBy("asset_id")->findAll();
+    $arr_penyusutan = [];
+    foreach ($getPenyusutan as $key => $value) {
+        $arr_penyusutan[$value->asset_id] = (int) $value->total_penyusutan;
+    }
+
     foreach ($models as $key => $value) {
         if ($value->lokasi_id==-1) {
             $value->lokasi = ["id" => $value->lokasi_id, "nama" => 'Lainya'];
@@ -433,10 +445,18 @@ $app->get('/acc/m_asset/index', function ($request, $response) {
         $value->akun_asset = ["id"=>$value->akun_asset_id,"nama"=>$value->nm_akun_asset];
         $value->akun_akumulasi = ["id"=>$value->akun_akumulasi_id,"nama"=>$value->nm_akun_akumulasi];
         $value->akun_beban = ["id"=>$value->akun_beban_id,"nama"=>$value->nm_akun_beban];
+        $value->akun_laba_rugi = ["id"=>$value->akun_laba_rugi_id,"nama"=>$value->nm_akun_laba_rugi];
+        $value->akun_kas_pelepasan = ["id"=>$value->akun_kas_pelepasan_id,"nama"=>$value->nm_akun_kas_pelepasan];
         if (isset($value->id_penyusutan)) {
             $value->proses_penyusutan = 1;
         }else{
             $value->proses_penyusutan = 0;
+        }
+
+        if (isset($arr_penyusutan[$value->id])) {
+            $value->nilai_buku_terakhir = $value->harga_beli - $arr_penyusutan[$value->id];
+        }else{
+            $value->nilai_buku_terakhir = 0;
         }
     }
 //     print_r($models);exit();
