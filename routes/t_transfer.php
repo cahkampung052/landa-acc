@@ -125,16 +125,12 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
         */
         $getakun = $sql->select("*")->from("acc_m_akun_peta")->where("type", "=", "Pengimbang Neraca")->find();
 
-        $getNoUrut = $sql->select("*")->from("acc_transfer")->orderBy("no_urut DESC")->find();
-        $insert['no_urut'] = 1;
-        $urut = 1;
-//        print_r($getNoUrut);die();
-        if ($getNoUrut) {
-            $insert['no_urut'] = $getNoUrut->no_urut + 1;
-            $urut = ((int) substr($getNoUrut->no_urut, -4)) + 1;
-        }
-        $no_urut = substr('0000' . $urut, -4);
-        $kode = $data['form']['m_lokasi_asal_id']['kode'] . date("y") . "TRNS" . $no_urut;
+        /*
+         * kode
+         */
+        $kode = generateNoTransaksi("transfer", $params['form']['m_lokasi_asal_id']['kode']);
+//        print_r($kode);die();
+        $insert['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
 
 //        $insert['no_transaksi'] = $data['form']['no_transaksi'];
         $insert['m_lokasi_asal_id'] = $data['form']['m_lokasi_asal_id']['id'];

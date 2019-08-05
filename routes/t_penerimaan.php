@@ -199,15 +199,10 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         /**
          * Generate kode penerimaan
          */
-        $getNoUrut = $sql->select("*")->from("acc_pemasukan")->orderBy("no_urut DESC")->find();
-        $penerimaan['no_urut'] = 1;
-        $urut = 1;
-        if ($getNoUrut) {
-            $penerimaan['no_urut'] = $getNoUrut->no_urut + 1;
-            $urut = ((int) substr($getNoUrut->no_urut, -4)) + 1;
-        }
-        $no_urut = substr('0000' . $urut, -4);
-        $kode = $params['form']['m_lokasi_id']['kode'] . date("y") . "PMSK" . $no_urut;
+        $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode']);
+//        print_r($kode);die();
+        $penerimaan['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
+        
         /**
          * Simpan penerimaan
          */
@@ -309,19 +304,25 @@ $app->get('/acc/t_penerimaan/print', function ($request, $response) {
     
     foreach($detail as $key => $val){
         $val->m_akun_id = ["id"=>$val->m_akun_id, "kode"=>$val->kodeAkun, "nama"=>$val->namaAkun];
+        $val->kredit = rp($val->kredit);
     }
     
     $data['tanggalsekarang'] = date("d-m-Y H:i");
+    $data['terbilang'] = terbilang($data['total']);
+    $data['total'] = rp($data['total']);
+    
+    $data['url_img'] = config('SITE_IMG');
+    
     $a = getMasterSetting();
     $template = $a->print_penerimaan;
-    $template = str_replace("<tr><td>{start_detail}</td></tr>", "{%for key, val in detail%}", $template);
-    $template = str_replace("<tr><td>{end}</td></tr>", "{%endfor%}", $template);
-//    echo json_encode($data);die();
+    $template = str_replace("{start_detail}", "{%for key, val in detail%}", $template);
+    $template = str_replace("{end}", "{%endfor%}", $template);
     $view = twigViewPath();
         $content = $view->fetchFromString($template, [
             "data" => $data,
             "detail" => (array) $detail,
         ]);
+    
         echo $content;
         echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
     

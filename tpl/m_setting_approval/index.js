@@ -96,7 +96,8 @@ app.controller("msettingapprovalCtrl", function ($scope, Data, $rootScope) {
         $scope.is_view = true;
         $scope.formtittle = "Lihat Data : " + form.min;
         $scope.form = form;
-        $scope.getDetail(form.id);
+        $scope.listDetail = form.detail;
+//        $scope.getDetail(form.id);
     };
     $scope.save = function (form) {
         $scope.loading = true;

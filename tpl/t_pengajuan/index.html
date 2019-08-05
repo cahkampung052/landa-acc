@@ -99,8 +99,8 @@
                                 <td>
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-success fa fa-print" ng-click="print(row)"></button>
-                                        <button type="button" class="btn btn-info fa fa-pencil" ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row)"></button>
+                                        <button type="button" class="btn btn-info fa fa-pencil" ng-click="update(row)" ng-if="row.status == ''"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row)" ng-if="row.status == ''"></button>
                                     </div>
                                 </td>
                             </tr>
@@ -299,6 +299,7 @@
                                         <th class="align-left">User</th>
                                         <th class="align-left">Sebagai</th>
                                         <th class="align-left" width="20">Level</th>
+                                        <th class="align-left" width="100">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -317,6 +318,9 @@
                                         </td>
                                         <td class="align-left">
                                             <input type="text" class="form-control form-control-sm angka rp" maxlength="11" ng-model="v.level" ng-disabled="is_view"/>
+                                        </td>
+                                        <td class="align-left">
+                                            <input type="text" class="form-control form-control-sm" maxlength="11" ng-model="v.status" ng-disabled="is_view"/>
                                         </td>
                                     </tr>
                                 </tbody>

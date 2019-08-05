@@ -36,8 +36,8 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
         var totaldebit = 0;
         var totalkredit = 0;
         angular.forEach($scope.displayed, function (value, key) {
-            totaldebit += value.debit;
-            totalkredit += value.kredit;
+            totaldebit += parseInt(value.debit);
+            totalkredit += parseInt(value.kredit);
         });
         $scope.totaldebit = totaldebit;
         $scope.totalkredit = totalkredit;

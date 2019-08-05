@@ -42,13 +42,14 @@ $app->get("/acc/appapproval/index", function ($request, $response) {
 //    if (isset($params["offset"]) && !empty($params["offset"])) {
 //        $db->offset($params["offset"]);
 //    }
-    $models = $db->groupBy("min, max")->findAll();
+    $models = $db->groupBy("tipe, min, max")->findAll();
     $totalItem = $db->count();
     
     foreach($models as $key => $val){
         $models[$key] = (array) $val;
         $db->select("acc_m_setting_approval.*, acc_m_user.nama as namaUser")->from("acc_m_setting_approval")
                 ->join("JOIN", "acc_m_user", "acc_m_user.id = acc_m_setting_approval.acc_m_user_id")
+                ->where("tipe", "=", $val->tipe)
                 ->where("min", "=", $val->min)
                 ->where("max", "=", $val->max);
         $countuser = $db->count();

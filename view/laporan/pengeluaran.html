@@ -1,6 +1,6 @@
 <style type="text/css">
     body{
-        font-family: monospace;
+        /*font-family: monospace;*/
     }
     table.table, table.table td , table.table th {
         border: 1px solid black;
@@ -102,65 +102,72 @@
         background-color: red;
     }
 </style>
-<table border="1">
-    <tr>
-        <td colspan="3" style="width: 25%" class="tengah">
-            {{data.m_lokasi_id.nama}}
-            <br>
-            {{data.no_transaksi}}
-            <br>
-            {{data.tanggal | date('d M Y')}}
-        </td>
-        <td colspan="6" style="width: 50%" class="tengah">PENERIMAAN <br> {{data.m_akun_id.nama}} </td>
-        <td colspan="3" style="width: 25%" class="tengah">
-            Dicetak Pada :
-            <br>
-            {{data.tanggalsekarang}}
-        </td>
-    </tr>
-    <tr>
-        <td colspan="12">Dibayarkan Kepada :  {{data.dibayar_kepada}}</td>
-    </tr>
-    <tr>
-        <!--<td style="width: 7%">No. </td>-->
-        <td style="width: 18%"class="tengah" colspan="3">Perkiraan</td>
-        <td class="tengah" colspan="6">Keterangan</td>
-        <td class="tengah" colspan="3">Jumlah</td>
-    </tr>
-    {% if detail %}
+
+<div>
+    <div>
+        <table style="width: 750px">
+            <tr>
+                <td class="tengah" width="10%">
+                    <img src="{{data.url_img}}logo-ukdc.png" width="100%">
+
+                </td>
+                <td width="24%" class="tengah" style="font-weight: bold">
+                    <span style="letter-spacing: 6px">UNIVERSITAS</span><br/>
+                    <span style="letter-spacing: 2px">DARMA CENDIKA</span><br/>
+                    <span style="letter-spacing: 6px">SURABAYA</span>
+                </td>
+                <td class="tengah">
+                    <span style="border: 1px solid black; font-weight: bold; padding: 3px; letter-spacing: 3px">BUKTI KAS KELUAR</span>
+                </td>
+                <td width="34%">
+                    No : {{data.no_urut}}
+                    <br/>
+                    Tanggal : {{data.tanggal_formated}}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        KODE : {{data.no_transaksi}}
+    </div>
+    <div>
+        <table border="1" style="width:750px; border-collapse: collapse">
+            <tbody style="display: list-item">
+                <tr style="display: flex; padding: 0px">
+                    <th width="60%" style="letter-spacing: 6px">URAIAN</th>
+                    <th width="40%">Banyaknya Uang</th>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
     {% for val in detail %}
-    <tr >
-        <!--<td class="tengah" style="width: 7%">{{val.no}}</td>-->
-        <td class="tengah" style="width: 18%" colspan="3">{{val.m_akun_id.kode}} - {{val.m_akun_id.nama}}</td>
-        <td colspan="6" style="width: 50%">{{val.keterangan}}</td>
-        <td class="angka" colspan="3">{{val.debit}}</td>
-    </tr>
+    <div>
+        
+        <table border="1" style="width:750px; border-collapse: collapse">
+            <tbody style="display: list-item">
+                <tr style="display: flex; padding: 0px">
+                    <!--<td class="tengah" style="width: 18%" colspan="3">{{val.m_akun_id.kode}} - {{val.m_akun_id.nama}}</td>-->
+                    <td width="60%">{{val.keterangan}}</td>
+                    <td class="angka" width="40%">{{val.debit}}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
     {% endfor %}
-    {% else %}
-    <tr >
-        <!--<td class="tengah" style="width: 7%"></td>-->
-        <td class="tengah" style="width: 18%" colspan="3"></td>
-        <td colspan="6" style="width: 50%"></td>
-        <td class="angka" colspan32"></td>
-    </tr>
-    {% endif %}
-    <tr>
-        <td colspan="9" style="width: 75%">Total
-        </td>
-        <td class="angka" colspan="3" style="width: 25%">{{data.total}}</td>
-    </tr>
-    <tr style="border-bottom:hidden">
-        <td class="tengah" colspan="4" style="border-right:hidden">Menyetujui </td>
-        <td class="tengah" colspan="4" style="border-right:hidden">Menerima </td>
-        <td class="tengah" colspan="4">Petugas </td>
-    </tr>
-    <tr>
-        <td colspan="12">
-            <br>  
-            <br>  
-            <br>  
-            <br>  
-        </td>
-    </tr>
-</table>
+    <div>
+        <table border="1" style="border-bottom: 1px solid white;border-left: 1px solid white;width:750px;">
+            <tbody style="display: list-item">
+                <tr style="display: flex; padding: 0px">
+                    <!--<td class="tengah" style="width: 18%" colspan="3">{{val.m_akun_id.kode}} - {{val.m_akun_id.nama}}</td>-->
+                    <td width="60%" class="angka" style="border-left: none">JUMLAH</td>
+                    <td class="angka" width="40%" style="border-bottom: 1px solid;">{{data.total}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        TERBILANG : {{data.terbilang}}
+    </div>
 </div>

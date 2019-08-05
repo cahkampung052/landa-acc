@@ -65,21 +65,24 @@
                                 <td class="align-left">{{ row.namaLokasi}}</td>
                                 <td class="align-left">{{ row.perihal}}</td>
                                 <td class="align-left">{{ row.tanggal_formated}}</td>
-<!--                                <td class="align-left">
-                                    <span ng-if="row.sisa_approval > 0" class="badge badge-warning "> {{row.sisa_approval}} approve</span>
-                                    <span ng-if="row.sisa_approval == 0" class="badge badge-success"> Terapprove</span>
-                                </td>-->
+                                <!--                                <td class="align-left">
+                                                                    <span ng-if="row.sisa_approval > 0" class="badge badge-warning "> {{row.sisa_approval}} approve</span>
+                                                                    <span ng-if="row.sisa_approval == 0" class="badge badge-success"> Terapprove</span>
+                                                                </td>-->
                                 <td>
                                     <span ng-if="row.status == 'Rejected'">{{row.status}}</span>
                                     <div class="btn-group pull-right" role="group" ng-if="row.status != 'Rejected'">
-                                        
-                                        <button type="submit" class="btn btn-danger btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="save(row, 'rejected')" ng-if="row.levelapproval == row.level">
-                                            <i class="fa fa-times"></i>
-                                            &nbsp;Tolak
-                                        </button>
-                                        <button type="submit" class="btn btn-success btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="save(row, 'open')" ng-if="row.levelapproval == row.level">
-                                            <i class="fa fa-check"></i>
-                                            &nbsp;Terima
+                                        <!--                                        <button type="submit" class="btn btn-danger btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="save(row, 'rejected')" ng-if="row.levelapproval == row.level">
+                                                                                    <i class="fa fa-times"></i>
+                                                                                    &nbsp;Tolak
+                                                                                </button>
+                                                                                <button type="submit" class="btn btn-success btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="save(row, 'open')" ng-if="row.levelapproval == row.level">
+                                                                                    <i class="fa fa-check"></i>
+                                                                                    &nbsp;Terima
+                                                                                </button>-->
+                                        <button type="button" class="btn btn-info btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="view(row)">
+                                            <i class="fa fa-list"></i>
+                                            &nbsp;Detail
                                         </button>
                                     </div>
                                 </td>
@@ -99,7 +102,7 @@
             <div class="card-body">
                 <form name="landaform" novalidate="">
                     <div class="row">
-                        
+
                         <div class="form-group row col-md-6">
                             <label class="col-sm-3 col-form-label-sm">Lokasi</label>
                             <div class="col-sm-9">
@@ -261,7 +264,7 @@
                                         <th class="align-left">User</th>
                                         <th class="align-left">Sebagai</th>
                                         <th class="align-left" width="20">Level</th>
-
+                                        <th class="align-left" width="100">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -281,6 +284,9 @@
                                 <td class="align-left">
                                     <input type="text" class="form-control form-control-sm" maxlength="11" ng-model="v.level" ng-disabled="is_view"/>
                                 </td>
+                                <td class="align-left">
+                                    <input type="text" class="form-control form-control-sm" maxlength="11" ng-model="v.status" ng-disabled="is_view"/>
+                                </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -296,11 +302,15 @@
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
                     </button>
-                    <button type="submit" class="btn btn-danger btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="save(form)" ng-if="form.levelapproval == form.level">
+                    <button type="submit" class="btn btn-info btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="modalBudget(form)" ng-if="form.levelapproval == form.level">
+                        <i class="fa fa-list"></i>
+                        &nbsp;Detail Budget
+                    </button>
+                    <button type="submit" class="btn btn-danger btn-sm" button-spinner="loading" ng-disabled="loading || !cekBudget" ng-click="save(form, 'rejected')" ng-if="form.levelapproval == form.level">
                         <i class="fa fa-times"></i>
                         &nbsp;Tolak
                     </button>
-                    <button type="submit" class="btn btn-success btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="save(form)" ng-if="form.levelapproval == form.level">
+                    <button type="submit" class="btn btn-success btn-sm" button-spinner="loading" ng-disabled="loading || !cekBudget" ng-click="save(form, 'open')" ng-if="form.levelapproval == form.level">
                         <i class="fa fa-check"></i>
                         &nbsp;Terima
                     </button>

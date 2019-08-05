@@ -210,19 +210,9 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         /**
          * Generate kode pengeluaran
          */
-        $getNoUrut = $sql->select("*")->from("acc_pengeluaran")->orderBy("no_urut DESC")->find();
-//        print_r($getNoUrut);die();
-        $pengeluaran['no_urut'] = 1;
-        $urut = 1;
-        if ($getNoUrut) {
-            $pengeluaran['no_urut'] = $getNoUrut->no_urut + 1;
-            $urut = ((int) substr($getNoUrut->no_urut, -4)+ 1);
-        }
-//        echo $urut;die();
-        $no_urut = substr('0000' . $urut, -4);
-        $kode = $params['form']['m_lokasi_id']['kode'] . date("y") . "PNGL" . $no_urut;
-        
-//        echo $kode;die();
+        $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
+//        print_r($kode);die();
+        $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
         /**
          * Simpan penerimaan
          */
@@ -353,19 +343,26 @@ $app->get('/acc/t_pengeluaran/print', function ($request, $response) {
     
     foreach($detail as $key => $val){
         $val->m_akun_id = ["id"=>$val->m_akun_id, "kode"=>$val->kodeAkun, "nama"=>$val->namaAkun];
+        $val->debit = rp($val->debit);
     }
     
     $data['tanggalsekarang'] = date("d-m-Y H:i");
+    $data['terbilang'] = terbilang($data['total']);
+    $data['total'] = rp($data['total']);
+    
+    $data['url_img'] = config('SITE_IMG');
+    
     $a = getMasterSetting();
     $template = $a->print_pengeluaran;
-    $template = str_replace("<tr><td>{start_detail}</td></tr>", "{%for key, val in detail%}", $template);
-    $template = str_replace("<tr><td>{end}</td></tr>", "{%endfor%}", $template);
+    $template = str_replace("{start_detail}", "{%for key, val in detail%}", $template);
+    $template = str_replace("{end}", "{%endfor%}", $template);
 //    echo json_encode($data);die();
     $view = twigViewPath();
         $content = $view->fetchFromString($template, [
             "data" => $data,
             "detail" => (array) $detail,
         ]);
+//        print_r($detail);die();
         echo $content;
         echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
     

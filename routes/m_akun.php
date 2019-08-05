@@ -456,6 +456,34 @@ $app->get('/acc/m_akun/export', function ($request, $response) {
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
     $objWriter->save('php://output');
 });
+
+/*
+ * ambil budget per lokasi (approve proposal)
+ */
+$app->get("/acc/m_akun/getBudgetPerLokasi", function ($request, $response){
+    $params = $request->getParams();
+    $db = $this->db;
+    
+    $getBudget = $db->select("*")
+            ->from("acc_budgeting")
+            ->where("tahun", "=", $params['tahun'])
+            ->andWhere("m_lokasi_id", "=", $params['m_lokasi_id'])
+            ->findAll();
+    
+    $arr = [];
+    for ($i = 1; $i <= 12; $i++) {
+        $arr[$i]['budget'] = 0;
+        $arr[$i]['nama_bulan'] = date('F', mktime(0, 0, 0, $i, 10)); // March
+    }
+    
+    foreach ($getBudget as $key => $val) {
+        $arr[$val->bulan]['budget'] += $val->budget;
+    }
+    
+    return successResponse($response, $arr);
+    
+});
+
 /**
  * Ambil budget
  */
@@ -468,6 +496,7 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
             ->from("acc_budgeting")
             ->where("tahun", "=", $params['tahun'])
             ->andWhere("m_akun_id", "=", $params['m_akun_id'])
+            ->andWhere("m_lokasi_id", "=", $params['m_lokasi_id'])
             ->findAll();
     $list = [];
     foreach ($getBudget as $key => $value) {
@@ -476,8 +505,8 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
     $listBudget = [];
     for ($i = 1; $i <= 12; $i++) {
         $j = $i;
-        if($i < 10)
-            $j = "0".$i;
+//        if($i < 10)
+//            $j = "0".$i;
         $listBudget[$i]['id'] = isset($list[$j]) ? $list[$j]['id'] : null;
         $listBudget[$i]['budget'] = isset($list[$j]) ? $list[$j]['budget'] : 0;
         $listBudget[$i]['nama_bulan'] = date('F', mktime(0, 0, 0, $i, 10)); // March
