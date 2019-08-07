@@ -362,12 +362,14 @@ $app->get('/acc/t_pengeluaran/print', function ($request, $response) {
     $template = $a->print_pengeluaran;
     $template = str_replace("{start_detail}", "{%for key, val in detail%}", $template);
     $template = str_replace("{end}", "{%endfor%}", $template);
+    $template = str_replace("<pre>", "<pre style='margin:0px'>", $template);
 //    echo json_encode($data);die();
     $view = twigViewPath();
         $content = $view->fetchFromString($template, [
             "data" => $data,
             "detail" => (array) $detail,
         ]);
+        $content = str_replace("<p></p>", "", $content);
 //        print_r($detail);die();
         echo $content;
         echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
