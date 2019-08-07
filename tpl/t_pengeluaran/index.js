@@ -145,8 +145,12 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
                 $scope.is_pengajuan = true;
                 $scope.form.no_proposal = data.no_proposal;
                 $scope.form.m_lokasi_id = data.m_lokasi_id;
+                $scope.form.penerima = data.penerima;
                 $scope.form.tanggal = new Date();
-                $scope.form.keterangan = data.perihal + " - " + data.dasar_pengajuan;
+                $scope.form.keterangan = data.catatan;
+                if(data.norek != ""){
+                    $scope.form.keterangan += " (Nomer rekening : " + data.norek + ")";
+                }
                 $scope.form.total = data.jumlah_perkiraan;
                 $scope.form.t_pengajuan_id = data.id;
                 $scope.listDetail = [];
@@ -157,10 +161,11 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
                             kode : $scope.akunDetail[0].kode,
                             nama : $scope.akunDetail[0].nama
                         },
-                        keterangan : value.keterangan + " (" + value.jenis_satuan + "@" + value.harga_satuan + ")",
+                        keterangan : value.keterangan + " (" + value.jumlah + "" + value.jenis_satuan +"@"+value.harga_satuan + ")",
                         debit : value.sub_total
                     }
                 });
+                $scope.sumTotal();
                 
             });
             
@@ -227,13 +232,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         angular.forEach($scope.listDetail, function (value, key) {
             totaldebit += parseInt(value.debit);
         });
-        console.log($scope.form.is_ppn)
-        $scope.form.subtotal = totaldebit;
-        if($scope.form.is_ppn)
-            $scope.form.ppn = (10/100)*totaldebit;
-        else
-            $scope.form.ppn = 0;
-        $scope.form.total = $scope.form.ppn + totaldebit;
+        $scope.form.total = totaldebit;
     };
     
 
@@ -277,8 +276,6 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         if(new Date() >= new Date($scope.tanggal_setting)){
             $scope.form.tanggal = new Date();
         }
-        $scope.form.ppn = 0;
-        $scope.form.is_ppn = true;
         $scope.listDetail = [{
             m_akun_id: {
                 id : $scope.akunDetail[0].id,
@@ -300,12 +297,6 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.is_disable = true;
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
-        $scope.form.is_ppn = false;
-        if($scope.form.ppn > 0){
-            $scope.form.is_ppn = true;
-        }
-        $scope.form.subtotal = $scope.form.total;
-        $scope.form.total = $scope.form.total + $scope.form.ppn;
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
@@ -325,12 +316,6 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.is_disable = true;
         $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
-        $scope.form.is_ppn = false;
-        if($scope.form.ppn > 0){
-            $scope.form.is_ppn = true;
-        }
-        $scope.form.subtotal = $scope.form.total;
-        $scope.form.total = $scope.form.total + $scope.form.ppn;
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);

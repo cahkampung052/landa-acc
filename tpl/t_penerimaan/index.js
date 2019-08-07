@@ -151,7 +151,12 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         angular.forEach($scope.listDetail, function(value, key) {
             totalkredit += parseInt(value.kredit);
         });
-        $scope.form.total = totalkredit;
+        $scope.form.subtotal = totalkredit;
+        if($scope.form.is_ppn)
+            $scope.form.ppn = (10/100)*totalkredit;
+        else
+            $scope.form.ppn = 0;
+        $scope.form.total = $scope.form.ppn + totalkredit;
     };
     
     /*
@@ -203,6 +208,8 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
+        $scope.form.ppn = 0;
+        $scope.form.is_ppn = true;
         $scope.form.tanggal = new Date($scope.tanggal_setting);
         if(new Date() >= new Date($scope.tanggal_setting)){
             $scope.form.tanggal = new Date();
@@ -234,6 +241,12 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.is_disable = true;
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
+        $scope.form.is_ppn = false;
+        if($scope.form.ppn > 0){
+            $scope.form.is_ppn = true;
+        }
+        $scope.form.subtotal = $scope.form.total;
+        $scope.form.total = $scope.form.total + $scope.form.ppn;
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
@@ -250,6 +263,12 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.is_disable = true;
         $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
+        $scope.form.is_ppn = false;
+        if($scope.form.ppn > 0){
+            $scope.form.is_ppn = true;
+        }
+        $scope.form.subtotal = $scope.form.total;
+        $scope.form.total = $scope.form.total + $scope.form.ppn;
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);

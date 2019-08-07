@@ -228,21 +228,53 @@
                                             </td>
                                             </tr>
                                             <tr>
-                                                <!--<td></td>-->
-                                                <td></td>
-                                                <td></td>
-                                                <td style="text-align: right">
-                                                    <b>Total</b>
-                                                </td>
-                                                <td>
-                                                    <div class="input-group input-group-sm">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Rp</span>
+                                                    <!--<td></td>-->
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td style="text-align: right"><b>Sub Total</b></td>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Rp</span>
+                                                            </div>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-model="form.subtotal" ng-disabled="true" />
                                                         </div>
-                                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="true" ng-model="form.total"/>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <!--<td></td>-->
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td style="text-align: right">
+                                                        <b>PPN</b>
+                                                        <div class="btn-group">
+                                                            <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.is_ppn" ng-disabled="is_view" uib-btn-radio="true" ng-click="sumTotal()">Ya</label>
+                                                            <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.is_ppn" ng-disabled="is_view" uib-btn-radio="false" ng-click="sumTotal()">Tidak</label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Rp</span>
+                                                            </div>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-model="form.ppn" ng-disabled="true" ng-change="sumTotal()"/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <!--<td></td>-->
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td style="text-align: right"><b>Grand Total</b></td>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Rp</span>
+                                                            </div>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="true" ng-model="form.total"/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>

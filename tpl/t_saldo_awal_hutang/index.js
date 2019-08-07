@@ -20,26 +20,26 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
     Data.get('acc/m_akun/akunHutang').then(function (response) {
         $scope.listAkun = response.data.list;
     });
-    
-    Data.get('acc/m_akun/getTanggalSetting').then(function(data) {
+
+    Data.get('acc/m_akun/getTanggalSetting').then(function (data) {
         console.log(data.data.tanggal)
         var tanggal = new Date(data.data.tanggal)
         tanggal.setDate(tanggal.getDate() - 1)
         $scope.form.tanggal = tanggal
-        
+
     });
-    
-    Data.get("acc/t_tutup_bulan/index", {filter:{jenis : "bulan"}}).then(function (response){
-       console.log(response)
-       if(response.data.list.length > 0){
-           $scope.tutup = true;
-       }
+
+    Data.get("acc/t_tutup_bulan/index", {filter: {jenis: "bulan"}}).then(function (response) {
+        console.log(response)
+        if (response.data.list.length > 0) {
+            $scope.tutup = true;
+        }
     });
 
     $scope.sumTotal = function () {
         var total = 0;
         angular.forEach($scope.displayed, function (value, key) {
-            total += value.total;
+            total += parseInt(value.total);
         });
         $scope.total = total;
     };
@@ -61,15 +61,15 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
         if (tableState.search.predicateObject) {
             param['filter'] = tableState.search.predicateObject;
         }
-        
-        
-        
+
+
+
         $scope.isLoading = false;
     };
 
-    
-    $scope.view = function(form){
-        if(form.tanggal != undefined && form.m_lokasi_id != undefined){
+
+    $scope.view = function (form) {
+        if (form.tanggal != undefined && form.m_lokasi_id != undefined) {
             console.log("ya")
             var a = form.tanggal;
             form.tanggal = moment(form.tanggal).format('YYYY-MM-DD');
@@ -77,15 +77,15 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
                 $scope.displayed = response.data.detail;
                 $scope.form.tanggal = new Date(response.data.tanggal);
                 angular.forEach($scope.displayed, function (value, key) {
-                    if(value.m_akun_id === undefined){
+                    if (value.m_akun_id === undefined) {
                         value.m_akun_id = $scope.listAkun[0]
                         value.total = 0;
                     }
                 });
                 $scope.sumTotal();
-    //            $scope.form = {};
+                //            $scope.form = {};
             });
-        }else{
+        } else {
             console.log("tidak")
         }
     }
@@ -93,25 +93,30 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
     $scope.save = function (form) {
         console.log(form)
         console.log($scope.displayed)
-        var data = {
-            form : form,
-            detail : $scope.displayed
-        }
-        if(form.tanggal != undefined && form.m_lokasi_id != undefined){
-            Data.post('acc/t_saldo_awal_hutang/saveHutang', data).then(function (result) {
-                if (result.status_code == 200) {
+        if ($scope.totaldebit == $scope.totalkredit) {
+            var data = {
+                form: form,
+                detail: $scope.displayed
+            }
+            if (form.tanggal != undefined && form.m_lokasi_id != undefined) {
+                Data.post('acc/t_saldo_awal_hutang/saveHutang', data).then(function (result) {
+                    if (result.status_code == 200) {
 
 
-                    $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
-                    $scope.getHutang(form)
-                } else {
-                    $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors) ,"error");
-                }
-            });
-        }else{
-            $rootScope.alert("Terjadi Kesalahan", "Tanggal dan lokasi harus diisi" ,"error");
+                        $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                        $scope.getHutang(form)
+                    } else {
+                        $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+                    }
+                });
+            } else {
+                $rootScope.alert("Terjadi Kesalahan", "Tanggal dan lokasi harus diisi", "error");
+            }
+        } else {
+            $rootScope.alert("Terjadi Kesalahan", "Total debit dan kredit harus sama", "error");
         }
-        
+
+
     };
     /** cancel action */
     $scope.cancel = function () {
@@ -121,29 +126,29 @@ app.controller('saldoawalhutangCtrl', function ($scope, Data, $rootScope, $uibMo
         $scope.is_edit = false;
         $scope.is_view = false;
     };
-    
+
     /*
      * export format
      */
-    $scope.export = function() {
+    $scope.export = function () {
         window.location = 'api/acc/t_saldo_awal_hutang/exportHutangAwal';
     };
-    
+
     /**
      * import
      */
-    $scope.uploadFiles = function(file, errFiles) {
+    $scope.uploadFiles = function (file, errFiles) {
         $scope.f = file;
         $scope.errFile = errFiles && errFiles[0];
         if (file) {
-            Data.get('site/url').then(function(data) {
+            Data.get('site/url').then(function (data) {
                 file.upload = Upload.upload({
                     url: data.data + 'acc/t_saldo_awal_hutang/importHutangAwal',
                     data: {
                         file: file
                     }
                 });
-                file.upload.then(function(response) {
+                file.upload.then(function (response) {
                     var data = response.data.data;
                     if (response.data.status_code == 200) {
                         console.log(data)

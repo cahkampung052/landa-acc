@@ -89,32 +89,77 @@
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
-                    <div class="row">
-                        <div class="col-md-6" ng-if="form.id != 1">
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label-sm">Induk</label>
-                                <div class="col-md-9">
-                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.parent_id" theme="bootstrap" ng-disabled="is_view">
-                                        <ui-select-match placeholder="Pilih Induk">
-                                            {{ $select.selected.kode + " - " + $select.selected.nama}}
-                                        </ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in parent | filter : $select.search">{{val.nama_lengkap}}</ui-select-choices>
-                                    </ui-select>
+                    <div class="row" ng-if="form.id != 1">
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label-sm">Induk</label>
+                                    <div class="col-md-9">
+                                        <ui-select class="ui-select-sm ui-select-container" ng-model="form.parent_id" theme="bootstrap" ng-disabled="is_view">
+                                            <ui-select-match placeholder="Pilih Induk">
+                                                {{ $select.selected.kode + " - " + $select.selected.nama}}
+                                            </ui-select-match>
+                                            <ui-select-choices position="down" repeat="val in parent | filter : $select.search">{{val.nama_lengkap}}</ui-select-choices>
+                                        </ui-select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label-sm required">Kode</label>
-                                <div class="col-md-9">
-                                    <input type="text" class="form-control form-control-sm" ng-model="form.kode" ng-disabled="is_view || is_update" />
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label-sm required">Kode</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control form-control-sm" ng-model="form.kode" ng-disabled="is_view || is_update" />
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label-sm required">Nama</label>
-                                <div class="col-md-9">
-                                    <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view"/>
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label-sm required">Nama</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view || is_update"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label-sm">Email</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control form-control-sm" ng-model="form.email" ng-disabled="is_view || is_update"/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label-sm">No Telepon</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control form-control-sm angka" ng-model="form.tlp" ng-disabled="is_view || is_update" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label-sm">Alamat</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control form-control-sm" ng-model="form.alamat" ng-disabled="is_view || is_update"/></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label-sm">Payment Detail</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control form-control-sm" ng-model="form.payment_detail" ng-disabled="is_view || is_update"/></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
                     </div>
                 </form>
             </div>

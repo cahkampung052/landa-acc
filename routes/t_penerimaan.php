@@ -211,7 +211,8 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $penerimaan['m_kontak_id'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['id'] : '';
         $penerimaan['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $penerimaan['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
-        $penerimaan['total'] = $params['form']['total'];
+        $penerimaan['total'] = $params['form']['total'] - $params['form']['ppn'];
+        $penerimaan['ppn'] = $params['form']['ppn'];
         $penerimaan['status'] = $params['form']['status'];
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $penerimaan['no_urut'] = $params['form']['no_urut'];

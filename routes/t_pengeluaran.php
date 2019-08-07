@@ -219,11 +219,17 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $pengeluaran['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
         $pengeluaran['m_akun_id'] = $params['form']['m_akun_id']['id'];
         $pengeluaran['m_kontak_id'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['id'] : '';
+        
+        if(isset($params['form']['penerima']))
+            $pengeluaran['penerima'] = (isset($params['form']['penerima']) && !empty($params['form']['penerima'])) ? $params['form']['penerima'] : "";
+        else
+            $pengeluaran['penerima'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['nama'] : '';
+        
         $pengeluaran['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $pengeluaran['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
-        $pengeluaran['total'] = $params['form']['total'] - $params['form']['ppn'];
-        $pengeluaran['ppn'] = $params['form']['ppn'];
+        $pengeluaran['total'] = $params['form']['total'];
         $pengeluaran['status'] = $params['form']['status'];
+//        print_r($pengeluaran);die();
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $pengeluaran['no_urut'] = $params['form']['no_urut'];
             $pengeluaran['no_transaksi'] = $params['form']['no_transaksi'];

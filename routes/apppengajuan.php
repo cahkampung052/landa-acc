@@ -31,6 +31,9 @@ $app->get("/acc/apppengajuan/getAll", function ($request, $response) {
     if (isset($params['id'])) {
         $db->andWhere("acc_t_pengajuan.id", "=", $params['id']);
     }
+    if (isset($params['no_proposal'])) {
+        $db->andWhere("acc_t_pengajuan.no_proposal", "=", $params['no_proposal']);
+    }
     $models = $db->findAll();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
@@ -263,7 +266,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
         }
         $model = $db->update("acc_t_pengajuan", $update, ["id" => $data["data"]["id"]]);
         if($data['status'] == "open")
-            $statusapproval = "aproved";
+            $statusapproval = "approved";
         else
             $statusapproval = "rejected";
         

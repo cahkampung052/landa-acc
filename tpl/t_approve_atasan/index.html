@@ -113,11 +113,11 @@
                             </div>
                         </div>
                         <div class="form-group row col-md-6">
-                            <label class="col-sm-3 col-form-label-sm required">Butuh Approval</label>
+                            <label class="col-sm-3 col-form-label-sm required">Tipe</label>
                             <div class="col-sm-9">
                                 <div class="btn-group">
-                                    <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.butuhapproval" ng-disabled="is_view" uib-btn-radio="1">Ya</label>
-                                    <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.butuhapproval" ng-disabled="is_view" uib-btn-radio="0">Tidak</label>
+                                    <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.tipe" ng-disabled="is_view" uib-btn-radio="'Budgeting'">Budgeting</label>
+                                    <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.tipe" ng-disabled="is_view" uib-btn-radio="'Non Budgeting'">Non Budgeting</label>
                                 </div>
                             </div>
                         </div>
@@ -127,15 +127,7 @@
                                 <input type="text" class="form-control form-control-sm" ng-model="form.no_proposal" ng-disabled="true"/>
                             </div>
                         </div>
-                        <div class="form-group row col-md-6">
-                            <label class="col-sm-3 col-form-label-sm required">Tipe</label>
-                            <div class="col-sm-9">
-                                <div class="btn-group">
-                                    <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.tipe" ng-disabled="is_view" uib-btn-radio="'Budgeting'">Budgeting</label>
-                                    <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.tipe" ng-disabled="is_view" uib-btn-radio="'Non Budgeting'">Non Budgeting</label>
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div class="form-group row col-md-6">
                             <label class="col-sm-3 col-form-label-sm required">Tanggal</label>
                             <div class="col-sm-9">
@@ -168,11 +160,41 @@
                             </div>
                         </div>
                         <div class="form-group row col-md-6">
-                            <label class="col-sm-3 col-form-label-sm">Dasar Pengajuan</label>
+                            <label class="col-sm-3 col-form-label-sm">Nama Kegiatan</label>
                             <div class="col-sm-9">
-                                <textarea ng-model="form.dasar_pengajuan" class="form-control form-control-sm" ng-disabled="is_view || is_update" ></textarea>
+                                <input type="text" class="form-control form-control-sm" ng-model="form.dasar_pengajuan" ng-disabled="is_view || is_update"  />
                             </div>
                         </div>
+                        <div class="form-group row col-md-6">
+                            <label class="col-sm-3 col-form-label-sm">Lokasi & Waktu</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" ng-model="form.lokasi_waktu" ng-disabled="is_view || is_update"  />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <hr/>
+                            <h6 class="tittle-header" style="margin-bottom: 15px;">Catatan</h6>
+                        </div>
+                        <div class="form-group row col-md-6">
+                            <label class="col-sm-3 col-form-label-sm">Penerima</label>
+                            <div class="col-sm-9">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-sm" ng-model="form.penerima" ng-disabled="is_view || is_update"  />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="form-group row col-md-6">
+                            <label class="col-sm-3 col-form-label-sm">No Rekening</label>
+                            <div class="col-sm-9">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-sm" ng-model="form.norek" ng-disabled="is_view || is_update"  />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6"></div>
                         <div class="form-group row col-md-6">
                             <label class="col-sm-3 col-form-label-sm">Catatan</label>
                             <div class="col-sm-9">
