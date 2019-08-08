@@ -72,13 +72,25 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
 $app->post('/acc/m_customer/save', function ($request, $response) {
     $params = $request->getParams();
     $sql    = $this->db;
+    
+    /*
+     * generate kode
+     */
+    $kode = generateNoTransaksi("customer", 0);
+    
     $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
     $validasi = validasi($params);
     if ($validasi === true) {
         $params['type'] = "customer";
         if (isset($params["id"])) {
+            if(isset($params["kode"]) && !empty($params["kode"])){
+                $params["kode"] = $params["kode"];
+            }else{
+                $params["kode"] = $kode;
+            }
             $model = $sql->update("acc_m_kontak", $params, array('id' => $params['id']));
         } else {
+            $params["kode"] = $kode;
             $model = $sql->insert("acc_m_kontak", $params);
         }
         if ($model) {

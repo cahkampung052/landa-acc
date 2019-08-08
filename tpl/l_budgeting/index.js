@@ -2,6 +2,14 @@ app.controller('l_budgetingCtrl', function($scope, Data, $rootScope, $uibModal, 
     var control_link = "acc/l_budgeting";
     $scope.form = {};
     $scope.form.tahun = new Date();
+    
+    Data.get('acc/m_lokasi/getLokasi').then(function(response) {
+        $scope.listLokasi = response.data.list;
+        if ($scope.listLokasi.length > 0) {
+            $scope.form.m_lokasi_id = $scope.listLokasi[0];
+        }
+    });
+    
     /**
      * Ambil list semua akun
      */
@@ -19,6 +27,8 @@ app.controller('l_budgetingCtrl', function($scope, Data, $rootScope, $uibModal, 
             export: is_export,
             print: is_print,
             m_akun_id: $scope.form.m_akun_id.id,
+            m_lokasi_id: $scope.form.m_lokasi_id.id,
+            nama_lokasi: $scope.form.m_lokasi_id.nama,
             tahun: moment($scope.form.tahun).format('YYYY')
         };
         if (is_export == 0 && is_print == 0) {

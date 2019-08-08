@@ -316,10 +316,11 @@ $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response) {
 //    echo "<pre>", print_r($data), "</pre>";die();
     $a = getMasterSetting();
     $template = $a->print_pengajuan;
-    $template = str_replace("<tr><td>{start_detail}</td></tr>", "{%for key, val in detail%}", $template);
-    $template = str_replace("<tr><td>{end}</td></tr>", "{%endfor%}", $template);
-    $template = str_replace("<td>{start_acc}</td>", "{%for key, val in acc%}", $template);
-    $template = str_replace("<td>{end}</td>", "{%endfor%}", $template);
+//    print_r($template);die();
+    $template = str_replace("{start_detail}", "{%for key, val in detail%}", $template);
+    $template = str_replace("{end}", "{%endfor%}", $template);
+    $template = str_replace("{start_acc}", "{%for key, val in acc%}", $template);
+    $template = str_replace("<td></td>", "", $template);
     $view = twigViewPath();
     $content = $view->fetchFromString($template, [
         "data" => $data,
@@ -327,6 +328,8 @@ $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response) {
         "acc" => (array) $acc
 //            "css" => modulUrl() . '/assets/css/style.css',
     ]);
+    $content = str_replace("<td></td>", "", $content);
+    $content = str_replace("<td>&nbsp;</td>", "", $content);
     echo $content;
     echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
 });

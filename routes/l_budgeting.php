@@ -17,6 +17,25 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             ->orderBy("acc_m_akun.kode ASC")
             ->find();
 
+    /*
+     * lokasi
+     */
+    if (isset($params['m_lokasi_id'])) {
+        $lokasiId = getChildId("acc_m_lokasi", $params['m_lokasi_id']);
+        /*
+         * jika lokasi punya child
+         */
+        if (!empty($lokasiId)) {
+            $lokasiId[] = $params['m_lokasi_id'];
+            $lokasiId = implode(",", $lokasiId);
+        }
+        /*
+         * jika lokasi tidak punya child
+         */ else {
+            $lokasiId = $params['m_lokasi_id'];
+        }
+    }
+
     /**
      * Ambil id akun turunan klasifikasi di parameter
      */
@@ -29,7 +48,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
         $childId = $getakun->id;
     }
 
-    
+
 
 
     /*
@@ -73,10 +92,14 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             /*
              * ambil transdetail
              */
-            $getTransDetail = $db->select("SUM(debit-kredit) AS nominal")->from("acc_trans_detail")
-                    ->where("m_akun_id", "=", $value->id)
-                    ->where("tanggal", "LIKE", "" . $params['tahun'] . "-" . $bulan . "")
-                    ->find();
+            $db->select("SUM(debit-kredit) AS nominal")->from("acc_trans_detail");
+            if (!empty($lokasiId)) {
+                $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
+            }
+            $db->where("m_akun_id", "=", $value->id)
+                    ->where("tanggal", "LIKE", "" . $params['tahun'] . "-" . $bulan . "");
+
+            $getTransDetail = $db->find();
 
             /*
              * isi nominal target dari budget
@@ -95,7 +118,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             } else {
                 $listAkun[$key]['detail'][$i]['realisasi'] = $getTransDetail->nominal;
             }
-            
+
             $listAkun[$key]['detail'][$i]['bulan'] = date('F', mktime(0, 0, 0, $i, 10));
         }
     }
@@ -127,6 +150,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
     $data['bulan'] = $listBulan;
     $data['setiapbulan'] = $listSetiapBulan;
     $data['disiapkan'] = date("d-m-Y, H:i");
+    $data['lokasi'] = $params['nama_lokasi'];
 
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();

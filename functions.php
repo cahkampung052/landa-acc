@@ -318,18 +318,21 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             array_push($arrPengecualian, $b->m_akun_id->id);
         }
     }
-
+    
+//    print_r($klasifikasi);die();
 
     /*
      * proses perulangan
      */
     foreach ($klasifikasi as $index => $akun) {
+//        print_r($arrPengecualian);die();
         $arr[$index] = (array) $akun;
         $arr[$index]['total'] = 0;
         /*
          * ambil child akun
          */
         $akunId = getChildId("acc_m_akun", $akun->id);
+//        print_r($akunId);
         if (is_array($akunPengecualian) && !empty($akunPengecualian)) {
             foreach ($arrPengecualian as $w => $x) {
                 foreach ($akunId as $y => $z) {
@@ -339,7 +342,9 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
                 }
             }
         }
-        $getakun = $sql->select("*")
+//        print_r($akunId);die();
+        if(is_array($akunId) && !empty($akunId)){
+            $getakun = $sql->select("*")
                 ->from("acc_m_akun")
                 ->customWhere("id IN(" . implode(',', $akunId) . ")")
                 ->orderBy("kode")
@@ -379,7 +384,10 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
                 }
             }
         }
+        }
+        
     }
+//    die();
 
 //    print_r($total_);die();
 
@@ -456,6 +464,16 @@ function generateNoTransaksi($type, $unker) {
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
+    } else if ($type == 'customer') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "CUST" . date("Y") . "" . $no_urut;
+    } else if ($type == 'supplier') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'supplier' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "VND" . date("Y") . "" . $no_urut;
     }
 
 

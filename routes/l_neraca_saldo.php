@@ -36,8 +36,13 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
 
 
         $arr = [];
-        $data['total_debit'] = 0;
-        $data['total_kredit'] = 0;
+        
+        $data['debit_awal'] = 0;
+        $data['kredit_awal'] = 0;
+        $data['debit_mutasi'] = 0;
+        $data['kredit_mutasi'] = 0;
+        $data['debit_akhir'] = 0;
+        $data['kredit_akhir'] = 0;
 
         /*
          * ambil akun
@@ -64,7 +69,9 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
 
             $arr2['saldo_awal'] = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
             $arr2['debit_awal'] = intval($getsaldoawal->debit);
+            $data['debit_awal'] += $arr2['debit_awal'];
             $arr2['kredit_awal'] = intval($getsaldoawal->kredit);
+            $data['kredit_awal'] += $arr2['kredit_awal'];
 
             /*
              * ambil transdetail dari akun where tanggal <, >
@@ -80,11 +87,13 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
             $arr2['kredit'] = $detail->kredit;
 
             $arr2['debit_akhir'] = $arr2['debit_awal'] + $arr2['debit'];
+            $data['debit_akhir'] += $arr2['debit_akhir'];
             $arr2['kredit_akhir'] = $arr2['kredit_awal'] + $arr2['kredit'];
+            $data['kredit_akhir'] += $arr2['kredit_akhir'];
             if ($arr2['saldo_awal'] != 0 || $arr2['debit'] != 0 || $arr2['kredit'] != 0) {
                 $arr[$key] = $arr2;
-                $data['total_debit'] += $arr2['debit'];
-                $data['total_kredit'] += $arr2['kredit'];
+                $data['debit_mutasi'] += $arr2['debit'];
+                $data['kredit_mutasi'] += $arr2['kredit'];
             }
         }
 

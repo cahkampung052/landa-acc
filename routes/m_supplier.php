@@ -76,13 +76,24 @@ $app->post('/acc/m_supplier/save', function ($request, $response) {
     $params = $request->getParams();
     $data   = $params;
     $sql    = $this->db;
+    
+    /*
+     * generate kode
+     */
+    $kode = generateNoTransaksi("supplier", 0);
 
     $validasi = validasi($data);
      if ($validasi === true) {
         $params['type'] = "supplier";
         if (isset($params["id"])) {
+            if(isset($params["kode"]) && !empty($params["kode"])){
+                $params["kode"] = $params["kode"];
+            }else{
+                $params["kode"] = $kode;
+            }
             $model = $sql->update("acc_m_kontak", $params, array('id' => $params['id']));
         } else {
+            $params["kode"] = $kode;
             $model = $sql->insert("acc_m_kontak", $params);
         }
         if ($model) {
