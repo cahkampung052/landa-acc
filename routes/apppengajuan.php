@@ -120,6 +120,7 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
         $models[$key]['tanggal_formated'] = date("d-m-Y H:i", strtotime($val->tanggal));
         $models[$key]['created_formated'] = $val->namaUser;
         $models[$key]['status'] = ucfirst($val->status);
+        $models[$key]['levelapproval'] = intval($val->levelapproval);
 
         /*
          * ambil sisa approve dari acc_approval_pengajuan
@@ -133,7 +134,7 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
          */
         $acc = $db->select("level")->from("acc_approval_pengajuan")->where("t_pengajuan_id", "=", $val->id)->where("acc_m_user_id", "=", $_SESSION['user']['id'])->find();
         if ($acc) {
-            $models[$key]['level'] = $acc->level;
+            $models[$key]['level'] = intval($acc->level);
         } else {
             if ($val->created_by != $_SESSION['user']['id']) {
                 unset($models[$key]);
@@ -267,12 +268,14 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
         $model = $db->update("acc_t_pengajuan", $update, ["id" => $data["data"]["id"]]);
         if($data['status'] == "open")
             $statusapproval = "approved";
-        else
+        if($data['status'] == "canceled")
+            $statusapproval = "canceled";
+        if($data['status'] == "rejected")
             $statusapproval = "rejected";
         
         $models = $db->update("acc_approval_pengajuan", ["status" => $statusapproval], ["t_pengajuan_id" => $data["data"]["id"], "acc_m_user_id" => $_SESSION["user"]["id"]]);
 
-        if ($data['status'] == "open") {
+        if ($statusapproval == "approved") {
             /*
              * cek jika masih kurang approve
              */

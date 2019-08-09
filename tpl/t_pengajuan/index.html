@@ -100,7 +100,7 @@
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-success fa fa-print" ng-click="print(row)"></button>
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-click="update(row)" ng-if="row.status == ''"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row)" ng-if="row.status == ''"></button>
                                     </div>
                                 </td>
                             </tr>

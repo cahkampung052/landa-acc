@@ -7,6 +7,13 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
     $scope.is_edit = false;
     $scope.is_view = false;
     $scope.master = master;
+    
+    $scope.generateKode = function () {
+        Data.get(control_link + '/kode').then(function(response) {
+            $scope.form.kode = response;
+        });
+    }
+    
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -40,6 +47,7 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
+        $scope.generateKode();
     };
     /** update */
     $scope.update = function(form) {
@@ -49,6 +57,9 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         $scope.is_disable = true;
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
+        if(!$scope.form.kode){
+            $scope.generateKode();
+        }
     };
     /** view */
     $scope.view = function(form) {

@@ -2,11 +2,17 @@
 function validasi($data, $custom = array())
 {
     $validasi = array(
-       'nama'      => 'required',
+        'nama'      => 'required',
+        'kode'      => 'required'
     );
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
+
+$app->get('/acc/m_customer/kode', function ($request, $response){
+    return generateNoTransaksi("customer", 0);
+});
+
 $app->get('/acc/m_customer/getKontak', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("*")
@@ -76,21 +82,21 @@ $app->post('/acc/m_customer/save', function ($request, $response) {
     /*
      * generate kode
      */
-    $kode = generateNoTransaksi("customer", 0);
+//    $kode = generateNoTransaksi("customer", 0);
     
     $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
     $validasi = validasi($params);
     if ($validasi === true) {
         $params['type'] = "customer";
         if (isset($params["id"])) {
-            if(isset($params["kode"]) && !empty($params["kode"])){
-                $params["kode"] = $params["kode"];
-            }else{
-                $params["kode"] = $kode;
-            }
+//            if(isset($params["kode"]) && !empty($params["kode"])){
+//                $params["kode"] = $params["kode"];
+//            }else{
+//                $params["kode"] = $kode;
+//            }
             $model = $sql->update("acc_m_kontak", $params, array('id' => $params['id']));
         } else {
-            $params["kode"] = $kode;
+//            $params["kode"] = $kode;
             $model = $sql->insert("acc_m_kontak", $params);
         }
         if ($model) {

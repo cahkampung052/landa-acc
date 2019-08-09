@@ -54,7 +54,7 @@
                                 <th class="align-left">Lokasi</th>
                                 <th class="align-left">Perihal</th>
                                 <th class="align-left">Tanggal</th>
-                                <!--<th class="align-left">Sisa</th>-->
+                                <!--<th class="align-left">Status</th>-->
                                 <th></th>
                             </tr>
                         </thead>
@@ -65,6 +65,7 @@
                                 <td class="align-left">{{ row.namaLokasi}}</td>
                                 <td class="align-left">{{ row.perihal}}</td>
                                 <td class="align-left">{{ row.tanggal_formated}}</td>
+                                <!--<td class="align-left">{{ row.status}}</td>-->
                                 <!--                                <td class="align-left">
                                                                     <span ng-if="row.sisa_approval > 0" class="badge badge-warning "> {{row.sisa_approval}} approve</span>
                                                                     <span ng-if="row.sisa_approval == 0" class="badge badge-success"> Terapprove</span>
@@ -335,6 +336,10 @@
                     <button type="submit" class="btn btn-success btn-sm" button-spinner="loading" ng-disabled="loading || !cekBudget" ng-click="save(form, 'open')" ng-if="form.levelapproval == form.level">
                         <i class="fa fa-check"></i>
                         &nbsp;Terima
+                    </button>
+                    <button type="submit" class="btn btn-danger btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="save(form, 'canceled')" ng-if="form.levelapproval == (form.level+1) && form.status == 'Approved'">
+                        <i class="fa fa-times"></i>
+                        &nbsp;Batalkan
                     </button>
                 </div>
             </div>
