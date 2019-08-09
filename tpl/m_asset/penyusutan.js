@@ -1,4 +1,4 @@
-app.controller('penyusutanassetCtrl', function ($scope, Data, $rootScope) {
+app.controller('penyusutanassetCtrl', function ($scope, Data, $rootScope,$uibModal) {
     var tableStateRef;
     var control_link = "acc/m_asset";
     var master = 'Penyusutan Asset Tetap';
@@ -7,6 +7,7 @@ app.controller('penyusutanassetCtrl', function ($scope, Data, $rootScope) {
     $scope.base_url = '';
     $scope.is_show = false;
     $scope.filter = {};
+    $scope.cari = {};
     $scope.filter.bulan = new Date();
     $scope.is_riwayat = false;
     $scope.displayed = [];
@@ -25,15 +26,27 @@ app.controller('penyusutanassetCtrl', function ($scope, Data, $rootScope) {
             param['order'] = tableState.sort.reverse;
         }
         /** set filter */
-        if (tableState.search.predicateObject) {
-            param['filter'] = tableState.search.predicateObject;
+        // if (tableState.search.predicateObject) {
+        //     param['filter'] = tableState.search.predicateObject;
+        // }
+        param['filter'] = {};
+        if ($scope.cari.lokasi!=undefined) {
+            param['filter']['lokasi'] = $scope.cari.lokasi.id;    
         }
+        if ($scope.cari.bulan!=undefined) {
+            param['filter']['bulan'] = moment($scope.cari.bulan).format('YYYY-MM-DD');
+        }
+        
         Data.get(control_link + '/list_penyusutan', param).then(function (response) {
             $scope.displayed = response.data.list;
             $scope.base_url = response.data.base_url;
         });
         $scope.isLoading = false;
     };
+
+    $scope.cari_riwayat = function(cari){
+        $scope.callServer(tableStateRef);
+    }
 
     
     Data.get('acc/m_lokasi/index', {filter:{is_deleted:0}}).then(function (response) {
@@ -115,5 +128,43 @@ app.controller('penyusutanassetCtrl', function ($scope, Data, $rootScope) {
         $scope.is_show = false;
     }
 
-    
+    $scope.detailRiw = function (form) {
+        var modalInstance = $uibModal.open({
+            templateUrl: $rootScope.pathModulAcc + "tpl/m_asset/modal_riwayat_penyusutan.html",
+            controller: "riwPenyusutanCtrl",
+            size: "lg",
+            backdrop: "static",
+            keyboard: false,
+            resolve: {
+                form: form,
+            }
+        });
+
+        modalInstance.result.then(function (response) {
+            if (response.data == undefined) {
+            } else {
+            }
+        });
+    }
+});
+
+
+app.controller("riwPenyusutanCtrl", function ($state, $scope, Data, $uibModalInstance, form) {
+    $scope.form = form;
+    $scope.listDetail = [];
+
+    $scope.detail_riw_penyusutan = function (id) {
+
+        Data.get('acc/m_asset/detail_riw_penyusutan', {id: id}).then(function (result) {
+            $scope.listDetail = result.data.list;
+        });
+    };
+
+    $scope.detail_riw_penyusutan(form.id);
+
+
+    $scope.close = function () {
+        $uibModalInstance.close({'data': undefined});
+    };
+
 });
