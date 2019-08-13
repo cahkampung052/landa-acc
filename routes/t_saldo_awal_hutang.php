@@ -48,7 +48,10 @@ $app->post('/acc/t_saldo_awal_hutang/saveHutang', function ($request, $response)
 
         if (!empty($params['detail'])) {
             $db = $this->db;
+            $db->delete("acc_saldo_hutang", ["m_lokasi_id"=>$m_lokasi_id]);
+            $db->delete("acc_trans_detail", ["m_lokasi_id"=>$m_lokasi_id, "reff_type"=>"acc_saldo_hutang"]);
             
+            $acc_t = [];
             foreach ($params['detail'] as $val) {
                 if (isset($val['total']) && !empty($val['total']) && isset($val['m_akun_id']) && !empty($val['m_akun_id'])) {
                     $detail['m_kontak_id'] = $val['id'];
@@ -57,11 +60,7 @@ $app->post('/acc/t_saldo_awal_hutang/saveHutang', function ($request, $response)
                     $detail['tanggal'] = $tanggal;
                     $detail['total'] = $val['total'];
                     
-                    if(isset($val['saldo_id']) && !empty($val['saldo_id'])){
-                        $insert = $db->update('acc_saldo_hutang', $detail, ["id" => $val['saldo_id']]);
-                    }else{
-                        $insert = $db->insert('acc_saldo_hutang', $detail);
-                    }
+                    $insert = $db->insert('acc_saldo_hutang', $detail);
                     
                     $detail2['m_kontak_id'] = $val['id'];
                     $detail2['m_lokasi_id'] = $m_lokasi_id;
@@ -85,17 +84,11 @@ $app->post('/acc/t_saldo_awal_hutang/saveHutang', function ($request, $response)
                     $detail_['reff_id'] = $insert->id;
                     $detail_['keterangan'] = 'Saldo Hutang';
                     
+                    array_push($acc_t, $detail2, $detail_);
                     
-                    if(isset($val['saldo_id']) && !empty($val['saldo_id'])){
-                        $insert = $db->update('acc_trans_detail', $detail2, ["reff_id" => $val['saldo_id'], "reff_type"=>"acc_saldo_hutang"]);
-                        $insert = $db->update('acc_trans_detail', $detail_, ["reff_id" => $val['saldo_id'], "reff_type"=>"acc_saldo_hutang"]);
-                    }else{
-                        $insert2 = $db->insert('acc_trans_detail', $detail_);
-                        $insert2 = $db->insert('acc_trans_detail', $detail2);
-                    }
                 }
             }
-
+            insertTransDetail($acc_t);
             return successResponse($response, []);
         }
 

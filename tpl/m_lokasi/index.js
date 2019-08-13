@@ -15,7 +15,6 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
             if ($scope.parent.length > 0 && $scope.is_create) {
                 $scope.form.parent_id = $scope.parent[0];
             }
-            console.log($scope.parent)
         });
     }
         

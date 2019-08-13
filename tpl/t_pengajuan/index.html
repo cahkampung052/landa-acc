@@ -78,7 +78,7 @@
                                 <th class="align-left">Perihal</th>
                                 <th class="align-left">Nama Kegiatan</th>
                                 <!--<th class="align-left">Butuh Approval</th>-->
-                                <th class="align-left">Tipe</th>
+                                <th class="align-center">Tipe</th>
                                 <th class="align-left">Tanggal</th>
                                 <th class="align-left">Biaya</th>
                                 <th></th>
@@ -286,7 +286,7 @@
                                             </div>
                                         </td>
                                         <td class="align-left">
-                                            <input type="text" class="form-control form-control-sm angka rp" maxlength="11" ng-model="v.jumlah" ng-change="sumTotal()" ng-disabled="is_view"/>
+                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="11" ng-model="v.jumlah" ng-change="sumTotal()" ng-disabled="is_view"/>
                                         </td>
                                         <td class="align-left">
                                             <div class="input-group input-group-sm">

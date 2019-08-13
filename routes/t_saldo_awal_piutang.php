@@ -50,7 +50,10 @@ $app->post('/acc/t_saldo_awal_piutang/savePiutang', function ($request, $respons
 
         if (!empty($params['detail'])) {
             $db = $this->db;
+            $db->delete("acc_saldo_piutang", ["m_lokasi_id"=>$m_lokasi_id]);
+            $db->delete("acc_trans_detail", ["m_lokasi_id"=>$m_lokasi_id, "reff_type"=>"acc_saldo_piutang"]);
             
+            $acc_t = [];
             foreach ($params['detail'] as $val) {
                 if (isset($val['total']) && !empty($val['total']) && isset($val['m_akun_id']) && !empty($val['m_akun_id'])) {
                     $detail['m_kontak_id'] = $val['id'];
@@ -59,11 +62,8 @@ $app->post('/acc/t_saldo_awal_piutang/savePiutang', function ($request, $respons
                     $detail['tanggal'] = $tanggal;
                     $detail['total'] = $val['total'];
                     
-                    if(isset($val['saldo_id']) && !empty($val['saldo_id'])){
-                        $insert = $db->update('acc_saldo_piutang', $detail, ["id" => $val['saldo_id']]);
-                    }else{
-                        $insert = $db->insert('acc_saldo_piutang', $detail);
-                    }
+                    
+                    $insert = $db->insert('acc_saldo_piutang', $detail);
                     
                     $detail2['m_kontak_id'] = $val['id'];
                     $detail2['m_lokasi_id'] = $m_lokasi_id;
@@ -87,16 +87,11 @@ $app->post('/acc/t_saldo_awal_piutang/savePiutang', function ($request, $respons
                     $detail_['reff_id'] = $insert->id;
                     $detail_['keterangan'] = 'Saldo Piutang';
                     
-                    if(isset($val['saldo_id']) && !empty($val['saldo_id'])){
-                        $insert = $db->update('acc_trans_detail', $detail2, ["reff_id" => $val['saldo_id'], "reff_type"=>"acc_saldo_piutang"]);
-                        $insert = $db->update('acc_trans_detail', $detail_, ["reff_id" => $val['saldo_id'], "reff_type"=>"acc_saldo_piutang"]);
-                    }else{
-                        $insert2 = $db->insert('acc_trans_detail', $detail2);
-                        $insert2 = $db->insert('acc_trans_detail', $detail_);
-                    }
+                    array_push($acc_t, $detail2, $detail_);
                 }
             }
-
+            insertTransDetail($acc_t);
+//            print_r($acc_t);die();
             return successResponse($response, []);
         }
 

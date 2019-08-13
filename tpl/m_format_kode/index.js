@@ -1,7 +1,7 @@
 app.controller('formatkodeCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/m_format_kode";
-    var master = 'Format Kode Transaksi';
+    var master = 'Pengaturan';
     $scope.formTitle = '';
     $scope.displayed = [];
     $scope.base_url = '';
@@ -13,6 +13,7 @@ app.controller('formatkodeCtrl', function ($scope, Data, $rootScope, $uibModal, 
     
     Data.get(control_link + '/index').then(function (response) {
             $scope.form = response.data.list;
+            $scope.form.tanggal = new Date($scope.form.tanggal)
             $scope.base_url = response.data.base_url;
         });
     

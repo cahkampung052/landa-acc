@@ -208,6 +208,8 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
+        if($scope.listLokasi.length > 0)
+            $scope.form.m_lokasi_id = $scope.listLokasi[0];
         $scope.form.ppn = 0;
         $scope.form.is_ppn = true;
         $scope.form.tanggal = new Date($scope.tanggal_setting);

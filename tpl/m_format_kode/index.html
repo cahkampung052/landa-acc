@@ -29,7 +29,27 @@
             <div class="card-body">
                 <form name="landaform" novalidate="">
                     <div class="row">
-
+                        <div class="col-md-12">
+                            <h6 class="tittle-header">Tanggal</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label-sm required">TANGGAL</label>
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                    <input type="text" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" ng-disabled="is_view" datepicker-options="options"/>
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <h6 class="tittle-header">Format Kode</h6>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group row">
                                 <label class="col-md-4 col-form-label-sm required">PEMASUKAN</label>
