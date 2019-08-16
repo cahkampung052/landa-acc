@@ -12,6 +12,14 @@ app.controller("tapprovalCtrl", function ($scope, Data, $rootScope, $uibModal) {
     $scope.loading = false;
     var master = "Approve Proposal";
     $scope.master = master;
+    
+    /*
+     * Ambil akun untuk detail
+     */
+    Data.get('acc/m_akun/akunDetail').then(function(data) {
+        $scope.akunDetail = data.data.list;
+    });
+    
     /**
      * End inialisasi
      */

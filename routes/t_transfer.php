@@ -60,8 +60,9 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
         ->join("join", "acc_m_akun akun1", "acc_transfer.m_akun_asal_id = akun1.id")
         ->join("join", "acc_m_akun akun2", "acc_transfer.m_akun_tujuan_id = akun2.id")
         ->join("join", "acc_m_lokasi lok1", "acc_transfer.m_lokasi_asal_id = lok1.id")
-            ->join("join", "acc_m_lokasi lok2", "acc_transfer.m_lokasi_tujuan_id = lok2.id")
-        ->orderBy('acc_transfer.no_urut');
+        ->join("join", "acc_m_lokasi lok2", "acc_transfer.m_lokasi_tujuan_id = lok2.id")
+        ->orderBy('acc_transfer.tanggal DESC')
+        ->orderBy('acc_transfer.created_at DESC');
 //        ->where("acc_pemasukan.is_deleted", "=", 0);
 
     if (isset($params['filter'])) {

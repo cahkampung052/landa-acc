@@ -130,7 +130,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 }
             }
         }
-        if($total > 0)
+        if($total > 0 || $total < 0)
             $arrHarta[$key]['total'] = $total;
         else
             unset($arrHarta[$key]);
@@ -205,7 +205,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 }
             }
         }
-        if($total > 0)
+        if($total > 0 || $total < 0)
             $arrKewajiban[$key]['total'] = $total;
         else
             unset($arrKewajiban[$key]);
@@ -290,7 +290,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 $total += $vals['saldo'];
             }
         }
-        if($total > 0)
+        if($total > 0 || $total < 0)
             $arrModal[$key]['total'] = $total;
         else
             unset($arrModal[$key]);

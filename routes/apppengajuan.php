@@ -170,6 +170,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
         $data["data"]["m_lokasi_id"] = $data["data"]["m_lokasi_id"]["id"];
         $tanggal = $data["data"]["tanggal"];
         $data["data"]["tanggal"] = date("Y-m-d H:i", strtotime($tanggal));
+        $data["data"]["lokasi_waktu"] .= " " . date("H:i");
         try {
 
             if (isset($data["data"]["id"]) && !empty($data["data"]["id"])) {
@@ -188,6 +189,8 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
                     return unprocessResponse($response, ["No proposal sudah ada"]);
                     die();
                 }
+                
+                
                 $model = $db->insert("acc_t_pengajuan", $data["data"]);
             }
 

@@ -137,7 +137,8 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
             ->from("acc_jurnal")
             ->join("join", "acc_m_user", "acc_jurnal.created_by = acc_m_user.id")
             ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal.m_lokasi_id")
-            ->orderBy('acc_jurnal.no_urut');
+            ->orderBy('acc_jurnal.tanggal DESC')
+            ->orderBy('acc_jurnal.created_at DESC');
 
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);

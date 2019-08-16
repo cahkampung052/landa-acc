@@ -7,10 +7,10 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
-    $scope.totaldebit = 0;
     $scope.form = {};
     $scope.form.tanggal = "";
     $scope.totalkredit = 0;
+    $scope.totaldebit = 0;
     $scope.tutup = false;
 //    $scope.form.m_fakultas_id = 1;
 

@@ -438,6 +438,7 @@ function generateNoTransaksi($type, $unker) {
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_pemasukan;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } else if ($type == 'pengeluaran') {
@@ -446,6 +447,7 @@ function generateNoTransaksi($type, $unker) {
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_pengeluaran;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } else if ($type == 'transfer') {
@@ -454,6 +456,7 @@ function generateNoTransaksi($type, $unker) {
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_transfer;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } else if ($type == 'jurnal') {
@@ -462,6 +465,7 @@ function generateNoTransaksi($type, $unker) {
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_jurnal;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } else if ($type == 'customer') {
