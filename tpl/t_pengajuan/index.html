@@ -81,7 +81,7 @@
                                 <th class="align-center">Tipe</th>
                                 <th class="align-left">Tanggal</th>
                                 <th class="align-left">Biaya</th>
-                                <th></th>
+                                <th width="100"></th>
                             </tr>
                         </thead>
                         <tbody ng-show="!isLoading">
@@ -96,7 +96,7 @@
                                                                 </td>-->
                                 <td class="align-center">{{ row.tipe}}</td>
                                 <td class="align-left">{{ row.tanggal_formated}}</td>
-                                <td class="align-left">{{ row.jumlah_perkiraan | currency }}</td>
+                                <td class="align-right">{{ row.jumlah_perkiraan | currency }}</td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-success fa fa-print" ng-click="print(row)"></button>

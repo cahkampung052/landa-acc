@@ -159,7 +159,8 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
          * Generate no_proposal
          */
         $kode = generateNoTransaksi("pengajuan", $data['data']['m_lokasi_id']['kode']);
-
+        $urut = (empty($kode)) ? 1 : ((int) substr($kode, -5));
+//        echo $kode;die();
         $data["data"]["m_lokasi_id"] = $data["data"]["m_lokasi_id"]["id"];
         $tanggal = $data["data"]["tanggal"];
         $data["data"]["tanggal"] = date("Y-m-d H:i", strtotime($tanggal));
@@ -172,6 +173,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
                 $db->delete("acc_approval_pengajuan", ["t_pengajuan_id" => $data["data"]["id"]]);
             } else {
                 $data["data"]["no_proposal"] = $kode;
+                $data["data"]["no_urut"] = $urut;
                 unset($data["data"]["id"]);
                 unset($data["data"]["levelapproval"]);
                 $checkproposal = $db->select("*")
