@@ -21,13 +21,17 @@ $app->get('/acc/m_akun_peta/index', function ($request, $response) {
 //    $akunpeta = ["Pengimbang Neraca", "Laba Rugi", "tes"];
     $akunpeta = $db->select("acc_m_akun_peta.*, acc_m_akun.kode, acc_m_akun.nama")
                 ->from("acc_m_akun_peta")
-                ->join("left join", "acc_m_akun", "acc_m_akun.id = acc_m_akun_peta.m_akun_id")
+                ->join("left join", "acc_m_akun", "acc_m_akun.id = acc_m_akun_peta.m_akun_id AND acc_m_akun_peta.is_multiple = 0")
                 ->findAll();
     $arr = [];
     $status = 1;
     foreach ($akunpeta as $key => $val) {
-        if($val->m_akun_id != 0){
-            $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kode, "nama" => $val->nama];
+        if($val->m_akun_id != NULL){
+            if($val->is_multiple == 1){
+                $val->m_akun_id = json_decode($val->m_akun_id);
+            }else{
+                $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kode, "nama" => $val->nama];
+            }
         }else{
             $status = 0;
         }
@@ -47,7 +51,12 @@ $app->post('/acc/m_akun_peta/save', function ($request, $response) {
 //    print_r($data);die();
     $sql = $this->db;
     foreach ($data as $key => $val) {
-        $val['m_akun_id'] = isset($val['m_akun_id']) ? $val['m_akun_id']['id'] : '';
+        if($val['is_multiple'] == 1){
+            $val['m_akun_id'] = isset($val['m_akun_id']) ? json_encode($val['m_akun_id']) : '';
+        }else{
+            $val['m_akun_id'] = isset($val['m_akun_id']) ? $val['m_akun_id']['id'] : '';
+        }
+//        print_r($val);
         $cek = $sql->select("*")->from("acc_m_akun_peta")->where("type", "=", $val["type"])->find();
         if($cek){
             $model = $sql->update("acc_m_akun_peta", $val, ["id"=>$cek->id]);
@@ -56,7 +65,7 @@ $app->post('/acc/m_akun_peta/save', function ($request, $response) {
         }
         
     }
-
+//    die();
     if ($model) {
         return successResponse($response, $model);
     } else {
