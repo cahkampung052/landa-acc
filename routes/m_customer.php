@@ -28,6 +28,20 @@ $app->get('/acc/m_customer/getKontak', function ($request, $response) {
       'list' => $models
     ]);
 });
+
+$app->get('/acc/m_customer/getKaryawan', function ($request, $response) {
+    $db     = $this->db;
+    $params = $request->getParams();
+    $models = $db->select("*")
+        ->from("karyawan")
+        ->where("is_deleted", "=", 0)
+        ->findAll();
+
+    return successResponse($response, [
+      'list' => $models
+    ]);
+});
+
 $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("*")
