@@ -468,6 +468,15 @@ function generateNoTransaksi($type, $unker) {
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
+    } else if ($type == 'pengajuan') {
+        $cek = $db->find("select no_proposal from acc_t_pengajuan order by no_proposal desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_proposal, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = $custom->format_pengajuan;
+        $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
+        $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
+        $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } else if ($type == 'customer') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;

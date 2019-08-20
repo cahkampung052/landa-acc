@@ -115,7 +115,8 @@
                                     {{row.total| currency}}
                                 </td>
                                 <td style="text-align: left;">
-                                    {{row.penerima}}
+                                    <span ng-if="row.penerima != ''">{{row.penerima}}</span>
+                                    <span ng-if="row.penerima == ''">{{row.namaAkun}}</span>
                                 </td>
                                 <td style="text-align: left;">
                                     {{row.created_at}}

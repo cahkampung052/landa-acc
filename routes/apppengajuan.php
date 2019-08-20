@@ -9,7 +9,7 @@
 function validasi($data, $custom = array()) {
     $validasi = array(
         "m_lokasi_id" => "required",
-        "no_proposal" => "required"
+//        "no_proposal" => "required"
     );
     $cek = validate($data, $validasi, $custom);
     return $cek;
@@ -154,18 +154,11 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
     $validasi = validasi($data["data"]);
     if ($validasi === true) {
 
+        
         /**
          * Generate no_proposal
          */
-//        $getNoUrut = $db->select("*")->from("acc_t_pengajuan")->orderBy("no_urut DESC")->find();
-//        $data["data"]["no_urut"] = 1;
-//        $urut = 1;
-//        if ($getNoUrut) {
-//            $data["data"]["no_urut"] = $getNoUrut->no_urut + 1;
-//            $urut = ((int) substr($getNoUrut->no_urut, -4)) + 1;
-//        }
-//        $no_urut = substr('0000' . $urut, -4);
-//        $kode = $data['data']['m_lokasi_id']['kode'] . date("y") . "PNGJ" . $no_urut;
+        $kode = generateNoTransaksi("pengajuan", $data['data']['m_lokasi_id']['kode']);
 
         $data["data"]["m_lokasi_id"] = $data["data"]["m_lokasi_id"]["id"];
         $tanggal = $data["data"]["tanggal"];
@@ -178,7 +171,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
                 $db->delete("acc_t_pengajuan_det", ["t_pengajuan_id" => $data["data"]["id"]]);
                 $db->delete("acc_approval_pengajuan", ["t_pengajuan_id" => $data["data"]["id"]]);
             } else {
-//                $data["data"]["no_proposal"] = $kode;
+                $data["data"]["no_proposal"] = $kode;
                 unset($data["data"]["id"]);
                 unset($data["data"]["levelapproval"]);
                 $checkproposal = $db->select("*")
