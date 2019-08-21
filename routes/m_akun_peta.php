@@ -13,6 +13,19 @@ function validasi($data, $custom = array()) {
     return $cek;
 }
 
+$app->get("/acc/m_akun_peta/getPemetaanAkun", function($request, $response){
+    $params = $request->getParams();
+    $akunpeta = getPemetaanAkun($params['type']);
+    
+    $db = $this->db;
+    $models = $db->select("*")->from("acc_m_akun")->where("id", "=", $akunpeta)->find();
+    
+    return successResponse($response, [
+        'list' => $models
+    ]);
+    
+});
+
 $app->get('/acc/m_akun_peta/index', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;

@@ -482,6 +482,16 @@ function generateNoTransaksi($type, $unker) {
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = date("Y") . "/" . date("m") . "/KSBN/" . $no_urut;
+    } else if ($type == 'pembayaran_kasbon') {
+        $cek = $db->find("select no_transaksi, no_urut from acc_bayar_kasbon order by no_urut desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = date("Y") . "/" . date("m") . "/" . $unker . "/BYRKSBN/" . $no_urut;
+    } else if ($type == 'pembayaran_hutang') {
+        $cek = $db->find("select kode from acc_bayar_hutang order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "BS" . $no_urut;
     } else if ($type == 'customer') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
