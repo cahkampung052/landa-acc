@@ -1,4 +1,4 @@
-app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
+app.controller('l_piutangCtrl', function ($scope, Data, $rootScope) {
     var tableStateRef;
     var control_link = "acc/l_piutang";
     var master = 'Laporan Piutang';
@@ -13,7 +13,7 @@ app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
     /**
      * Ambil list semua akun
      */
-    Data.get('acc/m_akun/akunDetail').then(function(data) {
+    Data.get('acc/m_akun/akunDetail').then(function (data) {
         $scope.listAkun = data.data.list;
         if ($scope.listAkun.length > 0) {
             $scope.form.m_akun_id = $scope.listAkun[0];
@@ -22,41 +22,41 @@ app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
     /**
      * Ambil semua lokasi
      */
-    Data.get('acc/m_lokasi/getLokasi').then(function(response) {
+    Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
         }
     });
-    
+
     /*
      * ambil supplier
      */
-    Data.get('acc/m_customer/getCustomer').then(function(response) {
+    Data.get('acc/m_customer/getCustomer').then(function (response) {
         $scope.listCustomer = response.data.list;
         if ($scope.listCustomer.length > 0) {
             $scope.form.m_kontak_id = $scope.listCustomer[0];
         }
     });
-    
+
     /**
      * Ambil laporan dari server
      */
-    $scope.view = function(is_export, is_print) {
+    $scope.view = function (is_export, is_print) {
         $scope.mulai = moment($scope.form.tanggal.startDate).format('DD-MM-YYYY');
         $scope.selesai = moment($scope.form.tanggal.endDate).format('DD-MM-YYYY');
         var param = {
             export: is_export,
             print: is_print,
             m_lokasi_id: $scope.form.m_lokasi_id.id,
-            m_kontak_id : $scope.form.m_kontak_id.id,
+            m_kontak_id: $scope.form.m_kontak_id.id,
             nama_lokasi: $scope.form.m_lokasi_id.nama,
             m_akun_id: $scope.form.m_akun_id.id,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
         };
         if (is_export == 0 && is_print == 0) {
-            Data.get(control_link + '/laporan', param).then(function(response) {
+            Data.get(control_link + '/laporan', param).then(function (response) {
                 if (response.status_code == 200) {
                     $scope.data = response.data.data;
                     $scope.detail = response.data.detail;
@@ -67,7 +67,10 @@ app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
                 }
             });
         } else {
-            window.open("api/acc/l_piutang/laporan?" + $.param(param), "_blank");
+            Data.get('site/base_url').then(function (response) {
+//                console.log(response)
+                window.open(response.data.base_url + "api/acc/l_piutang/laporan?" + $.param(param), "_blank");
+            });
         }
     };
 });
