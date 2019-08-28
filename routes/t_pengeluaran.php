@@ -130,19 +130,20 @@ $app->get('/acc/t_pengeluaran/getDetail', function ($request, $response) {
  */
 $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     $db = $this->db;
     $db->select("
             acc_pengeluaran.*, 
             acc_m_lokasi.kode as kodeLokasi, 
             acc_m_lokasi.nama as namaLokasi, 
-            acc_m_user.nama as namaUser, 
+            ".$tableuser.".nama as namaUser, 
             acc_m_akun.kode as kodeAkun, 
             acc_m_akun.nama as namaAkun, 
             acc_m_kontak.nama as namaSup,
             acc_m_kontak.type as typeSup
         ")
             ->from("acc_pengeluaran")
-            ->join("left join", "acc_m_user", "acc_pengeluaran.created_by = acc_m_user.id")
+            ->join("left join", $tableuser, $tableuser.".id = acc_pengeluaran.created_by")
             ->join("left join", "acc_m_akun", "acc_pengeluaran.m_akun_id = acc_m_akun.id")
             ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pengeluaran.m_lokasi_id")
             ->join("left join", "acc_m_kontak", "acc_m_kontak.id = acc_pengeluaran.m_kontak_id")

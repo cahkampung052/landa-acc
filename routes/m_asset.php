@@ -54,15 +54,16 @@ $app->get('/acc/m_asset/cekPenyusutanBulanini', function ($request, $response) {
 
 $app->get('/acc/m_asset/list_penyusutan', function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     // $sort     = "m_akun.kode ASC";
     $offset = isset($params['offset']) ? $params['offset'] : 0;
     $limit  = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_riw_penyusutan.*,acc_m_lokasi.nama as nm_lokasi,acc_m_user.nama as nm_user,SUM(penyusutan_perbulan) as total_penyusutan")
+    $db->select("acc_riw_penyusutan.*,acc_m_lokasi.nama as nm_lokasi," .$tableuser. ".nama as nm_user,SUM(penyusutan_perbulan) as total_penyusutan")
         ->from("acc_riw_penyusutan")
         ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_riw_penyusutan.lokasi_id")
-        ->leftJoin("acc_m_user", "acc_m_user.id = acc_riw_penyusutan.created_by")
+        ->leftJoin($tableuser, $tableuser.".id = acc_riw_penyusutan.created_by")
         ->leftJoin("acc_riw_penyusutan_dt", "acc_riw_penyusutan.id = acc_riw_penyusutan_dt.riw_id")
         ->orderBy('acc_riw_penyusutan.id DESC');
 

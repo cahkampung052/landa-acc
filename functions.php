@@ -507,3 +507,10 @@ function generateNoTransaksi($type, $unker) {
 
     return @$no_transaksi;
 }
+
+function tableUser(){
+    if(config('TABLE_USER') == "")
+        return "acc_m_user";
+    else
+        return config('TABLE_USER');
+}

@@ -10,7 +10,7 @@
                         
                         <div class="col-md-6" ng-repeat="val in displayed">
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label-sm required">{{val.type}}</label>
+                                    <label class="col-md-4 col-form-label-sm required">{{val.label}}</label>
                                     <div class="col-md-8">
                                         <ui-select multiple class="ui-select-sm ui-select-container" ng-model="val.m_akun_id" theme="bootstrap" ng-disabled="is_view" ng-if="val.is_multiple == 1">
                                             <ui-select-match placeholder="Pilih Akun">

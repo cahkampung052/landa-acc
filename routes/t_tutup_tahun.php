@@ -16,7 +16,7 @@ function validasi($data, $custom = array()) {
 
 $app->get('/acc/t_tutup_tahun/index', function ($request, $response) {
     $params = $request->getParams();
-
+    $tableuser = tableUser();
     $sort = "id DESC";
     $offset = isset($params['offset']) ? $params['offset'] : 0;
     $limit = isset($params['limit']) ? $params['limit'] : 10;
@@ -26,10 +26,10 @@ $app->get('/acc/t_tutup_tahun/index', function ($request, $response) {
     /** Select Gudang from database */
     $db->select("
       acc_tutup_buku.*,
-      acc_m_user.nama as namaUser
+      ".$tableuser.".nama as namaUser
       ")
             ->from("acc_tutup_buku")
-            ->leftJoin("acc_m_user", "acc_m_user.id=acc_tutup_buku.created_by")
+            ->leftJoin($tableuser, $tableuser.".id=acc_tutup_buku.created_by")
             ->where("acc_tutup_buku.jenis", "=", "tahun");
     /** Add filter */
     if (isset($params['filter'])) {

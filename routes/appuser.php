@@ -21,9 +21,10 @@ function validasi($data, $custom = array())
  */
 $app->get("/acc/appuser/getAll", function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     $db     = $this->db;
     $db->select("*")
-        ->from("acc_m_user")
+        ->from($tableuser)
         ->where("is_deleted", "=", 0);
     if (isset($params["nama"]) && !empty($params["nama"])) {
         $db->where("nama", "LIKE", $params["nama"]);
@@ -35,8 +36,9 @@ $app->get("/acc/appuser/getAll", function ($request, $response) {
  * Ambil data user untuk update profil
  */
 $app->get("/acc/appuser/view", function ($request, $response) {
+    $tableuser = tableUser();
     $db   = $this->db;
-    $data = $db->find("select * from acc_m_user where id = '" . $_SESSION["user"]["id"] . "'");
+    $data = $db->find("select * from " .$tableuser. " where id = '" . $_SESSION["user"]["id"] . "'");
     unset($data->password);
     return successResponse($response, $data);
 });
@@ -45,10 +47,11 @@ $app->get("/acc/appuser/view", function ($request, $response) {
  */
 $app->get("/acc/appuser/index", function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     $db     = $this->db;
-    $db->select("acc_m_user.*, acc_m_roles.nama as hakakses")
-        ->from("acc_m_user")
-        ->join("left join", "acc_m_roles", "acc_m_user.m_roles_id = acc_m_roles.id");
+    $db->select($tableuser.".*, acc_m_roles.nama as hakakses")
+        ->from($tableuser)
+        ->join("left join", "acc_m_roles", $tableuser.".m_roles_id = acc_m_roles.id");
     /**
      * Filter
      */
@@ -56,9 +59,9 @@ $app->get("/acc/appuser/index", function ($request, $response) {
         $filter = (array) json_decode($params["filter"]);
         foreach ($filter as $key => $val) {
             if ($key == "nama") {
-                $db->where("acc_m_user.nama", "LIKE", $val);
+                $db->where($tableuser.".nama", "LIKE", $val);
             } else if ($key == "is_deleted") {
-                $db->where("acc_m_user.is_deleted", "=", $val);
+                $db->where($tableuser.".is_deleted", "=", $val);
             } else {
                 $db->where($key, "LIKE", $val);
             }
@@ -86,6 +89,7 @@ $app->get("/acc/appuser/index", function ($request, $response) {
  */
 $app->post("/acc/appuser/save", function ($request, $response) {
     $data = $request->getParams();
+    $tableuser = tableUser();
     $db   = $this->db;
 
     if (isset($data["id"])) {
@@ -110,9 +114,9 @@ $app->post("/acc/appuser/save", function ($request, $response) {
         try {
             $data['lokasi'] = json_encode($data['lokasi']);
             if (isset($data["id"])) {
-                $model = $db->update("acc_m_user", $data, ["id" => $data["id"]]);
+                $model = $db->update($tableuser, $data, ["id" => $data["id"]]);
             } else {
-                $model = $db->insert("acc_m_user", $data);
+                $model = $db->insert($tableuser, $data);
             }
             return successResponse($response, $model);
         } catch (Exception $e) {
@@ -126,13 +130,14 @@ $app->post("/acc/appuser/save", function ($request, $response) {
  */
 $app->post("/acc/appuser/saveStatus", function ($request, $response) {
     $data = $request->getParams();
+    $tableuser = tableUser();
     $db   = $this->db;
     unset($data["password"]);
     $validasi = validasi($data);
     if ($validasi === true) {
         try {
             $data["lokasi"] = json_encode($data["lokasi"]);
-            $model = $db->update("acc_m_user", $data, ["id" => $data["id"]]);
+            $model = $db->update($tableuser, $data, ["id" => $data["id"]]);
             return successResponse($response, $model);
         } catch (Exception $e) {
             return unprocessResponse($response, ["Terjadi masalah pada server"]);

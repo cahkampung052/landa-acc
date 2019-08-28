@@ -67,10 +67,11 @@ $app->get("/acc/apppengajuan/view", function ($request, $response) {
  */
 $app->get("/acc/apppengajuan/getAcc", function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     $db = $this->db;
-    $db->select("acc_approval_pengajuan.*, acc_m_user.nama as namaUser")
+    $db->select("acc_approval_pengajuan.*, " .$tableuser. ".nama as namaUser")
             ->from("acc_approval_pengajuan")
-            ->join("JOIN", "acc_m_user", "acc_m_user.id = acc_approval_pengajuan.acc_m_user_id")
+            ->join("JOIN", $tableuser, $tableuser.".id = acc_approval_pengajuan.acc_m_user_id")
             ->where("t_pengajuan_id", "=", $params['t_pengajuan_id'])
             ->orderBy("acc_approval_pengajuan.level");
     $models = $db->findAll();
@@ -86,11 +87,12 @@ $app->get("/acc/apppengajuan/getAcc", function ($request, $response) {
  */
 $app->get("/acc/apppengajuan/index", function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     $db = $this->db;
-    $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_user.nama as namaUser")
+    $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, " .$tableuser. ".nama as namaUser")
             ->from("acc_t_pengajuan")
             ->join("JOIN", "acc_m_lokasi", "acc_m_lokasi.id = acc_t_pengajuan.m_lokasi_id")
-            ->join("JOIN", "acc_m_user", "acc_m_user.id = acc_t_pengajuan.created_by")
+            ->join("JOIN", $tableuser, $tableuser.".id = acc_t_pengajuan.created_by")
             ->orderBy("tanggal DESC");
 
     /**
@@ -305,14 +307,14 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
  */
 $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response) {
     $data = $request->getParams();
-
+    $tableuser = tableUser();
     $db = $this->db;
     $db->select("*")->from("acc_t_pengajuan_det")->where("t_pengajuan_id", "=", $data['id']);
     $detail = $db->findAll();
     foreach ($detail as $key => $val) {
         $val->no = $key + 1 . ".";
     }
-    $db->select("acc_approval_pengajuan.*, acc_m_user.nama")->from("acc_approval_pengajuan")->join("JOIN", "acc_m_user", "acc_m_user.id = acc_approval_pengajuan.acc_m_user_id")->where("t_pengajuan_id", "=", $data['id']);
+    $db->select("acc_approval_pengajuan.*, " .$tableuser. ".nama")->from("acc_approval_pengajuan")->join("JOIN", $tableuser, $tableuser.".id = acc_approval_pengajuan.acc_m_user_id")->where("t_pengajuan_id", "=", $data['id']);
     $acc = $db->findAll();
 //    echo "<pre>", print_r($data), "</pre>";die();
     $a = getMasterSetting();

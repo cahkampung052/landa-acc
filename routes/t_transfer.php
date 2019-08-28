@@ -48,14 +48,15 @@ $app->get('/acc/t_transfer/akunKas', function ($request, $response) {
 
 $app->get('/acc/t_transfer/index', function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     // $sort     = "m_akun.kode ASC";
     $offset = isset($params['offset']) ? $params['offset'] : 0;
     $limit = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_transfer.*, lok1.nama as namaLokAsal, lok1.kode as kodeLokAsal, lok2.nama as namaLokTujuan, lok2.kode as kodeLokTujuan, acc_m_user.nama as namaUser, akun2.id as idTujuan, akun2.nama as namaTujuan, akun2.kode as kodeTujuan, akun1.id as idAsal, akun1.nama as namaAsal, akun1.kode as kodeAsal")
+    $db->select("acc_transfer.*, lok1.nama as namaLokAsal, lok1.kode as kodeLokAsal, lok2.nama as namaLokTujuan, lok2.kode as kodeLokTujuan, ".$tableuser.".nama as namaUser, akun2.id as idTujuan, akun2.nama as namaTujuan, akun2.kode as kodeTujuan, akun1.id as idAsal, akun1.nama as namaAsal, akun1.kode as kodeAsal")
             ->from("acc_transfer")
-            ->join("join", "acc_m_user", "acc_transfer.created_by = acc_m_user.id")
+            ->join("join", $tableuser, $tableuser.".id = acc_transfer.created_by ")
             ->join("join", "acc_m_akun akun1", "acc_transfer.m_akun_asal_id = akun1.id")
             ->join("join", "acc_m_akun akun2", "acc_transfer.m_akun_tujuan_id = akun2.id")
             ->join("join", "acc_m_lokasi lok1", "acc_transfer.m_lokasi_asal_id = lok1.id")

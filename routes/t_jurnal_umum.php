@@ -128,14 +128,15 @@ $app->get('/acc/t_jurnal_umum/getDetail', function ($request, $response) {
  */
 $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     // $sort     = "m_akun.kode ASC";
     $offset = isset($params['offset']) ? $params['offset'] : 0;
     $limit = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_jurnal.*, acc_m_lokasi.id as idLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi, acc_m_user.nama as namaUser")
+    $db->select("acc_jurnal.*, acc_m_lokasi.id as idLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi, ".$tableuser.".nama as namaUser")
             ->from("acc_jurnal")
-            ->join("join", "acc_m_user", "acc_jurnal.created_by = acc_m_user.id")
+            ->join("join", $tableuser, $tableuser.".id = acc_jurnal.created_by")
             ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal.m_lokasi_id")
             ->orderBy('acc_jurnal.tanggal DESC')
             ->orderBy('acc_jurnal.created_at DESC');
