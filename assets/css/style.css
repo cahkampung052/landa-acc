@@ -109,6 +109,12 @@ td, th {
 .content-center {
     text-align: center;
 }
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
 .header-laporan-wrapper {
     margin-bottom: 15px;
     margin-top: 15px;

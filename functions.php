@@ -461,7 +461,7 @@ function generateNoTransaksi($type, $unker) {
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } else if ($type == 'pengeluaran') {
-        $cek = $db->find("select no_transaksi from acc_pengeluaran order by no_transaksi desc");
+        $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran order by no_urut desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_pengeluaran;
@@ -525,4 +525,11 @@ function generateNoTransaksi($type, $unker) {
 
 
     return @$no_transaksi;
+}
+
+function tableUser(){
+    if(config('TABLE_USER') == "")
+        return "acc_m_user";
+    else
+        return config('TABLE_USER');
 }

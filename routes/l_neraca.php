@@ -45,8 +45,8 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     /**
      * Ambil akun laba rugi
      */
-    $labarugi = $db->find("select * from acc_m_akun_peta where type = 'Laba Rugi Berjalan'");
-    $akunLabaRugi = isset($labarugi->m_akun_id) ? $labarugi->m_akun_id : 0;
+    $labarugi = getPemetaanAkun("Laba Rugi Berjalan");
+    $akunLabaRugi = isset($labarugi) ? $labarugi : 0;
 
     /*
      * ambil akun pengecualian
@@ -130,7 +130,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 }
             }
         }
-        if($total > 0 || $total < 0)
+        if ($total > 0 || $total < 0)
             $arrHarta[$key]['total'] = $total;
         else
             unset($arrHarta[$key]);
@@ -205,11 +205,10 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 }
             }
         }
-        if($total > 0 || $total < 0)
+        if ($total > 0 || $total < 0)
             $arrKewajiban[$key]['total'] = $total;
         else
             unset($arrKewajiban[$key]);
-        
     }
     /*
      * end proses kewajiban
@@ -290,11 +289,10 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 $total += $vals['saldo'];
             }
         }
-        if($total > 0 || $total < 0)
+        if ($total > 0 || $total < 0)
             $arrModal[$key]['total'] = $total;
         else
             unset($arrModal[$key]);
-        
     }
 
     $totalKewajibanModal = $totalKewajiban + $totalModal;

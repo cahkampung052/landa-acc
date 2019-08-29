@@ -18,11 +18,12 @@ function validasi($data, $custom = array()) {
  */
 $app->get("/acc/apppertanggungjawaban/index", function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     $db = $this->db;
-    $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_user.nama as namaUser")
+    $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, " .$tableuser. ".nama as namaUser")
             ->from("acc_t_pengajuan")
             ->join("JOIN", "acc_m_lokasi", "acc_m_lokasi.id = acc_t_pengajuan.m_lokasi_id")
-            ->join("JOIN", "acc_m_user", "acc_m_user.id = acc_t_pengajuan.created_by")
+            ->join("JOIN", $tableuser, $tableuser.".id = acc_t_pengajuan.created_by")
             ->where("acc_t_pengajuan.status", "=", "approved");
     
     /**

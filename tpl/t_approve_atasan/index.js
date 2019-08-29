@@ -95,7 +95,7 @@ app.controller("tapprovalCtrl", function ($scope, Data, $rootScope, $uibModal) {
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.getAcc(form.id);
-        $scope.cekBudget = false;
+        $scope.cekBudget = true;
     };
     $scope.save = function (form, status) {
         console.log(form)

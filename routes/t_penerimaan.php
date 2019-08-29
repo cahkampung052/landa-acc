@@ -118,19 +118,20 @@ $app->get('/acc/t_penerimaan/getDetail', function ($request, $response) {
  */
 $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     $db = $this->db;
     $db->select("
                 acc_pemasukan.*, 
                 acc_m_lokasi.kode as kodeLokasi, 
                 acc_m_lokasi.nama as namaLokasi, 
-                acc_m_user.nama as namaUser, 
+                ".$tableuser.".nama as namaUser, 
                 acc_m_akun.kode as kodeAkun, 
                 acc_m_akun.nama as namaAkun, 
                 acc_m_kontak.nama as namaCus,
                 acc_m_kontak.type as typeCus
             ")
             ->from("acc_pemasukan")
-            ->join("left join", "acc_m_user", "acc_pemasukan.created_by = acc_m_user.id")
+            ->join("left join", $tableuser, $tableuser.".id = acc_pemasukan.created_by")
             ->join("left join", "acc_m_akun", "acc_pemasukan.m_akun_id = acc_m_akun.id")
             ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pemasukan.m_lokasi_id")
             ->join("left join", "acc_m_kontak", "acc_m_kontak.id = acc_pemasukan.m_kontak_id")

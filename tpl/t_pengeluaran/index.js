@@ -156,11 +156,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
                 $scope.listDetail = [];
                 angular.forEach(response.data, function(value, key){
                     $scope.listDetail[key] = {
-                        m_akun_id: {
-                            id : $scope.akunDetail[0].id,
-                            kode : $scope.akunDetail[0].kode,
-                            nama : $scope.akunDetail[0].nama
-                        },
+                        m_akun_id: value.m_akun_id,
                         keterangan : value.keterangan + " (" + value.jumlah + "" + value.jenis_satuan +"@"+value.harga_satuan + ")",
                         debit : value.sub_total
                     }
