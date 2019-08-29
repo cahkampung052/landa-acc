@@ -398,10 +398,29 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
     }
 }
 
-function getPemetaanAkun($type) {
+function getPemetaanAkun($tipe = '')
+{
     $db = new Cahkampung\Landadb(config('DB')['db']);
-    $akun = $db->select("*")->from("acc_m_akun_peta")->where("type", "=", $type)->find();
-    return isset($akun->m_akun_id) ? $akun->m_akun_id : 0;
+    $arrAkun = [0 => 0];
+    $db->select("*")
+        ->from("acc_m_akun_peta");
+    if(!empty($tipe)){
+        $db->where("type", "=", $tipe);
+    }
+    $akun = $db->findAll();
+    foreach ($akun as $key => $value) {
+        if (isset($value->is_multiple) && $value->is_multiple == 1) {
+            $arrAkun[$value->type] = json_decode($value->m_akun_id);
+        } else {
+            $arrAkun[$value->type] = [0 => $value->m_akun_id];
+        }
+    }
+
+    if(!empty($tipe)){
+        return $arrAkun[$tipe];        
+    }else{
+        return $arrAkun;
+    }
 }
 
 function getMasterSetting() {
