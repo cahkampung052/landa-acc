@@ -318,8 +318,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             array_push($arrPengecualian, $b->m_akun_id->id);
         }
     }
-    
-//    print_r($klasifikasi);die();
+
 
     /*
      * proses perulangan
@@ -343,52 +342,50 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             }
         }
 //        print_r($akunId);die();
-        if(is_array($akunId) && !empty($akunId)){
+        if (is_array($akunId) && !empty($akunId)) {
             $getakun = $sql->select("*")
-                ->from("acc_m_akun")
-                ->customWhere("id IN(" . implode(',', $akunId) . ")")
-                ->orderBy("kode")
-                ->findAll();
-        foreach ($getakun as $key => $val) {
-            $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                    ->from("acc_trans_detail");
-            if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-                $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
-            }
-            $sql->where('acc_trans_detail.m_akun_id', '=', $val->id);
-            if ($tanggal_end != null) {
-                $sql->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
-                        ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
-            } else {
-                $sql->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_start);
-            }
-            $gettransdetail = $sql->find();
-            if ((intval($gettransdetail->debit) - intval($gettransdetail->kredit) > 0) || (intval($gettransdetail->debit) - intval($gettransdetail->kredit) < 0) || $val->is_tipe == 1) {
-                if ($val->is_tipe == 1) {
-                    $arr[$index]['detail'][$val->id]['kode'] = $val->kode;
-                    $arr[$index]['detail'][$val->id]['nama'] = $val->nama;
-                    $arr[$index]['detail'][$val->id]['nominal'] = 0;
+                    ->from("acc_m_akun")
+                    ->customWhere("id IN(" . implode(',', $akunId) . ")")
+                    ->orderBy("kode")
+                    ->findAll();
+            foreach ($getakun as $key => $val) {
+                $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
+                        ->from("acc_trans_detail");
+                if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+                    $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
+                }
+                $sql->where('acc_trans_detail.m_akun_id', '=', $val->id);
+                if ($tanggal_end != null) {
+                    $sql->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
+                            ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
                 } else {
-                    $arr[$index]['detail'][$val->parent_id]['detail'][$key]['kode'] = $val->kode;
-                    $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nama'] = $val->nama;
-                    $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'] = (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
-                    $arr[$index]['total'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
-                    $arr[$index]['detail'][$val->parent_id]['nominal'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
+                    $sql->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_start);
+                }
+                $gettransdetail = $sql->find();
+                if ((intval($gettransdetail->debit) - intval($gettransdetail->kredit) > 0) || (intval($gettransdetail->debit) - intval($gettransdetail->kredit) < 0) || $val->is_tipe == 1) {
+                    if ($val->is_tipe == 1) {
+                        $arr[$index]['detail'][$val->id]['kode'] = $val->kode;
+                        $arr[$index]['detail'][$val->id]['nama'] = $val->nama;
+                        $arr[$index]['detail'][$val->id]['nominal'] = 0;
+                    } else {
+                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['kode'] = $val->kode;
+                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nama'] = $val->nama;
+                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'] = (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
+                        $arr[$index]['total'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
+                        $arr[$index]['detail'][$val->parent_id]['nominal'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
 
-                    $total_[$val->tipe] += $arr[$index]['total'];
-                }
-                if ($akun->tipe == "HARTA" || $akun->tipe == "PENDAPATAN LAIN") {
-                    $total += (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
-                } else {
-                    $total -= (intval($gettransdetail->debit) - intval($gettransdetail->kredit));
+                        $total_[$val->tipe] += $arr[$index]['total'];
+                    }
+                    if ($akun->tipe == "HARTA" || $akun->tipe == "PENDAPATAN LAIN") {
+                        $total += (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
+                    } else {
+                        $total -= (intval($gettransdetail->debit) - intval($gettransdetail->kredit));
+                    }
                 }
             }
         }
-        }
-        
     }
 //    die();
-
 //    print_r($total_);die();
 
     if ($array) {
@@ -398,13 +395,12 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
     }
 }
 
-function getPemetaanAkun($tipe = '')
-{
+function getPemetaanAkun($tipe = '') {
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $arrAkun = [0 => 0];
     $db->select("*")
-        ->from("acc_m_akun_peta");
-    if(!empty($tipe)){
+            ->from("acc_m_akun_peta");
+    if (!empty($tipe)) {
         $db->where("type", "=", $tipe);
     }
     $akun = $db->findAll();
@@ -416,9 +412,9 @@ function getPemetaanAkun($tipe = '')
         }
     }
 
-    if(!empty($tipe)){
-        return $arrAkun[$tipe];        
-    }else{
+    if (!empty($tipe)) {
+        return $arrAkun[$tipe];
+    } else {
         return $arrAkun;
     }
 }
@@ -448,9 +444,9 @@ function getSessionLokasi() {
 function generateNoTransaksi($type, $unker) {
     $db = config('DB');
     $db = new Cahkampung\Landadb($db['db']);
-    
+
     $custom = getMasterSetting();
-    
+
     if ($type == 'penerimaan') {
         $cek = $db->find("select no_transaksi from acc_pemasukan order by no_transaksi desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
@@ -527,8 +523,8 @@ function generateNoTransaksi($type, $unker) {
     return @$no_transaksi;
 }
 
-function tableUser(){
-    if(config('TABLE_USER') == "")
+function tableUser() {
+    if (config('TABLE_USER') == "")
         return "acc_m_user";
     else
         return config('TABLE_USER');
