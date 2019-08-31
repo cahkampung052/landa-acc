@@ -217,9 +217,9 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
             if (isset($data['acc']) && !empty($data['acc'])) {
                 foreach ($data['acc'] as $key => $val) {
                     $insert['t_pengajuan_id'] = $model->id;
-                    $insert['acc_m_user_id'] = $val->acc_m_user_id;
-                    $insert['sebagai'] = $val->sebagai;
-                    $insert['level'] = $val->level;
+                    $insert['acc_m_user_id'] = $val['acc_m_user_id']['id'];
+                    $insert['sebagai'] = $val['sebagai'];
+                    $insert['level'] = $val['level'];
 
                     $db->insert("acc_approval_pengajuan", $insert);
                 }
@@ -243,7 +243,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
 
             return successResponse($response, $model);
         } catch (Exception $e) {
-            return unprocessResponse($response, ["terjadi kesalahan pada server"]);
+            return unprocessResponse($response, ['terjadi kesalahan pada server']);
         }
     }
     return unprocessResponse($response, $validasi);
