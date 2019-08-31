@@ -93,7 +93,7 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
             ->from("acc_t_pengajuan")
             ->join("JOIN", "acc_m_lokasi", "acc_m_lokasi.id = acc_t_pengajuan.m_lokasi_id")
             ->join("JOIN", $tableuser, $tableuser . ".id = acc_t_pengajuan.created_by")
-            ->orderBy("tanggal DESC");
+            ->orderBy("created_at DESC");
 
     /**
      * Filter
