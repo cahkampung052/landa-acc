@@ -18,7 +18,7 @@ $app->get("/acc/m_akun_peta/getPemetaanAkun", function($request, $response){
     $akunpeta = getPemetaanAkun($params['type']);
     
     $db = $this->db;
-    $models = $db->select("*")->from("acc_m_akun")->where("id", "=", $akunpeta)->find();
+    $models = $db->select("*")->from("acc_m_akun")->where("id", "=", (isset($akunpeta[0]) ? $akunpeta[0] : 0))->find();
     
     return successResponse($response, [
         'list' => $models
