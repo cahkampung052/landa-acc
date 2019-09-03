@@ -54,9 +54,9 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
     $limit = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_transfer.*, lok1.nama as namaLokAsal, lok1.kode as kodeLokAsal, lok2.nama as namaLokTujuan, lok2.kode as kodeLokTujuan, ".$tableuser.".nama as namaUser, akun2.id as idTujuan, akun2.nama as namaTujuan, akun2.kode as kodeTujuan, akun1.id as idAsal, akun1.nama as namaAsal, akun1.kode as kodeAsal")
+    $db->select("acc_transfer.*, lok1.nama as namaLokAsal, lok1.kode as kodeLokAsal, lok2.nama as namaLokTujuan, lok2.kode as kodeLokTujuan, " . $tableuser . ".nama as namaUser, akun2.id as idTujuan, akun2.nama as namaTujuan, akun2.kode as kodeTujuan, akun1.id as idAsal, akun1.nama as namaAsal, akun1.kode as kodeAsal")
             ->from("acc_transfer")
-            ->join("join", $tableuser, $tableuser.".id = acc_transfer.created_by ")
+            ->join("join", $tableuser, $tableuser . ".id = acc_transfer.created_by ")
             ->join("join", "acc_m_akun akun1", "acc_transfer.m_akun_asal_id = akun1.id")
             ->join("join", "acc_m_akun akun2", "acc_transfer.m_akun_tujuan_id = akun2.id")
             ->join("join", "acc_m_lokasi lok1", "acc_transfer.m_lokasi_asal_id = lok1.id")
@@ -179,7 +179,7 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
 
 
             $insert2_ = $insert2;
-            $insert2_['m_akun_id'] = $getakun;
+            $insert2_['m_akun_id'] = $getakun[0];
             $insert2_['debit'] = NULL;
             $insert2_['kredit'] = $data['form']['total'];
 
@@ -202,7 +202,7 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
 
         if ($data['form']['m_lokasi_asal_id'] != $data['form']['m_lokasi_tujuan_id']) {
             $insert3_ = $insert3;
-            $insert3_['m_akun_id'] = $getakun;
+            $insert3_['m_akun_id'] = $getakun[0];
             $insert3_['kredit'] = NULL;
             $insert3_['debit'] = $data['form']['total'];
             $transDetail[$index] = $insert3_;

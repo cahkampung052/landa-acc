@@ -506,7 +506,7 @@ function generateNoTransaksi($type, $unker) {
         $cek = $db->find("select kode from acc_bayar_hutang order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "BS" . $no_urut;
+        $no_transaksi = "BS/" . date("Y") . "/". $no_urut;
     } else if ($type == 'customer') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;

@@ -13,17 +13,25 @@ function validasi($data, $custom = array()) {
     return $cek;
 }
 
-$app->get("/acc/m_akun_peta/getPemetaanAkun", function($request, $response){
+$app->get("/acc/m_akun_peta/getPemetaanAkun", function($request, $response) {
     $params = $request->getParams();
     $akunpeta = getPemetaanAkun($params['type']);
+
+    $arr = [];
+    foreach ($akunpeta as $key => $val) {
+        if(isset($val->id))
+            array_push($arr, $val->id);
+        else
+            array_push($arr, $val);
+    }
     
+    $arr = implode(",", $arr);
     $db = $this->db;
-    $models = $db->select("*")->from("acc_m_akun")->where("id", "=", $akunpeta)->find();
-    
+    $models = $db->select("*")->from("acc_m_akun")->customWhere("id IN ($arr)", "AND")->findAll();
+
     return successResponse($response, [
         'list' => $models
     ]);
-    
 });
 
 $app->get('/acc/m_akun_peta/index', function ($request, $response) {
@@ -33,23 +41,23 @@ $app->get('/acc/m_akun_peta/index', function ($request, $response) {
 //    DEKLARASI AKUN PEMETAAN
 //    $akunpeta = ["Pengimbang Neraca", "Laba Rugi", "tes"];
     $akunpeta = $db->select("acc_m_akun_peta.*, acc_m_akun.kode, acc_m_akun.nama")
-                ->from("acc_m_akun_peta")
-                ->join("left join", "acc_m_akun", "acc_m_akun.id = acc_m_akun_peta.m_akun_id AND acc_m_akun_peta.is_multiple = 0")
-                ->findAll();
+            ->from("acc_m_akun_peta")
+            ->join("left join", "acc_m_akun", "acc_m_akun.id = acc_m_akun_peta.m_akun_id AND acc_m_akun_peta.is_multiple = 0")
+            ->findAll();
     $arr = [];
     $status = 1;
     foreach ($akunpeta as $key => $val) {
-        if($val->m_akun_id != NULL){
-            if($val->is_multiple == 1){
+        if ($val->m_akun_id != NULL) {
+            if ($val->is_multiple == 1) {
                 $val->m_akun_id = json_decode($val->m_akun_id);
-            }else{
+            } else {
                 $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kode, "nama" => $val->nama];
             }
-        }else{
+        } else {
             $status = 0;
         }
     }
-    
+
     return successResponse($response, [
         'list' => $akunpeta,
         'status_data' => $status,
@@ -61,24 +69,21 @@ $app->post('/acc/m_akun_peta/save', function ($request, $response) {
 
     $params = $request->getParams();
     $data = $params;
-//    print_r($data);die();
     $sql = $this->db;
     foreach ($data as $key => $val) {
-        if($val['is_multiple'] == 1){
+        if ($val['is_multiple'] == 1) {
             $val['m_akun_id'] = isset($val['m_akun_id']) ? json_encode($val['m_akun_id']) : '';
-        }else{
+        } else {
             $val['m_akun_id'] = isset($val['m_akun_id']) ? $val['m_akun_id']['id'] : '';
         }
-//        print_r($val);
+        
         $cek = $sql->select("*")->from("acc_m_akun_peta")->where("type", "=", $val["type"])->find();
-        if($cek){
-            $model = $sql->update("acc_m_akun_peta", $val, ["id"=>$cek->id]);
-        }else{
+        if ($cek) {
+            $model = $sql->update("acc_m_akun_peta", $val, ["id" => $cek->id]);
+        } else {
             $model = $sql->insert("acc_m_akun_peta", $val);
         }
-        
     }
-//    die();
     if ($model) {
         return successResponse($response, $model);
     } else {

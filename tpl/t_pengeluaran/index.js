@@ -15,40 +15,44 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     /*
      * Ambil akun kas
      */
-    Data.get('acc/m_akun/akunKas').then(function(data) {
+    Data.get('acc/m_akun/akunKas').then(function (data) {
         $scope.akun = data.data.list;
     });
-    
+
     /*
      * Ambil akun untuk detail
      */
-    Data.get('acc/m_akun/akunDetail').then(function(data) {
+    Data.get('acc/m_akun/akunDetail').then(function (data) {
         $scope.akunDetail = data.data.list;
     });
-    
+
     /*
      * ambil supplier
      */
-    Data.get('acc/m_customer/getKontak').then(function (response) {
-        $scope.listSupplier = response.data.list;
-    });
-    
+    $scope.cariKontak = function (cari) {
+        if (cari.toString().length > 2) {
+            Data.get('acc/m_customer/getKontak', {nama: cari}).then(function (response) {
+                $scope.listSupplier = response.data.list;
+            });
+        }
+    };
+
     /*
      * ambil lokasi
      */
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
     });
-    
-    Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
-        
+
+    Data.get('acc/m_akun/getTanggalSetting').then(function (response) {
+
         $scope.tanggal_setting = response.data.tanggal;
-        
+
         $scope.options = {
             minDate: new Date(response.data.tanggal),
         };
     });
-    
+
     /*
      * 
      * @type FileUploader
@@ -123,24 +127,24 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         });
     };
     /* sampe di sini*/
-    
+
     /*
      * cek jika ada param no_proposal
      */
     if (
-        typeof $stateParams.no_proposal != "undefined" &&
-        $stateParams.no_proposal != "" &&
-        $stateParams.no_proposal !== null
-    ) {
+            typeof $stateParams.no_proposal != "undefined" &&
+            $stateParams.no_proposal != "" &&
+            $stateParams.no_proposal !== null
+            ) {
         Data.get("acc/apppengajuan/getAll", {
-            no_proposal : $stateParams.no_proposal,
+            no_proposal: $stateParams.no_proposal,
             global: true
-        }).then(function(response) {
+        }).then(function (response) {
             var data = response.data[0];
             Data.get("acc/apppengajuan/view", {
-                t_pengajuan_id : data.id,
+                t_pengajuan_id: data.id,
                 global: true
-            }).then(function(response) {
+            }).then(function (response) {
                 $scope.create();
                 $scope.is_pengajuan = true;
                 $scope.form.no_proposal = data.no_proposal;
@@ -148,40 +152,40 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
                 $scope.form.penerima = data.penerima;
                 $scope.form.tanggal = new Date();
                 $scope.form.keterangan = data.catatan;
-                if(data.norek != ""){
+                if (data.norek != "") {
                     $scope.form.keterangan += " (Nomer rekening : " + data.norek + ")";
                 }
                 $scope.form.total = data.jumlah_perkiraan;
                 $scope.form.t_pengajuan_id = data.id;
                 $scope.listDetail = [];
-                angular.forEach(response.data, function(value, key){
+                angular.forEach(response.data, function (value, key) {
                     $scope.listDetail[key] = {
                         m_akun_id: value.m_akun_id,
-                        keterangan : value.keterangan + " (" + value.jumlah + "" + value.jenis_satuan +"@"+value.harga_satuan + ")",
-                        debit : value.sub_total
+                        keterangan: value.keterangan + " (" + value.jumlah + "" + value.jenis_satuan + "@" + value.harga_satuan + ")",
+                        debit: value.sub_total
                     }
                 });
                 $scope.sumTotal();
-                
+
             });
-            
+
         });
     }
 
-    
+
     /*
      * ambil detail pengeluaran
      */
-    $scope.getDetail = function (id){
+    $scope.getDetail = function (id) {
         console.log(id)
         var data = {
-            id : id
+            id: id
         }
-        Data.get(control_link + '/getDetail', data).then(function(data) {
+        Data.get(control_link + '/getDetail', data).then(function (data) {
             $scope.listDetail = data.data.list;
         });
     }
-    
+
     /*
      * tambah detail
      */
@@ -190,22 +194,22 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         console.log($scope.akunDetail)
         var newDet = {
             m_akun_id: {
-                id : $scope.akunDetail[0].id,
-                kode : $scope.akunDetail[0].kode,
-                nama : $scope.akunDetail[0].nama
+                id: $scope.akunDetail[0].id,
+                kode: $scope.akunDetail[0].kode,
+                nama: $scope.akunDetail[0].nama
             },
             m_lokasi_id: {
-                id : $scope.listLokasi[0].id,
-                nama : $scope.listLokasi[0].nama
+                id: $scope.listLokasi[0].id,
+                nama: $scope.listLokasi[0].nama
             },
-            keterangan : '',
-            debit : 0,
+            keterangan: '',
+            debit: 0,
             is_label: false,
         };
         $scope.sumTotal();
         val.splice(comArr, 0, newDet);
     };
-    
+
     /*
      * hapus detail
      */
@@ -219,7 +223,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
             alert("Something gone wrong");
         }
     };
-    
+
     /*
      * kalkulasi total detail
      */
@@ -230,7 +234,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         });
         $scope.form.total = totaldebit;
     };
-    
+
 
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
@@ -252,7 +256,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         Data.get('acc/m_lokasi/getLokasi', param).then(function (response) {
             $scope.listLokasi = response.data.list;
         });
-        
+
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
             $scope.base_url = response.data.base_url;
@@ -268,25 +272,25 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-        if($scope.listLokasi.length > 0)
+        if ($scope.listLokasi.length > 0)
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
         $scope.form.tanggal = new Date($scope.tanggal_setting);
-        if(new Date() >= new Date($scope.tanggal_setting)){
+        if (new Date() >= new Date($scope.tanggal_setting)) {
             $scope.form.tanggal = new Date();
         }
         $scope.listDetail = [{
-            m_akun_id: {
-                id : $scope.akunDetail[0].id,
-                kode : $scope.akunDetail[0].kode,
-                nama : $scope.akunDetail[0].nama
-            },
-            debit : 0
-        }];
+                m_akun_id: {
+                    id: $scope.akunDetail[0].id,
+                    kode: $scope.akunDetail[0].kode,
+                    nama: $scope.akunDetail[0].nama
+                },
+                debit: 0
+            }];
         $scope.sumTotal();
         $scope.gambar = {};
         $scope.url = "";
     };
-    
+
     /** update */
     $scope.update = function (form) {
         $scope.is_edit = true;
@@ -300,12 +304,12 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.getDetail(form.id);
 //        $scope.sumTotal();
         $scope.listgambar(form.id);
-        $scope.urlfoto += $scope.tanggal_foto.getFullYear() +"/"+ (parseInt($scope.tanggal_foto.getMonth())+1) +"/";
-        
+        $scope.urlfoto += $scope.tanggal_foto.getFullYear() + "/" + (parseInt($scope.tanggal_foto.getMonth()) + 1) + "/";
+
         console.log($scope.urlfoto);
-        
+
     };
-    
+
     /** view */
     $scope.view = function (form) {
         $scope.is_edit = true;
@@ -318,18 +322,18 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
-        $scope.urlfoto += $scope.tanggal_foto.getFullYear() +"/"+ (parseInt($scope.tanggal_foto.getMonth())+1) +"/";
-        
+        $scope.urlfoto += $scope.tanggal_foto.getFullYear() + "/" + (parseInt($scope.tanggal_foto.getMonth()) + 1) + "/";
+
     };
-    
+
     /** save action */
     $scope.save = function (form, type_save) {
         form["status"] = type_save;
         var data = {
-            form : form,
-            detail : $scope.listDetail,
+            form: form,
+            detail: $scope.listDetail,
         }
-        
+
         Data.post(control_link + '/save', data).then(function (result) {
             if (result.status_code == 200) {
                 $scope.form.id = result.data.id;
@@ -341,7 +345,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
             }
         });
     };
-    
+
     /** cancel action */
     $scope.cancel = function () {
         if (!$scope.is_view) {
@@ -351,7 +355,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         $scope.is_view = false;
         $scope.urlfoto = "api/file/pengeluaran/";
     };
-    
+
     /*
      * delete action
      */
@@ -382,18 +386,21 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         });
 
     };
-    
+
     $scope.print = function (row) {
         $scope.print = function (row) {
-        var data = angular.copy(row);
-        window.open("api/acc/t_pengeluaran/print?" + $.param(row), "_blank");
-    };
+            var data = angular.copy(row);
+            Data.get('site/base_url').then(function (response) {
+//                console.log(response)
+                window.open(response.data.base_url + "api/acc/t_pengeluaran/print?" + $.param(row), "_blank");
+            });
+        };
     };
 
     /**
      * Modal setting template print
      */
-    $scope.modalSetting = function() {
+    $scope.modalSetting = function () {
         var modalInstance = $uibModal.open({
             templateUrl: "api/acc/landaacc/tpl/t_pengeluaran/modal.html",
             controller: "settingPrintCtrl",
@@ -401,34 +408,36 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
             backdrop: "static",
             keyboard: false,
         });
-        modalInstance.result.then(function(response) {
-            if (response.data == undefined) {} else {}
+        modalInstance.result.then(function (response) {
+            if (response.data == undefined) {
+            } else {
+            }
         });
     }
-    
+
 });
 
-app.controller("settingPrintCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope) {
-    
+app.controller("settingPrintCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope) {
+
     $scope.templateDefault = "";
-        Data.get("acc/t_pengeluaran/getTemplate").then(function(response){
+    Data.get("acc/t_pengeluaran/getTemplate").then(function (response) {
         $scope.templateDefault = response.data;
     });
-    
-    
-    $scope.close = function() {
+
+
+    $scope.close = function () {
         $uibModalInstance.close({
             'data': undefined
         });
     };
-    
+
     $scope.save = function () {
         var ckeditor_data = CKEDITOR.instances.editor1.getData();
         var params = {
-            print_pengeluaran : ckeditor_data 
+            print_pengeluaran: ckeditor_data
         };
-        
-        Data.post("acc/t_pengeluaran/saveTemplate", params).then(function(result){
+
+        Data.post("acc/t_pengeluaran/saveTemplate", params).then(function (result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.close();
