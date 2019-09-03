@@ -205,7 +205,6 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
 
     $params = $request->getParams();
     $sql = $this->db;
-//    print_r($params);die();
     $validasi = validasi($params['form']);
     if ($validasi === true) {
         /**
@@ -229,6 +228,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $pengeluaran['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $pengeluaran['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $pengeluaran['total'] = $params['form']['total'];
+        $pengeluaran['t_pengajuan_id'] = (isset($params['form']['t_pengajuan_id']) && !empty($params['form']['t_pengajuan_id']) ? $params['form']['t_pengajuan_id'] : "");
         $pengeluaran['status'] = $params['form']['status'];
 //        print_r($pengeluaran);die();
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
@@ -313,6 +313,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
          * Simpan array trans detail ke database jika simpan dan kunci
          */
         if($params['form']['status'] == "terposting"){
+            $modelss = $sql->update("acc_t_pengajuan", ["status"=>"terbayar"], ["id"=>$params['form']['t_pengajuan_id']]);
             insertTransDetail($transDetail);
         }
         return successResponse($response, $model);

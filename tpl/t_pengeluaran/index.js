@@ -149,6 +149,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
                 $scope.is_pengajuan = true;
                 $scope.form.no_proposal = data.no_proposal;
                 $scope.form.m_lokasi_id = data.m_lokasi_id;
+                $scope.form.t_pengajuan_id = data.id;
                 $scope.form.penerima = data.penerima;
                 $scope.form.tanggal = new Date();
                 $scope.form.keterangan = data.catatan;

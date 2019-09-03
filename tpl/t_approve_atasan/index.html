@@ -68,6 +68,7 @@
                                 <td class="align-left">{{ row.tanggal_formated}}</td>
                                 <td class="align-right">{{ row.jumlah_perkiraan | currency}}</td>
                                 <td class="align-center">
+                                    <span class="bg-primary p-1" ng-if="row.status == 'Terbayar'">{{ row.status}}</span>
                                     <span class="bg-success p-1" ng-if="row.status == 'Approved'">{{ row.status}}</span>
                                     <span class="bg-warning p-1" ng-if="row.status == 'Canceled'">{{ row.status}}</span>
                                     <span class="bg-danger p-1" ng-if="row.status == 'Rejected'">{{ row.status}}</span>
