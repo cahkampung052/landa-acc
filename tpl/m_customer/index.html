@@ -91,6 +91,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group row">
+                                <label class="col-md-3 col-form-label-sm required">Kode</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control form-control-sm" ng-model="form.kode" ng-disabled="true" required/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label class="col-md-3 col-form-label-sm required">Nama Customer</label>
                                 <div class="col-md-9">
                                     <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view" required/>
@@ -105,7 +111,13 @@
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label-sm">No Telepon</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control form-control-sm angka" ng-model="form.tlp" ng-disabled="is_view" required/>
+                                    <input type="text" class="form-control form-control-sm angka align-left" ng-model="form.tlp" ng-disabled="is_view" required/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label-sm">Contact Person</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control form-control-sm" ng-model="form.cp" ng-disabled="is_view"/>
                                 </div>
                             </div>
                         </div>

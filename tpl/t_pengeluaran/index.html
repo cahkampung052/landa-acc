@@ -14,9 +14,9 @@
                                 &nbsp;Buat Pengeluaran Baru
                             </button>
                             <button class="dropdown-item" ng-click="modalSetting();" ng-if="user.akses.pengeluaran_template">
-                        <i class="fa fa-gear"></i>
-                        &nbsp;Setting Print
-                    </button>
+                                <i class="fa fa-gear"></i>
+                                &nbsp;Setting Print
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -115,7 +115,8 @@
                                     {{row.total| currency}}
                                 </td>
                                 <td style="text-align: left;">
-                                    {{row.m_kontak_id.nama}}
+                                    <span ng-if="row.penerima != ''">{{row.penerima}}</span>
+                                    <span ng-if="row.penerima == ''">{{row.namaAkun}}</span>
                                 </td>
                                 <td style="text-align: left;">
                                     {{row.created_at}}
@@ -200,12 +201,13 @@
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label-sm">Penerima</label>
                                         <div class="col-sm-9">
-                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_kontak_id" theme="bootstrap" ng-disabled="is_view">
-                                                <ui-select-match allow-clear="true" placeholder="Pilih Kontak">
-                                                    {{ $select.selected.type + " - " + $select.selected.nama}}
-                                                </ui-select-match>
-                                                <ui-select-choices position="down" repeat="val in listSupplier | filter : $select.search">{{val.type + " - " + val.nama}}</ui-select-choices>
+                                            <ui-select ng-disabled="is_view" ng-model="form.m_kontak_id"  theme="bootstrap">
+                                                <ui-select-match placeholder="Pilih Kontak">{{$select.selected.kode}} - {{$select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices refresh="cariKontak($select.search)" repeat="val in listSupplier">
+                                                    {{val.kode}} - {{val.nama}}
+                                                </ui-select-choices>
                                             </ui-select>
+                                            <input type="text" class="form-control form-control-sm" ng-model="form.penerima" ng-disabled="is_view" ng-if="is_pengajuan"/>
                                         </div>
                                     </div>
                                 </div>
@@ -293,41 +295,7 @@
                                                     <!--<td></td>-->
                                                     <td></td>
                                                     <td></td>
-                                                    <td style="text-align: right"><b>Sub Total</b></td>
-                                                    <td>
-                                                        <div class="input-group input-group-sm">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text">Rp</span>
-                                                            </div>
-                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-model="form.subtotal" ng-disabled="true" />
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <!--<td></td>-->
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td style="text-align: right">
-                                                        <b>PPN</b>
-                                                        <div class="btn-group">
-                                                            <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.is_ppn" ng-disabled="is_view" uib-btn-radio="true" ng-click="sumTotal()">Ya</label>
-                                                            <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.is_ppn" ng-disabled="is_view" uib-btn-radio="false" ng-click="sumTotal()">Tidak</label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="input-group input-group-sm">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text">Rp</span>
-                                                            </div>
-                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-model="form.ppn" ng-disabled="true" ng-change="sumTotal()"/>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <!--<td></td>-->
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td style="text-align: right"><b>Grand Total</b></td>
+                                                    <td style="text-align: right"><b>Total</b></td>
                                                     <td>
                                                         <div class="input-group input-group-sm">
                                                             <div class="input-group-prepend">

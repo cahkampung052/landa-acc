@@ -555,11 +555,18 @@ $app->get('/acc/m_akun/akunAll', function ($request, $response) {
  */
 $app->get('/acc/m_akun/akunKas', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")->from("acc_m_akun")
+    $params = $request->getParams();
+    $db->select("*")->from("acc_m_akun")
             ->where("is_kas", "=", 1)
             ->where("is_tipe", "=", 0)
-            ->where("is_deleted", "=", 0)
-            ->findAll();
+            ->where("is_deleted", "=", 0);
+    
+    if(isset($params['nama']) && !empty($params['nama'])){
+        $db->customWhere("acc_m_akun.nama LIKE '%" .$params['nama']. "%'", "AND");
+    }
+    
+    $models = $db->findAll();
+    
     return successResponse($response, ['list' => $models]);
 });
 

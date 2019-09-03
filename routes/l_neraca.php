@@ -45,8 +45,8 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     /**
      * Ambil akun laba rugi
      */
-    $labarugi = $db->find("select * from acc_m_akun_peta where type = 'Laba Rugi Berjalan'");
-    $akunLabaRugi = isset($labarugi->m_akun_id) ? $labarugi->m_akun_id : 0;
+    $labarugi = getPemetaanAkun("Laba Rugi Berjalan");
+    $akunLabaRugi = isset($labarugi) ? $labarugi : 0;
 
     /*
      * ambil akun pengecualian
@@ -79,10 +79,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
         $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
     }
-    $db->where("tipe", "=", "HARTA")
-            ->where("parent_id", "!=", 0);
+    $db->where("tipe", "=", "HARTA");
+//            ->where("parent_id", "!=", 0);
 
     $modelHarta = $db->findAll();
+//    print_r($modelHarta);
 //    die();
     $totalHarta = 0;
     $totalSub = 0;
@@ -129,7 +130,10 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 }
             }
         }
-        $arrHarta[$key]['total'] = $total;
+        if ($total > 0 || $total < 0)
+            $arrHarta[$key]['total'] = $total;
+        else
+            unset($arrHarta[$key]);
     }
     /*
      * end proses harta
@@ -154,8 +158,8 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
         $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
     }
-    $db->where("tipe", "=", "KEWAJIBAN")
-            ->where("parent_id", "!=", 0);
+    $db->where("tipe", "=", "KEWAJIBAN");
+//            ->where("parent_id", "!=", 0);
 
     $modelKewajiban = $db->findAll();
     $totalKewajiban = 0;
@@ -201,8 +205,10 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 }
             }
         }
-
-        $arrKewajiban[$key]['total'] = $total;
+        if ($total > 0 || $total < 0)
+            $arrKewajiban[$key]['total'] = $total;
+        else
+            unset($arrKewajiban[$key]);
     }
     /*
      * end proses kewajiban
@@ -226,8 +232,8 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
         $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
     }
-    $db->where("tipe", "=", "MODAL")
-            ->where("parent_id", "!=", 0);
+    $db->where("tipe", "=", "MODAL");
+//            ->where("parent_id", "!=", 0);
 
     $modelModal = $db->findAll();
 
@@ -283,7 +289,10 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 $total += $vals['saldo'];
             }
         }
-        $arrModal[$key]['total'] = $total;
+        if ($total > 0 || $total < 0)
+            $arrModal[$key]['total'] = $total;
+        else
+            unset($arrModal[$key]);
     }
 
     $totalKewajibanModal = $totalKewajiban + $totalModal;

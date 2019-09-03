@@ -8,9 +8,11 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
     $scope.is_edit = false;
     $scope.is_view = false;
 
-//    Data.get(control_link + '/cabang').then(function(data) {
-//        $scope.cabang = data.data.data;
-//    });
+    $scope.generateKode = function () {
+        Data.get(control_link + '/kode').then(function (response) {
+            $scope.form.kode = response;
+        });
+    }
 
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
@@ -20,8 +22,8 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         var limit = tableState.pagination.number || 1000;
         /** set offset and limit */
         var param = {
-            offset : offset,
-            limit : limit
+            offset: offset,
+            limit: limit
         };
         /** set sort and order */
         if (tableState.sort.predicate) {
@@ -36,8 +38,8 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
             $scope.displayed = response.data.list;
             $scope.base_url = response.data.base_url;
             tableState.pagination.numberOfPages = Math.ceil(
-                response.data.totalItems / limit
-            );
+                    response.data.totalItems / limit
+                    );
         });
         $scope.isLoading = false;
     };
@@ -50,6 +52,7 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
+        $scope.generateKode();
     };
     /** update */
     $scope.update = function (form) {
@@ -59,7 +62,9 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         $scope.is_disable = true;
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
-        console.log(form);
+        if (!$scope.form.kode) {
+            $scope.generateKode();
+        }
     };
     /** view */
     $scope.view = function (form) {
@@ -124,7 +129,7 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
             if (result.value) {
                 row.is_deleted = 0;
                 $rootScope.alert("Berhasil", "Data berhasil direstore", "success");
-                    $scope.cancel();
+                $scope.cancel();
             }
         });
     };

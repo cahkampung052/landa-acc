@@ -153,20 +153,27 @@
                 <div class="pl-15px pr-15px">
                     <div class="row mt-15px" ng-show="!isCollapsed">
                         <div class="col-md-12">
-                            <div class="alert alert-secondary">
+                            <div class="alert alert-light">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row mb-0px">
-                                        <label class="col-sm-1 col-form-label-sm mb-0px" for="nama">
+                                        <label class="col-sm-2 col-form-label-sm mb-0px" for="nama">
                                             Periode
                                         </label>
                                         <div class="col-sm-3">
-                                            
+                                            <input class="form-control form-control-sm" datepicker-mode="'month'" datepicker-options="{minMode: 'month'}" is-open="opened.cari_tgl" ng-change="cari_riwayat(cari)" ng-click="toggle($event, 'cari_tgl')" ng-model="cari.bulan" placeholder="Bulan Tahun" type="text" uib-datepicker-popup="MMMM yyyy"/>
                                         </div>
-                                        <label class="col-sm-1 col-form-label-sm mb-0px">
+                                        <label class="col-sm-2 col-form-label-sm mb-0px">
                                             Penanggung Jawab
                                         </label>
-                                        <div class="col-sm-2">
-                                            
+                                        <div class="col-sm-3">
+                                            <ui-select class="w100" ng-model="cari.lokasi" on-select="cari_riwayat(cari)" theme="bootstrap">
+                                                    <ui-select-match placeholder="Pilih Penanggung Jawab">
+                                                        {{ $select.selected.nama +" - "+ $select.selected.nama }}
+                                                    </ui-select-match>
+                                                    <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">
+                                                        {{ lb.nama_lengkap }}
+                                                    </ui-select-choices>
+                                            </ui-select>
                                         </div>
                                     </div>
                                 </form>
@@ -183,6 +190,9 @@
                                 </th>
                                 <th style="text-align: left;">
                                     Penanggung Jawab
+                                </th>
+                                <th style="text-align: left;">
+                                    Total Penyusutan
                                 </th>
                                 <th style="text-align: left;">
                                     Dibuat oleh
@@ -202,6 +212,9 @@
                                 <td style="text-align: left;">
                                     {{row.nm_lokasi}}
                                 </td>
+                                <td style="text-align: center;">
+                                    {{row.total_penyusutan|currency}}
+                                </td>
                                 <td style="text-align: left;">
                                     {{row.nm_user}}
                                 </td>
@@ -210,7 +223,10 @@
                                 </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
-                                        <button ng-hide="row.is_hidden" class="btn btn-danger fa fa-trash" ng-click="trash(row);"  type="button">
+                                        <button class="btn btn-sm btn-success" ng-click="detailRiw(row);"  type="button">
+                                            Detail
+                                        </button>
+                                        <button ng-hide="row.is_hidden" class="btn btn-sm btn-danger fa fa-trash" ng-click="trash(row);"  type="button">
                                         </button>
                                     </div>
                                 </td>

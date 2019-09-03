@@ -109,6 +109,12 @@ td, th {
 .content-center {
     text-align: center;
 }
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
 .header-laporan-wrapper {
     margin-bottom: 15px;
     margin-top: 15px;
@@ -123,7 +129,18 @@ td, th {
 /**
  * End tabel laporan
  */
-
+.sidebar .nav{
+    width: 225px;
+}
+.sidebar .sidebar-nav{
+    width: 225px;
+}
+.sidebar-fixed .sidebar{
+    width: 225px;
+}
+.app-header.navbar .navbar-brand{
+    width: 225px;
+}
 .non-body {
     background-color: #3798C4!important;
     color: white;

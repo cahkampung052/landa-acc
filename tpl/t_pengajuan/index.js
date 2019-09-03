@@ -239,7 +239,7 @@ app.controller("tpengajuanCtrl", function ($scope, Data,$rootScope,$uibModal) {
      */
     $scope.modalSetting = function() {
         var modalInstance = $uibModal.open({
-            templateUrl: "api/acc/landaacc/tpl/t_pengajuan/modal.html",
+            templateUrl: "../../" + $rootScope.pathModulAcc + "/tpl/t_pengajuan/modal.html",
             controller: "settingPrintCtrl",
             size: "xl",
             backdrop: "static",

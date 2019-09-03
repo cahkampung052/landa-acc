@@ -105,13 +105,15 @@ $app->post('/acc/m_lokasi/save', function ($request, $response) {
 
     $validasi = validasi($params);
     if ($validasi === true) {
-        $parent_id = $params['parent_id'];
+//        $parent_id = $params['parent_id'];
         if(isset($params['parent_id']) && $params['parent_id']['id'] != 0){
             $params['level'] = $params['parent_id']['level'] + 1;
         } else {
             $params['level'] = 0;
+            $params['parent_id']['id'] = 0;
         }
         
+//        print_r($params);die();
         if (isset($params['id']) && !empty($params['id'])) {
             $params['parent_id'] = $params['parent_id']['id'];
             $model = $sql->update("acc_m_lokasi", $params, ["id" => $params['id']]);

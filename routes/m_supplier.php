@@ -10,14 +10,24 @@ function validasi($data, $custom = array())
     return $cek;
 }
 
+$app->get('/acc/m_supplier/kode', function ($request, $response){
+    return generateNoTransaksi("supplier", 0);
+});
+
 $app->get('/acc/m_supplier/getSupplier', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")
+    $params = $request->getParams();
+    $db->select("*")
                 ->from("acc_m_kontak")
                 ->orderBy("acc_m_kontak.nama")
                 ->where("is_deleted", "=", 0)
-                ->where("type", "=", "supplier")
-                ->findAll();
+                ->where("type", "=", "supplier");
+
+                if(isset($params['nama']) && !empty($params['nama'])){
+                    $db->customWhere("nama LIKE '%" . $params['nama'] . "%'", "AND");
+                }
+
+                $models = $db->limit(20)->findAll();
     return successResponse($response, [
       'list' => $models
     ]);
@@ -76,13 +86,24 @@ $app->post('/acc/m_supplier/save', function ($request, $response) {
     $params = $request->getParams();
     $data   = $params;
     $sql    = $this->db;
+    
+    /*
+     * generate kode
+     */
+//    $kode = generateNoTransaksi("supplier", 0);
 
     $validasi = validasi($data);
      if ($validasi === true) {
         $params['type'] = "supplier";
         if (isset($params["id"])) {
+//            if(isset($params["kode"]) && !empty($params["kode"])){
+//                $params["kode"] = $params["kode"];
+//            }else{
+//                $params["kode"] = $kode;
+//            }
             $model = $sql->update("acc_m_kontak", $params, array('id' => $params['id']));
         } else {
+//            $params["kode"] = $kode;
             $model = $sql->insert("acc_m_kontak", $params);
         }
         if ($model) {

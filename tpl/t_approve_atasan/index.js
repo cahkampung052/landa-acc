@@ -12,6 +12,14 @@ app.controller("tapprovalCtrl", function ($scope, Data, $rootScope, $uibModal) {
     $scope.loading = false;
     var master = "Approve Proposal";
     $scope.master = master;
+    
+    /*
+     * Ambil akun untuk detail
+     */
+    Data.get('acc/m_akun/akunDetail').then(function(data) {
+        $scope.akunDetail = data.data.list;
+    });
+    
     /**
      * End inialisasi
      */
@@ -87,7 +95,7 @@ app.controller("tapprovalCtrl", function ($scope, Data, $rootScope, $uibModal) {
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.getAcc(form.id);
-        $scope.cekBudget = false;
+        $scope.cekBudget = true;
     };
     $scope.save = function (form, status) {
         console.log(form)

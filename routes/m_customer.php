@@ -2,19 +2,30 @@
 function validasi($data, $custom = array())
 {
     $validasi = array(
-       'nama'      => 'required',
+        'nama'      => 'required',
+        'kode'      => 'required'
     );
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
+
+$app->get('/acc/m_customer/kode', function ($request, $response){
+    return generateNoTransaksi("customer", 0);
+});
+
 $app->get('/acc/m_customer/getKontak', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")
+    $params = $request->getParams();
+    $db->select("*")
                 ->from("acc_m_kontak")
                 ->orderBy("acc_m_kontak.nama")
-                ->where("is_deleted", "=", 0)
-                ->findAll();
+                ->where("is_deleted", "=", 0);
     
+    if(isset($params['nama']) && !empty($params['nama'])){
+        $db->customWhere("nama LIKE '%".$params['nama']."%'", "AND");
+    }
+    
+    $models = $db->findAll();
     foreach($models as $key => $val){
         $val->type = ucfirst($val->type);
     }
@@ -22,6 +33,20 @@ $app->get('/acc/m_customer/getKontak', function ($request, $response) {
       'list' => $models
     ]);
 });
+
+$app->get('/acc/m_customer/getKaryawan', function ($request, $response) {
+    $db     = $this->db;
+    $params = $request->getParams();
+    $models = $db->select("*")
+        ->from("karyawan")
+        ->where("is_deleted", "=", 0)
+        ->findAll();
+
+    return successResponse($response, [
+      'list' => $models
+    ]);
+});
+
 $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("*")
@@ -72,13 +97,25 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
 $app->post('/acc/m_customer/save', function ($request, $response) {
     $params = $request->getParams();
     $sql    = $this->db;
+    
+    /*
+     * generate kode
+     */
+//    $kode = generateNoTransaksi("customer", 0);
+    
     $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
     $validasi = validasi($params);
     if ($validasi === true) {
         $params['type'] = "customer";
         if (isset($params["id"])) {
+//            if(isset($params["kode"]) && !empty($params["kode"])){
+//                $params["kode"] = $params["kode"];
+//            }else{
+//                $params["kode"] = $kode;
+//            }
             $model = $sql->update("acc_m_kontak", $params, array('id' => $params['id']));
         } else {
+//            $params["kode"] = $kode;
             $model = $sql->insert("acc_m_kontak", $params);
         }
         if ($model) {

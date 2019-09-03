@@ -9,13 +9,16 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
     $scope.is_view = false;
     $scope.is_create = false;
 
+    $scope.getParent = function () {
         Data.get(control_link + '/getLokasi').then(function (data) {
             $scope.parent = data.data.list;
             if ($scope.parent.length > 0 && $scope.is_create) {
                 $scope.form.parent_id = $scope.parent[0];
             }
-            console.log($scope.parent)
         });
+    }
+        
+        
 
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
@@ -57,6 +60,7 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.is_create = true;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
+        $scope.getParent();
     };
     /** update */
     $scope.update = function (form) {
@@ -64,8 +68,10 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.is_view = false;
         $scope.is_create = false;
         $scope.formtitle = master + " | Edit Data : " + form.nama;
+        
         $scope.form = form;
         console.log(form);
+        $scope.getParent();
     };
     /** view */
     $scope.view = function (form) {
@@ -74,6 +80,7 @@ app.controller('lokasiCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         $scope.is_create = false;
         $scope.formtitle = master + " | Lihat Data : " + form.nama;
         $scope.form = form;
+        $scope.getParent();
     };
     /** save action */
     $scope.save = function (form) {

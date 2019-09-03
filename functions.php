@@ -324,12 +324,14 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      * proses perulangan
      */
     foreach ($klasifikasi as $index => $akun) {
+//        print_r($arrPengecualian);die();
         $arr[$index] = (array) $akun;
         $arr[$index]['total'] = 0;
         /*
          * ambil child akun
          */
         $akunId = getChildId("acc_m_akun", $akun->id);
+//        print_r($akunId);
         if (is_array($akunPengecualian) && !empty($akunPengecualian)) {
             foreach ($arrPengecualian as $w => $x) {
                 foreach ($akunId as $y => $z) {
@@ -339,48 +341,51 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
                 }
             }
         }
-        $getakun = $sql->select("*")
-                ->from("acc_m_akun")
-                ->customWhere("id IN(" . implode(',', $akunId) . ")")
-                ->orderBy("kode")
-                ->findAll();
-        foreach ($getakun as $key => $val) {
-            $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                    ->from("acc_trans_detail");
-            if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-                $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
-            }
-            $sql->where('acc_trans_detail.m_akun_id', '=', $val->id);
-            if ($tanggal_end != null) {
-                $sql->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
-                        ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
-            } else {
-                $sql->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_start);
-            }
-            $gettransdetail = $sql->find();
-            if ((intval($gettransdetail->debit) - intval($gettransdetail->kredit) > 0) || (intval($gettransdetail->debit) - intval($gettransdetail->kredit) < 0) || $val->is_tipe == 1) {
-                if ($val->is_tipe == 1) {
-                    $arr[$index]['detail'][$val->id]['kode'] = $val->kode;
-                    $arr[$index]['detail'][$val->id]['nama'] = $val->nama;
-                    $arr[$index]['detail'][$val->id]['nominal'] = 0;
-                } else {
-                    $arr[$index]['detail'][$val->parent_id]['detail'][$key]['kode'] = $val->kode;
-                    $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nama'] = $val->nama;
-                    $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'] = (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
-                    $arr[$index]['total'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
-                    $arr[$index]['detail'][$val->parent_id]['nominal'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
-
-                    $total_[$val->tipe] += $arr[$index]['total'];
+//        print_r($akunId);die();
+        if (is_array($akunId) && !empty($akunId)) {
+            $getakun = $sql->select("*")
+                    ->from("acc_m_akun")
+                    ->customWhere("id IN(" . implode(',', $akunId) . ")")
+                    ->orderBy("kode")
+                    ->findAll();
+            foreach ($getakun as $key => $val) {
+                $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
+                        ->from("acc_trans_detail");
+                if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+                    $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
                 }
-                if ($akun->tipe == "HARTA" || $akun->tipe == "PENDAPATAN LAIN") {
-                    $total += (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
+                $sql->where('acc_trans_detail.m_akun_id', '=', $val->id);
+                if ($tanggal_end != null) {
+                    $sql->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
+                            ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
                 } else {
-                    $total -= (intval($gettransdetail->debit) - intval($gettransdetail->kredit));
+                    $sql->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_start);
+                }
+                $gettransdetail = $sql->find();
+                if ((intval($gettransdetail->debit) - intval($gettransdetail->kredit) > 0) || (intval($gettransdetail->debit) - intval($gettransdetail->kredit) < 0) || $val->is_tipe == 1) {
+                    if ($val->is_tipe == 1) {
+                        $arr[$index]['detail'][$val->id]['kode'] = $val->kode;
+                        $arr[$index]['detail'][$val->id]['nama'] = $val->nama;
+                        $arr[$index]['detail'][$val->id]['nominal'] = 0;
+                    } else {
+                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['kode'] = $val->kode;
+                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nama'] = $val->nama;
+                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'] = (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
+                        $arr[$index]['total'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
+                        $arr[$index]['detail'][$val->parent_id]['nominal'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
+
+                        $total_[$val->tipe] += $arr[$index]['total'];
+                    }
+                    if ($akun->tipe == "HARTA" || $akun->tipe == "PENDAPATAN LAIN") {
+                        $total += (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
+                    } else {
+                        $total -= (intval($gettransdetail->debit) - intval($gettransdetail->kredit));
+                    }
                 }
             }
         }
     }
-
+//    die();
 //    print_r($total_);die();
 
     if ($array) {
@@ -390,10 +395,28 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
     }
 }
 
-function getPemetaanAkun($type) {
+function getPemetaanAkun($tipe = '') {
     $db = new Cahkampung\Landadb(config('DB')['db']);
-    $akun = $db->select("*")->from("acc_m_akun_peta")->where("type", "=", $type)->find();
-    return isset($akun->m_akun_id) ? $akun->m_akun_id : 0;
+    $arrAkun = [0 => 0];
+    $db->select("*")
+            ->from("acc_m_akun_peta");
+    if (!empty($tipe)) {
+        $db->where("type", "=", $tipe);
+    }
+    $akun = $db->findAll();
+    foreach ($akun as $key => $value) {
+        if (isset($value->is_multiple) && $value->is_multiple == 1) {
+            $arrAkun[$value->type] = json_decode($value->m_akun_id);
+        } else {
+            $arrAkun[$value->type] = [0 => $value->m_akun_id];
+        }
+    }
+
+    if (!empty($tipe)) {
+        return $arrAkun[$tipe];
+    } else {
+        return $arrAkun;
+    }
 }
 
 function getMasterSetting() {
@@ -421,23 +444,25 @@ function getSessionLokasi() {
 function generateNoTransaksi($type, $unker) {
     $db = config('DB');
     $db = new Cahkampung\Landadb($db['db']);
-    
+
     $custom = getMasterSetting();
-    
+
     if ($type == 'penerimaan') {
         $cek = $db->find("select no_transaksi from acc_pemasukan order by no_transaksi desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_pemasukan;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } else if ($type == 'pengeluaran') {
-        $cek = $db->find("select no_transaksi from acc_pengeluaran order by no_transaksi desc");
+        $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran order by no_urut desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_pengeluaran;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } else if ($type == 'transfer') {
@@ -446,6 +471,7 @@ function generateNoTransaksi($type, $unker) {
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_transfer;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } else if ($type == 'jurnal') {
@@ -454,10 +480,57 @@ function generateNoTransaksi($type, $unker) {
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_jurnal;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
+    } else if ($type == 'pengajuan') {
+        $cek = $db->find("select no_proposal, no_urut from acc_t_pengajuan order by no_urut desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_proposal, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = $custom->format_pengajuan;
+        $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
+        $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
+        $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
+    } else if ($type == 'kasbon') {
+        $cek = $db->find("select no_transaksi, no_urut from acc_kasbon order by no_urut desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = date("Y") . "/" . date("m") . "/KSBN/" . $no_urut;
+    } else if ($type == 'pembayaran_kasbon') {
+        $cek = $db->find("select no_transaksi, no_urut from acc_bayar_kasbon order by no_urut desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = date("Y") . "/" . date("m") . "/" . $unker . "/BYRKSBN/" . $no_urut;
+    } else if ($type == 'pembayaran_hutang') {
+        $cek = $db->find("select kode from acc_bayar_hutang order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "BS/" . date("Y") . "/". $no_urut;
+    } else if ($type == 'customer') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "CUST" . date("Y") . "" . $no_urut;
+    } else if ($type == 'supplier') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'supplier' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "VND" . date("Y") . "" . $no_urut;
+    } else if ($type == 'stok_masuk') {
+        $cek = $db->find("select kode from inv_stok_masuk order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "PI/" . date("m") . "/" . date("Y") . "/" . $no_urut;
     }
 
 
     return @$no_transaksi;
+}
+
+function tableUser() {
+    if (config('TABLE_USER') == "")
+        return "acc_m_user";
+    else
+        return config('TABLE_USER');
 }

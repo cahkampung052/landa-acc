@@ -22,6 +22,9 @@ function validasi($data, $custom = array()) {
 $app->get("/acc/appapproval/index", function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
+    
+    $tableuser = tableUser();
+    
     $db->select("*")
             ->from("acc_m_setting_approval");
     /**
@@ -47,8 +50,8 @@ $app->get("/acc/appapproval/index", function ($request, $response) {
     
     foreach($models as $key => $val){
         $models[$key] = (array) $val;
-        $db->select("acc_m_setting_approval.*, acc_m_user.nama as namaUser")->from("acc_m_setting_approval")
-                ->join("JOIN", "acc_m_user", "acc_m_user.id = acc_m_setting_approval.acc_m_user_id")
+        $db->select("acc_m_setting_approval.*, " . $tableuser . ".nama as namaUser")->from("acc_m_setting_approval")
+                ->join("JOIN", $tableuser, $tableuser.".id = acc_m_setting_approval.acc_m_user_id")
                 ->where("tipe", "=", $val->tipe)
                 ->where("min", "=", $val->min)
                 ->where("max", "=", $val->max);

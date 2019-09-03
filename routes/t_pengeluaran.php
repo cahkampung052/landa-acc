@@ -130,19 +130,20 @@ $app->get('/acc/t_pengeluaran/getDetail', function ($request, $response) {
  */
 $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
     $params = $request->getParams();
+    $tableuser = tableUser();
     $db = $this->db;
     $db->select("
             acc_pengeluaran.*, 
             acc_m_lokasi.kode as kodeLokasi, 
             acc_m_lokasi.nama as namaLokasi, 
-            acc_m_user.nama as namaUser, 
+            ".$tableuser.".nama as namaUser, 
             acc_m_akun.kode as kodeAkun, 
             acc_m_akun.nama as namaAkun, 
             acc_m_kontak.nama as namaSup,
             acc_m_kontak.type as typeSup
         ")
             ->from("acc_pengeluaran")
-            ->join("left join", "acc_m_user", "acc_pengeluaran.created_by = acc_m_user.id")
+            ->join("left join", $tableuser, $tableuser.".id = acc_pengeluaran.created_by")
             ->join("left join", "acc_m_akun", "acc_pengeluaran.m_akun_id = acc_m_akun.id")
             ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pengeluaran.m_lokasi_id")
             ->join("left join", "acc_m_kontak", "acc_m_kontak.id = acc_pengeluaran.m_kontak_id")
@@ -204,7 +205,6 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
 
     $params = $request->getParams();
     $sql = $this->db;
-//    print_r($params);die();
     $validasi = validasi($params['form']);
     if ($validasi === true) {
         /**
@@ -219,11 +219,18 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $pengeluaran['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
         $pengeluaran['m_akun_id'] = $params['form']['m_akun_id']['id'];
         $pengeluaran['m_kontak_id'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['id'] : '';
+        
+        if(isset($params['form']['penerima']))
+            $pengeluaran['penerima'] = (isset($params['form']['penerima']) && !empty($params['form']['penerima'])) ? $params['form']['penerima'] : "";
+        else
+            $pengeluaran['penerima'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['nama'] : '';
+        
         $pengeluaran['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $pengeluaran['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
-        $pengeluaran['total'] = $params['form']['total'] - $params['form']['ppn'];
-        $pengeluaran['ppn'] = $params['form']['ppn'];
+        $pengeluaran['total'] = $params['form']['total'];
+        $pengeluaran['t_pengajuan_id'] = (isset($params['form']['t_pengajuan_id']) && !empty($params['form']['t_pengajuan_id']) ? $params['form']['t_pengajuan_id'] : "");
         $pengeluaran['status'] = $params['form']['status'];
+//        print_r($pengeluaran);die();
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $pengeluaran['no_urut'] = $params['form']['no_urut'];
             $pengeluaran['no_transaksi'] = $params['form']['no_transaksi'];
@@ -306,6 +313,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
          * Simpan array trans detail ke database jika simpan dan kunci
          */
         if($params['form']['status'] == "terposting"){
+            $modelss = $sql->update("acc_t_pengajuan", ["status"=>"terbayar"], ["id"=>$params['form']['t_pengajuan_id']]);
             insertTransDetail($transDetail);
         }
         return successResponse($response, $model);
@@ -356,12 +364,14 @@ $app->get('/acc/t_pengeluaran/print', function ($request, $response) {
     $template = $a->print_pengeluaran;
     $template = str_replace("{start_detail}", "{%for key, val in detail%}", $template);
     $template = str_replace("{end}", "{%endfor%}", $template);
+    $template = str_replace("<pre>", "<pre style='margin:0px'>", $template);
 //    echo json_encode($data);die();
     $view = twigViewPath();
         $content = $view->fetchFromString($template, [
             "data" => $data,
             "detail" => (array) $detail,
         ]);
+        $content = str_replace("<p></p>", "", $content);
 //        print_r($detail);die();
         echo $content;
         echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';

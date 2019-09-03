@@ -115,17 +115,27 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td align="right" class="text-center" colspan="3">
+                                    <td align="right" class="text-center">
                                         <b>Saldo Akhir</b>
                                     </td>
-                                    <td></td>
                                     <td align="right" class="text-right">
-                                        <b>{{ data.total_debit| number }}</b>
+                                        <b>{{ data.debit_awal| number }}</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b>{{ data.total_kredit| number }}</b>
+                                        <b>{{ data.kredit_awal| number }}</b>
                                     </td>
-                                    <td align="right" class="text-right" colspan="2"></td>
+                                    <td align="right" class="text-right">
+                                        <b>{{ data.debit_mutasi| number }}</b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <b>{{ data.kredit_mutasi| number }}</b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <b>{{ data.debit_akhir| number }}</b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <b>{{ data.kredit_akhir| number }}</b>
+                                    </td>
                                 </tr>
                             </tfoot>
                         </table>
