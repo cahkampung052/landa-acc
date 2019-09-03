@@ -30,15 +30,15 @@
                             <div class="alert alert-secondary">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row mb-0px">
-                                        <label for="nama" class="col-md-1 col-form-label-sm mb-0px">Nama</label>
+                                        <label for="nama" class="col-md-1 col-form-label-sm">Nama</label>
                                         <div class="col-md-3">
                                             <input type="text" class="form-control form-control-sm" st-search="nama" id="nama" placeholder="Nama"/>
                                         </div>
-                                        <label for="nama" class="col-md-1 col-form-label-sm mb-0px">Telp</label>
+                                        <label for="nama" class="col-md-1 col-form-label-sm">Telp</label>
                                         <div class="col-md-3">
                                             <input type="text" class="form-control form-control-sm" st-search="tlp" id="telp" placeholder="Telp"/>
                                         </div>
-                                        <label class="col-md-1 col-form-label-sm mb-0px">Status</label>
+                                        <label class="col-md-1 col-form-label-sm">Status</label>
                                         <div class="col-md-2">
                                             <select class="form-control form-control-sm" st-search="is_deleted">
                                                 <option value="0">Aktif</option>
@@ -51,35 +51,35 @@
                         </div>
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                <!-- <div class="table-responsive"> -->
+                    <table class="table table-striped table-hover table-mobile">
                         <thead>
                             <tr>
-                                <th style="text-align: left;">Nama  Customer</th>
-                                <th style="text-align: left;">No Telepon</th>
-                                <th style="text-align: left;">Email</th>
-                                <th style="text-align: left;">Alamat</th>
-                                <th></th>
+                                <th class="align-left" scope="col">Nama  Customer</th>
+                                <th class="align-left" scope="col">No Telepon</th>
+                                <th class="align-left" scope="col">Email</th>
+                                <th class="align-left" scope="col">Alamat</th>
+                                <th scope="col" width="20"></th>
                             </tr>
                         </thead>
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
-                                <td style="text-align: left;">{{ row.nama }}</td>
-                                <td style="text-align: left;">{{ row.tlp }}</td>
-                                <td style="text-align: left;">{{ row.email }}</td>
-                                <td style="text-align: left;">{{ row.alamat }}</td>
+                                <td class="align-left" data-label="Nama  Customer"><span>{{ row.nama }}</span></td>
+                                <td class="align-left" data-label="No Telepon"><span>{{ row.tlp }}</span></td>
+                                <td class="align-left" data-label="Email"><span>{{ row.email }}</span></td>
+                                <td class="align-left" data-label="Alamat"><span>{{ row.alamat }}</span></td>
                                 <td>
-                                    <div class="btn-group pull-right" role="group">
-                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
-                                        <button type="button" class="btn btn-warning fa fa-refresh" ng-if="row.is_deleted == 1" ng-click="restore(row);"></button>
+                                    <div class="btn-group d-flex btn-table-mobile" role="group">
+                                        <button type="button" class="btn btn-info fa fa-pencil w-100" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash w-100" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
+                                        <button type="button" class="btn btn-warning fa fa-refresh w-100" ng-if="row.is_deleted == 1" ng-click="restore(row);"></button>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     <div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>
-                </div>
+                <!-- </div> -->
             </div>
         </div>
         <div class="card" ng-if="is_edit">
