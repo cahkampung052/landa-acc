@@ -517,6 +517,11 @@ function generateNoTransaksi($type, $unker) {
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "VND" . date("Y") . "" . $no_urut;
+    } else if ($type == 'stok_masuk') {
+        $cek = $db->find("select kode from inv_stok_masuk order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "PI/" . date("m") . "/" . date("Y") . "/" . $no_urut;
     }
 
 

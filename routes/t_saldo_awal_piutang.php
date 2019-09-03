@@ -80,7 +80,7 @@ $app->post('/acc/t_saldo_awal_piutang/savePiutang', function ($request, $respons
                     $getakun = getPemetaanAkun("Pengimbang Neraca");
                     $detail_['m_kontak_id'] = $val['id'];
                     $detail_['m_lokasi_id'] = $m_lokasi_id;
-                    $detail_['m_akun_id'] = $getakun;
+                    $detail_['m_akun_id'] = $getakun[0];
                     $detail_['tanggal'] = $tanggal;
                     $detail_['kredit'] = $val['total'];
                     $detail_['reff_type'] = 'acc_saldo_piutang';
