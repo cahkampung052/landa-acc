@@ -71,7 +71,9 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
     };
     /** save action */
     $scope.save = function(form) {
+        console.log("asd")
         Data.post(control_link + '/save', form).then(function(result) {
+            console.log(result)
             if (result.status_code == 200) {
                 Swal.fire({
                     title: "Tersimpan",
@@ -82,7 +84,8 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
                     $scope.is_edit = false;
                 });
             } else {
-                Swal.fire("Gagal", result.errors, "error");
+                console.log(result.errors)
+                $rootScope.alert("Terjadi kesalahan", result.errors, "error");
             }
         });
     };
