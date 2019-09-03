@@ -401,18 +401,21 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
      * Modal setting template print
      */
     $scope.modalSetting = function () {
-        var modalInstance = $uibModal.open({
-            templateUrl: "api/acc/landaacc/tpl/t_pengeluaran/modal.html",
-            controller: "settingPrintCtrl",
-            size: "xl",
-            backdrop: "static",
-            keyboard: false,
-        });
-        modalInstance.result.then(function (response) {
-            if (response.data == undefined) {
-            } else {
-            }
-        });
+        Data.get('site/base_url').then(function (response) {
+            var modalInstance = $uibModal.open({
+                templateUrl: response.data.base_url + "api/"+ response.data.acc_dir +"/tpl/t_pengeluaran/modal.html",
+                        controller: "settingPrintCtrl",
+                size: "xl",
+                backdrop: "static",
+                keyboard: false,
+            });
+            modalInstance.result.then(function (response) {
+                if (response.data == undefined) {
+                } else {
+                }
+            });
+        })
+
     }
 
 });
