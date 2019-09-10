@@ -460,28 +460,27 @@ $app->get('/acc/m_akun/export', function ($request, $response) {
 /*
  * ambil budget per lokasi (approve proposal)
  */
-$app->get("/acc/m_akun/getBudgetPerLokasi", function ($request, $response){
+$app->get("/acc/m_akun/getBudgetPerLokasi", function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
-    
+
     $getBudget = $db->select("*")
             ->from("acc_budgeting")
             ->where("tahun", "=", $params['tahun'])
             ->andWhere("m_lokasi_id", "=", $params['m_lokasi_id'])
             ->findAll();
-    
+
     $arr = [];
     for ($i = 1; $i <= 12; $i++) {
         $arr[$i]['budget'] = 0;
         $arr[$i]['nama_bulan'] = date('F', mktime(0, 0, 0, $i, 10)); // March
     }
-    
+
     foreach ($getBudget as $key => $val) {
         $arr[$val->bulan]['budget'] += $val->budget;
     }
-    
+
     return successResponse($response, $arr);
-    
 });
 
 /**
@@ -560,13 +559,26 @@ $app->get('/acc/m_akun/akunKas', function ($request, $response) {
             ->where("is_kas", "=", 1)
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0);
-    
-    if(isset($params['nama']) && !empty($params['nama'])){
-        $db->customWhere("acc_m_akun.nama LIKE '%" .$params['nama']. "%'", "AND");
+
+    if (isset($params['nama']) && !empty($params['nama'])) {
+        $db->customWhere("acc_m_akun.nama LIKE '%" . $params['nama'] . "%'", "AND");
     }
-    
+
     $models = $db->findAll();
-    
+
+    return successResponse($response, ['list' => $models]);
+});
+
+/*
+ * Ambil akun pendapatan
+ */
+$app->get('/acc/m_akun/akunPendapatan', function ($request, $response) {
+    $db = $this->db;
+    $models = $db->select("*")->from("acc_m_akun")
+            ->customWhere("nama LIKE '%PENDAPATAN%'")
+            ->where("is_tipe", "=", 0)
+            ->where("is_deleted", "=", 0)
+            ->findAll();
     return successResponse($response, ['list' => $models]);
 });
 
