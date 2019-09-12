@@ -16,7 +16,13 @@ function insertTransDetail($data) {
  * Set modul ACC URL
  */
 function modulUrl() {
-    return config('SITE_URL') . "/" . config('MODUL_ACC_PATH');
+    $port = !empty($_SERVER['SERVER_PORT']) ? ":".$_SERVER['SERVER_PORT'] : "";
+    $a = "http://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
+    $a = str_replace($_SERVER['PATH_INFO'], '', $a);
+    $a = substr($a, 0, strpos($a, "?"));
+//    echo $a;
+//    echo config('SITE_URL');die;
+    return $a . "/" . config('MODUL_ACC_PATH');
 }
 
 /**
