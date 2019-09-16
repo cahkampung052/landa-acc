@@ -202,6 +202,9 @@ app.controller('jurnalCtrl', function ($scope, Data, $rootScope, $uibModal, Uplo
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
             $scope.base_url = response.data.base_url;
+            tableState.pagination.numberOfPages = Math.ceil(
+                    response.data.totalItems / limit
+                    );
         });
         $scope.isLoading = false;
     };

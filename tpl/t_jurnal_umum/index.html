@@ -115,8 +115,9 @@
                                 <td style="text-align: left;">
                                     {{row.namaUser}}
                                 </td>
-                                <td style="text-align: left;">
-                                    {{row.status}}
+                                <td style="text-align: center;">
+                                    <span class="bg-primary p-1" ng-if="row.status == 'Draft'">{{ row.status}}</span>
+                                    <span class="bg-success p-1" ng-if="row.status == 'Terposting'">{{ row.status}}</span>
                                 </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
@@ -129,7 +130,7 @@
                         </tbody>
                     </table>
                 </div>
-                <!--<div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>-->
+                <div st-pagination="" st-items-by-page="20" st-template="tpl/common/pagination.custom.html"></div>
             </div>
         </div>
         <div class="card" ng-if="is_edit">

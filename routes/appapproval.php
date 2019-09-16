@@ -65,7 +65,7 @@ $app->get("/acc/appapproval/index", function ($request, $response) {
         
     }
     return successResponse($response, ["list" => $models,
-//        "totalItems" => $totalItem
+        "totalItems" => $totalItem
             ]);
 });
 /**

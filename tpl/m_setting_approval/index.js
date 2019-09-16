@@ -37,9 +37,9 @@ app.controller("msettingapprovalCtrl", function ($scope, Data, $rootScope) {
         }
         Data.get("acc/appapproval/index", param).then(function (response) {
             $scope.displayed = response.data.list;
-//            tableState.pagination.numberOfPages = Math.ceil(
-//                    response.data.totalItems / limit
-//                    );
+            tableState.pagination.numberOfPages = Math.ceil(
+                    response.data.totalItems / limit
+                    );
         });
         $scope.isLoading = false;
     };

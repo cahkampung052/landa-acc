@@ -179,7 +179,10 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         /** 
          * set offset and limit
          */
-        var param = {};
+        var param = {
+            offset : offset,
+            limit : limit
+        };
         /** 
          * set sort and order
          */
@@ -199,6 +202,9 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
             $scope.base_url = response.data.base_url;
+            tableState.pagination.numberOfPages = Math.ceil(
+                    response.data.totalItems / limit
+                    );
         });
         $scope.isLoading = false;
     };
@@ -252,7 +258,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
             $scope.form.is_ppn = true;
         }
         $scope.form.subtotal = $scope.form.total;
-        $scope.form.total = $scope.form.total + $scope.form.ppn;
+        $scope.form.total = parseInt($scope.form.total) + parseInt($scope.form.ppn);
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
@@ -274,12 +280,11 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
             $scope.form.is_ppn = true;
         }
         $scope.form.subtotal = $scope.form.total;
-        $scope.form.total = $scope.form.total + $scope.form.ppn;
+        $scope.form.total = parseInt($scope.form.total) + parseInt($scope.form.ppn);
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
-        console.log(form)
         $scope.urlfoto += $scope.tanggal_foto.getFullYear() + "/" + (parseInt($scope.tanggal_foto.getMonth()) + 1) + "/";
     };
     /**
