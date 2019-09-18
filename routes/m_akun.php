@@ -588,7 +588,7 @@ $app->get('/acc/m_akun/akunPendapatan', function ($request, $response) {
 $app->get('/acc/m_akun/akunHutang', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("*")->from("acc_m_akun")
-            ->customWhere("nama LIKE '%UTANG%'")
+            ->customWhere("nama LIKE '%HUTANG%'")
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
