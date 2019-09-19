@@ -37,7 +37,6 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
             });
         } else {
             Data.get('site/base_url').then(function(response){
-//                console.log(response)
                 window.open(response.data.base_url + "api/acc/l_neraca/laporan?" + $.param(param), "_blank");
             });
             

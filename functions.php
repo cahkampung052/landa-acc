@@ -350,7 +350,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
     if ($array) {
         return ["data" => $arr, "total" => $grandTotal];
     } else {
-        return $total;
+        return $grandTotal['PENDAPATAN'] - $grandTotal['BEBAN'];
     }
 }
 function getPemetaanAkun($tipe = '')

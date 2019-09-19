@@ -1,22 +1,8 @@
 <?php
-
-function validasi($data, $custom = array()) {
-    $validasi = array(
-//        'parent_id' => 'required',
-//        'kode'      => 'required',
-//        'nama'      => 'required',
-            // 'tipe' => 'required',
-    );
-//    GUMP::set_field_name("parent_id", "Akun");
-    $cek = validate($data, $validasi, $custom);
-    return $cek;
-}
-
 $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $params = $request->getParams();
     $filter = $params;
     $db = $this->db;
-
     /*
      * lokasi
      */
@@ -29,25 +15,21 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             $lokasiId = $filter['m_lokasi_id'];
         }
     }
-//    print_r($lokasiId);die();
     /**
      * tanggal
      */
     $tanggal = new DateTime($filter['tanggal']);
     $tanggal->setTimezone(new DateTimeZone('Asia/Jakarta'));
     $tanggal = $tanggal->format("Y-m-d");
-
     /**
      * Ambil laba / rugi
      */
     $totalLabaRugi = getLabaRugi("1970-01-01", $tanggal, null, false);
-
     /**
      * Ambil akun laba rugi
      */
     $labarugi = getPemetaanAkun("Laba Rugi Berjalan");
-    $akunLabaRugi = isset($labarugi) ? $labarugi : 0;
-
+    $akunLabaRugi = isset($labarugi[0]) ? $labarugi[0] : 0;
     /*
      * ambil akun pengecualian
      */
@@ -58,9 +40,6 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             array_push($arrPengecualian, $b->m_akun_id->id);
         }
     }
-
-
-
     /*
      * proses harta
      */
@@ -72,19 +51,15 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             acc_m_akun.is_tipe,
             acc_m_akun.parent_id,
             acc_m_akun.saldo_normal
-            ")
-            ->from("acc_m_akun")
-            ->groupBy("acc_m_akun.id")
-            ->orderBy("acc_m_akun.kode");
+        ")
+        ->from("acc_m_akun")
+        ->groupBy("acc_m_akun.id")
+        ->orderBy("acc_m_akun.kode");
     if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
         $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
     }
     $db->where("tipe", "=", "HARTA");
-//            ->where("parent_id", "!=", 0);
-
     $modelHarta = $db->findAll();
-//    print_r($modelHarta);
-//    die();
     $totalHarta = 0;
     $totalSub = 0;
     $arrHarta = [];
@@ -94,19 +69,15 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
             $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
         }
-        $db->where('m_akun_id', '=', $val->id)
-                ->andWhere('date(tanggal)', '<=', $tanggal);
+        $db->where('m_akun_id', '=', $val->id)->andWhere('date(tanggal)', '<=', $tanggal);
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
-
         if ($val->id == $akunLabaRugi) {
             $saldoAwal += $totalLabaRugi;
         }
-
         $val->nama_lengkap = $val->kode . ' - ' . $val->nama;
         $val->saldo = $saldoAwal;
         $val->saldo_rp = $val->saldo;
-
         if (($val->saldo < 0 || $val->saldo > 0) || $val->is_tipe == 1) {
             if ($val->is_tipe == 1) {
                 $id = $val->id;
@@ -119,7 +90,6 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             }
         }
     }
-
     foreach ($arrHarta as $key => $val) {
         $arrHarta[$key] = (array) $val;
         $total = 0;
@@ -130,16 +100,15 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 }
             }
         }
-        if ($total > 0 || $total < 0)
+        if ($total > 0 || $total < 0) {
             $arrHarta[$key]['total'] = $total;
-        else
+        } else {
             unset($arrHarta[$key]);
+        }
     }
     /*
      * end proses harta
      */
-
-
     /*
      * proses kewajiban
      */
@@ -159,30 +128,23 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
     }
     $db->where("tipe", "=", "KEWAJIBAN");
-//            ->where("parent_id", "!=", 0);
-
     $modelKewajiban = $db->findAll();
     $totalKewajiban = 0;
-    $arrKewajiban = [];
+    $arrKewajiban   = [];
     foreach ($modelKewajiban as $key => $val) {
-        $db->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                ->from("acc_trans_detail");
+        $db->select("SUM(debit) as debit, SUM(kredit) as kredit")->from("acc_trans_detail");
         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
             $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
         }
-        $db->where('m_akun_id', '=', $val->id)
-                ->andWhere('date(tanggal)', '<=', $tanggal);
-        $getsaldoawal = $db->find();
-        $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
-
+        $db->where('m_akun_id', '=', $val->id)->andWhere('date(tanggal)', '<=', $tanggal);
+        $getsaldoawal   = $db->find();
+        $saldoAwal      = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
         if ($val->id == $akunLabaRugi) {
             $saldoAwal += $totalLabaRugi;
         }
-
         $val->nama_lengkap = $val->kode . ' - ' . $val->nama;
         $val->saldo = $saldoAwal;
         $val->saldo_rp = $val->saldo;
-
         if (($val->saldo < 0 || $val->saldo > 0) || $val->is_tipe == 1) {
             if ($val->is_tipe == 1) {
                 $id = $val->id;
@@ -205,15 +167,15 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 }
             }
         }
-        if ($total > 0 || $total < 0)
+        if ($total > 0 || $total < 0) {
             $arrKewajiban[$key]['total'] = $total;
-        else
+        } else {
             unset($arrKewajiban[$key]);
+        }
     }
     /*
      * end proses kewajiban
      */
-
     /*
      * proses modal
      */
@@ -233,10 +195,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
     }
     $db->where("tipe", "=", "MODAL");
-//            ->where("parent_id", "!=", 0);
-
     $modelModal = $db->findAll();
-
     /*
      * panggil function saldo laba rugi, karena digunakan juga di laporan neraca
      */
@@ -246,7 +205,6 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
     $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
     $saldo_labarugi = $pendapatan - $biaya - $beban;
-
     $totalModal = 0;
     $arrModal = [];
     foreach ($modelModal as $key => $val) {
@@ -259,15 +217,12 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 ->andWhere('date(tanggal)', '<=', $tanggal);
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
-
         if ($val->id == $akunLabaRugi) {
             $saldoAwal += $totalLabaRugi;
         }
-
         $val->nama_lengkap = $val->kode . ' - ' . $val->nama;
         $val->saldo = $saldoAwal;
         $val->saldo_rp = $val->saldo;
-
         if (($val->saldo < 0 || $val->saldo > 0) || $val->is_tipe == 1) {
             if ($val->is_tipe == 1) {
                 $id = $val->id;
@@ -280,7 +235,6 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             }
         }
     }
-
     foreach ($arrModal as $key => $val) {
         $arrModal[$key] = (array) $val;
         $total = 0;
@@ -289,17 +243,16 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
                 $total += $vals['saldo'];
             }
         }
-        if ($total > 0 || $total < 0)
+        if ($total > 0 || $total < 0) {
             $arrModal[$key]['total'] = $total;
-        else
+        } else {
             unset($arrModal[$key]);
+        }
     }
-
     $totalKewajibanModal = $totalKewajiban + $totalModal;
     /*
      * end proses harta
      */
-
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neraca.html', [
@@ -330,7 +283,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         header("Content-type: application/vnd.ms-excel");
         header("Content-Disposition: attachment;Filename=laporan-neraca.xls");
         echo $content;
-    } else if (isset($params['print']) && $params['print'] == 1) {
+    } elseif (isset($params['print']) && $params['print'] == 1) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neraca.html', [
             "modelHarta" =>
@@ -386,6 +339,3 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         ]);
     }
 });
-
-
-
