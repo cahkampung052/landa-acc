@@ -1,9 +1,9 @@
 <?php
-
 /**
  * Multi insert ke trans detail
  */
-function insertTransDetail($data) {
+function insertTransDetail($data)
+{
     $db = new Cahkampung\Landadb(config('DB')['db']);
     if (!empty($data)) {
         foreach ($data as $key => $value) {
@@ -11,7 +11,6 @@ function insertTransDetail($data) {
         }
     }
 }
-
 /**
  * Set modul ACC URL
  */
@@ -24,24 +23,24 @@ function modulUrl() {
 //    echo config('SITE_URL');die;
     return $a . "/" . config('MODUL_ACC_PATH');
 }
-
 /**
  * Set path untuk slim twig view
  */
-function twigViewPath() {
+function twigViewPath()
+{
     $view = new \Slim\Views\Twig(config('MODUL_ACC_PATH') . '/view');
     return $view;
 }
-
-function twigView() {
+function twigView()
+{
     $view = new \Slim\Views\Twig('views');
     return $view;
 }
-
 /**
  * Buat nested tree
  */
-function buildTree($elements, $parentId = 0) {
+function buildTree($elements, $parentId = 0)
+{
     $branch = array();
     foreach ($elements as $element) {
         if ($element->parent_id == $parentId) {
@@ -54,11 +53,11 @@ function buildTree($elements, $parentId = 0) {
     }
     return $branch;
 }
-
 /**
  * ubah id child jadi numerical array
  */
-function buildFlatTreeId($tree, $ids = []) {
+function buildFlatTreeId($tree, $ids = [])
+{
     $colName = 'id';
     $childColName = 'children';
     foreach ($tree as $element) {
@@ -72,11 +71,11 @@ function buildFlatTreeId($tree, $ids = []) {
     }
     return $ids;
 }
-
 /**
  * ubah child jadi flat array
  */
-function flatten($arr) {
+function flatten($arr)
+{
     $result = [];
     foreach ($arr as $item) {
         $result[] = $item;
@@ -87,20 +86,20 @@ function flatten($arr) {
     }
     return $result;
 }
-
 /**
  * Ambil semua child
  */
-function getChildFlat($array, $parentId) {
+function getChildFlat($array, $parentId)
+{
     $tree = buildTree($array, $parentId);
     $child = flatten($tree);
     return $child;
 }
-
 /**
  * Ambil semua id child
  */
-function getChildId($tabelName, $parentId) {
+function getChildId($tabelName, $parentId)
+{
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $db->select("*")->from($tabelName)->where("is_deleted", "=", 0);
     $data = $db->findAll();
@@ -108,11 +107,11 @@ function getChildId($tabelName, $parentId) {
     $child = buildFlatTreeId($tree);
     return $child;
 }
-
 /**
  * Ambil saldo awal
  */
-function getSaldo($akunId, $lokasiId, $tanggal) {
+function getSaldo($akunId, $lokasiId, $tanggal)
+{
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $db->select("sum(debit) as debit, sum(kredit) as kredit")
             ->from("acc_trans_detail")
@@ -131,11 +130,11 @@ function getSaldo($akunId, $lokasiId, $tanggal) {
     $kredit = isset($model->kredit) ? $model->kredit : 0;
     return $debit - $kredit;
 }
-
 /**
  * Nominal Laba Rugi
  */
-function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null) {
+function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null)
+{
     $sql = new Cahkampung\Landadb(config('DB')['db']);
     /*
      * ambil child lokasi
@@ -149,7 +148,6 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null) {
             $lokasiId = $lokasi;
         }
     }
-
     /**
      * Ambil transaksi
      */
@@ -159,14 +157,12 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null) {
             ->customWhere("acc_m_akun.tipe IN ('PENDAPATAN', 'BIAYA', 'BEBAN')")
             ->groupBy("acc_m_akun.id")
             ->findAll();
-
     /**
      * Set parameter lokasi
      */
     if (!empty($lokasi)) {
         $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
-
     /**
      * Set parameter tanggal
      */
@@ -176,7 +172,6 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null) {
     if (!empty($tglEnd)) {
         $sql->andWhere("date(acc_trans_detail.tanggal)", "<=", $tglEnd);
     }
-
     /**
      * hitung laba rugi
      */
@@ -190,22 +185,20 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null) {
             $total -= ($subTotal * $value->saldo_normal);
         }
     }
-
     /**
      * Ambil akun laba rugi
      */
     $pemetaan = getPemetaanAkun('Laba Rugi Berjalan');
-
     return [
         "m_akun_id" => $pemetaan,
         "total" => $total,
     ];
 }
-
 /**
  * Saldo Neraca
  */
-function getSaldoNeraca($akunId, $lokasi, $tanggal) {
+function getSaldoNeraca($akunId, $lokasi, $tanggal)
+{
     $sql = new Cahkampung\Landadb(config('DB')['db']);
     /*
      * ambil child lokasi
@@ -219,7 +212,6 @@ function getSaldoNeraca($akunId, $lokasi, $tanggal) {
             $lokasiId = $lokasi;
         }
     }
-
     /**
      * Ambil transaksi
      */
@@ -229,14 +221,12 @@ function getSaldoNeraca($akunId, $lokasi, $tanggal) {
             ->customWhere("acc_m_akun.tipe IN ('HARTA', 'KEWAJIBAN', 'MODAL')")
             ->groupBy("acc_m_akun.id")
             ->findAll();
-
     /**
      * Set parameter lokasi
      */
     if (!empty($lokasi)) {
         $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
-
     /**
      * Set parameter Akun
      */
@@ -247,21 +237,18 @@ function getSaldoNeraca($akunId, $lokasi, $tanggal) {
             $sql->customWhere("acc_trans_detail.m_akun_id = '" . $akunId . "'", "AND");
         }
     }
-
     /**
      * Set parameter Tanggal
      */
     if (!empty($tanggal)) {
         $sql->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal);
     }
-
     $model = $sql->findAll();
     $arr = [];
     foreach ($model as $key => $value) {
         $subTotal = intval($value->debit) - intval($value->kredit);
         $arr[$value->m_akun_id] = $subTotal * $value->saldo_normal;
     }
-
     /**
      * Ambil laba rugi nominal
      */
@@ -271,14 +258,13 @@ function getSaldoNeraca($akunId, $lokasi, $tanggal) {
     } else {
         $arr[$labaRugi['m_akun_id']] = $labaRugi['total'];
     }
-
     return $arr;
 }
-
 /**
  * Laba rugi
  */
-function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array = true) {
+function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array = true)
+{
     $sql = new Cahkampung\Landadb(config('DB')['db']);
     /*
      * ambil child lokasi
@@ -291,117 +277,89 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
         } else {
             $lokasiId = $lokasi;
         }
+    }else{
+        $lokasi = $sql->findAll("select id from acc_m_lokasi where is_deleted = 0");
+        $arrLok = [];
+        foreach ($lokasi as $key => $value) {
+            $arrLok[] = $value->id;
+        }
+        $lokasiId = implode(",", $arrLok);
     }
     $data['saldo_awal'] = 0;
     $data['total_saldo'] = 0;
     /*
-     * get akun parent 0, akun utama
-     */
-    $klasifikasi = $sql->select("*")
-            ->from("acc_m_akun")
-            ->customWhere("tipe IN ('PENDAPATAN', 'PENDAPATAN DI LUAR USAHA', 'BEBAN', 'BEBAN DI LUAR USAHA')")
-            ->where("is_tipe", "=", 1)
-            ->where("level", "=", 1)
-            ->findAll();
-    $arr = [];
-    $total = 0;
-
-    /*
-     * deklarasi total per tipe
-     */
-    $total_ = [];
-    foreach ($klasifikasi as $key => $val) {
-        $total_[$val->tipe] = 0;
-    }
-//    print_r($total);die();
-    /*
      * ambil akun pengecualian
      */
-    $akunPengecualian = getMasterSetting();
-    $arrPengecualian = [];
+    $akunPengecualian   = getMasterSetting();
+    $arrPengecualian    = [];
     if (is_array($akunPengecualian) && !empty($akunPengecualian)) {
         foreach ($akunPengecualian->pengecualian_labarugi as $a => $b) {
             array_push($arrPengecualian, $b->m_akun_id->id);
         }
     }
-
-
-    /*
-     * proses perulangan
+    /**
+     * Ambil transaksi di akun
      */
-    foreach ($klasifikasi as $index => $akun) {
-//        print_r($arrPengecualian);die();
-        $arr[$index] = (array) $akun;
-        $arr[$index]['total'] = 0;
-        /*
-         * ambil child akun
-         */
-        $akunId = getChildId("acc_m_akun", $akun->id);
-//        print_r($akunId);
-        if (is_array($akunPengecualian) && !empty($akunPengecualian)) {
-            foreach ($arrPengecualian as $w => $x) {
-                foreach ($akunId as $y => $z) {
-                    if ($z == $x) {
-                        unset($akunId[$y]);
-                    }
-                }
-            }
-        }
-//        print_r($akunId);die();
-        if (is_array($akunId) && !empty($akunId)) {
-            $getakun = $sql->select("*")
-                    ->from("acc_m_akun")
-                    ->customWhere("id IN(" . implode(',', $akunId) . ")")
-                    ->orderBy("kode")
-                    ->findAll();
-            foreach ($getakun as $key => $val) {
-                $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                        ->from("acc_trans_detail");
-                if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-                    $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
-                }
-                $sql->where('acc_trans_detail.m_akun_id', '=', $val->id);
-                if ($tanggal_end != null) {
-                    $sql->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
-                            ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
-                } else {
-                    $sql->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_start);
-                }
-                $gettransdetail = $sql->find();
-                if ((intval($gettransdetail->debit) - intval($gettransdetail->kredit) > 0) || (intval($gettransdetail->debit) - intval($gettransdetail->kredit) < 0) || $val->is_tipe == 1) {
-                    if ($val->is_tipe == 1) {
-                        $arr[$index]['detail'][$val->id]['kode'] = $val->kode;
-                        $arr[$index]['detail'][$val->id]['nama'] = $val->nama;
-                        $arr[$index]['detail'][$val->id]['nominal'] = 0;
-                    } else {
-                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['kode'] = $val->kode;
-                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nama'] = $val->nama;
-                        $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'] = (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
-                        $arr[$index]['total'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
-                        $arr[$index]['detail'][$val->parent_id]['nominal'] += $arr[$index]['detail'][$val->parent_id]['detail'][$key]['nominal'];
+    $sql->select("
+            SUM(debit) as debit, 
+            SUM(kredit) as kredit,
+            acc_m_akun.id,
+            acc_m_akun.saldo_normal
+        ")
+        ->from("acc_trans_detail")
+        ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+        ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'BEBAN')")
+        ->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND")
+        ->groupBy("acc_m_akun.id");
+    /**
+     * Filter tanggal
+     */
+    if ($tanggal_end != null) {
+        $sql->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
+    } else {
+        $sql->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_start);
+    }
+    /**
+     * Filter pengecualian
+     */
+    if(!empty($arrPengecualian)){
+        $sql->customWhere("m_akun_id NOT INT (".implode(",", $arrPengecualian).")", "And");
+    }
+    $trans = $sql->findAll();
+    $arrTrans = [];
+    foreach ($trans as $key => $value) {
+        $arrTrans[$value->id] = (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
+    }
+    /*
+     * ambil akun (jika saldo 0 ikut ditampilkan)
+     */
+    $sql->select("id, nama, kode, tipe")
+        ->from("acc_m_akun")
+        ->customWhere("tipe in ('PENDAPATAN', 'BEBAN')")
+        ->andWhere("is_deleted", "=", 0);
+    $model = $sql->findAll();
+    $grandTotal = ['PENDAPATAN' => 0, 'BEBAN' => 0];
+    $arr        = [];
+    foreach ($model as $key => $value) {
+        $total = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0);
+        if (!empty($value->tipe) && $total != 0) {
+            $grandTotal[$value->tipe] += $total;
 
-                        $total_[$val->tipe] += $arr[$index]['total'];
-                    }
-                    if ($akun->tipe == "HARTA" || $akun->tipe == "PENDAPATAN LAIN") {
-                        $total += (intval($gettransdetail->debit) - intval($gettransdetail->kredit)) * $val->saldo_normal;
-                    } else {
-                        $total -= (intval($gettransdetail->debit) - intval($gettransdetail->kredit));
-                    }
-                }
-            }
+            $arr[$value->tipe]['nama'] = $value->tipe;
+            $arr[$value->tipe]['detail'][$value->id]['kode'] = $value->kode;
+            $arr[$value->tipe]['detail'][$value->id]['nama'] = $value->nama;
+            $arr[$value->tipe]['detail'][$value->id]['nominal'] = $total;
+            $arr[$value->tipe]['total'] = (isset($arr[$value->tipe]['total']) ? $arr[$value->tipe]['total'] : 0) + $total;
         }
     }
-//    die();
-//    print_r($total_);die();
-
     if ($array) {
-        return ["data" => $arr, "total" => $total_];
+        return ["data" => $arr, "total" => $grandTotal];
     } else {
-        return $total;
+        return $grandTotal['PENDAPATAN'] - $grandTotal['BEBAN'];
     }
 }
-
-function getPemetaanAkun($tipe = '') {
+function getPemetaanAkun($tipe = '')
+{
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $arrAkun = [0 => 0];
     $db->select("*")
@@ -417,42 +375,36 @@ function getPemetaanAkun($tipe = '') {
             $arrAkun[$value->type] = [0 => $value->m_akun_id];
         }
     }
-
     if (!empty($tipe)) {
-        return $arrAkun[$tipe];
+        return isset($arrAkun[$tipe]) ? $arrAkun[$tipe] : 0;
     } else {
         return $arrAkun;
     }
 }
-
-function getMasterSetting() {
+function getMasterSetting()
+{
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $data = $db->select("*")
             ->from("acc_m_setting")
             ->find();
-
     $data->pengecualian_neraca = json_decode($data->pengecualian_neraca);
     $data->pengecualian_labarugi = json_decode($data->pengecualian_labarugi);
-
     return $data;
 }
-
-function getSessionLokasi() {
+function getSessionLokasi()
+{
     $cabang = [];
     foreach ($_SESSION['user']['lokasi'] as $val) {
         $cabang[] = $val->id;
     }
-
     $return = implode(",", $cabang);
     return $return;
 }
-
-function generateNoTransaksi($type, $unker) {
+function generateNoTransaksi($type, $unker)
+{
     $db = config('DB');
     $db = new Cahkampung\Landadb($db['db']);
-
     $custom = getMasterSetting();
-
     if ($type == 'penerimaan') {
         $cek = $db->find("select no_transaksi from acc_pemasukan order by no_transaksi desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
@@ -462,7 +414,7 @@ function generateNoTransaksi($type, $unker) {
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
-    } else if ($type == 'pengeluaran') {
+    } elseif ($type == 'pengeluaran') {
         $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran order by no_urut desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
@@ -471,7 +423,7 @@ function generateNoTransaksi($type, $unker) {
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
-    } else if ($type == 'transfer') {
+    } elseif ($type == 'transfer') {
         $cek = $db->find("select no_transaksi from acc_transfer order by no_transaksi desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
@@ -480,7 +432,7 @@ function generateNoTransaksi($type, $unker) {
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
-    } else if ($type == 'jurnal') {
+    } elseif ($type == 'jurnal') {
         $cek = $db->find("select no_transaksi from acc_jurnal order by no_transaksi desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
@@ -489,7 +441,7 @@ function generateNoTransaksi($type, $unker) {
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
-    } else if ($type == 'pengajuan') {
+    } elseif ($type == 'pengajuan') {
         $cek = $db->find("select no_proposal, no_urut from acc_t_pengajuan order by no_urut desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_proposal, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
@@ -498,45 +450,44 @@ function generateNoTransaksi($type, $unker) {
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEPRODI", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
-    } else if ($type == 'kasbon') {
+    } elseif ($type == 'kasbon') {
         $cek = $db->find("select no_transaksi, no_urut from acc_kasbon order by no_urut desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = date("Y") . "/" . date("m") . "/KSBN/" . $no_urut;
-    } else if ($type == 'pembayaran_kasbon') {
+    } elseif ($type == 'pembayaran_kasbon') {
         $cek = $db->find("select no_transaksi, no_urut from acc_bayar_kasbon order by no_urut desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = date("Y") . "/" . date("m") . "/" . $unker . "/BYRKSBN/" . $no_urut;
-    } else if ($type == 'pembayaran_hutang') {
+    } elseif ($type == 'pembayaran_hutang') {
         $cek = $db->find("select kode from acc_bayar_hutang order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "BS/" . date("Y") . "/". $no_urut;
-    } else if ($type == 'customer') {
+    } elseif ($type == 'customer') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "CUST" . date("Y") . "" . $no_urut;
-    } else if ($type == 'supplier') {
+    } elseif ($type == 'supplier') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'supplier' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "VND" . date("Y") . "" . $no_urut;
-    } else if ($type == 'stok_masuk') {
+    } elseif ($type == 'stok_masuk') {
         $cek = $db->find("select kode from inv_stok_masuk order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "PI/" . date("m") . "/" . date("Y") . "/" . $no_urut;
     }
-
-
     return @$no_transaksi;
 }
-
-function tableUser() {
-    if (config('TABLE_USER') == "")
+function tableUser()
+{
+    if (config('TABLE_USER') == "") {
         return "acc_m_user";
-    else
+    } else {
         return config('TABLE_USER');
+    }
 }

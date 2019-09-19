@@ -6,12 +6,12 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
     /**
      * Ambil list lokasi
      */
-    Data.get('acc/m_lokasi/getLokasi').then(function(response) {
-        $scope.listLokasi = response.data.list;
-        if ($scope.listLokasi.length > 0) {
-            $scope.form.m_lokasi_id = $scope.listLokasi[0];
-        }
-    });
+//    Data.get('acc/m_lokasi/getLokasi').then(function(response) {
+//        $scope.listLokasi = response.data.list;
+//        if ($scope.listLokasi.length > 0) {
+//            $scope.form.m_lokasi_id = $scope.listLokasi[0];
+//        }
+//    });
     
      /**
      * Ambil laporan dari server
@@ -22,7 +22,7 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
             export: is_export,
             print: is_print,
             tanggal: moment($scope.form.tanggal).format('YYYY-MM-DD'),
-            m_lokasi_id : $scope.form.m_lokasi_id.id
+//            m_lokasi_id : $scope.form.m_lokasi_id.id
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan', param).then(function(response) {
@@ -37,7 +37,6 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
             });
         } else {
             Data.get('site/base_url').then(function(response){
-//                console.log(response)
                 window.open(response.data.base_url + "api/acc/l_neraca/laporan?" + $.param(param), "_blank");
             });
             
