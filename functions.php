@@ -376,7 +376,7 @@ function getPemetaanAkun($tipe = '')
         }
     }
     if (!empty($tipe)) {
-        return $arrAkun[$tipe];
+        return isset($arrAkun[$tipe]) ? $arrAkun[$tipe] : 0;
     } else {
         return $arrAkun;
     }
