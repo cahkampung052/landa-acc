@@ -23,7 +23,6 @@ function modulUrl() {
 //    echo config('SITE_URL');die;
     return $a . "/" . config('MODUL_ACC_PATH');
 }
-}
 /**
  * Set path untuk slim twig view
  */
