@@ -17,6 +17,15 @@ td, th {
 /**
  * Tabel Laporan
  */
+.table-white tbody tr:nth-of-type(odd){
+    background-color: #fff !important;
+}
+.table-white tbody tr{
+    background-color: #fff !important;
+}
+.table-white tbody tr:hover{
+    background-color: #f2f7fb !important;   
+}
 .table-laporan tr {
     background-color: #3fa8d82e;
     border-bottom: none;
