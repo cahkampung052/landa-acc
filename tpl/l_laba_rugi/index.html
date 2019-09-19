@@ -91,7 +91,7 @@
                                         <b>{{ val.nama }}</b>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in val.detail">
+                                <tr ng-repeat="vals in val.detail[val.id].detail">
                                     <td align="left" style="vertical-align: top">{{ vals.kode }}</td>
                                     <td align="left" style="vertical-align: top">{{ vals.nama }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ vals.nominal | number }}</td>
