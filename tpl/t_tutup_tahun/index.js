@@ -9,21 +9,21 @@ app.controller('tutuptahunCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.is_view = false;
     $scope.tampilkan = false;
 
-    Data.get('acc/m_akun/akunDetail').then(function(data) {
+    Data.get('acc/m_akun/akunDetail').then(function (data) {
         $scope.listAkun = data.data.list;
     });
-    
-    
+
+
     $scope.getDetail = function (form) {
         console.log("ya")
         var params = {
-            akun_ikhtisar_id : form.akun_ikhtisar_id.id,
-            akun_pemindahan_modal_id : form.akun_pemindahan_modal_id.id,
-            tahun : form.tahun
+            akun_ikhtisar_id: form.akun_ikhtisar_id.id,
+            akun_pemindahan_modal_id: form.akun_pemindahan_modal_id.id,
+            tahun: form.tahun
         };
         if ((form.tahun != undefined) && (form.akun_ikhtisar_id != undefined) && (form.akun_pemindahan_modal_id != undefined)) {
             Data.get(control_link + '/getDetail', params).then(function (response) {
-                $scope.detail  = response.data.detail;
+                $scope.detail = response.data.detail;
                 $scope.data = response.data.data;
                 $scope.form.debit = response.data.data.labarugimodal;
                 $scope.form.kredit = response.data.data.labarugimodal2;
@@ -31,7 +31,7 @@ app.controller('tutuptahunCtrl', function ($scope, Data, $rootScope, $uibModal, 
             });
         }
     }
-    
+
     $scope.sumTotal = function () {
         console.log("ya")
         var totaldebit = 0;
@@ -49,7 +49,10 @@ app.controller('tutuptahunCtrl', function ($scope, Data, $rootScope, $uibModal, 
         var offset = tableState.pagination.start || 0;
         var limit = tableState.pagination.number || 1000;
         /** set offset and limit */
-        var param = {};
+        var param = {
+            offset : offset,
+            limit : limit
+        };
         /** set sort and order */
         if (tableState.sort.predicate) {
             param['sort'] = tableState.sort.predicate;
@@ -59,10 +62,13 @@ app.controller('tutuptahunCtrl', function ($scope, Data, $rootScope, $uibModal, 
         if (tableState.search.predicateObject) {
             param['filter'] = tableState.search.predicateObject;
         }
-        
+
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
             $scope.base_url = response.data.base_url;
+            tableState.pagination.numberOfPages = Math.ceil(
+                    response.data.totalItems / limit
+                    );
         });
         $scope.isLoading = false;
     };
@@ -89,7 +95,7 @@ app.controller('tutuptahunCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.getDetail(form.id);
         console.log($scope.form);
-        
+
     };
     /** view */
     $scope.view = function (form) {
@@ -104,19 +110,19 @@ app.controller('tutuptahunCtrl', function ($scope, Data, $rootScope, $uibModal, 
     };
     /** save action */
     $scope.save = function (form) {
-        
-        form['hasil_lr'] = parseInt(form.debit)-parseInt(form.kredit);
+
+        form['hasil_lr'] = parseInt(form.debit) - parseInt(form.kredit);
         form['tahun'] = moment(form.tahun).format('YYYY');
         console.log(form)
-        
-        
+
+
         Data.post(control_link + '/save', form).then(function (result) {
             if (result.status_code == 200) {
                 Swal.fire({
                     title: "Tersimpan",
                     text: "Data Berhasil Di Simpan.",
                     type: "success"
-                }).then(function() {
+                }).then(function () {
                     $scope.callServer(tableStateRef);
                     $scope.is_edit = false;
                 });

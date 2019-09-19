@@ -29,10 +29,10 @@
                         <thead>
                             <tr>
                             <tr>
-                                <th class="align-left">Tipe</th>
-                                <th class="align-left">Min</th>
-                                <th class="align-left">Max</th>
-                                <th class="align-left">Jumlah Approval</th>
+                                <th class="align-center">Tipe</th>
+                                <th class="align-center">Min</th>
+                                <th class="align-center">Max</th>
+                                <th class="align-center">Jumlah Approval</th>
                                 <th></th>
                             </tr>
                             </tr>
@@ -40,8 +40,8 @@
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
                                 <td class="align-left">{{ row.tipe}}</td>
-                                <td class="align-left">{{ row.min | currency}}</td>
-                                <td class="align-left">{{ row.max | currency}}</td>
+                                <td class="align-right">{{ row.min | number}}</td>
+                                <td class="align-right">{{ row.max | number}}</td>
                                 <td class="align-left">{{ row.jumlah_approval}} Approval</td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
@@ -53,7 +53,7 @@
                         </tbody>
                     </table>
                 </div>
-                <!--<div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>-->
+                <div st-pagination="" st-items-by-page="20" st-template="tpl/common/pagination.custom.html"></div>
             </div>
         </div>
         <div class="card" ng-if="is_edit">

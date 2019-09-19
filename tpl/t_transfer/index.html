@@ -125,8 +125,8 @@
                                 <td style="text-align: left;">
                                     {{row.namaTujuan}}
                                 </td>
-                                <td style="text-align: left;">
-                                    {{row.total | currency}}
+                                <td style="text-align: right;">
+                                    {{row.total | number}}
                                 </td>
                                 <td style="text-align: left;">
                                     {{row.tanggal_formated}}
@@ -150,7 +150,7 @@
                         </tbody>
                     </table>
                 </div>
-                <!--<div st-pagination="" st-items-by-page="10" st-template="tpl/common/pagination.custom.html"></div>-->
+                <div st-pagination="" st-items-by-page="20" st-template="tpl/common/pagination.custom.html"></div>
             </div>
         </div>
         <div class="card" ng-if="is_edit">

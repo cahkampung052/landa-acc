@@ -175,12 +175,13 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key] = (array) $val;
         $models[$key]['tanggal'] = date("Y-m-d", $val->modified_at);
         $models[$key]['tanggal_formated'] = date("d-m-Y", strtotime($val->tanggal));
-        $models[$key]['created_at'] = date("d-m-Y h:i:s", $val->created_at);
+        $models[$key]['created_at'] = date("d-m-Y h:i", $val->created_at);
         $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
         $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaCus, "type"=>ucfirst($val->typeCus)];
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['tanggal_setting'] = $setting->tanggal;
+        $models[$key]['grandtotal'] = intval($val->total) + intval($val->ppn);
         
     }
     return successResponse($response, [

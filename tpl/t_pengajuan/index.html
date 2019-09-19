@@ -56,12 +56,22 @@
                                         <div class="col-sm-2">
                                             <select class="form-control form-control-sm" st-search="m_lokasi_id">
                                                 <option value="">- Semua Lokasi -</option>
-                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{ val.nama_lengkap }}</option>
+                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{ val.nama_lengkap}}</option>
                                             </select>
                                         </div>
                                         <label for="nama" class="col-sm-2 col-form-label-sm mb-0px">No Proposal</label>
                                         <div class="col-sm-2">
                                             <input type="text" class="form-control form-control-sm" st-search="no_proposal" id="no_transaksi" placeholder="No Proposal"/>
+                                        </div>
+                                        <label for="nama" class="col-sm-2 col-form-label-sm mb-0px">Status</label>
+                                        <div class="col-sm-2">
+                                            <select class="form-control form-control-sm" st-search="acc_t_pengajuan.status">
+                                                <option value="">- Semua Status -</option>
+                                                <option ng-value="Approved">Approved</option>
+                                                <option ng-value="Rejected">Rejected</option>
+                                                <option ng-value="Canceled">Canceled</option>
+                                                <option ng-value="Terbayar">Terbayar</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </form>
@@ -74,29 +84,29 @@
                         <thead>
                             <tr>
                                 <th class="align-left">No Proposal</th>
+                                <th class="align-left">Pemohon</th>
                                 <th class="align-left">Lokasi</th>
                                 <th class="align-left">Perihal</th>
-                                <th class="align-left">Nama Kegiatan</th>
-                                <!--<th class="align-left">Butuh Approval</th>-->
-                                <th class="align-center">Tipe</th>
                                 <th class="align-left">Tanggal</th>
                                 <th class="align-left">Biaya</th>
-                                <th width="100"></th>
+                                <th class="align-center">Status</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
                                 <td class="align-left">{{ row.no_proposal}}</td>
-                                <td class="align-left">{{ row.kodeLokasi + " - " + row.namaLokasi}}</td>
+                                <td class="align-left">{{ row.created_formated}}</td>
+                                <td class="align-left">{{ row.namaLokasi}}</td>
                                 <td class="align-left">{{ row.perihal}}</td>
-                                <td class="align-left">{{ row.dasar_pengajuan}}</td>
-                                <!--                                <td class="align-left">
-                                                                    <span ng-if="row.approval != 0">Ya</span>
-                                                                    <span ng-if="row.approval == 0">Tidak</span>
-                                                                </td>-->
-                                <td class="align-center">{{ row.tipe}}</td>
                                 <td class="align-left">{{ row.tanggal_formated}}</td>
-                                <td class="align-right">{{ row.jumlah_perkiraan | currency }}</td>
+                                <td class="align-right">{{ row.jumlah_perkiraan | number}}</td>
+                                <td class="align-center">
+                                    <span class="bg-primary p-1" ng-if="row.status == 'Terbayar'">{{ row.status}}</span>
+                                    <span class="bg-success p-1" ng-if="row.status == 'Approved'">{{ row.status}}</span>
+                                    <span class="bg-warning p-1" ng-if="row.status == 'Canceled'">{{ row.status}}</span>
+                                    <span class="bg-danger p-1" ng-if="row.status == 'Rejected'">{{ row.status}}</span>
+                                </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-success fa fa-print" ng-click="print(row)"></button>

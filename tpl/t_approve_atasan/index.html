@@ -39,6 +39,16 @@
                                         <div class="col-sm-3">
                                             <input st-search="m_lokasi_id" class="form-control form-control-sm" placeholder="Lokasi"/>
                                         </div>
+                                        <label class="col-sm-1 col-form-label-sm mb-0">Status</label>
+                                        <div class="col-sm-2">
+                                            <select class="form-control form-control-sm" st-search="acc_t_pengajuan.status">
+                                                <option value="">- Semua Status -</option>
+                                                <option ng-value="Approved">Approved</option>
+                                                <option ng-value="Rejected">Rejected</option>
+                                                <option ng-value="Canceled">Canceled</option>
+                                                <option ng-value="Terbayar">Terbayar</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -66,7 +76,7 @@
                                 <td class="align-left">{{ row.namaLokasi}}</td>
                                 <td class="align-left">{{ row.perihal}}</td>
                                 <td class="align-left">{{ row.tanggal_formated}}</td>
-                                <td class="align-right">{{ row.jumlah_perkiraan | currency}}</td>
+                                <td class="align-right">{{ row.jumlah_perkiraan | number}}</td>
                                 <td class="align-center">
                                     <span class="bg-primary p-1" ng-if="row.status == 'Terbayar'">{{ row.status}}</span>
                                     <span class="bg-success p-1" ng-if="row.status == 'Approved'">{{ row.status}}</span>
@@ -78,7 +88,6 @@
                                     <div class="btn-group pull-right" role="group" ng-if="row.status != 'Rejected'">
                                         <button type="button" class="btn btn-info btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="view(row)">
                                             <i class="fa fa-list"></i>
-                                            &nbsp;Detail
                                         </button>
                                         <button type="button" class="btn btn-success btn-sm" ui-sref="keuangan.pengeluaran({no_proposal: row.no_proposal})" ng-if="row.status == 'Approved'">
                                             <i class="fa fa-dollar"></i>
