@@ -490,6 +490,11 @@ function generateNoTransaksi($type, $unker)
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "PT/" . date("m") . "/" . date("Y") . "/" . $no_urut;
+    } elseif ($type == 'asuransi') {
+        $cek = $db->find("select kode from m_asuransi order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -4)) + 1;
+        $no_urut = substr('0000' . $urut, -4);
+        $no_transaksi = "ASR" . "/" . $no_urut;
     }
     return @$no_transaksi;
 }
