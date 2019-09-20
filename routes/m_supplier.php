@@ -1,16 +1,15 @@
 <?php
 
-function validasi($data, $custom = array())
-{
+function validasi($data, $custom = array()) {
     $validasi = array(
-        'nama'      => 'required',
+        'nama' => 'required',
     );
     GUMP::set_field_name("tlp", "No Telepon");
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
 
-$app->get('/acc/m_supplier/kode', function ($request, $response){
+$app->get('/acc/m_supplier/kode', function ($request, $response) {
     return generateNoTransaksi("supplier", 0);
 });
 
@@ -18,32 +17,32 @@ $app->get('/acc/m_supplier/getSupplier', function ($request, $response) {
     $db = $this->db;
     $params = $request->getParams();
     $db->select("*")
-                ->from("acc_m_kontak")
-                ->orderBy("acc_m_kontak.nama")
-                ->where("is_deleted", "=", 0)
-                ->where("type", "=", "supplier");
+            ->from("acc_m_kontak")
+            ->orderBy("acc_m_kontak.nama")
+            ->where("is_deleted", "=", 0)
+            ->where("type", "=", "supplier");
 
-                if(isset($params['nama']) && !empty($params['nama'])){
-                    $db->customWhere("nama LIKE '%" . $params['nama'] . "%'", "AND");
-                }
+    if (isset($params['nama']) && !empty($params['nama'])) {
+        $db->customWhere("nama LIKE '%" . $params['nama'] . "%'", "AND");
+    }
 
-                $models = $db->limit(20)->findAll();
+    $models = $db->limit(20)->findAll();
     return successResponse($response, [
-      'list' => $models
+        'list' => $models
     ]);
 });
 
 $app->get('/acc/m_supplier/index', function ($request, $response) {
     $params = $request->getParams();
     // $sort     = "m_akun.kode ASC";
-    $offset   = isset($params['offset']) ? $params['offset'] : 0;
-    $limit    = isset($params['limit']) ? $params['limit'] : 10;
+    $offset = isset($params['offset']) ? $params['offset'] : 0;
+    $limit = isset($params['limit']) ? $params['limit'] : 10;
 
     $db = $this->db;
     $db->select("*")
-        ->from("acc_m_kontak")
-        ->orderBy('acc_m_kontak.nama')
-        ->where("type", "=", "supplier");
+            ->from("acc_m_kontak")
+            ->orderBy('acc_m_kontak.nama')
+            ->where("type", "=", "supplier");
 
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
@@ -51,7 +50,7 @@ $app->get('/acc/m_supplier/index', function ($request, $response) {
         foreach ($filter as $key => $val) {
             if ($key == 'is_deleted') {
                 $db->where("is_deleted", '=', $val);
-            }else{
+            } else {
                 $db->where($key, 'LIKE', $val);
             }
         }
@@ -67,15 +66,14 @@ $app->get('/acc/m_supplier/index', function ($request, $response) {
         $db->offset($params['offset']);
     }
 
-    $models    = $db->findAll();
+    $models = $db->findAll();
     $totalItem = $db->count();
 //     print_r($models);exit();
-    
 //      print_r($arr);exit();
     return successResponse($response, [
-      'list'        => $models,
-      'totalItems'  => $totalItem,
-      'base_url'    => str_replace('api/', '', config('SITE_URL'))
+        'list' => $models,
+        'totalItems' => $totalItem,
+        'base_url' => str_replace('api/', '', config('SITE_URL'))
     ]);
 });
 
@@ -84,16 +82,16 @@ $app->get('/acc/m_supplier/index', function ($request, $response) {
 $app->post('/acc/m_supplier/save', function ($request, $response) {
 
     $params = $request->getParams();
-    $data   = $params;
-    $sql    = $this->db;
-    
+    $data = $params;
+    $sql = $this->db;
+
     /*
      * generate kode
      */
 //    $kode = generateNoTransaksi("supplier", 0);
 
     $validasi = validasi($data);
-     if ($validasi === true) {
+    if ($validasi === true) {
         $params['type'] = "supplier";
         if (isset($params["id"])) {
 //            if(isset($params["kode"]) && !empty($params["kode"])){
@@ -119,7 +117,7 @@ $app->post('/acc/m_supplier/save', function ($request, $response) {
 $app->post('/acc/m_supplier/trash', function ($request, $response) {
 
     $data = $request->getParams();
-    $db   = $this->db;
+    $db = $this->db;
 
 
     $model = $db->update("acc_m_kontak", $data, array('id' => $data['id']));
@@ -132,12 +130,12 @@ $app->post('/acc/m_supplier/trash', function ($request, $response) {
 
 $app->post('/acc/m_supplier/delete', function ($request, $response) {
     $data = $request->getParams();
-    $db   = $this->db;
+    $db = $this->db;
 
     $delete = $db->delete('acc_m_kontak', array('id' => $data['id']));
-       if ($delete) {
-           return successResponse($response, ['data berhasil dihapus']);
-       } else {
-           return unprocessResponse($response, ['data gagal dihapus']);
-       }
+    if ($delete) {
+        return successResponse($response, ['data berhasil dihapus']);
+    } else {
+        return unprocessResponse($response, ['data gagal dihapus']);
+    }
 });
