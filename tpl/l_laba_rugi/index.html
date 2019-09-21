@@ -15,8 +15,13 @@
                             <form name="landaform" novalidate="">
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <div class="form-group">
+                                        <div class="input-group">
                                             <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-3">
@@ -75,40 +80,83 @@
                         <table class="table table-striped table-hover table-laporan table-white" style="border-collapse: collapse;">
                             <thead>
                                 <tr>
-                                    <th style="width: 25px;">
-                                        <b>KODE</b>
-                                    </th>
                                     <th>
                                         <b>AKUN</b>
                                     </th>
                                     <th width="100">
-                                        <b>Nominal</b>
+                                        <b>NOMINAL</b>
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody ng-repeat="(key,val) in detail">
-                                <tr>
-                                    <td align="left" style="vertical-align: top" colspan="3">
-                                        <b>{{ val.nama }}</b>
+                            <tbody>
+                                <tr ng-repeat="vals in detail.PENDAPATAN.detail">
+                                    <td align="left" style="vertical-align: top">
+                                        <div ng-bind-html="vals.nama"></div>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <span ng-if="vals.is_tipe == 0">{{ vals.nominal | number }}</span>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in val.detail">
-                                    <td align="left" style="vertical-align: top">{{ vals.kode }}</td>
-                                    <td align="left" style="vertical-align: top">{{ vals.nama }}</td>
-                                    <td align="right" class="text-right" style="vertical-align: top">{{ vals.nominal | number }}</td>
+                                <tr>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>TOTAL PENDAPATAN USAHA</b>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>{{ detail.PENDAPATAN.total | number }}</b>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="vals in detail.BEBAN.detail">
+                                    <td align="left" style="vertical-align: top">
+                                        <div ng-bind-html="vals.nama"></div>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <span ng-if="vals.is_tipe == 0">{{ vals.nominal | number }}</span>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td align="right" class="text-right" style="vertical-align: top" colspan="2">
-                                        <b>TOTAL {{ val.nama }}</b>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>TOTAL BEBAN USAHA</b>
                                     </td>
-                                    <td align="right" class="text-right" style="vertical-align: top" colspan="2">
-                                        <b>{{ val.total | number }}</b>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>{{ detail.BEBAN.total | number }}</b>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="vals in detail.PENDAPATAN_DILUAR_USAHA.detail">
+                                    <td align="left" style="vertical-align: top">
+                                        <div ng-bind-html="vals.nama"></div>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <span ng-if="vals.is_tipe == 0">{{ vals.nominal | number }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>TOTAL PENDAPATAN DILUAR USAHA</b>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>{{ detail.PENDAPATAN_DILUAR_USAHA.total | number }}</b>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="vals in detail.BEBAN_DILUAR_USAHA.detail">
+                                    <td align="left" style="vertical-align: top">
+                                        <div ng-bind-html="vals.nama"></div>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <span ng-if="vals.is_tipe == 0">{{ vals.nominal | number }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>TOTAL BEBAN DILUAR USAHA</b>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>{{ detail.BEBAN_DILUAR_USAHA.total | number }}</b>
                                     </td>
                                 </tr>
                             </tbody>
                             <tbody>
                                 <tr>
-                                    <td align="right" colspan="2">
+                                    <td align="right">
                                         <b style="color:green; font-size: 18px" ng-if="data.total >= 0">
                                             LABA
                                         </b>
