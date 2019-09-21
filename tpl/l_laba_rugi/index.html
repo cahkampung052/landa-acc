@@ -75,7 +75,7 @@
                         <table class="table table-striped table-hover table-laporan table-white" style="border-collapse: collapse;">
                             <thead>
                                 <tr>
-                                    <th style="width: 25px;">
+                                    <th style="width: 100px;">
                                         <b>KODE</b>
                                     </th>
                                     <th>
@@ -92,7 +92,7 @@
                                         <b>{{ val.nama }}</b>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in val.detail[val.id].detail">
+                                <tr ng-repeat="vals in val.detail">
                                     <td align="left" style="vertical-align: top">{{ vals.kode }}</td>
                                     <td align="left" style="vertical-align: top">{{ vals.nama }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ vals.nominal | number }}</td>
