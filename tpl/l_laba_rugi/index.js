@@ -1,10 +1,15 @@
 app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
     var control_link = "acc/l_laba_rugi";
     $scope.form = {};
+    $scope.url = {};
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+
+    Data.get('site/base_url').then(function (response) {
+        $scope.url = response.data;
+    });
     /**
      * Ambil list lokasi
      */
@@ -51,8 +56,8 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
      */
     $scope.modalSetting = function () {
         var modalInstance = $uibModal.open({
-            templateUrl: "api/acc/landaacc/tpl/l_laba_rugi/modal.html",
-            controller: "settingLabarugiCtrl",
+            templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/l_laba_rugi/modal.html",
+                    controller: "settingLabarugiCtrl",
             size: "md",
             backdrop: "static",
             keyboard: false,

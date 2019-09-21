@@ -1,17 +1,12 @@
 app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
     var control_link = "acc/l_neraca";
     $scope.form = {};
+    $scope.url = {};
     $scope.form.tanggal = new Date();
     
-    /**
-     * Ambil list lokasi
-     */
-//    Data.get('acc/m_lokasi/getLokasi').then(function(response) {
-//        $scope.listLokasi = response.data.list;
-//        if ($scope.listLokasi.length > 0) {
-//            $scope.form.m_lokasi_id = $scope.listLokasi[0];
-//        }
-//    });
+    Data.get('site/base_url').then(function (response) {
+        $scope.url = response.data;
+    });
     
      /**
      * Ambil laporan dari server
@@ -48,7 +43,7 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
      */
     $scope.modalSetting = function() {
         var modalInstance = $uibModal.open({
-            templateUrl: "api/acc/landaacc/tpl/l_neraca/modal.html",
+            templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/l_neraca/modal.html",
             controller: "settingNeracaCtrl",
             size: "md",
             backdrop: "static",

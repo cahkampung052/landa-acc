@@ -32,20 +32,14 @@ app.controller('l_hutangCtrl', function ($scope, Data, $rootScope) {
     /*
      * ambil supplier
      */
-     $scope.getSupplier = function (val) {
-Data.get('acc/m_supplier/getSupplier', {nama : val}).then(function (response) {
-        $scope.listSupplier = response.data.list;
-        if ($scope.listSupplier.length > 0) {
-            $scope.form.m_kontak_id = $scope.listSupplier[0];
-        }
-    });
-     }
-    Data.get('acc/m_supplier/getSupplier').then(function (response) {
-        $scope.listSupplier = response.data.list;
-        if ($scope.listSupplier.length > 0) {
-            $scope.form.m_kontak_id = $scope.listSupplier[0];
-        }
-    });
+    $scope.getSupplier = function (val) {
+        Data.get('acc/m_supplier/getSupplier', {nama: val}).then(function (response) {
+            $scope.listSupplier = response.data.list;
+            if ($scope.listSupplier.length > 0 && $scope.form.m_kontak_id == undefined) {
+                $scope.form.m_kontak_id = $scope.listSupplier[0];
+            }
+        });
+    }
 
     /**
      * Ambil laporan dari server

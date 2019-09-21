@@ -1,0 +1,164 @@
+<div class="modal-header">
+    <h5 class="modal-title">List Item Penerimaan : {{form.kode}}</h5>
+    <button type="button" class="close" ng-click="close()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body col-md-12" id="print">
+    <!-- <div class="col-md-12 col-sm-12"> -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align: center; font-weight: bold;">
+                    Item
+                </th>
+                <th style="text-align: center; font-weight: bold;">
+                    Jml Masuk
+                </th>
+                <th style="text-align: center; font-weight: bold;">
+                    Satuan
+                </th>
+                <th style="text-align: center; font-weight: bold;">
+                    Harga
+                </th>
+                <th style="text-align: center; font-weight: bold;">
+                    Diskon
+                </th>
+                <th style="text-align: center; font-weight: bold;">
+                    Pajak
+                </th>
+                <th style="text-align: center; font-weight: bold; width: 15%">
+                    Total
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="val in detPenerimaan">
+                <td style="text-align: center; width: 20%">
+        <ui-select class="w100" ng-disabled="1" ng-model="val.m_item_id" on-select="getItems(val.m_item_id, $index)" theme="bootstrap">
+            <ui-select-match placeholder="Pilih Item">
+                {{$select.selected.nama}}
+            </ui-select-match>
+            <ui-select-choices position="down" refresh="getItemf($select.search)" repeat="vals in getItem">
+                {{vals.nama}}
+            </ui-select-choices>
+        </ui-select>
+        </td>
+        <td style="text-align: center;">
+            <div ng-if="val.barcode_item == 'Non Batch'">
+                <input class="x-form w100 angka" ng-disabled="1" ng-keyup="total()" ng-change="cek_jumlah(val.jumlah_po, val.jumlah, val.realisasi, $index)" ng-model="val.jumlah" placeholder="Jumlah" style="text-align:center;" type="text"/>
+            </div>
+            <div ng-if="val.barcode_item == 'Reff Batch'">
+                <input class="x-form w100 angka" ng-disabled="1" ng-keyup="total();" ng-change="cek_jumlah(val.jumlah_po, val.jumlah, val.realisasi, $index)" ng-model="val.jumlah" style="text-align:center;" type="hidden"/>
+                <button class="btn btn-success btn-sm" ng-click="getBatch(val, $index, is_view)">
+                    {{val.jumlah}}
+                </button>
+            </div>
+        </td>
+        <td style="text-align: center; width: 8%">
+        <ui-select class="w100" ng-disabled="1" ng-model="val.m_item_konversi_id" theme="bootstrap">
+            <ui-select-match placeholder="Pilih Satuan">
+                {{$select.selected.nama}}
+            </ui-select-match>
+            <ui-select-choices position="down" repeat="v in konversi_item">
+                {{v.nama}}
+            </ui-select-choices>
+        </ui-select>
+        </td>
+        <td style="text-align: right;">
+            <div class="input-group input-group-sm">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Rp</span>
+                </div>
+                <input class="form-control form-control-sm angka rp" ng-model="val.harga" ng-readonly="true" placeholder="Harga" style="text-align:right;" type="text" ui-number-mask="0"/>
+            </div>
+        </td>
+        <td style="text-align: right;">
+            <div class="input-group input-group-sm">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Rp</span>
+                </div>
+                <input class="form-control form-control-sm angka rp" ng-keyup="total()" ng-model="val.diskon" ng-readonly="true" placeholder="Diskon" style="text-align:right;" type="text" ui-number-mask="0"/>
+            </div>
+        </td>
+        <td style="text-align: right;">
+            <div class="input-group input-group-sm">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Rp</span>
+                </div>
+                <input class="form-control form-control-sm angka rp" ng-keyup="total()" ng-model="val.pajak" ng-readonly="true" placeholder="Pajak" style="text-align:right;" type="text" ui-number-mask="0"/>
+            </div>
+        </td>
+        <td style="text-align: right;">
+            <div class="input-group input-group-sm">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Rp</span>
+                </div>
+                <input class="form-control form-control-sm angka rp" ng-model="val.sub_total_item" ng-readonly="true" style="text-align:right;" type="text" ui-number-mask="0"/>
+            </div>
+        </td>
+        </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6" style="text-align: right;">
+                    Sub Total
+                </td>
+                <td style="text-align: right;">
+                    <div class="input-group input-group-sm" style="margin:0px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control form-control-sm angka rp" ng-model="form.sub_total" ng-readonly="true" style="text-align:right;" type="text" ui-number-mask="0"/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align: right;">
+                    Diskon
+                </td>
+                <td style="text-align: right;">
+                    <div class="input-group input-group-sm" style="margin:0px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control form-control-sm angka rp" ng-keyup="total()" ng-model="form.diskon" ng-readonly="true" style="text-align:right;" type="text" ui-number-mask="0"/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align: right;">
+                    PPN
+                </td>
+                <td style="text-align: right;">
+                    <div class="input-group input-group-sm" style="margin:0px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control form-control-sm angka rp" ng-keyup="total()" ng-model="form.ppn" ng-readonly="1" style="text-align:right;" type="text" ui-number-mask="0"/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align: right;">
+                    <strong>
+                        Grand Total
+                    </strong>
+                </td>
+                <td style="text-align: right;">
+                    <div class="input-group input-group-sm" style="margin:0px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control form-control-sm angka rp" ng-model="form.grand_total" ng-readonly="1" style="text-align:right;" type="text" ui-number-mask="0"/>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+
+    </table>
+    <!-- </div> -->
+</div>
+<div class="modal-footer" ng-show="!is_view">
+
+</div>
