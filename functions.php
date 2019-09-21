@@ -20,8 +20,6 @@ function modulUrl() {
     $a = "http://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
     $a = str_replace($_SERVER['PATH_INFO'], '', $a);
     $a = substr($a, 0, strpos($a, "?"));
-//    echo $a;
-//    echo config('SITE_URL');die;
     return $a . "/" . config('MODUL_ACC_PATH');
 }
 
@@ -56,6 +54,25 @@ function buildTree($elements, $parentId = 0) {
 }
 
 /**
+ * Buat nested akun
+ */
+function buildTreeAkun($listAkun, $parentId = 0)
+{
+    $branch = array();
+    foreach ($listAkun as $key => $element) {
+        $kode = str_replace(".", "", $element->kode);
+        if ($element->parent_id == $parentId) {
+            $children = buildTreeAkun($listAkun, $element->id);
+            if ($children) {
+                $element->children = $children;
+            }
+            $branch[$kode] = $element;
+        }
+    }
+    // ksort($branch);
+    return $branch;
+}
+/**
  * ubah id child jadi numerical array
  */
 function buildFlatTreeId($tree, $ids = []) {
@@ -78,9 +95,10 @@ function buildFlatTreeId($tree, $ids = []) {
  */
 function flatten($arr) {
     $result = [];
-    foreach ($arr as $item) {
+    foreach ($arr as $key => $item) {
         $result[] = $item;
         if (isset($item->children)) {
+            ksort($item->children);
             $result = array_merge($result, flatten($item->children));
         }
         unset($item->children);
@@ -155,7 +173,7 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null) {
     $sql->select("sum(acc_trans_detail.debit) as debit, sum(acc_trans_detail.kredit) as kredit, acc_m_akun.saldo_normal, acc_m_akun.tipe")
             ->from("acc_trans_detail")
             ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-            ->customWhere("acc_m_akun.tipe IN ('PENDAPATAN', 'BIAYA', 'BEBAN')")
+            ->customWhere("acc_m_akun.tipe IN ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
             ->groupBy("acc_m_akun.id")
             ->findAll();
     /**
@@ -307,11 +325,11 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             acc_m_akun.id,
             acc_m_akun.saldo_normal
         ")
-            ->from("acc_trans_detail")
-            ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-            ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'BEBAN')")
-            ->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND")
-            ->groupBy("acc_m_akun.id");
+        ->from("acc_trans_detail")
+        ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+        ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
+        ->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND")
+        ->groupBy("acc_m_akun.id");
     /**
      * Filter tanggal
      */
@@ -324,7 +342,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      * Filter pengecualian
      */
     if (!empty($arrPengecualian)) {
-        $sql->customWhere("m_akun_id NOT INT (" . implode(",", $arrPengecualian) . ")", "And");
+        $sql->customWhere("m_akun_id NOT INT (".implode(",", $arrPengecualian).")", "And");
     }
     $trans = $sql->findAll();
     $arrTrans = [];
@@ -334,29 +352,36 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
     /*
      * ambil akun (jika saldo 0 ikut ditampilkan)
      */
-    $sql->select("id, nama, kode, tipe")
-            ->from("acc_m_akun")
-            ->customWhere("tipe in ('PENDAPATAN', 'BEBAN')")
-            ->andWhere("is_deleted", "=", 0);
+    $sql->select("id, nama, kode, tipe, level, is_tipe, parent_id")
+        ->from("acc_m_akun")
+        ->customWhere("tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
+        ->andWhere("is_deleted", "=", 0)
+        ->orderBy("acc_m_akun.kode");
     $model = $sql->findAll();
-    $grandTotal = ['PENDAPATAN' => 0, 'BEBAN' => 0];
-    $arr = [];
-    foreach ($model as $key => $value) {
-        $total = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0);
-        if (!empty($value->tipe) && $total != 0) {
-            $grandTotal[$value->tipe] += $total;
-
-            $arr[$value->tipe]['nama'] = $value->tipe;
-            $arr[$value->tipe]['detail'][$value->id]['kode'] = $value->kode;
-            $arr[$value->tipe]['detail'][$value->id]['nama'] = $value->nama;
-            $arr[$value->tipe]['detail'][$value->id]['nominal'] = $total;
-            $arr[$value->tipe]['total'] = (isset($arr[$value->tipe]['total']) ? $arr[$value->tipe]['total'] : 0) + $total;
-        }
+    $listAkun   = buildTreeAkun($model, 0);
+    $arrModel   = flatten($listAkun);
+    $grandTotal = ['PENDAPATAN' => 0, 'BEBAN' => 0, 'PENDAPATAN DILUAR USAHA' => 0, 'BEBAN DILUAR USAHA' => 0];
+    $arr        = ['PENDAPATAN' => ['detail' => []], 'BEBAN' => ['detail' => []], 'PENDAPATAN_DILUAR_USAHA' => ['detail' => []], 'BEBAN_DILUAR_USAHA' => ['detail' => []]];
+    foreach ($arrModel as $key => $value) {
+        $total  = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0);
+        $tipe   = str_replace(" ", "_", $value->tipe);
+        $grandTotal[$value->tipe] += $total;
+        $spasi      = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
+        $fullName   = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$tipe]['detail'][$key]['kode']     = $value->kode;
+        $arr[$tipe]['detail'][$key]['is_tipe']  = $value->is_tipe;
+        $arr[$tipe]['detail'][$key]['nama']     = ($value->is_tipe == 0) ? $fullName : "<b>".$fullName."</b>";
+        $arr[$tipe]['detail'][$key]['nominal']  = ($value->is_tipe == 1) ? '' : $total;
+        $arr[$tipe]['total'] = (isset($arr[$tipe]['total']) ? $arr[$tipe]['total'] : 0) + $total;
     }
+    ksort($arr['PENDAPATAN']['detail']);
+    ksort($arr['BEBAN']['detail']);
+    ksort($arr['PENDAPATAN_DILUAR_USAHA']['detail']);
+    ksort($arr['BEBAN_DILUAR_USAHA']['detail']);
     if ($array) {
         return ["data" => $arr, "total" => $grandTotal];
     } else {
-        return $grandTotal['PENDAPATAN'] - $grandTotal['BEBAN'];
+        return $grandTotal['PENDAPATAN'] + $grandTotal['PENDAPATAN DILUAR USAHA'] - $grandTotal['BEBAN'] - $grandTotal['BEBAN DILUAR USAHA'];
     }
 }
 
