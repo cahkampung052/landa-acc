@@ -40,7 +40,7 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
                 "css" => modulUrl().'/assets/css/style.css',
             ]);
         header("Content-type: application/vnd.ms-excel");
-        header("Content-Disposition: attachment;Filename=laporan-buku-besar.xls");
+        header("Content-Disposition: attachment;Filename=laporan-laba-rugi.xls");
         echo $content;
     } elseif (isset($params['print']) && $params['print'] == 1) {
         $view = twigViewPath();

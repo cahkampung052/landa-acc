@@ -21,44 +21,38 @@
                 <table class="table table-striped table-hover table-laporan table-white" style="border-collapse: collapse; width: 100%">
                     <thead>
                         <tr style="background-color: #263444">
-                            <th style="width: 70px;">
-                                <b>KODE</b>
-                            </th>
                             <th>
                                 <b>AKUN</b>
                             </th>
-                            <th style="width: 200px">
-                                <b>Nominal</b>
+                            <th style="width: 100px">
+                                <b>NOMINAL</b>
                             </th>
                         </tr>
                     </thead>
-                    {%for key, val in detail%}
                     <tbody>
+                        {%for key, val in detail%}
                         <tr style="background-color: #fff">
-                            <td align="left" style="vertical-align: top" colspan="3">
+                            <td align="left" style="vertical-align: top" colspan="2">
                                 <b>{{ val.nama }}</b>
                             </td>
                         </tr>
                         {%for k, vals in val.detail%}
                         <tr ng-repeat="vals in val.detail" style="background-color: #fff">
-                            <td align="left" style="vertical-align: top">{{ vals.kode }}</td>
-                            <td align="left" style="vertical-align: top">{{ vals.nama }}</td>
+                            <td align="left" style="vertical-align: top">{{ vals.nama | raw }}</td>
                             <td align="right" class="text-right" style="vertical-align: top">{{ vals.nominal | number_format }}</td>
                         </tr>
                         {% endfor %}
                         <tr style="background-color: #fff">
-                            <td align="right" class="text-right" style="vertical-align: top" colspan="2">
-                                <b>TOTAL {{ val.nama }}</b>
+                            <td align="right" class="text-right" style="vertical-align: top">
+                                <b>TOTAL {{ key|replace({'_': ' '}) }}</b>
                             </td>
-                            <td align="right" class="text-right" style="vertical-align: top" colspan="2">
+                            <td align="right" class="text-right" style="vertical-align: top">
                                 <b>{{ val.total | number_format }}</b>
                             </td>
                         </tr>
-                    </tbody>
-                    {%endfor%}
-                    <tfoot>
+                        {%endfor%}
                         <tr style="background-color: #fff">
-                            <td align="right" colspan="2">
+                            <td align="right">
                                 {%if totalsemua >= 0%}
                                 <b style="color:#327037">LABA</b>
                                 {%else%}
@@ -73,7 +67,7 @@
                                 {%endif%}
                             </td>
                         </tr>
-                    </tfoot>
+                    </tbody>
                 </table>
             </div>
         </div>
