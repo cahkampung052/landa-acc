@@ -23,7 +23,7 @@ $app->get('/acc/m_supplier/getSupplier', function ($request, $response) {
             ->where("type", "=", "supplier");
 
     if (isset($params['nama']) && !empty($params['nama'])) {
-        $db->customWhere("nama LIKE '%" . $params['nama'] . "%'", "AND");
+        $db->customWhere("nama LIKE '%" . $params['nama'] . "%' OR kode LIKE '%" . $params['nama'] . "%'", "AND");
     }
 
     $models = $db->limit(20)->findAll();

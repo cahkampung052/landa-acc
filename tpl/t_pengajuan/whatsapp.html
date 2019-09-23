@@ -1,0 +1,33 @@
+<div class="modal-header">
+    <h5 class="modal-title">Kirim Pesan Whatsapp</h5>
+    <button type="button" class="close" ng-click="close()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label-sm mb-0px">Kepada</label>
+                <div class="col-sm-9">
+                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.penerima" theme="bootstrap" ng-disabled="is_view">
+                        <ui-select-match placeholder="Pilih Penerima">{{ $select.selected.nama}}</ui-select-match>
+                        <ui-select-choices repeat="val in listUser | filter : $select.search">{{ val.nama}}</ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label-sm mb-0px">Pesan</label>
+                <div class="col-sm-9">
+                    <textarea class="form-control" ng-model="form.pesan" style="min-height: 200px"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-click="send(form)" ng-hide="is_view">
+        <i class="fa fa-save"></i>
+        Kirim
+    </button>
+</div>

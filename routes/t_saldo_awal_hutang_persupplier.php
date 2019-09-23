@@ -189,8 +189,8 @@ $app->post('/acc/t_saldo_awal_hutang_persupplier/delete', function ($request, $r
     $db = $this->db;
 
 
-    $model = $db->delete("inv_stok_masuk", ['id' => $data['id']]);
-    $model = $db->deleted("acc_trans_detail", ["reff_type" => "inv_stok_masuk", "reff_id" => $data['id']]);
+    $model = $db->delete("acc_saldo_hutang", ['id' => $data['id']]);
+    $model = $db->deleted("acc_trans_detail", ["reff_type" => "acc_saldo_hutang", "reff_id" => $data['id']]);
     if ($model) {
         return successResponse($response, $model);
     } else {

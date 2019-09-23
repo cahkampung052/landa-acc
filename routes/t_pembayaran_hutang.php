@@ -7,6 +7,7 @@ function validasi($data, $custom = array()) {
 //        'kode'          => 'required',
         'tanggal' => 'required',
         'akun' => 'required',
+        'lokasi' => 'required',
         // 'm_akun_denda_id' => 'required',
         // 'm_unker_id'   => 'required',
         'total' => 'required',
@@ -27,16 +28,20 @@ $app->get('/acc/t_pembayaran_hutang/view', function ($request, $response) {
     $db->select("
             acc_bayar_hutang_det.*,
             acc_saldo_hutang.*,
+            acc_m_akun.nama as namaAkun,
+            acc_m_akun.kode as kodeAkun,
             acc_bayar_hutang_det.created_at,
             acc_bayar_hutang_det.created_by
         ")
             ->from("acc_bayar_hutang_det")
             ->leftJoin("acc_saldo_hutang", "acc_saldo_hutang.id= acc_bayar_hutang_det.acc_saldo_hutang_id")
+            ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_saldo_hutang.m_akun_hutang_id")
             ->where("acc_bayar_hutang_det.acc_bayar_hutang_id", "=", $params['id']);
 
     $models = $db->findAll();
     foreach ($models as $val) {
         $val->bayar = $val->bayar - $val->potongan;
+        $val->akun_hutang = ["id"=>$val->m_akun_hutang_id, "nama"=>$val->namaAkun, "kode"=>$val->kodeAkun];
     }
 
     $db->select("acc_m_akun.*")
@@ -60,7 +65,7 @@ $app->get('/acc/t_pembayaran_hutang/getJurnal', function ($request, $response) {
                 ->from("acc_trans_detail")
                 ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
                 ->orderBy("tanggal, acc_trans_detail.id ASC")
-                ->where('reff_type', '=', 'acc_saldo_hutang')->where('reff_id', '=', $param['id']);
+                ->where('reff_type', '=', 'acc_bayar_hutang')->where('reff_id', '=', $param['id']);
         $model = $db->findAll();
 
         $debit = $kredit = 0;
@@ -120,6 +125,7 @@ $app->get('/acc/t_pembayaran_hutang/getListHutang', function ($request, $respons
             ->from("acc_saldo_hutang")
             ->join("join", "acc_m_akun", "acc_m_akun.id = acc_saldo_hutang.m_akun_hutang_id")
             ->where("acc_saldo_hutang.m_kontak_id", "=", $param['supplier_id'])
+            ->where("acc_saldo_hutang.m_lokasi_id", "=", $param['lokasi_id'])
             ->andWhere("acc_saldo_hutang.status", "=", "terposting")
             ->andWhere("acc_saldo_hutang.status_hutang", "=", "belum lunas");
 //    if (isset($param['tgl_verifikasi'])) {
@@ -235,6 +241,7 @@ $app->post('/acc/t_pembayaran_hutang/save', function ($request, $response) {
     $sql = $this->db;
     $validasi = validasi($data['form']);
     if ($validasi === true) {
+//        print_r($data);die;
 
         /*
          * kode
@@ -243,6 +250,7 @@ $app->post('/acc/t_pembayaran_hutang/save', function ($request, $response) {
 
 
         $insert['m_kontak_id'] = $data['form']['supplier']['id'];
+        $insert['m_lokasi_id'] = $data['form']['lokasi']['id'];
         $insert['m_akun_id'] = $data['form']['akun']['id'];
         $insert['tanggal'] = date("Y-m-d h:i:s", strtotime($data['form']['tanggal']));
         $insert['total'] = $data['form']['total'];
@@ -297,7 +305,7 @@ $app->post('/acc/t_pembayaran_hutang/save', function ($request, $response) {
             $data['jurnal'][$key]['m_akun_id'] = $val['akun']['id'];
             $data['jurnal'][$key]['kode'] = $model->kode;
             $data['jurnal'][$key]['tanggal'] = date("Y-m-d", strtotime($data['form']['tanggal']));
-            $data['jurnal'][$key]['reff_type'] = "acc_saldo_hutang";
+            $data['jurnal'][$key]['reff_type'] = "acc_bayar_hutang";
             $data['jurnal'][$key]['reff_id'] = $model->id;
             $data['jurnal'][$key]['m_kontak_id'] = $model->m_kontak_id;
         }
@@ -359,7 +367,7 @@ $app->post('/acc/t_pembayaran_hutang/delete', function ($request, $response) {
 
     $model = $db->delete("acc_bayar_hutang", ['id' => $data['id']]);
     $model = $db->delete("acc_bayar_hutang_det", ['acc_bayar_hutang_id' => $data['id']]);
-    $model = $db->deleted("acc_trans_detail", ["reff_type" => "acc_bayar_hutang", "reff_id" => $data['id']]);
+    $model = $db->delete("acc_trans_detail", ["reff_type" => "acc_bayar_hutang", "reff_id" => $data['id']]);
     if ($model) {
         return successResponse($response, $model);
     } else {

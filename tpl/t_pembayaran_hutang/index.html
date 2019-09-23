@@ -31,9 +31,6 @@
                                         <input type="text" class="form-control form-control-sm" st-search="acc_bayar_hutang.kode" id="no_transaksi" placeholder="No Transaksi"/>
                                     </div>
                                     <div class="col-sm-3">
-                                        <input type="text" class="form-control form-control-sm" st-search="karyawan.nama" id="nama" placeholder="Karyawan"/>
-                                    </div>
-                                    <div class="col-sm-3">
                                         <div class="btn-group" style="width:100%; float:left">
                                             <ui-select ng-disabled="is_view" style="width: 100%" ng-model="form.supplier" theme="bootstrap" on-select="onFilter(form)">
                                                 <ui-select-match placeholder="Supplier">{{ $select.selected.kode}} - {{ $select.selected.nama}}</ui-select-match>
@@ -68,7 +65,7 @@
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
                                 <td>{{ row.kode}}</td>
                                 <td>{{ row.supplier.nama}}</td>
-                                <td>{{ row.tanggal}}</td>
+                                <td>{{ row.tanggal_formated}}</td>
                                 <td>{{ row.akun.nama}}</td>
                                 <td class="text-right">{{ row.total|currency:undefined:0 }}</td>
                                 <td style="text-align: center">{{ row.created_at}}</td>
@@ -102,14 +99,23 @@
                                 <label class="col-sm-3 col-form-label-sm required">No Transaksi</label>
                                 <div class="col-sm-9">
                                     <div class="input-group input-group-sm">
-                                        <input type="text"  class="form-control form-control-sm" maxlength="12" ng-disabled="true" ng-model="form.kode" placeholder="-- Kode Generate Otomatis --"/>
+                                        <input type="text"  class="form-control form-control-sm" ng-disabled="true" ng-model="form.kode" placeholder="-- Kode Generate Otomatis --"/>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
+                                <div class="col-sm-9">
+                                    <ui-select class="w100" ng-disabled="is_view" ng-model="form.lokasi" on-select="getListHutang(form.supplier.id, form.lokasi.id)" theme="bootstrap">
+                                        <ui-select-match placeholder="Lokasi">{{ $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listLokasi | filter:$select.search">{{ val.nama}}</ui-select-choices>
+                                    </ui-select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label-sm required">Supplier</label>
                                 <div class="col-sm-9">
-                                    <ui-select ng-disabled="is_view" ng-model="form.supplier" on-select="" theme="bootstrap">
+                                    <ui-select ng-disabled="is_view" ng-model="form.supplier" on-select="getListHutang(form.supplier.id, form.lokasi.id)" theme="bootstrap">
                                         <ui-select-match placeholder="Supplier">{{ $select.selected.kode}} - {{ $select.selected.nama}}</ui-select-match>
                                         <ui-select-choices refresh="getSupplier($select.search)" repeat="val in listSupplier">{{ val.kode}} - {{ val.nama}}</ui-select-choices>
                                     </ui-select>
@@ -122,12 +128,6 @@
                                         <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
                                         <ui-select-choices repeat="val in listAkun | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
                                     </ui-select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Tanggal Verifikasi</label>
-                                <div class="col-sm-9">
-                                    <input class="form-control form-control-sm" date-range-picker="" options="dateOptions" ng-model="form.tgl_verifikasi" placeholder="Periode" type="text" ng-disabled="is_view"/>
                                 </div>
                             </div>
                         </div>
@@ -152,12 +152,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12 text-center">
-                            <button class="btn btn-sm btn-primary" ng-click="getListHutang(form.supplier.id, form.tgl_verifikasi)" ng-hide="!is_create">
-                                <i class="fa fa-search"></i>
-                                Tampilkan Detail
-                            </button>
-                        </div>
+                        <!--                        <div class="col-md-12 text-center">
+                                                    <button class="btn btn-sm btn-primary" ng-hide="!is_create">
+                                                        <i class="fa fa-search"></i>
+                                                        Tampilkan Detail
+                                                    </button>
+                                                </div>-->
                         <div class="col-md-12">
                             <hr/>
                             <h6 style="margin-bottom: 15px">
@@ -173,7 +173,7 @@
                                     <tr>
                                         <th style="width: 2%"></th>
                                         <th style="text-align: center; font-weight: bold; width: 170px">No. Invoice</th>
-                                        <th style="text-align: center; font-weight: bold;">Sales Invoice</th>
+                                        <!--<th style="text-align: center; font-weight: bold;">Sales Invoice</th>-->
                                         <th style="text-align: center; font-weight: bold;">Keterangan</th>
                                         <th style="text-align: center; font-weight: bold; width: 100px;">Tanggal</th>
                                         <th style="text-align: center; font-weight: bold; width: 100px;">Jatuh Tempo</th>
@@ -197,10 +197,10 @@
                                                                                         </button>-->
                                             <span>{{ detail.kode}}</span>
                                         </td>
-                                        <td class="text-center">{{ detail.no_sales_inv}}</td>
+                                        <!--<td class="text-center">{{ detail.no_sales_inv}}</td>-->
                                         <td>{{ detail.keterangan}}</td>
-                                        <td class="text-center">{{ detail.tanggal| date: "dd MMM yyyy" }}</td>
-                                        <td class="text-center">{{ detail.jatuh_tempo| date: "dd MMM yyyy" }}</td>
+                                        <td class="text-center">{{ detail.tanggal| date: "dd-MM-yyyy" }}</td>
+                                        <td class="text-center">{{ detail.jatuh_tempo| date: "dd-MM-yyyy" }}</td>
                                         <!--                                        <td class="text-center">{{ detail.tgl_monitoring_tt| date: "dd MMM yyyy" }}</td>
                                                                                 <td class="text-center">
                                                                                     <span class="bg-warning p-1" ng-if="detail.tukar_tagihan == 'Pending'">Pending</span>
@@ -240,7 +240,7 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="8" style="text-align: right;font-weight: bold">Total Bayar</th>
+                                        <th colspan="7" style="text-align: right;font-weight: bold">Total Bayar</th>
                                         <th>
                                             <div class="input-group input-group-sm" style="margin:0px;">
                                                 <div class="input-group-prepend">
@@ -251,7 +251,7 @@
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th colspan="8" style="text-align: right;font-weight: bold">Total Akhir</th>
+                                        <th colspan="7" style="text-align: right;font-weight: bold">Total Akhir</th>
                                         <th>
                                             <div class="input-group input-group-sm" style="margin:0px;">
                                                 <div class="input-group-prepend">
