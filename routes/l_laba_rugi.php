@@ -30,7 +30,9 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
     $arr        = $labarugi['data'];
     $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
     $beban      = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
-    $data['total'] = $pendapatan - $beban;
+    $pendapatanLuarUsaha = isset($labarugi['total']['PENDAPATAN DILUAR USAHA']) ? $labarugi['total']['PENDAPATAN DILUAR USAHA'] : 0;
+    $bebanLuarUsaha      = isset($labarugi['total']['BEBAN DILUAR USAHA']) ? $labarugi['total']['BEBAN DILUAR USAHA'] : 0;
+    $data['total'] = $pendapatan + $pendapatanLuarUsaha - $beban - $bebanLuarUsaha;
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/labaRugi.html', [
