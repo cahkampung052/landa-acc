@@ -122,7 +122,7 @@
                                 <div class="col-sm-9">
                                     <ui-select ng-disabled="is_view" ng-model="form.supplier" on-select="setDataSupplier(form.supplier);setTempo(form.supplier.jatuh_tempo, form.tanggal);" theme="bootstrap">
                                         <ui-select-match placeholder="Supplier">{{ $select.selected.kode}} - {{ $select.selected.nama}}</ui-select-match>
-                                        <ui-select-choices refresh="getSupplier($select.search)" repeat="val in listSupplier">{{ val.kode}} - {{ val.nama}}</ui-select-choices>
+                                        <ui-select-choices refresh="getSupplier($select.search)" repeat="val in listSupplier | filter : $select.search">{{ val.kode}} - {{ val.nama}}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -152,7 +152,7 @@
                                 <label class="col-sm-3 col-form-label-sm">No Telepon</label>
                                 <div class="col-sm-9">
                                     <div class="input-group input-group-sm">
-                                        <input type="text"  class="form-control form-control-sm angka text-left" maxlength="12" ng-disabled="is_view" ng-model="form.tlp"/>
+                                        <input type="text"  class="form-control form-control-sm angka text-left" maxlength="12" ng-disabled="true" ng-model="form.tlp"/>
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +177,7 @@
                                 <label class="col-sm-3 col-form-label-sm">Email</label>
                                 <div class="col-sm-9">
                                     <div class="input-group input-group-sm">
-                                        <input type="text"  class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.email"/>
+                                        <input type="text"  class="form-control form-control-sm" ng-disabled="true" ng-model="form.email"/>
                                     </div>
                                 </div>
                             </div>

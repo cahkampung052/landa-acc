@@ -19,6 +19,10 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
 //        minMode: 'year'
     };
 
+    Data.get("acc/m_lokasi/getLokasi").then(function (result) {
+        $scope.listLokasi = result.data.list;
+    });
+
     /*
      * ambil data di load
      */
@@ -26,8 +30,15 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
         $scope.listAkun = data.data.list;
     });
 
+    /*
+     * ambil pemetaan akun potongan pembelian
+     */
+    Data.get('acc/m_akun_peta/getPemetaanAkun', {type: "Potongan Pembelian"}).then(function (data) {
+        $scope.akunPotongan = data.data.list[0];
+    });
+
     $scope.getSupplier = function (val) {
-        var param = {val: val};
+        var param = {nama: val};
         Data.get("acc/m_supplier/getSupplier", param).then(function (response) {
             $scope.listSupplier = response.data.list;
         });
@@ -48,24 +59,18 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
     /*
      * detail
      */
-    $scope.getListHutang = function (supplier_id, tgl_verifikasi) {
+    $scope.getListHutang = function (supplier_id, lokasi_id) {
 
-        if ((supplier_id != undefined && supplier_id != '')) {
+        if ((supplier_id != undefined && supplier_id != '') && (lokasi_id != undefined && lokasi_id != '')) {
 
             var data = {
                 supplier_id: supplier_id,
-                tgl_verifikasi: tgl_verifikasi
+                lokasi_id : lokasi_id
             };
             Data.get("acc/t_pembayaran_hutang/getListHutang", data).then(function (response) {
                 $scope.detHutang = response.data;
                 $scope.kalkulasi();
             });
-        } else {
-            $rootScope.alert(
-                    "Peringatan!",
-                    "Suplier dan Tanggal Jatuh Tempo belum dipilih!",
-                    "error"
-                    );
         }
 
     };
@@ -121,10 +126,14 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
     };
 
     $scope.prepareJurnal = function () {
+        console.log("ok")
+        console.log($scope.detHutang)
         var listJurnal = [];
         var index = 0;
         var total = 0;
         var keterangan = "";
+        var keterangan_potongan = "";
+        var potongan = 0;
         angular.forEach($scope.detHutang, function (val, key) {
             if (val.akun_hutang != undefined && val.bayar > 0) {
                 if (index > 0) {
@@ -137,7 +146,8 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
                             tipe: "debit",
                             debit: val.bayar,
                             kredit: 0,
-                            keterangan: "Pembayaran Hutang (" + val.kode + ")"
+                            keterangan: "Pembayaran Hutang (" + val.kode + ")",
+                            lokasi: val.m_lokasi_id
                         }
                         index++;
                     }
@@ -147,16 +157,29 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
                         tipe: "debit",
                         debit: val.bayar,
                         kredit: 0,
-                        keterangan: "Pembayaran Hutang (" + val.kode + ")"
+                        keterangan: "Pembayaran Hutang (" + val.kode + ")",
+                        lokasi: val.m_lokasi_id
                     }
                     index++;
                 }
+                potongan += val.potongan;
                 total += val.bayar;
                 keterangan += "Pembayaran Hutang (" + val.kode + ")</br>";
             }
 
 
         });
+        if (potongan > 0) {
+            listJurnal[index] = {
+                akun: $scope.akunPotongan,
+                tipe: "kredit",
+                debit: 0,
+                kredit: potongan,
+                keterangan: "Potongan Pembayaran Hutang"
+            }
+            total -= potongan;
+            index++;
+        }
         if ($scope.form.akun != undefined) {
             listJurnal[index] = {
                 akun: $scope.form.akun,
@@ -166,7 +189,8 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
                 keterangan: keterangan
             }
         }
-        $scope.data.totalJurnal = total;
+        console.log(listJurnal)
+        $scope.data.totalJurnal = total + potongan;
         $scope.listJurnal = listJurnal;
     }
     /*
@@ -261,10 +285,8 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
             startDate: form.tgl_mulai,
             endDate: form.tgl_selesai
         }
-
         $scope.getDetail(form.id);
-        $scope.kalkulasi();
-        $scope.getJurnal(form.id);
+
 
     };
     /** view */
@@ -282,11 +304,14 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
             endDate: form.tgl_selesai
         }
         $scope.getDetail(form.id);
-        $scope.getJurnal(form.id);
+        if (form.status == "Terposting") {
+            $scope.getJurnal(form.id)
+        }
+
     };
     /** save action */
     $scope.save = function (form, type_save) {
-        if (($scope.data.totalJurnal != $scope.form.total)) {
+        if (($scope.data.totalJurnal != $scope.form.total_bayar)) {
             $rootScope.alert(
                     "Peringatan!",
                     "Total jurnal dan total bayar tidak sama",
