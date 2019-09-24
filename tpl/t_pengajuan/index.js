@@ -1,4 +1,4 @@
-app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal) {
+app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, $stateParams) {
     /**
      * Inialisasi
      */
@@ -11,8 +11,10 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal) 
     $scope.is_create = false;
     $scope.is_copy = false;
     $scope.loading = false;
+    $scope.special_filter = {};
     var master = "Transaksi Pengajuan";
     $scope.master = master;
+    $scope.cek_special = 0;
 
     Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
@@ -42,6 +44,7 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal) 
         $scope.listUser = response.data;
     });
 
+
     $scope.getBudgeting = function (lokasi, tanggal) {
         var form = {
             lokasi: lokasi,
@@ -53,6 +56,19 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal) 
         })
     };
 
+    if (
+                typeof $stateParams.tahun != "undefined" &&
+                $stateParams.tahun != "" &&
+                $stateParams.tahun !== null
+                ) {
+
+            $scope.special_filter = {
+                tahun: new Date($stateParams.tahun),
+                lokasi: $stateParams.lokasi
+            }
+
+        }
+
     /**
      * End inialisasi
      */
@@ -63,7 +79,9 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal) 
         var limit = tableState.pagination.number || 10;
         var param = {
             offset: offset,
-            limit: limit
+            limit: limit,
+            special_tahun: $scope.special_filter.tahun,
+            special_lokasi : $scope.special_filter.lokasi
         };
         if (tableState.sort.predicate) {
             param["sort"] = tableState.sort.predicate;
@@ -78,9 +96,20 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal) 
             tableState.pagination.numberOfPages = Math.ceil(
                     response.data.totalItems / limit
                     );
+            
         });
         $scope.isLoading = false;
+        if($scope.cek_special == 0)
+            $scope.cekSpecial();
+            
     };
+
+    $scope.cekSpecial = function () {
+        console.log("asd")
+        
+    }
+
+
     $scope.getDetail = function (id) {
         Data.get("acc/apppengajuan/view?t_pengajuan_id=" + id).then(function (response) {
             $scope.listDetail = response.data;

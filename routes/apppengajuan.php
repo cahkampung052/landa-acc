@@ -128,6 +128,7 @@ $app->get("/acc/apppengajuan/getAcc", function ($request, $response) {
 $app->get("/acc/apppengajuan/index", function ($request, $response) {
     $params = $request->getParams();
     $tableuser = tableUser();
+    
     $db = $this->db;
     $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, " . $tableuser . ".nama as namaUser")
             ->from("acc_t_pengajuan")
@@ -153,6 +154,16 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
     if (isset($params["offset"]) && !empty($params["offset"])) {
         $db->offset($params["offset"]);
     }
+    
+    if (isset($params["special_tahun"]) && !empty($params["special_tahun"])) {
+        $db->where("acc_t_pengajuan.tanggal", ">=", date("Y", strtotime($params['special_tahun'])) . "-01-01")
+                ->where("acc_t_pengajuan.tanggal", "<=", date("Y", strtotime($params['special_tahun'])) . "-12-31");
+    }
+    
+    if (isset($params["special_lokasi"]) && !empty($params["special_lokasi"])) {
+        $db->where("acc_t_pengajuan.m_lokasi_id", "=", $params['special_lokasi']);
+    }
+    
     $models = $db->findAll();
     $totalItem = $db->count();
 

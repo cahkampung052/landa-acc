@@ -6,6 +6,7 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+    $scope.form.is_detail = 1;
 
     Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
@@ -32,6 +33,7 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
             m_lokasi_nama: $scope.form.m_lokasi_id.nama,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
+            is_detail : $scope.form.is_detail
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan', param).then(function (response) {

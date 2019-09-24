@@ -1,4 +1,4 @@
-<link href="{{ css }}" rel="stylesheet" type="text/css"/>
+<link href="{{ css}}" rel="stylesheet" type="text/css"/>
 <div class="card-body" id="print" ng-show="tampilkan">
     <div align="left">
         <div class="row">
@@ -6,11 +6,11 @@
                 <br/>
                 <center>
                     <h2 class="header-laporan">LAPORAN AKTIFITAS</h2>
-                    Lokasi : {{ data.lokasi }}
+                    Lokasi : {{ data.lokasi}}
                     <br/>
-                    Periode : {{ data.tanggal }}
+                    Periode : {{ data.tanggal}}
                     <br/>
-                    Disiapkan Tanggal : {{ data.disiapkan }}
+                    Disiapkan Tanggal : {{ data.disiapkan}}
                     <br/>
                 </center>
             </div>
@@ -33,14 +33,22 @@
                         {%for key, val in detail%}
                         <tr style="background-color: #fff">
                             <td align="left" style="vertical-align: top" colspan="2">
-                                <b>{{ val.nama }}</b>
+                                <b>{{ val.nama}}</b>
                             </td>
                         </tr>
                         {%for k, vals in val.detail%}
-                        <tr ng-repeat="vals in val.detail" style="background-color: #fff">
+                        {%if data.is_detail == 0 and vals.is_tipe == 1%}
+                        <tr style="background-color: #fff">
                             <td align="left" style="vertical-align: top">{{ vals.nama | raw }}</td>
                             <td align="right" class="text-right" style="vertical-align: top">{{ vals.nominal | number_format }}</td>
                         </tr>
+                        {%endif%}
+                        {%if data.is_detail == 1%}
+                        <tr style="background-color: #fff">
+                            <td align="left" style="vertical-align: top">{{ vals.nama | raw }}</td>
+                            <td align="right" class="text-right" style="vertical-align: top">{{ vals.nominal | number_format }}</td>
+                        </tr>
+                        {%endif%}
                         {% endfor %}
                         <tr style="background-color: #fff">
                             <td align="right" class="text-right" style="vertical-align: top">
@@ -63,7 +71,7 @@
                                 {%if totalsemua >= 0%}
                                 <b style="color: #327037">{{ totalsemua | number_format }}</b>
                                 {%else%}
-                                <b style="color:red">{{ (totalsemua * -1) | number_format }}</b>
+                                <b style="color:red">{{ (totalsemua * -1) | number_format}}</b>
                                 {%endif%}
                             </td>
                         </tr>

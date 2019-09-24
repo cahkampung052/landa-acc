@@ -106,18 +106,36 @@ $app->get('/acc/t_tutup_tahun/getDetail', function ($request, $response) {
     /*
      * deklarasi 2 tipe
      */
+    $akunPendapatan = $db->select("*")
+            ->from("acc_m_akun")
+            ->where("is_tipe", "=", 1)
+            ->where("parent_id", "=", 0)
+            ->customWhere("tipe = 'PENDAPATAN' OR tipe = 'PENDAPATAN DILUAR USAHA'", "AND")
+            ->findAll();
+    $arr_pendapatan = [];
+    foreach ($akunPendapatan as $key => $val) {
+        $arr_pendapatan[] = $val->id;
+    }
+
+    $akunBeban = $db->select("*")
+            ->from("acc_m_akun")
+            ->where("is_tipe", "=", 1)
+            ->where("parent_id", "=", 0)
+            ->customWhere("tipe = 'BEBAN' OR tipe = 'BEBAN DILUAR USAHA'", "AND")
+            ->findAll();
+    $arr_beban = [];
+    foreach ($akunBeban as $key => $val) {
+        $arr_beban[] = $val->id;
+    }
+
     $tipe = [
         [
             "nama" => "Pendapatan",
-            "nama_akun" => [
-                4, 8
-            ]
+            "nama_akun" => $arr_pendapatan
         ],
         [
             "nama" => "Beban",
-            "nama_akun" => [
-                5, 6, 7, 9
-            ]
+            "nama_akun" => $arr_beban
         ]
     ];
 
@@ -160,7 +178,7 @@ $app->get('/acc/t_tutup_tahun/getDetail', function ($request, $response) {
 //    die();
     $tahun = date("Y", strtotime($params['tahun']));
     $labarugi = getLabaRugi($tahun . "-01-01", $tahun . "-12-31");
-    
+
     $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
     $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
     $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;

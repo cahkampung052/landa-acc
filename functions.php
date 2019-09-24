@@ -362,6 +362,11 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
     $arrModel   = flatten($listAkun);
     $grandTotal = ['PENDAPATAN' => 0, 'BEBAN' => 0, 'PENDAPATAN DILUAR USAHA' => 0, 'BEBAN DILUAR USAHA' => 0];
     $arr        = ['PENDAPATAN' => ['detail' => []], 'BEBAN' => ['detail' => []], 'PENDAPATAN_DILUAR_USAHA' => ['detail' => []], 'BEBAN_DILUAR_USAHA' => ['detail' => []]];
+    
+    /*
+     * tanya adi ya, buat apa 
+     */
+    $testing = 0;
     foreach ($arrModel as $key => $value) {
         $total  = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0);
         $tipe   = str_replace(" ", "_", $value->tipe);
@@ -370,9 +375,22 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
         $fullName   = $spasi . $value->kode . ' - ' . $value->nama;
         $arr[$tipe]['detail'][$key]['kode']     = $value->kode;
         $arr[$tipe]['detail'][$key]['is_tipe']  = $value->is_tipe;
+        $arr[$tipe]['detail'][$key]['parent_id'] = $value->parent_id;
         $arr[$tipe]['detail'][$key]['nama']     = ($value->is_tipe == 0) ? $fullName : "<b>".$fullName."</b>";
         $arr[$tipe]['detail'][$key]['nominal']  = ($value->is_tipe == 1) ? '' : $total;
         $arr[$tipe]['total'] = (isset($arr[$tipe]['total']) ? $arr[$tipe]['total'] : 0) + $total;
+        
+        /*
+         * tanya adi
+         */
+        if($value->is_tipe == 0){
+            $arr[$tipe]['detail'][$key]['testing'] = $testing;
+            $arr[$tipe]['detail'][$testing]['nominal'] += $total;
+        }else{
+            $arr[$tipe]['detail'][$key]['testing'] = $key;
+            $testing = $key;
+        }
+        
     }
     ksort($arr['PENDAPATAN']['detail']);
     ksort($arr['BEBAN']['detail']);
