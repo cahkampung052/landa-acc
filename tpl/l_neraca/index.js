@@ -3,6 +3,7 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
     $scope.form = {};
     $scope.url = {};
     $scope.form.tanggal = new Date();
+    $scope.form.is_detail = 1;
     
     Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
@@ -17,6 +18,7 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
             export: is_export,
             print: is_print,
             tanggal: moment($scope.form.tanggal).format('YYYY-MM-DD'),
+            is_detail : $scope.form.is_detail
 //            m_lokasi_id : $scope.form.m_lokasi_id.id
         };
         if (is_export == 0 && is_print == 0) {

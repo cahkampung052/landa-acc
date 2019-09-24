@@ -31,8 +31,8 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal) 
     /*
      * Ambil akun untuk detail
      */
-    Data.get('acc/m_akun/akunDetail').then(function (data) {
-        $scope.akunDetail = data.data.list;
+    Data.get('acc/m_akun/akunBeban').then(function (data) {
+        $scope.listAkun = data.data.list;
     });
 
     /*
@@ -42,7 +42,16 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal) 
         $scope.listUser = response.data;
     });
 
-
+    $scope.getBudgeting = function (lokasi, tanggal) {
+        var form = {
+            lokasi: lokasi,
+            tanggal: tanggal,
+            detail: $scope.listDetail
+        }
+        Data.post("acc/apppengajuan/getBudgeting", form).then(function (response) {
+            $scope.listDetail = response.data;
+        })
+    };
 
     /**
      * End inialisasi
@@ -86,7 +95,13 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal) 
     $scope.listDetail = [{}];
     $scope.addDetail = function (val) {
         var comArr = eval(val);
-        var newDet = {};
+        var newDet = {
+            m_akun_id: {
+                id: $scope.listAkun[0].id,
+                kode: $scope.listAkun[0].kode,
+                nama: $scope.listAkun[0].nama
+            },
+        };
         val.push(newDet);
     };
     $scope.removeDetail = function (val, paramindex) {
@@ -142,9 +157,9 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal) 
         $scope.form.tipe = 'Budgeting';
         $scope.listDetail = [{
                 m_akun_id: {
-                    id: $scope.akunDetail[0].id,
-                    kode: $scope.akunDetail[0].kode,
-                    nama: $scope.akunDetail[0].nama
+                    id: $scope.listAkun[0].id,
+                    kode: $scope.listAkun[0].kode,
+                    nama: $scope.listAkun[0].nama
                 },
             }];
         $scope.listAcc = {};

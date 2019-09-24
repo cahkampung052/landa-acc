@@ -26,10 +26,10 @@ $app->get('/acc/t_tutup_tahun/index', function ($request, $response) {
     /** Select Gudang from database */
     $db->select("
       acc_tutup_buku.*,
-      ".$tableuser.".nama as namaUser
+      " . $tableuser . ".nama as namaUser
       ")
             ->from("acc_tutup_buku")
-            ->leftJoin($tableuser, $tableuser.".id=acc_tutup_buku.created_by")
+            ->leftJoin($tableuser, $tableuser . ".id=acc_tutup_buku.created_by")
             ->where("acc_tutup_buku.jenis", "=", "tahun");
     /** Add filter */
     if (isset($params['filter'])) {
@@ -103,10 +103,6 @@ $app->get('/acc/t_tutup_tahun/getDetail', function ($request, $response) {
 
     $db = $this->db;
 
-    $akunPendapatan = getChildId("acc_m_akun", 4);
-    $akunPendapatanLain = getChildId("acc_m_akun", 8);
-//    print_r(array_merge($akunPendapatan, $akunPendapatanLain));die();
-
     /*
      * deklarasi 2 tipe
      */
@@ -162,8 +158,9 @@ $app->get('/acc/t_tutup_tahun/getDetail', function ($request, $response) {
 
 //    print_r($models);
 //    die();
-
-    $labarugi = getLabaRugi($params['tahun'] . "01-01", $params['tahun'] . "12-31");
+    $tahun = date("Y", strtotime($params['tahun']));
+    $labarugi = getLabaRugi($tahun . "-01-01", $tahun . "-12-31");
+    
     $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
     $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
     $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
@@ -217,7 +214,7 @@ $app->post('/acc/t_tutup_tahun/save', function ($request, $response) {
              */
             $tanggal = $data['tahun'] + 1 . "-01-01";
             $db->update("acc_m_setting", ["tanggal" => $tanggal], 1);
-            
+
             /*
              * akun ikhtisar
              */
@@ -233,7 +230,7 @@ $app->post('/acc/t_tutup_tahun/save', function ($request, $response) {
             $transdet[0]['reff_type'] = "acc_tutup_buku_det";
             $transdet[0]['reff_id'] = $insertdetail->id;
 
-            
+
             /*
              * akun pemindahan modal
              */
@@ -242,7 +239,7 @@ $app->post('/acc/t_tutup_tahun/save', function ($request, $response) {
             $det2['debit'] = $data['debit'];
 
             $insertdetail = $db->insert("acc_tutup_buku_det", $det2);
-            
+
             $transdet[1]['m_akun_id'] = $data['akun_pemindahan_modal_id'];
             $transdet[1]['tanggal'] = date("Y-m-d");
             $transdet[1]['debit'] = $data['debit'];
@@ -250,7 +247,7 @@ $app->post('/acc/t_tutup_tahun/save', function ($request, $response) {
             $transdet[1]['reff_id'] = $insertdetail->id;
 
             insertTransDetail($transdet);
-            
+
             return successResponse($response, $model);
         } else {
             return unprocessResponse($response, 'Data Gagal Di Simpan');

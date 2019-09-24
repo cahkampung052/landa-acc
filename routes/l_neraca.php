@@ -278,6 +278,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             ],
             "tanggal" => date("d-m-Y", strtotime($tanggal)),
             "disiapkan" => date("d-m-Y, H:i"),
+            "is_detail" => $filter['is_detail'],
             "css" => modulUrl() . '/assets/css/style.css',
         ]);
         header("Content-type: application/vnd.ms-excel");
@@ -308,10 +309,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             ],
             "tanggal" => date("d-m-Y", strtotime($tanggal)),
             "disiapkan" => date("d-m-Y, H:i"),
+            "is_detail" => $filter['is_detail'],
             "css" => modulUrl() . '/assets/css/style.css',
         ]);
         echo $content;
-        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+//        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
     } else {
         return successResponse($response, [
             "modelHarta" =>

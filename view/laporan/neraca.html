@@ -1,12 +1,12 @@
-<link href="{{ css }}" rel="stylesheet" type="text/css"/>
+<link href="{{ css}}" rel="stylesheet" type="text/css"/>
 <div class="card-body">
     <div class="row header-laporan-wrapper">
         <div class="col-md-12">
             <center>
-                <h2 class="header-laporan">LAPORAN NERACA</h2>
-                Periode : {{ tanggal }}
+                <h2 class="header-laporan">LAPORAN POSISI KEUANGAN</h2>
+                Periode : {{ tanggal}}
                 <br/>
-                Disiapkan Tanggal : {{ disiapkan }}
+                Disiapkan Tanggal : {{ disiapkan}}
                 <br/>
             </center>
             <hr/>
@@ -23,11 +23,23 @@
             </tbody>
             {% for key, val in modelHarta.list %}
             <tbody>
+                {%if is_detail == 0%}
+                <tr ng-if="form.is_detail == 0">
+                    <td style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;">{{ val.nama}}</span>
+                    </td>
+                    <td style="text-align: right">
+                        <span style="color: #0055ef;">{{ val.total}}</span>
+                    </td>
+                </tr>
+                {%endif%}
+                {%if is_detail == 1%}
                 <tr>
                     <td colspan="2" style="padding-left: 25px!important;">
                         <span style="color: #0055ef;">{{ val.nama}}</span>
                     </td>
                 </tr>
+
                 {% for keys, row in val.detail %}
                 <tr>
                     <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode}} - {{row.nama}}</td>
@@ -42,6 +54,7 @@
                         <span style="color: #0055ef;">{{ val.total}}</span>
                     </td>
                 </tr>
+                {%endif%}
             </tbody>
             {% endfor %}
             <tbody>
@@ -63,6 +76,17 @@
             </tbody>
             {% for key, val in modelKewajiban.list %}
             <tbody >
+                {%if is_detail == 0%}
+                <tr ng-if="form.is_detail == 0">
+                    <td style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;">{{ val.nama}}</span>
+                    </td>
+                    <td style="text-align: right">
+                        <span style="color: #0055ef;">{{ val.total}}</span>
+                    </td>
+                </tr>
+                {%endif%}
+                {%if is_detail == 1%}
                 <tr>
                     <td colspan="2" style="padding-left: 25px!important;">
                         <span style="color: #0055ef;">{{ val.nama}}</span>
@@ -82,6 +106,7 @@
                         <span style="color: #0055ef;">{{ val.total}}</span>
                     </td>
                 </tr>
+                {%endif%}
             </tbody>
             {% endfor %}
             <tbody>
@@ -103,6 +128,17 @@
             </tbody>
             {% for key, val in modelModal.list %}
             <tbody>
+                {%if is_detail == 0%}
+                <tr ng-if="form.is_detail == 0">
+                    <td style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;">{{ val.nama}}</span>
+                    </td>
+                    <td style="text-align: right">
+                        <span style="color: #0055ef;">{{ val.total}}</span>
+                    </td>
+                </tr>
+                {%endif%}
+                {%if is_detail == 1%}
                 <tr>
                     <td colspan="2" style="padding-left: 25px!important;">
                         <span style="color: #0055ef;">{{ val.nama}}</span>
@@ -122,6 +158,7 @@
                         <span style="color: #0055ef;">{{ val.total}}</span>
                     </td>
                 </tr>
+                {%endif%}
             </tbody>
             {% endfor %}
             <tbody>

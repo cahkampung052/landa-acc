@@ -74,6 +74,7 @@ app.controller("msettingapprovalCtrl", function ($scope, Data, $rootScope) {
         $scope.is_create = true;
         $scope.formtittle = "Form Tambah Data";
         $scope.form = {};
+        $scope.form.status = "create";
         $scope.form.tipe = "Budgeting";
         $scope.listDetail = [{
             acc_m_user_id: {
@@ -88,6 +89,7 @@ app.controller("msettingapprovalCtrl", function ($scope, Data, $rootScope) {
         $scope.is_view = false;
         $scope.formtittle = "Edit Data : " + form.min;
         $scope.form = form;
+        $scope.form.status = "update";
         $scope.listDetail = form.detail;
 //        $scope.getDetail(form.id);
     };

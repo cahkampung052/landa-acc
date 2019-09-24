@@ -15,6 +15,46 @@ function validasi($data, $custom = array()) {
     return $cek;
 }
 
+$app->post("/acc/apppengajuan/getBudgeting", function ($request, $response) {
+    $params = $request->getParams();
+//    print_r($params);die();
+    $db = $this->db;
+
+    $tahun = date("Y", strtotime($params['tanggal']));
+    $bulan = date("n", strtotime($params['tanggal']));
+
+
+
+    foreach ($params['detail'] as $key => $val) {
+        if (isset($val['m_akun_id']) && !empty($val['m_akun_id'])) {
+            $budget = $db->select("*")
+                    ->from("acc_budgeting")
+                    ->where("m_lokasi_id", "=", $params['lokasi'])
+                    ->where("m_akun_id", "=", $val['m_akun_id']['id'])
+                    ->where("tahun", "=", $tahun)
+                    ->where("bulan", "=", $bulan)
+                    ->find();
+
+            $usedbudget = $db->select("SUM(sub_total) as budget")
+                    ->from("acc_t_pengajuan_det")
+                    ->join("JOIN", "acc_t_pengajuan", "acc_t_pengajuan.id = acc_t_pengajuan_det.t_pengajuan_id")
+                    ->where("acc_t_pengajuan.m_lokasi_id", "=", $params['lokasi'])
+                    ->customWhere("acc_t_pengajuan.status = 'approved' OR acc_t_pengajuan.status = 'terbayar'", "AND")
+                    ->where("acc_t_pengajuan_det.m_akun_id", "=", $val['m_akun_id']['id'])
+                    ->find();
+
+            $budget = isset($budget) && !empty($budget->budget) ? $budget->budget : 0;
+            $usedbudget = isset($usedbudget) && !empty($usedbudget->budget) ? $usedbudget->budget : 0;
+            $sisabudget = $budget - $usedbudget;
+
+            $params['detail'][$key]['budget'] = $budget;
+            $params['detail'][$key]['sisa_budget'] = $sisabudget;
+        }
+    }
+
+    return successResponse($response, $params['detail']);
+});
+
 /*
  * ambil pengajuan
  */
@@ -214,7 +254,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
             /*
              * Simpan t_acc_pengajuan
              */
-            if (isset($data['acc']) && !empty($data['acc'])) {
+            if (isset($data['acc'][0]) && !empty($data['acc'][0])) {
                 foreach ($data['acc'] as $key => $val) {
                     $insert['t_pengajuan_id'] = $model->id;
                     $insert['acc_m_user_id'] = $val['acc_m_user_id']['id'];

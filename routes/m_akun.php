@@ -609,6 +609,19 @@ $app->get('/acc/m_akun/akunPiutang', function ($request, $response) {
 });
 
 /**
+ * Ambil akun beban
+ */
+$app->get('/acc/m_akun/akunBeban', function ($request, $response) {
+    $db = $this->db;
+    $models = $db->select("*")->from("acc_m_akun")
+            ->customWhere("nama LIKE '%BEBAN%'")
+            ->where("is_tipe", "=", 0)
+            ->where("is_deleted", "=", 0)
+            ->findAll();
+    return successResponse($response, ['list' => $models]);
+});
+
+/**
  * Ambil akun saja tanpa klasifikasinya
  */
 $app->get('/acc/m_akun/akunDetail', function ($request, $response) {

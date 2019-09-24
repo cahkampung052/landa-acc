@@ -57,10 +57,13 @@ $app->get("/acc/appapproval/index", function ($request, $response) {
                 ->where("max", "=", $val->max);
         $countuser = $db->count();
         $getuser = $db->findAll();
+        $arr_id = [];
         foreach($getuser as $keys => $vals){
             $models[$key]['detail'][$keys] = (array) $vals;
+            $arr_id[] = $vals->id;
             $models[$key]['detail'][$keys]['acc_m_user_id'] = ["id"=>$vals->acc_m_user_id, "nama"=>$vals->namaUser];
         }
+        $models[$key]['arr_id'] = implode(", ", $arr_id);
         $models[$key]['jumlah_approval'] = $countuser;
         
     }
@@ -74,26 +77,24 @@ $app->get("/acc/appapproval/index", function ($request, $response) {
 $app->post("/acc/appapproval/save", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
+//    print_r($data);die;
     $validasi = validasi($data["data"]);
     if ($validasi === true) {
         try {
+            if($data['data']['status'] == "update")
+                $db->run("DELETE FROM acc_m_setting_approval WHERE id IN(".$data["data"]["arr_id"].")");
             /**
              * Simpan detail
              */
             if (isset($data["detail"]) && !empty($data["detail"])) {
                 foreach ($data["detail"] as $key => $val) {
-                    $detail["id"] = isset($val["id"]) ? $val["id"] : '';
                     $detail["tipe"] = $data["data"]["tipe"];
                     $detail["min"] = $data["data"]["min"];
                     $detail["max"] = $data["data"]["max"];
                     $detail["acc_m_user_id"] = isset($val["acc_m_user_id"]['id']) ? $val["acc_m_user_id"]['id'] : '';
                     $detail["sebagai"] = isset($val["sebagai"]) ? $val["sebagai"] : '';
                     $detail["level"] = isset($val["level"]) ? $val["level"] : '';
-                    if(isset($val["id"])){
-                        $db->update("acc_m_setting_approval", $detail, ["id"=> $val["id"]]);
-                    }else{
-                        $db->insert("acc_m_setting_approval", $detail);
-                    }
+                    $db->insert("acc_m_setting_approval", $detail);
                     
                 }
             }

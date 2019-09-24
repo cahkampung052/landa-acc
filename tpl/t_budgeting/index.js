@@ -31,8 +31,8 @@ app.controller('budgetingCtrl', function ($scope, Data, $rootScope, $uibModal, U
     /*
      * Ambil akun untuk detail
      */
-    Data.get('acc/m_akun/akunDetail').then(function (data) {
-        $scope.akunDetail = data.data.list;
+    Data.get('acc/m_akun/akunBeban').then(function (data) {
+        $scope.listAkun = data.data.list;
     });
 
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
