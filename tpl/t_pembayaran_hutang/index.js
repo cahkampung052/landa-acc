@@ -14,11 +14,15 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
         endDate: moment().add(1, 'D'),
         startDate: moment()
     };
+    $scope.url = "";
 
     $scope.dateOptions = {
 //        minMode: 'year'
     };
 
+    Data.get('site/base_url').then(function (response) {
+        $scope.url = response.data.base_url;
+    });
     Data.get("acc/m_lokasi/getLokasi").then(function (result) {
         $scope.listLokasi = result.data.list;
     });
@@ -65,7 +69,7 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
 
             var data = {
                 supplier_id: supplier_id,
-                lokasi_id : lokasi_id
+                lokasi_id: lokasi_id
             };
             Data.get("acc/t_pembayaran_hutang/getListHutang", data).then(function (response) {
                 $scope.detHutang = response.data;
@@ -318,31 +322,50 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
                     "error"
                     );
         } else {
-            form.status = type_save
-            form.startDate = moment(form.tgl_verifikasi.startDate).format("YYYY-MM-DD")
-            form.endDate = moment(form.tgl_verifikasi.endDate).format("YYYY-MM-DD")
-            var data = {
-                form: form,
-                detail: $scope.detHutang,
-                jurnal: $scope.listJurnal
-            };
-            Data.post("acc/t_pembayaran_hutang/save", data).then(function (result) {
-                if (result.status_code == 200) {
-                    $scope.is_edit = false;
-                    $scope.callServer(tableStateRef);
-                    $rootScope.alert(
-                            "Berhasil",
-                            "Data berhasil disimpan",
-                            "success"
-                            );
-                } else {
-                    $rootScope.alert(
-                            "Terjadi Kesalahan",
-                            setErrorMessage(result.errors),
-                            "error"
-                            );
+            var go = true;
+            if ($scope.detHutang.length < 1) {
+                go = false;
+            }
+            angular.forEach($scope.listJurnal, function (value, key) {
+                if (value.akun == undefined) {
+                    go = false;
                 }
             });
+            if (go) {
+                form.status = type_save
+                form.startDate = moment(form.tgl_verifikasi.startDate).format("YYYY-MM-DD")
+                form.endDate = moment(form.tgl_verifikasi.endDate).format("YYYY-MM-DD")
+                var data = {
+                    form: form,
+                    detail: $scope.detHutang,
+                    jurnal: $scope.listJurnal
+                };
+                Data.post("acc/t_pembayaran_hutang/save", data).then(function (result) {
+                    if (result.status_code == 200) {
+                        $scope.is_edit = false;
+                        $scope.callServer(tableStateRef);
+                        $rootScope.alert(
+                                "Berhasil",
+                                "Data berhasil disimpan",
+                                "success"
+                                );
+                    } else {
+                        $rootScope.alert(
+                                "Terjadi Kesalahan",
+                                setErrorMessage(result.errors),
+                                "error"
+                                );
+                    }
+                });
+            } else {
+                $rootScope.alert(
+                        "Peringatan!",
+                        "Jurnal / detail tidak valid, cek kembali jurnal dan detail sebelum simpan",
+                        "error"
+                        );
+            }
+
+
         }
 
     };
@@ -418,5 +441,13 @@ app.controller('pembayaranhutangCtrl', function ($scope, Data, $rootScope, $uibM
         });
 
     };
+
+    $scope.printHutang = function (id, tipe) {
+        var param = {
+            id: id,
+            tipe: tipe
+        }
+        window.open($scope.url + "api/acc/t_pembayaran_hutang/print?" + $.param(param), "_blank");
+    }
 
 });

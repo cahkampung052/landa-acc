@@ -115,10 +115,10 @@ $app->post('/acc/t_saldo_awal_hutang_persupplier/save', function ($request, $res
 
         
         $insert['m_kontak_id'] = $data['supplier']['id'];
-        $insert['tanggal'] = $data['tanggal'];
+        $insert['tanggal'] = date("Y-m-d", strtotime($data['tanggal']));
         $insert['m_lokasi_id'] = $data['lokasi']['id'];
         $insert['total'] = $data['total'];
-        $insert['jatuh_tempo'] = $data['tanggal'];
+        $insert['jatuh_tempo'] = date("Y-m-d", strtotime($data['tanggal']));
         $insert['status_hutang'] = 'belum lunas';
         $insert['status'] = $data['status'];
         $insert['m_akun_id'] = $data['akun_debit']['id'];
@@ -190,7 +190,7 @@ $app->post('/acc/t_saldo_awal_hutang_persupplier/delete', function ($request, $r
 
 
     $model = $db->delete("acc_saldo_hutang", ['id' => $data['id']]);
-    $model = $db->deleted("acc_trans_detail", ["reff_type" => "acc_saldo_hutang", "reff_id" => $data['id']]);
+    $model2 = $db->delete("acc_trans_detail", ["reff_type" => "acc_saldo_hutang", "reff_id" => $data['id']]);
     if ($model) {
         return successResponse($response, $model);
     } else {

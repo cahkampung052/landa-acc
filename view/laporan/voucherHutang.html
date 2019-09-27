@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<div>
+    <table width="100%">
+        <tr>
+            <td width="80%" colspan="2"></td>
+            <td>
+                <h1 style="text-align: center;font-size: 35px;font-weight: bold;font-family: sans-serif;text-align: right;text-transform: uppercase;color: #ddd;letter-spacing: 3px; vertical-align: middle;">VOUCHER</h1>
+                <h1 style="text-align: center;font-size: 18px;font-weight: bold;font-family: sans-serif;text-align: right;text-transform: uppercase;color: #ddd;letter-spacing: 3px; vertical-align: middle;">SUPPLIER PAYMENT</h1>
+            </td>
+        </tr>
+        <tr >
+            <td colspan="3" style="border-bottom: 1px solid #ddd;">
+
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3"></td>
+        </tr>
+        <tr>
+            <td rowspan="3" width="70%"><b>{{data.namaLokasi}}</b></td>
+            <td style="text-align: right">No :</td>
+            <td style="text-align: left">{{data.kode}}</td>
+        </tr>
+        <tr>
+            <td style="text-align: right">Date :</td>
+            <td style="text-align: left">{{data.tanggal| date('d F Y')}}</td>
+        </tr>
+        <tr>
+            <td style="text-align: right">To :</td>
+            <td style="text-align: left">{{data.namaKontak}}</td>
+        </tr>
+    </table>
+</div>
+<div style="margin-top: 20px">
+    <table width="100%" border="1" style="border-collapse: collapse">
+        <tr class="border">
+            <th style="text-align: center;font-size: small">DESCRIPTION</th>
+            <th style="text-align: right;font-size: small">TOTAL INVOICE</th>
+            <th style="text-align: right;font-size: small">DISCOUNT</th>
+            <th style="text-align: right;font-size: small">PAID</th>
+            <th style="text-align: right;font-size: small">REMAINING PAYMENT</th>
+        </tr>
+        {% for key, val in detail %}
+        <tr>
+            <td style="font-size: 12px">{{val.kodeHutang}}<br/>
+            </td>
+            <td style="text-align: right;font-size: 12px">
+                Rp. {{val.sisa | number_format}}
+            </td>
+            <td style="text-align: right;font-size: 12px">
+                Rp. {{val.potongan | number_format}}
+            </td>
+            <td style="text-align: right;font-size: 12px">
+                Rp. {{val.bayar | number_format}}
+            </td>
+            <td style="text-align: right;font-size: 12px">
+                Rp. {{val.sisa_bayar | number_format}}
+            </td>
+        </tr>
+        {% endfor %}
+        <!--        <tr class="borders">
+                    <th colspan="5" style="text-align: center">
+                    </th>
+                </tr>-->
+    </table>
+</div>
+<div style="margin-top: 20px">
+    <table width="100%">
+        <tr>
+            <td rowspan="2" width="70%"></td>
+            <td style="text-align: right"><b>Denda :</b></td>
+            <td style="text-align: right"><b> {{data.denda | number_format}}</b></td>
+        </tr>
+        <tr>
+            <td style="text-align: right"><b>To Be Paid :</b></td>
+            <td style="text-align: right"><b>{{data.sisa_bayar| number_format}}</b></td>
+        </tr>
+    </table>
+</div>
+<div>
+    <br>
+    <table width="100%">
+        <tr >
+            <td colspan="3" style="border-bottom: 1px solid #ddd;">
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Prepared By
+                <br>
+                <br>
+                <br>
+                <br>
+                <br/>
+                {{data.user}}
+            </td>
+            <td>
+                Payment details
+                <br>
+                <br>
+                <br>
+                <br>
+                <br/>
+                {{data.namaAkun |raw}}
+            </td>
+            <td width="60%">
+                
+            </td>
+        </tr>
+    </table>
+</div>

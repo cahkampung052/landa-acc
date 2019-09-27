@@ -90,6 +90,10 @@
         <div class="card" ng-if="is_edit">
             <div class="card-header">
                 <strong>{{ formtitle}}</strong>
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-primary btn-sm pull-right" ng-click="printHutang(form.id, 'voucher')"><i class="fa fa-print"></i> Print Voucher</button>
+                    <button type="button" class="btn btn-success btn-sm pull-right" ng-click="printHutang(form.id, 'kwitansi')"><i class="fa fa-print"></i> Print Bukti Pembayaran</button>
+                </div>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">

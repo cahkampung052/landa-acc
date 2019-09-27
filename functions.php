@@ -347,7 +347,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
     $trans = $sql->findAll();
     $arrTrans = [];
     foreach ($trans as $key => $value) {
-        $arrTrans[$value->id] = (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
+        $arrTrans[$value->id] = intval((intval($value->debit) - intval($value->kredit)) * intval($value->saldo_normal));
     }
     /*
      * ambil akun (jika saldo 0 ikut ditampilkan)
@@ -368,7 +368,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      */
     $testing = 0;
     foreach ($arrModel as $key => $value) {
-        $total  = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0);
+        $total  = (isset($arrTrans[$value->id]) ? intval($arrTrans[$value->id]) : 0);
         $tipe   = str_replace(" ", "_", $value->tipe);
         $grandTotal[$value->tipe] += $total;
         $spasi      = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
@@ -385,7 +385,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
          */
         if($value->is_tipe == 0){
             $arr[$tipe]['detail'][$key]['testing'] = $testing;
-            $arr[$tipe]['detail'][$testing]['nominal'] += $total;
+            $arr[$tipe]['detail'][$testing]['nominal'] += intval($total);
         }else{
             $arr[$tipe]['detail'][$key]['testing'] = $key;
             $testing = $key;

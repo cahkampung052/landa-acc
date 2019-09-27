@@ -149,8 +149,6 @@ app.controller('hutangpersupplierCtrl', function ($scope, Data, $rootScope, $uib
     /** save action */
     $scope.save = function (form, type_save) {
         form["status"] = type_save;
-        form["tanggal"] = moment(form.tanggal).format("YYYY-MM-DD")
-        form["jatuh_tempo"] = moment(form.jatuh_tempo).format("YYYY-MM-DD")
 
         Data.post(control_link + '/save', form).then(function (result) {
             if (result.status_code == 200) {

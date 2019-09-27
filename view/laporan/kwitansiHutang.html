@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tanda Terima</title>
+	<style type="text/css">
+	.border-top-bot {
+			font-size: 20px;
+			text-align: center;
+			/*border-top: 1px solid #000;*/
+			border-bottom: 1px solid #ddd;
+			font-weight: bold;
+		}
+	.border-full{
+		border: 1px solid #ddd;
+		text-align: center;
+		color: #000;
+		background-color: #ddd;
+		font-weight: 700;
+		font-size: 20px;
+		}
+	.table-bot {
+	padding: 5px;
+	width: 100%;
+    max-width: 100%;
+	}
+	.table {
+	/*margin-left:20px; */
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    padding: 8px 2px 8px;
+	}
+	.c-1 {
+		width: 20px;
+	}
+	.c-2{
+		width: 10%;
+	}
+	.c-3 {
+	 width: 25%;
+	}
+	.c-4{
+		border-bottom: 1px solid #ddd;
+	}
+	.c-5{
+		
+		width: 40%;
+	}
+	.c-100{
+		
+		width: 72%;
+	}
+	.line {
+
+		border-bottom: 1px solid #ddd;
+	}
+	.cs-3{
+		width: 15%;
+	}
+	.cs-2{
+		width: 37%;
+	}
+
+	</style>
+</head>
+<body>
+<table style="width: 100%;">
+    <tr>
+        <td>
+        	 {%if data.logo_print %}
+           <img src="{{baseUrl}}/../img/print/{{model.logo_print}}" style="height: 85px;">
+           {% endif %}
+        
+       </td>
+        <td>
+        		<div style="color: #ddd;font-size: 30px;font-weight:bold;text-align: right; letter-spacing: 3px; display: table-cell;vertical-align: middle;">KWITANSI</div>
+        	
+        </td>
+         
+    </tr>
+    <tr >
+        <td colspan="2" style="border-bottom: 1px solid #ddd;">
+
+        </td>
+    </tr>
+     <tr>
+        <td colspan="2"></td>
+    </tr> 
+    
+</table>
+<table class="table">
+	
+	<tr>
+            <th class="c-3" style="text-align: left">Invoice No.</th>
+		<td class="c-1">:</td>
+		<td class="c-5 line"> {{data.invoice}}</td>
+		<th class="c-2" >Date </th>
+		<td class="c-1">:</td>
+		<td class="c-4"> {{data.tanggal| date('d F Y')}}</td>
+	</tr>
+	<tr>
+		<th class="c-3" style="text-align: left">Transaction No.</th>
+		<td class="c-1">:</td>
+		<td class="c-100 line" colspan="4"> {{data.kode}}</td>
+	</tr>
+	<tr>
+		<th class="c-3" style="text-align: left">Has Been Received From</th>
+		<td class="c-1">:</td>
+		<td class="c-100 line" colspan="4"> {{data.namaKontak}}</td>
+	</tr>
+	<tr>
+		<th class="c-3" style="text-align: left">Amount of Money (IDR) </th>
+		<td class="c-1">:</td>
+		<td class="c-100 line" colspan="4">{{data.terbilang}}</td>
+	</tr>
+	<tr>
+		<th class="c-3" style="text-align: left">For Payment</th>
+		<td class="c-1">:</td>
+		<td class="c-100 line" colspan="4">Invoice Payment {{data.kode}}</td>
+	</tr>	
+</table>
+<br><br>
+<br><br>
+
+<table class="table-bot">
+	<tr>
+		<th class="border-full c-3">  Rp. {{data.total | number_format}}</th>
+		<td ></td>
+		<td class="cs-3">Received By</td>
+		<td class="c-1">:</td>
+		<td class="line cs-2"></td>
+	</tr>
+</table>
+</body>
+</html>

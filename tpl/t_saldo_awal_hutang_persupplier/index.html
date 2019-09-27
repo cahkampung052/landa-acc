@@ -76,7 +76,10 @@
                                 <td class="text-right">{{ row.total|number:undefined:0 }}</td>
                                 <td>{{ row.tanggal_formated}}</td>
                                 <td>{{ row.jatuh_tempo_formated}}</td>
-                                <td>{{ row.status}}</td>
+                                <td>
+                                    <span class="bg-primary p-1" ng-if="row.status == 'Terposting'">{{ row.status}}</span>
+                                    <span class="bg-success p-1" ng-if="row.status == 'Draft'">{{ row.status}}</span>
+                                </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft')"  ng-click="update(row)"></button>

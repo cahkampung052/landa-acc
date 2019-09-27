@@ -29,7 +29,9 @@ $app->get('/acc/t_monitoring_budget/index', function ($request, $response) {
     $budget = $db->select("*")->from("acc_budgeting")->where("tahun", "=", $tahun)->findAll();
 
     foreach ($budget as $key => $val) {
-        $arr[$val->m_lokasi_id]['budget'] += $val->budget;
+        if (isset($arr[$val->m_lokasi_id]) && !empty($arr[$val->m_lokasi_id])) {
+            $arr[$val->m_lokasi_id]['budget'] += intval($val->budget);
+        }
     }
 
     $usedbudget = $db->select("*")
@@ -41,9 +43,9 @@ $app->get('/acc/t_monitoring_budget/index', function ($request, $response) {
             ->findAll();
 
     foreach ($usedbudget as $key => $val) {
-        $arr[$val->m_lokasi_id]['used_budget'] += $val->jumlah_perkiraan;
+        $arr[$val->m_lokasi_id]['used_budget'] += intval($val->jumlah_perkiraan);
     }
-    
+
 
     return successResponse($response, [
         'list' => $arr

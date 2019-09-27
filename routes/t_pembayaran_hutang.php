@@ -41,7 +41,7 @@ $app->get('/acc/t_pembayaran_hutang/view', function ($request, $response) {
     $models = $db->findAll();
     foreach ($models as $val) {
         $val->bayar = $val->bayar - $val->potongan;
-        $val->akun_hutang = ["id"=>$val->m_akun_hutang_id, "nama"=>$val->namaAkun, "kode"=>$val->kodeAkun];
+        $val->akun_hutang = ["id" => $val->m_akun_hutang_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
     }
 
     $db->select("acc_m_akun.*")
@@ -70,13 +70,13 @@ $app->get('/acc/t_pembayaran_hutang/getJurnal', function ($request, $response) {
 
         $debit = $kredit = 0;
         foreach ($model as $key => $val) {
-            
-            if($val->debit != 0){
+
+            if ($val->debit != 0) {
                 $val->tipe = "debit";
-            }else{
+            } else {
                 $val->tipe = "kredit";
             }
-            
+
             $val->akun = [
                 'id' => $val->m_akun_id,
                 'kode' => $val->kodeAkun,
@@ -308,8 +308,9 @@ $app->post('/acc/t_pembayaran_hutang/save', function ($request, $response) {
             $data['jurnal'][$key]['reff_type'] = "acc_bayar_hutang";
             $data['jurnal'][$key]['reff_id'] = $model->id;
             $data['jurnal'][$key]['m_kontak_id'] = $model->m_kontak_id;
+            $data['jurnal'][$key]['m_lokasi_id'] = $model->m_lokasi_id;
         }
-        
+
 //        print_r($data['jurnal']);die();
         /*
          * Simpan array trans detail ke database jika simpan dan kunci
@@ -374,3 +375,59 @@ $app->post('/acc/t_pembayaran_hutang/delete', function ($request, $response) {
         return unprocessResponse($response, ['Gagal menghapus data']);
     }
 });
+
+$app->get('/acc/t_pembayaran_hutang/print', function ($request, $response) {
+    $params = $request->getParams();
+    $db = $this->db;
+
+    $data = $db->select("acc_bayar_hutang.*, acc_m_lokasi.nama as namaLokasi, acc_m_kontak.nama as namaKontak, acc_m_akun.nama as namaAkun")
+                    ->from("acc_bayar_hutang")
+                    ->join("JOIN", "acc_m_lokasi", "acc_m_lokasi.id = acc_bayar_hutang.m_lokasi_id")
+                    ->join("JOIN", "acc_m_kontak", "acc_m_kontak.id = acc_bayar_hutang.m_kontak_id")
+                    ->join("JOIN", "acc_m_akun", "acc_m_akun.id = acc_bayar_hutang.m_akun_id")
+                    ->where("acc_bayar_hutang.id", "=", $params['id'])->find();
+    $arr = $db->select("acc_bayar_hutang_det.*, acc_saldo_hutang.kode as kodeHutang")
+            ->from("acc_bayar_hutang_det")
+            ->join("JOIN", "acc_saldo_hutang", "acc_saldo_hutang.id = acc_bayar_hutang_det.acc_saldo_hutang_id")
+            ->where("acc_bayar_hutang_id", "=", $data->id)
+            ->where("bayar", ">", 0)
+            ->findAll();
+
+
+    $data->sisa_bayar = 0;
+    $data->invoice = [];
+    foreach ($arr as $key => $val) {
+        $val->sisa_bayar = $val->sisa - $val->bayar;
+        $data->sisa_bayar += intval($val->sisa_bayar);
+        $data->invoice[] = $val->kodeHutang;
+    }
+    
+    $data->invoice = implode(", ", $data->invoice);
+    $data->user = $_SESSION['user']['nama'];
+    $data->terbilang = terbilang($data->total);
+
+//    echo "<pre>", print_r($data), "</pre>";
+//    echo "<pre>", print_r($arr), "</pre>";
+//    die;
+
+
+
+    $view = twigViewPath();
+    if ($params['tipe'] == "voucher") {
+        $content = $view->fetch('laporan/voucherHutang.html', [
+            "data" => $data,
+            "detail" => $arr,
+            "css" => modulUrl() . '/assets/css/style.css',
+        ]);
+    } else {
+        $content = $view->fetch('laporan/kwitansiHutang.html', [
+            "data" => $data,
+            "detail" => $arr,
+            "css" => modulUrl() . '/assets/css/style.css',
+        ]);
+    }
+
+    echo $content;
+    echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+});
+
