@@ -57,17 +57,17 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
     };
 
     if (
-                typeof $stateParams.tahun != "undefined" &&
-                $stateParams.tahun != "" &&
-                $stateParams.tahun !== null
-                ) {
+            typeof $stateParams.tahun != "undefined" &&
+            $stateParams.tahun != "" &&
+            $stateParams.tahun !== null
+            ) {
 
-            $scope.special_filter = {
-                tahun: new Date($stateParams.tahun),
-                lokasi: $stateParams.lokasi
-            }
-
+        $scope.special_filter = {
+            tahun: new Date($stateParams.tahun),
+            lokasi: $stateParams.lokasi
         }
+
+    }
 
     /**
      * End inialisasi
@@ -81,7 +81,7 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
             offset: offset,
             limit: limit,
             special_tahun: $scope.special_filter.tahun,
-            special_lokasi : $scope.special_filter.lokasi
+            special_lokasi: $scope.special_filter.lokasi
         };
         if (tableState.sort.predicate) {
             param["sort"] = tableState.sort.predicate;
@@ -96,17 +96,17 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
             tableState.pagination.numberOfPages = Math.ceil(
                     response.data.totalItems / limit
                     );
-            
+
         });
         $scope.isLoading = false;
-        if($scope.cek_special == 0)
+        if ($scope.cek_special == 0)
             $scope.cekSpecial();
-            
+
     };
 
     $scope.cekSpecial = function () {
         console.log("asd")
-        
+
     }
 
 
@@ -190,6 +190,7 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
                     kode: $scope.listAkun[0].kode,
                     nama: $scope.listAkun[0].nama
                 },
+                detail: []
             }];
         $scope.listAcc = {};
     };
@@ -203,7 +204,11 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
         $scope.form = {};
         $scope.form.tanggal = new Date();
         $scope.form.approval = 1;
-        $scope.listDetail = [{}];
+//        $scope.listDetail = [{
+//                keterangan: "",
+//                budget: 0,
+//                realisasi: 0
+//            }];
         $scope.listAcc = {};
         /*
          * ambil pengajuan untuk copy
@@ -322,6 +327,35 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
         });
     }
 
+    $scope.modalDetail = function (form, index) {
+
+        var modalInstance = $uibModal.open({
+            templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/t_pengajuan/detail.html",
+            controller: "modalDetailCtrl",
+            size: "lg",
+            backdrop: "static",
+            keyboard: false,
+            resolve: {
+                form: form,
+                data: {
+                    is_view: $scope.is_view,
+                    status: $scope.form.status
+                }
+
+            }
+        })
+
+        modalInstance.result.then(function (response) {
+            if (response.detail.length > 0) {
+                form.detail = response.detail;
+            }
+            form.harga_satuan = response.total;
+            form.jumlah = 1;
+            form.sub_total = response.sub_total;
+            $scope.sumTotal();
+        })
+    }
+
 });
 
 app.controller("settingPrintCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope) {
@@ -364,7 +398,6 @@ app.controller("whatsappCtrl", function ($state, $scope, Data, $uibModalInstance
     });
 
     $scope.data = form;
-    console.log($scope.data)
 
     $scope.form.pesan = $scope.data.no_proposal +
             "\nNama Kegiatan : " + $scope.data.dasar_pengajuan +
@@ -389,4 +422,70 @@ app.controller("whatsappCtrl", function ($state, $scope, Data, $uibModalInstance
         }
         window.open("https://wa.me/" + telp + "?text=" + encodeURIComponent(form.pesan), '_blank');
     }
+});
+
+app.controller("modalDetailCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope, form, data) {
+
+    $scope.form = {};
+
+    $scope.form = form;
+    $scope.is_view = data.is_view;
+    $scope.status = data.status;
+
+    $scope.listDetail = [];
+    if ($scope.form.detail != undefined) {
+        $scope.listDetail = $scope.form.detail;
+//        $scope.sumTotal();
+    }
+//    $scope.sumTotal();
+
+    $scope.addDetail = function (val) {
+        var comArr = eval(val);
+        var newDet = {
+            keterangan: "",
+            budget: 0,
+            realisasi: 0
+        };
+        val.push(newDet);
+    };
+    $scope.removeDetail = function (val, paramindex) {
+        var comArr = eval(val);
+        val.splice(paramindex, 1);
+        $scope.sumTotal();
+    };
+
+    $scope.sumTotal = function () {
+        var total = 0;
+        angular.forEach($scope.listDetail, function (value, key) {
+            if (value.budget === undefined) {
+                value.budget = 0;
+            }
+            if (value.realisasi === undefined) {
+                value.realisasi = 0;
+            }
+            total += value.budget;
+        });
+        $scope.form.sub_total = total;
+    };
+
+    $scope.save = function () {
+        if ($scope.status == "Terbayar") {
+            Data.post("acc/apppengajuan/saveDetail", $scope.listDetail).then(function (result) {
+                if (result.status_code == 200) {
+                    $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
+                    $scope.close();
+                } else {
+                    $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+                }
+            });
+        }
+    }
+
+    $scope.close = function () {
+        $uibModalInstance.close({
+            detail: $scope.listDetail,
+            total: $scope.form.total
+        });
+    };
+
 });

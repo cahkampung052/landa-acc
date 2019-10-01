@@ -95,11 +95,24 @@ $app->get("/acc/apppengajuan/view", function ($request, $response) {
             ->where("t_pengajuan_id", "=", $params["t_pengajuan_id"]);
     $models = $db->findAll();
 
+    $db->select("*")
+            ->from("acc_t_pengajuan_det2")
+            ->where("t_pengajuan_id", "=", $params["t_pengajuan_id"]);
+    $models2 = $db->findAll();
+
+    $arr = [];
     foreach ($models as $key => $val) {
         $val->m_akun_id = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
+        $arr[$val->id] = (array) $val;
     }
 
-    return successResponse($response, $models);
+    foreach ($models2 as $key => $val) {
+        if (isset($arr[$val->t_pengajuan_id])) {
+            $arr[$val->t_pengajuan_id]['detail'][] = $val;
+        }
+    }
+
+    return successResponse($response, $arr);
 });
 
 /*
@@ -128,7 +141,7 @@ $app->get("/acc/apppengajuan/getAcc", function ($request, $response) {
 $app->get("/acc/apppengajuan/index", function ($request, $response) {
     $params = $request->getParams();
     $tableuser = tableUser();
-    
+
     $db = $this->db;
     $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, " . $tableuser . ".nama as namaUser")
             ->from("acc_t_pengajuan")
@@ -154,16 +167,16 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
     if (isset($params["offset"]) && !empty($params["offset"])) {
         $db->offset($params["offset"]);
     }
-    
+
     if (isset($params["special_tahun"]) && !empty($params["special_tahun"])) {
         $db->where("acc_t_pengajuan.tanggal", ">=", date("Y", strtotime($params['special_tahun'])) . "-01-01")
                 ->where("acc_t_pengajuan.tanggal", "<=", date("Y", strtotime($params['special_tahun'])) . "-12-31");
     }
-    
+
     if (isset($params["special_lokasi"]) && !empty($params["special_lokasi"])) {
         $db->where("acc_t_pengajuan.m_lokasi_id", "=", $params['special_lokasi']);
     }
-    
+
     $models = $db->findAll();
     $totalItem = $db->count();
 
@@ -243,8 +256,6 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
                 $model = $db->insert("acc_t_pengajuan", $data["data"]);
             }
 
-
-
             /**
              * Simpan detail
              */
@@ -258,7 +269,15 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
                     $detail["jumlah"] = isset($val["jumlah"]) ? $val["jumlah"] : '';
                     $detail["sub_total"] = isset($val["sub_total"]) ? $val["sub_total"] : '';
                     $detail["t_pengajuan_id"] = $model->id;
-                    $db->insert("acc_t_pengajuan_det", $detail);
+                    $modeldetail = $db->insert("acc_t_pengajuan_det", $detail);
+
+                    if (isset($val["detail"]) && !empty($val["detail"])) {
+                        foreach ($val["detail"] as $keys => $vals) {
+                            $vals["t_pengajuan_id"] = $model->id;
+                            $vals["t_pengajuan_det_id"] = $modeldetail->id;
+                            $db->insert("acc_t_pengajuan_det2", $vals);
+                        }
+                    }
                 }
             }
 
@@ -299,6 +318,25 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
     }
     return unprocessResponse($response, $validasi);
 });
+
+/*
+ * save detail
+ */
+$app->post("/acc/apppengajuan/saveDetail", function ($request, $response) {
+    $data = $request->getParams();
+    $db = $this->db;
+
+    try {
+        foreach ($data as $key => $val) {
+            $model = $db->update("acc_t_pengajuan_det2", $val, $val["id"]);
+        }
+        return successResponse($response, $model);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["terjadi masalah pada server"]);
+    }
+    return unprocessResponse($response, $validasi);
+});
+
 /**
  * Hapus t pengajuan
  */

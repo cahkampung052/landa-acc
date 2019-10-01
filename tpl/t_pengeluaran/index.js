@@ -159,12 +159,15 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
                 $scope.form.total = data.jumlah_perkiraan;
                 $scope.form.t_pengajuan_id = data.id;
                 $scope.listDetail = [];
+                console.log(response.data)
+                var index = 0;
                 angular.forEach(response.data, function (value, key) {
-                    $scope.listDetail[key] = {
+                    $scope.listDetail[index] = {
                         m_akun_id: value.m_akun_id,
                         keterangan: value.keterangan + " (" + value.jumlah + "" + value.jenis_satuan + "@" + value.harga_satuan + ")",
                         debit: value.sub_total
                     }
+                    index++;
                 });
                 $scope.sumTotal();
 
