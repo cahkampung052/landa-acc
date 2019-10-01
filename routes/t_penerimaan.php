@@ -97,17 +97,14 @@ $app->get('/acc/t_penerimaan/getDetail', function ($request, $response) {
     $models = $db->select("
                 acc_pemasukan_det.*, 
                 acc_m_akun.kode as kodeAkun, 
-                acc_m_akun.nama as namaAkun, 
-                acc_m_lokasi.nama as namaLokasi
+                acc_m_akun.nama as namaAkun
             ")
             ->from("acc_pemasukan_det")
             ->join("join", "acc_m_akun", "acc_m_akun.id = acc_pemasukan_det.m_akun_id")
-            ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pemasukan_det.m_lokasi_id")
             ->where("acc_pemasukan_id", "=", $params['id'])
             ->findAll();
     foreach ($models as $key => $val) {
         $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kodeAkun, "nama" => $val->namaAkun];
-        $val->m_lokasi_id = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi];
     }
     return successResponse($response, [
         'list' => $models

@@ -227,7 +227,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
          */
         $kode = generateNoTransaksi("pengajuan", $data['data']['m_lokasi_id']['kode']);
         $urut = (empty($kode)) ? 1 : ((int) substr($kode, -5));
-//        echo $kode;die();
+        $data["data"]["lokasi_waktu"] = isset($data["data"]["lokasi_waktu"]) ? $data["data"]["lokasi_waktu"] : '';
         $data["data"]["m_lokasi_id"] = $data["data"]["m_lokasi_id"]["id"];
         $tanggal = $data["data"]["tanggal"];
         $data["data"]["tanggal"] = date("Y-m-d H:i", strtotime($tanggal));
@@ -268,6 +268,8 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
                     $detail["harga_satuan"] = isset($val["harga_satuan"]) ? $val["harga_satuan"] : '';
                     $detail["jumlah"] = isset($val["jumlah"]) ? $val["jumlah"] : '';
                     $detail["sub_total"] = isset($val["sub_total"]) ? $val["sub_total"] : '';
+                    $detail["budget"] = isset($val["budget"]) ? $val["budget"] : '';
+                    $detail["sisa_budget"] = isset($val["sisa_budget"]) ? $val["sisa_budget"] : '';
                     $detail["t_pengajuan_id"] = $model->id;
                     $modeldetail = $db->insert("acc_t_pengajuan_det", $detail);
 
@@ -328,11 +330,11 @@ $app->post("/acc/apppengajuan/saveDetail", function ($request, $response) {
 
     try {
         foreach ($data as $key => $val) {
-            $model = $db->update("acc_t_pengajuan_det2", $val, $val["id"]);
+            $model = $db->update("acc_t_pengajuan_det2", $val, ["id" => $val["id"]]);
         }
         return successResponse($response, $model);
     } catch (Exception $e) {
-        return unprocessResponse($response, ["terjadi masalah pada server"]);
+        return unprocessResponse($response, [$e->getMessage()]);
     }
     return unprocessResponse($response, $validasi);
 });

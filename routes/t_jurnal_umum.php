@@ -107,16 +107,14 @@ $app->get('/acc/t_jurnal_umum/kode/{kode}', function ($request, $response) {
 $app->get('/acc/t_jurnal_umum/getDetail', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
-    $models = $db->select("acc_jurnal_det.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun, acc_m_lokasi.nama as namaLokasi")
+    $models = $db->select("acc_jurnal_det.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")
             ->from("acc_jurnal_det")
             ->join("join", "acc_m_akun", "acc_m_akun.id = acc_jurnal_det.m_akun_id")
-            ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal_det.m_lokasi_id")
             ->where("acc_jurnal_id", "=", $params['id'])
             ->findAll();
 
     foreach ($models as $key => $val) {
         $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kodeAkun, "nama" => $val->namaAkun];
-        $val->m_lokasi_id = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi];
     }
     return successResponse($response, [
         'list' => $models

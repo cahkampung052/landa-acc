@@ -107,16 +107,15 @@ $app->get('/acc/t_pengeluaran/getDetail', function ($request, $response) {
     $params = $request->getParams();
 //    print_r($params);die();
     $db = $this->db;
-    $models = $db->select("acc_pengeluaran_det.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun, acc_m_lokasi.nama as namaLokasi")
+    $models = $db->select("acc_pengeluaran_det.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")
             ->from("acc_pengeluaran_det")
+            ->join("join", "acc_pengeluaran", "acc_pengeluaran.id = acc_pengeluaran_det.acc_pengeluaran_id")
             ->join("join", "acc_m_akun", "acc_m_akun.id = acc_pengeluaran_det.m_akun_id")
-            ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pengeluaran_det.m_lokasi_id")
             ->where("acc_pengeluaran_id", "=", $params['id'])
             ->findAll();
 
     foreach ($models as $key => $val) {
         $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kodeAkun, "nama" => $val->namaAkun];
-        $val->m_lokasi_id = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi];
     }
 
 
@@ -266,7 +265,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
                  */
                 $transDetail[$index]['m_akun_id'] = $modeldetail->m_akun_id;
                 $transDetail[$index]['m_kontak_id'] = $model->m_kontak_id;
-                $transDetail[$index]['m_lokasi_id'] = $modeldetail->m_lokasi_id;
+                $transDetail[$index]['m_lokasi_id'] = $model->m_lokasi_id;
                 $transDetail[$index]['tanggal'] = date("Y-m-d", strtotime($model->tanggal));
                 $transDetail[$index]['debit'] = $modeldetail->debit;
                 $transDetail[$index]['keterangan'] = $modeldetail->keterangan;
