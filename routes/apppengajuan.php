@@ -107,8 +107,8 @@ $app->get("/acc/apppengajuan/view", function ($request, $response) {
     }
 
     foreach ($models2 as $key => $val) {
-        if (isset($arr[$val->t_pengajuan_id])) {
-            $arr[$val->t_pengajuan_id]['detail'][] = $val;
+        if (isset($arr[$val->t_pengajuan_det_id])) {
+            $arr[$val->t_pengajuan_det_id]['detail'][] = $val;
         }
     }
 
