@@ -28,15 +28,23 @@
                             <div class="alert alert-secondary">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row mb-0">
-                                        <label class="col-sm-2 col-form-label-sm mb-0">No Proposal</label>
+                                        <div class="col-md-3">
+                                            <div class="input-group input-group-sm">
+                                                <input class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.periode" placeholder="Periode" type="text"/>
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" ng-click="filterTanggal()" style="cursor: pointer"><i class="fa fa-search"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--<label class="col-sm-2 col-form-label-sm mb-0">No Proposal</label>-->
                                         <div class="col-sm-3">
                                             <input st-search="no_proposal" class="form-control form-control-sm" placeholder="No Proposal"/>
                                         </div>
-                                        <label class="col-sm-1 col-form-label-sm mb-0">Lokasi</label>
+                                        <!--<label class="col-sm-1 col-form-label-sm mb-0">Lokasi</label>-->
                                         <div class="col-sm-3">
                                             <input st-search="m_lokasi_id" class="form-control form-control-sm" placeholder="Lokasi"/>
                                         </div>
-                                        <label class="col-sm-1 col-form-label-sm mb-0">Status</label>
+                                        <!--<label class="col-sm-1 col-form-label-sm mb-0">Status</label>-->
                                         <div class="col-sm-2">
                                             <select class="form-control form-control-sm" st-search="acc_t_pengajuan.status">
                                                 <option value="">- Semua Status -</option>

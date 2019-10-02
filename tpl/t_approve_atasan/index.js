@@ -12,14 +12,22 @@ app.controller("tapprovalCtrl", function ($scope, Data, $rootScope, $uibModal) {
     $scope.loading = false;
     var master = "Approve Proposal";
     $scope.master = master;
-    
+    $scope.form.periode = {
+        endDate: moment().add(1, 'M'),
+        startDate: moment()
+    };
+
+    $scope.filterTanggal = function () {
+        $scope.callServer(tableStateRef);
+    }
+
     /*
      * Ambil akun untuk detail
      */
-    Data.get('acc/m_akun/akunDetail').then(function(data) {
+    Data.get('acc/m_akun/akunDetail').then(function (data) {
         $scope.akunDetail = data.data.list;
     });
-    
+
     /**
      * End inialisasi
      */
@@ -30,7 +38,9 @@ app.controller("tapprovalCtrl", function ($scope, Data, $rootScope, $uibModal) {
         var limit = tableState.pagination.number || 10;
         var param = {
             offset: offset,
-            limit: limit
+            limit: limit,
+            start_date: moment($scope.form.periode.startDate).format("YYYY-MM-DD"),
+            end_date: moment($scope.form.periode.endDate).format("YYYY-MM-DD")
         };
         if (tableState.sort.predicate) {
             param["sort"] = tableState.sort.predicate;
@@ -142,10 +152,10 @@ app.controller("tapprovalCtrl", function ($scope, Data, $rootScope, $uibModal) {
         var param = {
             tahun: moment(form.tanggal).format("YYYY"),
             m_lokasi_id: form.m_lokasi_id.id,
-            nama : form.m_lokasi_id.kode +" - "+ form.m_lokasi_id.nama
+            nama: form.m_lokasi_id.kode + " - " + form.m_lokasi_id.nama
         };
 
-        
+
 
         var modalInstance = $uibModal.open({
             templateUrl: $rootScope.pathModulAcc + "tpl/t_approve_atasan/modal.html",
@@ -168,10 +178,10 @@ app.controller("budgetCtrl", function ($state, $scope, Data, $uibModalInstance, 
     $scope.form = form;
     $scope.listBudget = [];
     Data.get('acc/m_akun/getBudgetPerLokasi', form).then(function (result) {
-            $scope.listBudget = result.data;
-            console.log($scope.listBudget)
-        });
-    
+        $scope.listBudget = result.data;
+        console.log($scope.listBudget)
+    });
+
     $scope.close = function () {
         $uibModalInstance.close({
             'data': undefined

@@ -176,6 +176,14 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
     if (isset($params["special_lokasi"]) && !empty($params["special_lokasi"])) {
         $db->where("acc_t_pengajuan.m_lokasi_id", "=", $params['special_lokasi']);
     }
+    
+    if (isset($params["start_date"]) && !empty($params["start_date"])) {
+        $db->where("acc_t_pengajuan.tanggal", ">=", $params['start_date']);
+    }
+    
+    if (isset($params["end_date"]) && !empty($params["end_date"])) {
+        $db->where("acc_t_pengajuan.tanggal", "<=", $params['end_date']);
+    }
 
     $models = $db->findAll();
     $totalItem = $db->count();
