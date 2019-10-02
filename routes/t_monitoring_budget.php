@@ -15,7 +15,10 @@ $app->get('/acc/t_monitoring_budget/index', function ($request, $response) {
 
     $db = $this->db;
 
-    $tahun = date("Y", strtotime($params['tahun']));
+    if (isset($params['tahun'])) {
+        $tahun = date("Y", strtotime($params['tahun']));
+    }
+
     $arr = [];
 
     $lokasi = $db->select("*")->from("acc_m_lokasi")->where("is_deleted", "=", 0)->findAll();
@@ -23,10 +26,16 @@ $app->get('/acc/t_monitoring_budget/index', function ($request, $response) {
         $arr[$val->id] = (array) $val;
         $arr[$val->id]['budget'] = 0;
         $arr[$val->id]['used_budget'] = 0;
+        $arr[$val->id]['used_budget2'] = 0;
     }
 //    print_r($lokasi);die;
 
-    $budget = $db->select("*")->from("acc_budgeting")->where("tahun", "=", $tahun)->findAll();
+    $db->select("*")->from("acc_budgeting");
+    if (isset($params['tahun'])) {
+        $db->where("tahun", "=", $tahun)->findAll();
+    }
+
+    $budget = $db->findAll();
 
     foreach ($budget as $key => $val) {
         if (isset($arr[$val->m_lokasi_id]) && !empty($arr[$val->m_lokasi_id])) {
@@ -34,21 +43,30 @@ $app->get('/acc/t_monitoring_budget/index', function ($request, $response) {
         }
     }
 
-    $usedbudget = $db->select("*")
-            ->from("acc_t_pengajuan")
-            ->where("tanggal", ">=", $tahun . "-01-01")
-            ->where("tanggal", "<=", $tahun . "-12-31")
-            ->where("tipe", "=", "Budgeting")
-            ->customWhere("status = 'approved' OR status = 'terbayar'", "AND")
+    $db->select("*")
+            ->from("acc_t_pengajuan");
+    if (isset($params['tahun'])) {
+        $db->where("tanggal", ">=", $tahun . "-01-01")
+                ->where("tanggal", "<=", $tahun . "-12-31");
+    }
+//            ->where("tipe", "=", "Budgeting")
+    $usedbudget = $db->customWhere("status = 'approved' OR status = 'terbayar'", "AND")
             ->findAll();
 
+    $data['total'] = 0;
     foreach ($usedbudget as $key => $val) {
-        $arr[$val->m_lokasi_id]['used_budget'] += intval($val->jumlah_perkiraan);
+        if ($val->tipe == "Budgeting") {
+            $arr[$val->m_lokasi_id]['used_budget'] += intval($val->jumlah_perkiraan);
+        } else if ($val->tipe == "Non Budgeting") {
+            $arr[$val->m_lokasi_id]['used_budget2'] += intval($val->jumlah_perkiraan);
+        }
+        $data['total'] += intval($val->jumlah_perkiraan);
     }
 
 
     return successResponse($response, [
-        'list' => $arr
+        'list' => $arr,
+        'data' => $data
     ]);
 });
 
