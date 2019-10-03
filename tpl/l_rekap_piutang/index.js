@@ -49,7 +49,7 @@ app.controller('l_rekappiutangCtrl', function ($scope, Data, $rootScope) {
             export: is_export,
             print: is_print,
             m_lokasi_id: $scope.form.m_lokasi_id.id != undefined ? $scope.form.m_lokasi_id.id : null,
-            m_customer_id: $scope.form.m_customer_id.id != undefined ? $scope.form.m_customer_id.id : null,
+//            m_customer_id: $scope.form.m_customer_id.id != undefined ? $scope.form.m_customer_id.id : null,
             nama_lokasi: $scope.form.m_lokasi_id.nama != undefined ? $scope.form.m_lokasi_id.nama : null,
             m_akun_id: $scope.form.m_akun_id.id != undefined ? $scope.form.m_akun_id.id : null,
             nama_akun: $scope.form.m_akun_id.nama != undefined ? $scope.form.m_akun_id.nama : null,
