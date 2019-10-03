@@ -72,7 +72,8 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
          * ambil saldo awal piutang ke customer
          */
         $sql->select('acc_m_kontak.*, acc_trans_detail.m_kontak_id, acc_trans_detail.debit, acc_trans_detail.kredit')
-                ->from('acc_trans_detail');
+                ->from('acc_trans_detail')
+                ->join("JOIN", "acc_m_kontak", "acc_m_kontak.id = acc_trans_detail.m_kontak_id");
         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
             $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)");
         }
@@ -100,7 +101,8 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
          * ambil saldo hutang di rentan tanggal dari customer
          */
         $sql->select('acc_m_kontak.*, acc_trans_detail.m_kontak_id, acc_trans_detail.debit, acc_trans_detail.kredit')
-                ->from('acc_trans_detail');
+                ->from('acc_trans_detail')
+                ->join("JOIN", "acc_m_kontak", "acc_m_kontak.id = acc_trans_detail.m_kontak_id");
         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
             $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)");
         }
