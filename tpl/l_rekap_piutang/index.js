@@ -32,12 +32,12 @@ app.controller('l_rekappiutangCtrl', function ($scope, Data, $rootScope) {
     /*
      * ambil supplier
      */
-    Data.get('acc/m_customer/getCustomer').then(function (response) {
-        $scope.listCustomer = response.data.list;
-        if ($scope.listCustomer.length > 0) {
-            $scope.form.m_customer_id = $scope.listCustomer[0];
-        }
-    });
+//    Data.get('acc/m_customer/getCustomer').then(function (response) {
+//        $scope.listCustomer = response.data.list;
+//        if ($scope.listCustomer.length > 0) {
+//            $scope.form.m_customer_id = $scope.listCustomer[0];
+//        }
+//    });
 
     /**
      * Ambil laporan dari server
