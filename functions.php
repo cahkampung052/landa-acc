@@ -347,7 +347,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
     $trans = $sql->findAll();
     $arrTrans = [];
     foreach ($trans as $key => $value) {
-        $arrTrans[$value->id] = intval((intval($value->debit) - intval($value->kredit)) * intval($value->saldo_normal));
+        $arrTrans[$value->id] = ($value->debit - $value->kredit) * $value->saldo_normal;
     }
     /*
      * ambil akun (jika saldo 0 ikut ditampilkan)
@@ -383,9 +383,9 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
         /*
          * tanya adi
          */
-        if($value->is_tipe == 0){
-            $arr[$tipe]['detail'][$key]['nominal'] += intval($total);
-        }
+        // if($value->is_tipe == 0){
+        //     $arr[$tipe]['detail'][$key]['nominal'] += intval($total);
+        // }
         
     }
     ksort($arr['PENDAPATAN']['detail']);

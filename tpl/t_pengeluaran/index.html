@@ -88,8 +88,8 @@
                                 <td style="width: 100px;">
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-success fa fa-print"  ng-click="print(row)"></button>
-                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft' && (row.tanggal>= tanggal_setting)) || (row.status == 'Terposting' && user.akses.pengeluaran_update)" ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="(row.status == 'Draft' && (row.tanggal>= tanggal_setting)) || (row.status == 'Terposting' && user.akses.pengeluaran_delete)" ng-click="delete(row);"></button>
+                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft' && (row.tanggal >= tanggal_setting)) || (row.status == 'Terposting' && user.akses.pengeluaran_update)" ng-click="update(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="(row.status == 'Draft' && (row.tanggal >= tanggal_setting)) || (row.status == 'Terposting' && user.akses.pengeluaran_delete)" ng-click="delete(row);"></button>
                                     </div>
                                 </td>
                             </tr>
