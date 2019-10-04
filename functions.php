@@ -377,18 +377,14 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
         $arr[$tipe]['detail'][$key]['is_tipe']  = $value->is_tipe;
         $arr[$tipe]['detail'][$key]['parent_id'] = $value->parent_id;
         $arr[$tipe]['detail'][$key]['nama']     = ($value->is_tipe == 0) ? $fullName : "<b>".$fullName."</b>";
-        $arr[$tipe]['detail'][$key]['nominal']  = ($value->is_tipe == 1) ? '' : $total;
+        $arr[$tipe]['detail'][$key]['nominal']  = ($value->is_tipe == 1) ? 0 : $total;
         $arr[$tipe]['total'] = (isset($arr[$tipe]['total']) ? $arr[$tipe]['total'] : 0) + $total;
         
         /*
          * tanya adi
          */
         if($value->is_tipe == 0){
-            $arr[$tipe]['detail'][$key]['testing'] = $testing;
-            $arr[$tipe]['detail'][$testing]['nominal'] += intval($total);
-        }else{
-            $arr[$tipe]['detail'][$key]['testing'] = $key;
-            $testing = $key;
+            $arr[$tipe]['detail'][$key]['nominal'] += intval($total);
         }
         
     }

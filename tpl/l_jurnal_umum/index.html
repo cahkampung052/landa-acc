@@ -10,9 +10,14 @@
                         <div class="col-md-12">
                             <form name="landaform" novalidate="">
                                 <div class="row">
-                                    <div class="col-md-2">
-                                        <div class="form-group">
+                                    <div class="col-md-3">
+                                        <div class="input-group">
                                             <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -72,38 +77,38 @@
                         <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
                             <thead>
                                 <tr>
-                                    <th width="80">
+                                    <th width="80" class="align-center">
                                         <b>TANGGAL</b>
                                     </th>
-                                    <th width="80">
+                                    <th width="80" class="align-center">
                                         <b>REFF</b>
                                     </th>
-                                    <th>
-                                        <b>LOKASI</b>
-                                    </th>
-                                    <th>
+                                    <th width="200" class="align-center">
                                         <b>AKUN</b>
                                     </th>
-                                    <th>
+                                    <th width="200" class="align-center">
+                                        <b>LOKASI</b>
+                                    </th>
+                                    <th class="align-center">
                                         <b>KETERANGAN</b>
                                     </th>
-                                    <th width="100">
+                                    <th width="100" class="align-center">
                                         <b>DEBIT</b>
                                     </th>
-                                    <th width="100">
+                                    <th width="100" class="align-center">
                                         <b>KREDIT</b>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="val in detail">
-                                    <td align="center" class="text-center" style="vertical-align: top">{{ val.tanggal }}</td>
-                                    <td align="left" style="vertical-align: top">{{ val.kode }}</td>
-                                    <td align="left" style="vertical-align: top">{{ val.namaLokasi }}</td>
+                                    <td align="center" class="text-center" style="vertical-align: top">{{ val.tanggal | date:'dd-MM-yyyy' }}</td>
+                                    <td align="center" style="vertical-align: top">{{ val.kode }}</td>
                                     <td style="vertical-align: top">
                                         <span style="margin-left:50px" ng-if="val.debit == 0">{{ val.kodeAkun + " - " + val.namaAkun }}</span>
                                         <span ng-if="val.debit != 0">{{ val.kodeAkun + " - " + val.namaAkun }}</span>
                                     </td>
+                                    <td align="left" style="vertical-align: top">{{ val.namaLokasi }}</td>
                                     <td>{{ val.keterangan }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ val.debit| number }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ val.kredit| number }}</td>

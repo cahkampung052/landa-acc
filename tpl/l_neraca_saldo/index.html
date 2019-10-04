@@ -10,9 +10,14 @@
                         <div class="col-md-12">
                             <form name="landaform" novalidate="">
                                 <div class="row">
-                                    <div class="col-md-2">
-                                        <div class="form-group">
+                                    <div class="col-md-3">
+                                        <div class="input-group">
                                             <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -59,39 +64,39 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover table-laporan">
+                        <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
                             <thead>
                                 <tr>
-                                    <th rowspan="2" style="text-align: center">
+                                    <th rowspan="2" class="align-center">
                                         <b>AKUN</b>
                                     </th>
-                                    <th colspan="2" style="text-align: center">
+                                    <th colspan="2" class="align-center">
                                         <b>SALDO AWAL</b>
                                     </th>
-                                    <th colspan="2" style="text-align: center">
+                                    <th colspan="2" class="align-center">
                                         <b>MUTASI</b>
                                     </th>
-                                    <th colspan="2" style="text-align: center">
+                                    <th colspan="2" class="align-center">
                                         <b>SALDO AKHIR</b>
                                     </th>
                                 </tr>
                                 <tr>
-                                    <th width="100" class="text-right">
+                                    <th width="100" class="align-center">
                                         <b>DEBIT</b>
                                     </th>
-                                    <th width="100" class="text-right">
+                                    <th width="100" class="align-center">
                                         <b>KREDIT</b>
                                     </th>
-                                    <th width="100" class="text-right">
+                                    <th width="100" class="align-center">
                                         <b>DEBIT</b>
                                     </th>
-                                    <th width="100" class="text-right">
+                                    <th width="100" class="align-center">
                                         <b>KREDIT</b>
                                     </th>
-                                    <th width="100" class="text-right">
+                                    <th width="100" class="align-center">
                                         <b>DEBIT</b>
                                     </th>
-                                    <th width="100" class="text-right">
+                                    <th width="100" class="align-center">
                                         <b>KREDIT</b>
                                     </th>
                                 </tr>
@@ -131,10 +136,12 @@
                                         <b>{{ data.kredit_mutasi| number }}</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b>{{ data.debit_akhir| number }}</b>
+                                        <span ng-if="data.debit_akhir >= 0">{{data.debit_akhir| number}}</span>
+                                        <span ng-if="data.debit_akhir < 0">{{data.debit_akhir * -1| number}}</span>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b>{{ data.kredit_akhir| number }}</b>
+                                        <span ng-if="data.kredit_akhir >= 0">{{data.kredit_akhir| number}}</span>
+                                        <span ng-if="data.kredit_akhir < 0">{{data.kredit_akhir * -1| number}}</span>
                                     </td>
                                 </tr>
                             </tfoot>
