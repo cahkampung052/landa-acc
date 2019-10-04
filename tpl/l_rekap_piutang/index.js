@@ -32,12 +32,12 @@ app.controller('l_rekappiutangCtrl', function ($scope, Data, $rootScope) {
     /*
      * ambil supplier
      */
-    Data.get('acc/m_customer/getCustomer').then(function (response) {
-        $scope.listCustomer = response.data.list;
-        if ($scope.listCustomer.length > 0) {
-            $scope.form.m_customer_id = $scope.listCustomer[0];
-        }
-    });
+//    Data.get('acc/m_customer/getCustomer').then(function (response) {
+//        $scope.listCustomer = response.data.list;
+//        if ($scope.listCustomer.length > 0) {
+//            $scope.form.m_customer_id = $scope.listCustomer[0];
+//        }
+//    });
 
     /**
      * Ambil laporan dari server
@@ -48,11 +48,11 @@ app.controller('l_rekappiutangCtrl', function ($scope, Data, $rootScope) {
         var param = {
             export: is_export,
             print: is_print,
-            m_lokasi_id: $scope.form.m_lokasi_id.id,
-            m_customer_id: $scope.form.m_customer_id.id,
-            nama_lokasi: $scope.form.m_lokasi_id.nama,
-            m_akun_id: $scope.form.m_akun_id.id,
-            nama_akun: $scope.form.m_akun_id.nama,
+            m_lokasi_id: $scope.form.m_lokasi_id.id != undefined ? $scope.form.m_lokasi_id.id : null,
+//            m_customer_id: $scope.form.m_customer_id.id != undefined ? $scope.form.m_customer_id.id : null,
+            nama_lokasi: $scope.form.m_lokasi_id.nama != undefined ? $scope.form.m_lokasi_id.nama : null,
+            m_akun_id: $scope.form.m_akun_id.id != undefined ? $scope.form.m_akun_id.id : null,
+            nama_akun: $scope.form.m_akun_id.nama != undefined ? $scope.form.m_akun_id.nama : null,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
         };
