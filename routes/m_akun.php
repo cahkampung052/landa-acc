@@ -1,9 +1,9 @@
 <?php
+
 /**
  * validasi akun
  */
-function validasi($data, $custom = array())
-{
+function validasi($data, $custom = array()) {
     $validasi = array(
         'parent_id' => 'required',
         'kode' => 'required',
@@ -15,11 +15,11 @@ function validasi($data, $custom = array())
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
+
 /**
  * validasi saldo awal
  */
-function validasiSaldo($data, $custom = array())
-{
+function validasiSaldo($data, $custom = array()) {
     $validasi = array(
         'tanggal' => 'required',
         'm_lokasi_id' => 'required',
@@ -28,15 +28,33 @@ function validasiSaldo($data, $custom = array())
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
+
 /**
  * setLevelTipeAkun
  */
-function setLevelTipeAkun($parent_id)
-{
+function setLevelTipeAkun($parent_id) {
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $parent = $db->find("select * from acc_m_akun where id = '" . $parent_id . "'");
     return $parent->level + 1;
 }
+
+/*
+ * get kode
+ */
+$app->get('/acc/m_akun/getKode/{kode}', function($request, $response) {
+
+    $kode = $request->getAttribute('kode');
+    $db = $this->db;
+
+    $models = $db->select('kode')->from('acc_m_akun')->where('kode', '=', $kode)->count();
+//    print_r($models);die;
+    if ($models > 0) {
+        return successResponse($response, ['status_kode' => 0, 'message' => "Kode sudah digunakan"]);
+    }else{
+        return successResponse($response, ['status_kode' => 1, 'message' => ""]);
+    }
+});
+
 /**
  * Ambil saldo awal
  */
@@ -51,8 +69,7 @@ $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
     ")
             ->from('acc_m_akun')
             ->leftJoin(
-                    'acc_trans_detail',
-                'acc_trans_detail.m_lokasi_id = ' . $params['m_lokasi_id'] . ' and 
+                    'acc_trans_detail', 'acc_trans_detail.m_lokasi_id = ' . $params['m_lokasi_id'] . ' and 
             acc_trans_detail.m_akun_id = acc_m_akun.id and
             acc_trans_detail.reff_type = "Saldo Awal"'
             )
@@ -214,10 +231,10 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
             acc_m_akun.id,
             acc_m_akun.saldo_normal
         ")
-        ->from("acc_trans_detail")
-        ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-        ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
-        ->groupBy("acc_m_akun.id");
+            ->from("acc_trans_detail")
+            ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+            ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
+            ->groupBy("acc_m_akun.id");
     $trans = $db->findAll();
     $arrTrans = [];
     foreach ($trans as $key => $value) {
@@ -244,11 +261,11 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
             }
         }
     }
-    $models     = $db->findAll();
-    $totalItem  = $db->count();
-    $listAkun   = buildTreeAkun($models, 0);
-    $arrModel   = flatten($listAkun);
-    $arr        = [];
+    $models = $db->findAll();
+    $totalItem = $db->count();
+    $listAkun = buildTreeAkun($models, 0);
+    $arrModel = flatten($listAkun);
+    $arr = [];
     foreach ($arrModel as $key => $value) {
         $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
         $spasi = ($value->level == 1) ? '' : str_repeat("···", $value->level - 1);
