@@ -1,4 +1,4 @@
-app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, $stateParams) {
+app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $stateParams) {
     /**
      * Inialisasi
      */
@@ -12,6 +12,12 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
     $scope.is_copy = false;
     $scope.loading = false;
     $scope.special_filter = {};
+    $scope.cari = {
+        periode : {
+            startDate : new Date(),
+            endDate: new Date()
+        }
+    };
     var master = "Transaksi Pengajuan";
     $scope.master = master;
     $scope.cek_special = 0;
@@ -19,42 +25,37 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
-    Data.get('site/base_url').then(function (response) {
+    Data.get('site/base_url').then(function(response) {
         $scope.url = response.data;
     });
     /**
      * Ambil semua lokasi
      */
-    Data.get('acc/m_lokasi/getLokasi').then(function (response) {
+    Data.get('acc/m_lokasi/getLokasi').then(function(response) {
         $scope.listLokasi = response.data.list;
-        if ($scope.listLokasi.length > 0) {
-            $scope.form.m_lokasi_id = $scope.listLokasi[0];
-        }
     });
     /*
      * Ambil akun untuk detail
      */
-    Data.get('acc/m_akun/akunBeban').then(function (data) {
+    Data.get('acc/m_akun/akunBeban').then(function(data) {
         $scope.listAkun = data.data.list;
     });
     /*
      * ambil user
      */
-    Data.get("/acc/appuser/getAll").then(function (response) {
+    Data.get("/acc/appuser/getAll").then(function(response) {
         $scope.listUser = response.data;
     });
-    
-    $scope.filterTanggal = function () {
+    $scope.filterTanggal = function() {
         $scope.callServer(tableStateRef);
     }
-    
-    $scope.getBudgeting = function (lokasi, tanggal) {
+    $scope.getBudgeting = function(lokasi, tanggal) {
         var form = {
             lokasi: lokasi,
             tanggal: tanggal,
             detail: $scope.listDetail
         }
-        Data.post("acc/apppengajuan/getBudgeting", form).then(function (response) {
+        Data.post("acc/apppengajuan/getBudgeting", form).then(function(response) {
             $scope.listDetail = response.data;
         })
     };
@@ -77,8 +78,8 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
             limit: limit,
             special_tahun: $scope.special_filter.tahun,
             special_lokasi: $scope.special_filter.lokasi,
-            start_date : moment($scope.form.periode.startDate).format("YYYY-MM-DD"),
-            end_date : moment($scope.form.periode.endDate).format("YYYY-MM-DD")
+            start_date: moment($scope.cari.periode.startDate).format("YYYY-MM-DD"),
+            end_date: moment($scope.cari.periode.endDate).format("YYYY-MM-DD")
         };
         if (tableState.sort.predicate) {
             param["sort"] = tableState.sort.predicate;
@@ -88,29 +89,24 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
             param["filter"] = tableState.search.predicateObject;
         }
         param["type"] = "pengajuan";
-        Data.get("acc/apppengajuan/index", param).then(function (response) {
+        Data.get("acc/apppengajuan/index", param).then(function(response) {
             $scope.displayed = response.data.list;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
         $scope.isLoading = false;
-        if ($scope.cek_special == 0)
-            $scope.cekSpecial();
-    };
-    $scope.cekSpecial = function () {
-        console.log("asd")
     }
-    $scope.getDetail = function (id) {
-        Data.get("acc/apppengajuan/view?t_pengajuan_id=" + id).then(function (response) {
+    $scope.getDetail = function(id) {
+        Data.get("acc/apppengajuan/view?t_pengajuan_id=" + id).then(function(response) {
             $scope.listDetail = response.data;
             if ($scope.is_copy) {
-                angular.forEach($scope.listDetail, function (value, key) {
+                angular.forEach($scope.listDetail, function(value, key) {
                     value.id = "";
                 });
             }
         });
     };
     $scope.listDetail = [{}];
-    $scope.addDetail = function (val) {
+    $scope.addDetail = function(val) {
         var comArr = eval(val);
         var newDet = {
             m_akun_id: {
@@ -121,7 +117,7 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
         };
         val.push(newDet);
     };
-    $scope.removeDetail = function (val, paramindex) {
+    $scope.removeDetail = function(val, paramindex) {
         var comArr = eval(val);
         if (comArr.length > 1) {
             val.splice(paramindex, 1);
@@ -129,9 +125,9 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
             alert("Something gone wrong");
         }
     };
-    $scope.sumTotal = function () {
+    $scope.sumTotal = function() {
         var jumlah_perkiraan = 0;
-        angular.forEach($scope.listDetail, function (value, key) {
+        angular.forEach($scope.listDetail, function(value, key) {
             if (value.harga_satuan === undefined) {
                 value.harga_satuan = 0;
             }
@@ -143,18 +139,18 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
         });
         $scope.form.jumlah_perkiraan = jumlah_perkiraan;
     };
-    $scope.getAcc = function (id) {
-        Data.get("acc/apppengajuan/getAcc?t_pengajuan_id=" + id).then(function (response) {
+    $scope.getAcc = function(id) {
+        Data.get("acc/apppengajuan/getAcc?t_pengajuan_id=" + id).then(function(response) {
             $scope.listAcc = response.data;
         });
     };
     $scope.listAcc = [{}];
-    $scope.addAcc = function (val) {
+    $scope.addAcc = function(val) {
         var comArr = eval(val);
         var newDet = {};
         val.push(newDet);
     };
-    $scope.removeDetail = function (val, paramindex) {
+    $scope.removeDetail = function(val, paramindex) {
         var comArr = eval(val);
         if (comArr.length > 1) {
             val.splice(paramindex, 1);
@@ -162,7 +158,7 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
             alert("Something gone wrong");
         }
     };
-    $scope.create = function (form) {
+    $scope.create = function(form) {
         $scope.is_copy = false;
         $scope.is_edit = true;
         $scope.is_view = false;
@@ -173,16 +169,19 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
         $scope.form.butuhapproval = 1;
         $scope.form.tipe = 'Budgeting';
         $scope.listDetail = [{
-                m_akun_id: {
-                    id: $scope.listAkun[0].id,
-                    kode: $scope.listAkun[0].kode,
-                    nama: $scope.listAkun[0].nama
-                },
-                detail: []
-            }];
+            m_akun_id: {
+                id: $scope.listAkun[0].id,
+                kode: $scope.listAkun[0].kode,
+                nama: $scope.listAkun[0].nama
+            },
+            detail: []
+        }];
+        if ($scope.listLokasi.length > 0) {
+            $scope.form.m_lokasi_id = $scope.listLokasi[0];
+        }
         $scope.listAcc = {};
     };
-    $scope.copy = function (form) {
+    $scope.copy = function(form) {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = true;
@@ -191,21 +190,16 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
         $scope.form = {};
         $scope.form.tanggal = new Date();
         $scope.form.approval = 1;
-        //        $scope.listDetail = [{
-        //                keterangan: "",
-        //                budget: 0,
-        //                realisasi: 0
-        //            }];
         $scope.listAcc = {};
         /*
          * ambil pengajuan untuk copy
          */
-        Data.get("acc/apppengajuan/getAll").then(function (response) {
+        Data.get("acc/apppengajuan/getAll").then(function(response) {
             $scope.listPengajuan = response.data;
             console.log(response.data)
         });
     };
-    $scope.update = function (form) {
+    $scope.update = function(form) {
         $scope.is_copy = false;
         $scope.is_edit = true;
         $scope.is_view = false;
@@ -216,7 +210,7 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
         $scope.getAcc(form.id);
         $scope.form.tanggal = new Date(form.tanggal);
     };
-    $scope.view = function (form) {
+    $scope.view = function(form) {
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.formtittle = master + " | Lihat Data : " + form.no_proposal;
@@ -225,14 +219,14 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
         $scope.getAcc(form.id);
         $scope.form.tanggal = new Date(form.tanggal);
     };
-    $scope.save = function (form) {
+    $scope.save = function(form) {
         $scope.loading = true;
         var form = {
             data: form,
             detail: $scope.listDetail,
             acc: $scope.listAcc
         }
-        Data.post("acc/apppengajuan/save", form).then(function (result) {
+        Data.post("acc/apppengajuan/save", form).then(function(result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.cancel();
@@ -242,22 +236,22 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
             $scope.loading = false;
         });
     };
-    $scope.cancel = function () {
+    $scope.cancel = function() {
         $scope.is_edit = false;
         $scope.is_view = false;
         $scope.is_create = false;
         $scope.callServer(tableStateRef);
     };
-    $scope.delete = function (row) {
+    $scope.delete = function(row) {
         if (confirm("Apa anda yakin akan Menghapus item ini ?")) {
             row.is_deleted = 0;
-            Data.post("acc/apppengajuan/hapus", row).then(function (result) {
+            Data.post("acc/apppengajuan/hapus", row).then(function(result) {
                 $scope.displayed.splice($scope.displayed.indexOf(row), 1);
             });
         }
     };
-    $scope.getPengajuan = function (no_proposal) {
-        Data.get("acc/apppengajuan/getAll?id=" + no_proposal.id).then(function (response) {
+    $scope.getPengajuan = function(no_proposal) {
+        Data.get("acc/apppengajuan/getAll?id=" + no_proposal.id).then(function(response) {
             $scope.form = response.data[0];
             $scope.form.tanggal = new Date($scope.form.tanggal)
             $scope.getDetail($scope.form.id)
@@ -267,13 +261,13 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
             $scope.tersalin_dari = no_proposal;
         });
     }
-    $scope.print = function (row) {
+    $scope.print = function(row) {
         window.open("api/acc/apppengajuan/printPengajuan?" + $.param(row), "_blank");
     }
     /**
      * Modal setting template print
      */
-    $scope.modalSetting = function () {
+    $scope.modalSetting = function() {
         var modalInstance = $uibModal.open({
             templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/t_pengajuan/modal.html",
             controller: "settingPrintCtrl",
@@ -281,16 +275,14 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
             backdrop: "static",
             keyboard: false,
         });
-        modalInstance.result.then(function (response) {
-            if (response.data == undefined) {
-            } else {
-            }
+        modalInstance.result.then(function(response) {
+            if (response.data == undefined) {} else {}
         });
     }
     /**
      * Modal setting template print
      */
-    $scope.modalWhatsapp = function (form) {
+    $scope.modalWhatsapp = function(form) {
         var modalInstance = $uibModal.open({
             templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/t_pengajuan/whatsapp.html",
             controller: "whatsappCtrl",
@@ -301,13 +293,11 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
                 form: form,
             }
         });
-        modalInstance.result.then(function (response) {
-            if (response.data == undefined) {
-            } else {
-            }
+        modalInstance.result.then(function(response) {
+            if (response.data == undefined) {} else {}
         });
     }
-    $scope.modalDetail = function (form, index) {
+    $scope.modalDetail = function(form, index) {
         var modalInstance = $uibModal.open({
             templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/t_pengajuan/detail.html",
             controller: "modalDetailCtrl",
@@ -322,7 +312,7 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
                 }
             }
         })
-        modalInstance.result.then(function (response) {
+        modalInstance.result.then(function(response) {
             console.log(response);
             if (response.detail.length > 0) {
                 form.detail = response.detail;
@@ -333,22 +323,22 @@ app.controller("tpengajuanCtrl", function ($scope, Data, $rootScope, $uibModal, 
         })
     }
 });
-app.controller("settingPrintCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope) {
+app.controller("settingPrintCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope) {
     $scope.templateDefault = "";
-    Data.get("acc/apppengajuan/getTemplate").then(function (response) {
+    Data.get("acc/apppengajuan/getTemplate").then(function(response) {
         $scope.templateDefault = response.data;
     });
-    $scope.close = function () {
+    $scope.close = function() {
         $uibModalInstance.close({
             'data': undefined
         });
     };
-    $scope.save = function () {
+    $scope.save = function() {
         var ckeditor_data = CKEDITOR.instances.editor1.getData();
         var params = {
             print_pengajuan: ckeditor_data
         };
-        Data.post("acc/apppengajuan/saveTemplate", params).then(function (result) {
+        Data.post("acc/apppengajuan/saveTemplate", params).then(function(result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.close();
@@ -358,19 +348,19 @@ app.controller("settingPrintCtrl", function ($state, $scope, Data, $uibModalInst
         });
     }
 });
-app.controller("whatsappCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope, form) {
+app.controller("whatsappCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope, form) {
     $scope.form = {};
-    Data.get("acc/appuser/getAll").then(function (result) {
+    Data.get("acc/appuser/getAll").then(function(result) {
         $scope.listUser = result.data;
     });
     $scope.data = form;
     $scope.form.pesan = $scope.data.no_proposal + "\nNama Kegiatan : " + $scope.data.dasar_pengajuan + "\nTotal Biaya : " + $scope.data.jumlah_perkiraan + "\nTanggal : " + $scope.data.tanggal + "\n+++++++++++++++++++++++\nPenerima : " + $scope.data.penerima + "\nNo. Rekening : " + $scope.data.norek + "\nCatatan :";
-    $scope.close = function () {
+    $scope.close = function() {
         $uibModalInstance.close({
             'data': undefined
         });
     };
-    $scope.send = function (form) {
+    $scope.send = function(form) {
         var telp = 0;
         if (form.penerima.telepon.charAt(0) == 0) {
             telp = form.penerima.telepon.replace(form.penerima.telepon.charAt(0), 62);
@@ -380,7 +370,7 @@ app.controller("whatsappCtrl", function ($state, $scope, Data, $uibModalInstance
         window.open("https://wa.me/" + telp + "?text=" + encodeURIComponent(form.pesan), '_blank');
     }
 });
-app.controller("modalDetailCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope, form, data) {
+app.controller("modalDetailCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope, form, data) {
     $scope.form = {};
     $scope.form = form;
     $scope.is_view = data.is_view;
@@ -391,7 +381,7 @@ app.controller("modalDetailCtrl", function ($state, $scope, Data, $uibModalInsta
         //        $scope.sumTotal();
     }
     //    $scope.sumTotal();
-    $scope.addDetail = function (val) {
+    $scope.addDetail = function(val) {
         var comArr = eval(val);
         var newDet = {
             keterangan: "",
@@ -400,14 +390,14 @@ app.controller("modalDetailCtrl", function ($state, $scope, Data, $uibModalInsta
         };
         val.push(newDet);
     };
-    $scope.removeDetail = function (val, paramindex) {
+    $scope.removeDetail = function(val, paramindex) {
         var comArr = eval(val);
         val.splice(paramindex, 1);
         $scope.sumTotal();
     };
-    $scope.sumTotal = function () {
+    $scope.sumTotal = function() {
         var total = 0;
-        angular.forEach($scope.listDetail, function (value, key) {
+        angular.forEach($scope.listDetail, function(value, key) {
             if (value.budget === undefined) {
                 value.budget = 0;
             }
@@ -418,9 +408,9 @@ app.controller("modalDetailCtrl", function ($state, $scope, Data, $uibModalInsta
         });
         $scope.form.sub_total = total;
     };
-    $scope.save = function () {
+    $scope.save = function() {
         if ($scope.status == "Terbayar") {
-            Data.post("acc/apppengajuan/saveDetail", $scope.listDetail).then(function (result) {
+            Data.post("acc/apppengajuan/saveDetail", $scope.listDetail).then(function(result) {
                 if (result.status_code == 200) {
                     $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                     $scope.close();
@@ -432,7 +422,7 @@ app.controller("modalDetailCtrl", function ($state, $scope, Data, $uibModalInsta
             $scope.close();
         }
     }
-    $scope.close = function () {
+    $scope.close = function() {
         $uibModalInstance.close({
             detail: $scope.listDetail,
             total: $scope.form.sub_total

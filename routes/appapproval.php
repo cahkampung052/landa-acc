@@ -6,7 +6,8 @@
  * @param  array $custom
  * @return array
  */
-function validasi($data, $custom = array()) {
+function validasi($data, $custom = array())
+{
     $validasi = array(
         "min" => "required",
         "max" => "required",
@@ -36,19 +37,10 @@ $app->get("/acc/appapproval/index", function ($request, $response) {
             $db->where($key, "LIKE", $val);
         }
     }
-    /**
-     * Set limit dan offset
-     */
-//    if (isset($params["limit"]) && !empty($params["limit"])) {
-//        $db->limit($params["limit"]);
-//    }
-//    if (isset($params["offset"]) && !empty($params["offset"])) {
-//        $db->offset($params["offset"]);
-//    }
     $models = $db->groupBy("tipe, min, max")->findAll();
     $totalItem = $db->count();
     
-    foreach($models as $key => $val){
+    foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
         $db->select("acc_m_setting_approval.*, " . $tableuser . ".nama as namaUser")->from("acc_m_setting_approval")
                 ->join("JOIN", $tableuser, $tableuser.".id = acc_m_setting_approval.acc_m_user_id")
@@ -58,18 +50,15 @@ $app->get("/acc/appapproval/index", function ($request, $response) {
         $countuser = $db->count();
         $getuser = $db->findAll();
         $arr_id = [];
-        foreach($getuser as $keys => $vals){
+        foreach ($getuser as $keys => $vals) {
             $models[$key]['detail'][$keys] = (array) $vals;
             $arr_id[] = $vals->id;
             $models[$key]['detail'][$keys]['acc_m_user_id'] = ["id"=>$vals->acc_m_user_id, "nama"=>$vals->namaUser];
         }
         $models[$key]['arr_id'] = implode(", ", $arr_id);
         $models[$key]['jumlah_approval'] = $countuser;
-        
     }
-    return successResponse($response, ["list" => $models,
-        "totalItems" => $totalItem
-            ]);
+    return successResponse($response, ["list" => $models, "totalItems" => $totalItem]);
 });
 /**
  * Save m setting approval
@@ -81,8 +70,9 @@ $app->post("/acc/appapproval/save", function ($request, $response) {
     $validasi = validasi($data["data"]);
     if ($validasi === true) {
         try {
-            if($data['data']['status'] == "update")
+            if ($data['data']['status'] == "update") {
                 $db->run("DELETE FROM acc_m_setting_approval WHERE id IN(".$data["data"]["arr_id"].")");
+            }
             /**
              * Simpan detail
              */
@@ -95,7 +85,6 @@ $app->post("/acc/appapproval/save", function ($request, $response) {
                     $detail["sebagai"] = isset($val["sebagai"]) ? $val["sebagai"] : '';
                     $detail["level"] = isset($val["level"]) ? $val["level"] : '';
                     $db->insert("acc_m_setting_approval", $detail);
-                    
                 }
             }
             return successResponse($response, $detail);

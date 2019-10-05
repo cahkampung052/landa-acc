@@ -2,12 +2,10 @@
     <div ng-controller="pengeluaranCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong class="">{{master}}</strong>
+                <strong class="">{{ master }}</strong>
                 <div class="btn-group pull-right mt-5px d-lg-none" role="group">
                     <div class="dropdown">
-                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Menu
-                        </button>
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <button class="dropdown-item" ng-click="create();" ng-if="user.akses.pengeluaran_create">
                                 <i class="fa fa-plus"></i>
@@ -20,14 +18,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
-                    <button class="btn btn-primary btn-sm" ng-click="create();" ng-if="user.akses.pengeluaran_create">
-                        <i class="fa fa-plus"></i>
-                        &nbsp;Buat Pengeluaran Baru
-                    </button>
+                <div class="pull-right mt-5px d-md-down-none" role="group">
                     <button class="btn btn-transparan btn-sm" ng-click="modalSetting();" ng-if="user.akses.pengeluaran_template">
                         <i class="fa fa-gear"></i>
                         &nbsp;Setting Print
+                    </button>
+                    <button class="btn btn-primary btn-sm" ng-click="create();" ng-if="user.akses.pengeluaran_create">
+                        <i class="fa fa-plus"></i>
+                        &nbsp;Buat Pengeluaran Baru
                     </button>
                 </div>
             </div>
@@ -37,21 +35,16 @@
                         <div class="col-md-12">
                             <div class="alert alert-secondary">
                                 <form name="landaform" novalidate="">
-
                                     <div class="form-group row mb-0px">
-                                        <label class="col-sm-1 col-form-label-sm mb-0px">Lokasi</label>
                                         <div class="col-sm-2">
                                             <select class="form-control form-control-sm" st-search="m_lokasi_id">
                                                 <option value="">- Semua Lokasi -</option>
-                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{val.nama_lengkap}}</option>
-
+                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{ val.nama_lengkap }}</option>
                                             </select>
                                         </div>
-                                        <label for="nama" class="col-sm-2 col-form-label-sm mb-0px">No Transaksi</label>
                                         <div class="col-sm-2">
                                             <input type="text" class="form-control form-control-sm" st-search="no_transaksi" id="no_transaksi" placeholder="No Transaksi"/>
                                         </div>
-                                        <label for="nama" class="col-sm-2 col-form-label-sm mb-0px">Penerima</label>
                                         <div class="col-sm-2">
                                             <input type="text" class="form-control form-control-sm" st-search="acc_m_kontak.nama" id="m_kontak_id" placeholder="Penerima"/>
                                         </div>
@@ -65,69 +58,34 @@
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th style="text-align: left;">
-                                    No Transaksi
-                                </th>
-                                <th style="text-align: left;">
-                                    Lokasi
-                                </th>
-                                <th style="text-align: left;">
-                                    Tanggal
-                                </th>
-                                <th style="text-align: left;">
-                                    Total
-                                </th>
-                                <th style="text-align: left;">
-                                    Penerima
-                                </th>
-                                <th style="text-align: left;">
-                                    Dibuat Pada
-                                </th>
-                                <th style="text-align: left;">
-                                    Dibuat Oleh
-                                </th>
-                                <th style="text-align: left;">
-                                    Status
-                                </th>
-                                <th>
-                                </th>
+                                <th class="align-left">No Transaksi</th>
+                                <th class="align-left">Lokasi</th>
+                                <th class="align-left">Tanggal</th>
+                                <th class="align-right">Total</th>
+                                <th class="align-left">Penerima</th>
+                                <th class="align-left">Dibuat Pada</th>
+                                <th class="align-left">Dibuat Oleh</th>
+                                <th class="align-center">Status</th>
+                                <th></th>
                             </tr>
                         </thead>
-
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
-                                <td style="text-align: left;">
-                                    {{row.no_transaksi}}
+                                <td class="align-left">{{ row.no_transaksi }}</td>
+                                <td class="align-left">{{ row.namaLokasi }}</td>
+                                <td class="align-left">{{ row.tanggal_formated }}</td>
+                                <td class="align-right">{{ row.total| number }}</td>
+                                <td class="align-left">
+                                    <span ng-if="row.penerima != ''">{{ row.penerima }}</span>
+                                    <span ng-if="row.penerima == ''">{{ row.namaAkun }}</span>
                                 </td>
-                                <!--  <td style="text-align: left;">
-                                    {{row.tipe}}
-                                </td> -->
-                                <td style="text-align: left;">
-                                    {{row.namaLokasi}}
+                                <td class="align-left">{{ row.created_at }}</td>
+                                <td class="align-left">{{ row.namaUser }}</td>
+                                <td class="align-center">
+                                    <span class="bg-success p-1" ng-if="row.status == 'Terposting'">{{ row.status }}</span>
+                                    <span class="bg-info p-1" ng-if="row.status == 'Draft'">{{ row.status }}</span>
                                 </td>
-                                <td style="text-align: left;">
-                                    {{row.tanggal_formated}}
-                                </td>
-                                <!--                                <td style="text-align: left;">
-                                                                    {{row.kodeAkun + " - " + row.namaAkun}}
-                                                                </td>-->
-                                <td style="text-align: right;">
-                                    {{row.total| number}}
-                                </td>
-                                <td style="text-align: left;">
-                                    <span ng-if="row.penerima != ''">{{row.penerima}}</span>
-                                    <span ng-if="row.penerima == ''">{{row.namaAkun}}</span>
-                                </td>
-                                <td style="text-align: left;">
-                                    {{row.created_at}}
-                                </td>
-                                <td style="text-align: left;">
-                                    {{row.namaUser}}
-                                </td>
-                                <td style="text-align: left;">
-                                    {{row.status}}
-                                </td>
-                                <td>
+                                <td style="width: 100px;">
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-success fa fa-print"  ng-click="print(row)"></button>
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft' && (row.tanggal >= tanggal_setting)) || (row.status == 'Terposting' && user.akses.pengeluaran_update)" ng-click="update(row)"></button>
@@ -143,7 +101,7 @@
         </div>
         <div class="card" ng-if="is_edit">
             <div class="card-header">
-                <strong>{{ formtitle}}</strong>
+                <strong>{{ formtitle }}</strong>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
@@ -158,18 +116,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6" ng-if="is_pengajuan">
-
-                                </div>
+                                <div class="col-md-6" ng-if="is_pengajuan"></div>
                                 <div class="col-md-6">
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
                                         <div class="col-sm-9">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
-                                                <ui-select-match placeholder="Pilih Lokasi">
-                                                    {{ $select.selected.kode + " - " + $select.selected.nama}}
-                                                </ui-select-match>
-                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{val.nama_lengkap}}</ui-select-choices>
+                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
                                             </ui-select>
                                         </div>
                                     </div>
@@ -202,10 +156,8 @@
                                         <label class="col-sm-3 col-form-label-sm">Penerima</label>
                                         <div class="col-sm-9">
                                             <ui-select ng-disabled="is_view" ng-model="form.m_kontak_id"  theme="bootstrap" ng-if="!is_pengajuan">
-                                                <ui-select-match placeholder="Pilih Kontak">{{$select.selected.kode}} - {{$select.selected.nama}}</ui-select-match>
-                                                <ui-select-choices refresh="cariKontak($select.search)" repeat="val in listSupplier">
-                                                    {{val.kode}} - {{val.nama}}
-                                                </ui-select-choices>
+                                                <ui-select-match placeholder="Pilih Kontak">{{ $select.selected.kode }} - {{ $select.selected.nama }}</ui-select-match>
+                                                <ui-select-choices refresh="cariKontak($select.search)" repeat="val in listSupplier">{{ val.kode }} - {{ val.nama }}</ui-select-choices>
                                             </ui-select>
                                             <input type="text" class="form-control form-control-sm" ng-model="form.penerima" ng-disabled="is_view" ng-if="is_pengajuan"/>
                                         </div>
@@ -216,10 +168,8 @@
                                         <label class="col-sm-3 col-form-label-sm required">Keluar Dari</label>
                                         <div class="col-sm-9">
                                             <ui-select class="ui-select-sm" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view">
-                                                <ui-select-match placeholder="Pilih Akun">
-                                                    {{ $select.selected.kode + " - " + $select.selected.nama}}
-                                                </ui-select-match>
-                                                <ui-select-choices repeat="val in akun | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
+                                                <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
+                                                <ui-select-choices repeat="val in akun | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
                                             </ui-select>
                                         </div>
                                     </div>
@@ -235,7 +185,10 @@
                                 <div class="col-md-12">
                                     <hr/>
                                     <h6 style="margin-bottom: 15px">
-                                        <b><i class="fa fa-check-square-o"></i> Detail Dana</b>
+                                        <b>
+                                            <i class="fa fa-check-square-o"></i>
+                                            Detail Dana
+                                        </b>
                                     </h6>
                                 </div>
                                 <div class="col-md-12">
@@ -243,9 +196,11 @@
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th width="10"><button type="button" class="btn btn-success fa fa-plus btn-sm" ng-click="addDetail(listDetail)" ng-disabled="is_view"></button></th>
-                                                    <!--<th class="align-center">Lokasi</th>-->
+                                                    <th width="10">
+                                                        <button type="button" class="btn btn-success fa fa-plus btn-sm" ng-click="addDetail(listDetail)" ng-disabled="is_view"></button>
+                                                    </th>
                                                     <th class="align-center" width="300">Nama Akun</th>
+                                                    <th class="align-center" width="300">Lokasi</th>
                                                     <th class="align-center">Keterangan</th>
                                                     <th class="align-center" width="200">Nominal</th>
                                                 </tr>
@@ -253,28 +208,21 @@
                                             <tbody>
                                                 <tr class="tabletr" ng-repeat="val in listDetail">
                                                     <td>
-                                                        <!--<div class="btn-group" role="group">-->
                                                         <button type="button" class="btn btn-danger fa fa-minus btn-sm" ng-click="removeDetail(listDetail, $index)" ng-disabled="is_view"></button>
-                                                        <!--<button type="button" class="btn btn-success fa fa-plus" ng-click="addDetail(listDetail, $index)" ng-disabled="is_view"></button>-->
-                                                        <!--</div>-->
                                                     </td>
-                                                    <!--                                                    <td>
-                                                                                                            <div>
-                                                                                                                <ui-select class="ui-select-sm ui-select-container" ng-model="val.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
-                                                                                                                    <ui-select-match placeholder="Pilih Lokasi">
-                                                                                                                        {{$select.selected.nama}}
-                                                                                                                    </ui-select-match>
-                                                                                                                    <ui-select-choices repeat="val in listLokasi | filter : $select.search">{{val.nama}}</ui-select-choices>
-                                                                                                                </ui-select>
-                                                                                                            </div>
-                                                                                                        </td>-->
                                                     <td>
                                                         <div>
                                                             <ui-select class="ui-select-sm ui-select-container" ng-model="val.m_akun_id" theme="bootstrap" ng-disabled="is_view">
-                                                                <ui-select-match placeholder="Pilih Akun">
-                                                                    {{ $select.selected.kode + " - " + $select.selected.nama}}
-                                                                </ui-select-match>
-                                                                <ui-select-choices repeat="val in akunDetail | filter : $select.search">{{val.kode + " - " + val.nama}}</ui-select-choices>
+                                                                <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
+                                                                <ui-select-choices repeat="val in akunDetail | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
+                                                            </ui-select>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <ui-select class="ui-select-sm ui-select-container" ng-model="val.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.nama }}</ui-select-match>
+                                                                <ui-select-choices repeat="val in listLokasi | filter : $select.search">{{ val.nama }}</ui-select-choices>
                                                             </ui-select>
                                                         </div>
                                                     </td>
@@ -286,16 +234,17 @@
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
-
                                                             <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="is_view" ng-model="val.debit" ng-change="sumTotal()"/>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <!--<td></td>-->
                                                     <td></td>
                                                     <td></td>
-                                                    <td style="text-align: right"><b>Total</b></td>
+                                                    <td></td>
+                                                    <td style="text-align: right">
+                                                        <b>Total</b>
+                                                    </td>
                                                     <td>
                                                         <div class="input-group input-group-sm">
                                                             <div class="input-group-prepend">
@@ -308,191 +257,114 @@
                                             </tbody>
                                         </table>
                                     </div>
-
                                 </div>
                             </div>
                         </uib-tab>
                         <uib-tab heading="Bukti Transaksi" index="1">
-                            <div class="col-md-12" style="margin-top: 10px">
-                                <div class="hbox hbox-auto-xs hbox-auto-sm" filters="queueLimit, customFilter" nv-file-drop="" uploader="uploader">
-                                    <div class="row" ng-hide="is_view">
-                                        <div class="col-md-4">
-                                            <div class="wrapper-md dker b-b">
-                                                <h3 class="m-n font-thin">
-                                                    Select files
-                                                </h3>
-                                            </div>
-                                            <div class="wrapper-md">
-                                                <div class="m-b-md" ng-show="uploader.isHTML5">
-                                                    <div class="b-a b-2x b-dashed wrapper-lg bg-white text-center m-b" nv-file-over="" over-class="b-info" uploader="uploader">
-                                                        Drop Gambar
-                                                    </div>
-                                                </div>
-                                                <p>
-                                                    Pilih Gambar
-                                                </p>
-                                                <input multiple="" nv-file-select="" type="file" uploader="uploader"/>
-                                            </div>
+                            <div class="hbox hbox-auto-xs hbox-auto-sm" filters="queueLimit, customFilter" nv-file-drop="" uploader="uploader">
+                                <div class="row" ng-hide="is_view">
+                                    <div class="col-md-4">
+                                        <div class="wrapper-md dker b-b">
+                                            <h3 class="m-n font-thin">Select files</h3>
                                         </div>
-                                        <div class="col-md-8">
-                                            <div class="wrapper-md">
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th width="50%">
-                                                                Name
-                                                            </th>
-                                                            <th ng-show="uploader.isHTML5">
-                                                                Size
-                                                            </th>
-                                                            <th ng-show="uploader.isHTML5">
-                                                                Progress
-                                                            </th>
-                                                            <th>
-                                                                Status
-                                                            </th>
-                                                            <th>
-                                                                Actions
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr ng-repeat="item in uploader.queue">
-                                                            <td>
-                                                                <strong>
-                                                                    {{ item.file.name}}
-                                                                </strong>
-                                                            </td>
-                                                            <td ng-show="uploader.isHTML5" nowrap="">
-                                                                {{ item.file.size
-                                                                                        / 1024 / 1024|number:2 }} MB
-                                                            </td>
-                                                            <td ng-show="uploader.isHTML5">
-                                                                <div class="progress progress-sm m-b-none m-t-xs">
-                                                                    <div class="progress-bar bg-info" ng-style="{
-                                                                            'width'
-                                                                                    : item.progress + '%' }" role="progressbar">
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <span class="text-success" ng-show="item.isSuccess">
-                                                                    <i class="glyphicon glyphicon-ok">
-                                                                    </i>
-                                                                </span>
-                                                                <span class="text-warning" ng-show="item.isCancel">
-                                                                    <i class="glyphicon glyphicon-ban-circle">
-                                                                    </i>
-                                                                </span>
-                                                                <span class="text-danger" ng-show="item.isError">
-                                                                    <i class="glyphicon glyphicon-remove">
-                                                                    </i>
-                                                                </span>
-                                                            </td>
-                                                            <td nowrap="">
-                                                                <!--                                                                <button class="btn btn-default btn-sm" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" type="button">
-                                                                                                                                    Upload
-                                                                                                                                </button>
-                                                                                                                                <button class="btn btn-default btn-sm" ng-click="item.cancel()" ng-disabled="!item.isUploading" type="button">
-                                                                                                                                    Cancel
-                                                                                                                                </button>-->
-                                                                <button class="btn btn-default btn-sm" ng-click="item.remove()" type="button">
-                                                                    Remove
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                                <div>
-                                                    <div>
-                                                        <p>
-                                                            Proses Upload:
-                                                        </p>
-                                                        <div class="progress bg-light dker" style="">
-                                                            <div class="progress-bar progress-bar-striped bg-info" ng-style="{
-                                                                    'width'
-                                                                            : uploader.progress + '%' }" role="progressbar">
+                                        <div class="wrapper-md">
+                                            <div class="m-b-md" ng-show="uploader.isHTML5">
+                                                <div class="b-a b-2x b-dashed wrapper-lg bg-white text-center m-b" nv-file-over="" over-class="b-info" uploader="uploader">Drop Gambar</div>
+                                            </div>
+                                            <p>Pilih Gambar</p>
+                                            <input multiple="" nv-file-select="" type="file" uploader="uploader"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="wrapper-md">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="50%">Name</th>
+                                                        <th ng-show="uploader.isHTML5">Size</th>
+                                                        <th ng-show="uploader.isHTML5">Progress</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item in uploader.queue">
+                                                        <td>
+                                                            <strong>{{ item.file.name }}</strong>
+                                                        </td>
+                                                        <td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/ 1024 / 1024|number:2 }} MB</td>
+                                                        <td ng-show="uploader.isHTML5">
+                                                            <div class="progress progress-sm m-b-none m-t-xs">
+                                                                <div class="progress-bar bg-info" ng-style="{ 'width' : item.progress + '%' }" role="progressbar"></div>
                                                             </div>
-                                                        </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span class="text-success" ng-show="item.isSuccess">
+                                                                <i class="glyphicon glyphicon-ok"></i>
+                                                            </span>
+                                                            <span class="text-warning" ng-show="item.isCancel">
+                                                                <i class="glyphicon glyphicon-ban-circle"></i>
+                                                            </span>
+                                                            <span class="text-danger" ng-show="item.isError">
+                                                                <i class="glyphicon glyphicon-remove"></i>
+                                                            </span>
+                                                        </td>
+                                                        <td nowrap="">
+                                                            <button class="btn btn-default btn-sm" ng-click="item.remove()" type="button">Remove</button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div>
+                                                <div>
+                                                    <p>Proses Upload:</p>
+                                                    <div class="progress bg-light dker" style="">
+                                                        <div class="progress-bar progress-bar-striped bg-info" ng-style="{ 'width' : uploader.progress + '%' }" role="progressbar"></div>
                                                     </div>
-                                                    <div>
-                                                        <!--                                                        <button class="btn btn-addon btn-success btn-sm" ng-click="uploadGambar(form.nik)" ng-disabled="!uploader.getNotUploadedItems().length" type="button">
-                                                                                                                    <i class="fa fa-arrow-circle-o-up">
-                                                                                                                    </i>
-                                                                                                                    Upload all
-                                                                                                                </button>
-                                                                                                                <button class="btn btn-addon btn-warning btn-sm" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" type="button">
-                                                                                                                    <i class="fa fa-ban">
-                                                                                                                    </i>
-                                                                                                                    Cancel all
-                                                                                                                </button>-->
-                                                        <button class="btn btn-addon btn-danger btn-sm" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" type="button">
-                                                            <i class="fa fa-trash-o">
-                                                            </i>
-                                                            Remove all
-                                                        </button>
-                                                    </div>
-                                                    <br>
-
                                                 </div>
+                                                <div>
+                                                    <button class="btn btn-addon btn-danger btn-sm" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" type="button">
+                                                        <i class="fa fa-trash-o"></i>
+                                                        Remove all
+                                                    </button>
+                                                </div>
+                                                <br/>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="wrapper-md dker b-b" ng-hide="is_view" style="margin-bottom: 25px;">
-                                                <h6 class="page-header" style="font-size: 16px;margin-top: 10px">
-                                                    <i class="fa fa-picture-o"></i> Detail Foto
-                                                </h6>
-                                            </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr/>
+                                        <div class="wrapper-md dker b-b" ng-hide="is_view" style="margin-bottom: 25px;">
+                                            <h6 class="page-header" style="font-size: 16px;margin-top: 10px">
+                                                <i class="fa fa-picture-o"></i>
+                                                Detail Foto
+                                            </h6>
                                         </div>
-                                        <div class="col-md-2 m-b repeat-animation hide-fade" ng-repeat="slide in gambar" style="padding-left: 0">
-                                            <a href="" ng-click="gambarzoom(slide.img)">
-                                                <img class="img-thumbnail" ng-src="{{urlfoto}}{{slide.img}}"/>
+                                    </div>
+                                    <div class="col-md-2 m-b repeat-animation hide-fade" ng-repeat="slide in gambar" style="padding-left: 0">
+                                        <a href="" ng-click="gambarzoom(slide.img)">
+                                            <img class="img-thumbnail" ng-src="{{ urlfoto }}{{ slide.img }}"/>
+                                        </a>
+                                        <p align="center" ng-show="!is_view" style="padding:10px;">
+                                            <label class="i-checks" tooltip="Gambar Utama"></label>
+                                            <a href="" ng-click="removeFoto($index, slide.img, slide.id)">
+                                                <i class="btn btn-danger fa fa-trash btn-sm" tooltip="Hapus"></i>
                                             </a>
-                                            <p align="center" ng-show="!is_view" style="padding:10px;">
-                                                <!--<div class="list-group-item">-->
-                                                <label class="i-checks" tooltip="Gambar Utama">
-                                                    <!--<center>-->
-                                                    <!--                                                                    <input  ng-disabled="is_view" ng-model="form.produk_foto_id" value="{{slide.id}}" type="radio">
-                                                                                                                        <i>
-                                                                                                                        </i>-->
-                                                    <!--</center>-->
-                                                    <!--<input type="radio" ng-model="form.produk_foto_id" value="{{slide.id}}">-->
-                                                </label>
-                                                <a href="" ng-click="removeFoto($index, slide.img, slide.id)">
-                                                    <i class="btn btn-danger fa fa-trash btn-sm" tooltip="Hapus">
-                                                    </i>
-                                                </a>
-                                                <!--</div>-->
-                                            </p>
-                                        </div>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </uib-tab>
                     </uib-tabset>
-
                 </form>
             </div>
-            <!--            <div class="card-footer">
-                            <div class="pull-right">
-                                <button type="submit" class="btn btn-secondary btn-sm" ng-click="cancel()">
-                                    <i class="fa fa-arrow-left"></i>
-                                    &nbsp;Kembali
-                                </button>
-                                <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek <= 3 || loading" ng-click="save(form)">
-                                    <i class="fa fa-save"></i>
-                                    &nbsp;Simpan
-                                </button>
-                            </div>
-                        </div>-->
         </div>
         <div class="app-footer" style="background-color: #29363d;left:0;bottom: 0;position: fixed;padding:10px 0px;width: 100%;padding-left: 20px;color: #fff;"ng-if="is_edit">
-            <div class="col-md-10" style="padding: 0px;">
-            </div>  
+            <div class="col-md-10" style="padding: 0px;"></div>
             <div class="col-md-10">
-                <div class="pull-right btn btn-group">
+                <div class="pull-right btn">
                     <button type="submit" class="btn btn-secondary btn-sm" ng-click="cancel()">
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
@@ -507,7 +379,6 @@
                     </button>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
