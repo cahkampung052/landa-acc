@@ -14,8 +14,8 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
     $scope.special_filter = {};
     $scope.cari = {
         periode : {
-            startDate : new Date(),
-            endDate: new Date()
+            endDate : moment().add(1, 'M'),
+            startDate: moment().subtract(1, 'M')
         }
     };
     var master = "Transaksi Pengajuan";

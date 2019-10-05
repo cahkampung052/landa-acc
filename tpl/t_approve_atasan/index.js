@@ -13,9 +13,9 @@ app.controller("tapprovalCtrl", function($scope, Data, $rootScope, $uibModal) {
     var master = "Approve Proposal";
     $scope.master = master;
     $scope.cari = {
-        periode: {
-            endDate: moment().add(1, 'M'),
-            startDate: moment()
+        periode : {
+            endDate : moment().add(1, 'M'),
+            startDate: moment().subtract(1, 'M')
         }
     };
     $scope.filterTanggal = function() {
