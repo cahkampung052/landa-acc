@@ -272,10 +272,11 @@ function getSaldoNeraca($akunId, $lokasi, $tanggal) {
      * Ambil laba rugi nominal
      */
     $labaRugi = getLabaRugiNominal(null, $tanggal, null);
-    if (isset($arr[$labaRugi['m_akun_id']])) {
-        $arr[$labaRugi['m_akun_id']] += $labaRugi['total'];
+//    print_r($labaRugi);die;
+    if (isset($arr[$labaRugi['m_akun_id'][0]])) {
+        $arr[$labaRugi['m_akun_id'][0]] += $labaRugi['total'];
     } else {
-        $arr[$labaRugi['m_akun_id']] = $labaRugi['total'];
+        $arr[$labaRugi['m_akun_id'][0]] = $labaRugi['total'];
     }
     return $arr;
 }
