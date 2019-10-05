@@ -157,7 +157,7 @@
                                 <label class="col-md-4 col-form-label-sm required">Kode Akun</label>
                                 <div class="col-md-8">
                                     <div class="input-group input-group-sm">
-                                        <div class="input-group-prepend" ng-if="form.parent_id> 0">
+                                        <div class="input-group-prepend" ng-if="form.parent_id > 0">
                                             <span class="input-group-text">{{ form.kode_induk }}</span>
                                         </div>
                                         <input type="text" class="form-control form-control-sm angka align-left" ng-model="form.kode" ng-disabled="is_view"/>
@@ -170,7 +170,7 @@
                                     <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view"/>
                                 </div>
                             </div>
-                            <div class="form-group row" ng-if="form.id> 9 || !form.id">
+                            <div class="form-group row">
                                 <label class="col-md-4 col-form-label-sm">Tipe Arus Kas</label>
                                 <div class="col-md-8">
                                     <select class="form-control form-control-sm" id="tipearus" ng-disabled="is_view" ng-model="form.tipe_arus">
