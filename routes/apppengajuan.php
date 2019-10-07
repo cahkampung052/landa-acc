@@ -157,8 +157,11 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
     if (isset($params["end_date"]) && !empty($params["end_date"])) {
         $db->where("acc_t_pengajuan.tanggal", "<=", $params['end_date']);
     }
-    $models = $db->findAll();
-    $totalItem = $db->count();
+    if(isset($params["status"]) && $params["status"] == 'Pending'){
+        $db->customWhere("acc_t_pengajuan.status = '' or acc_t_pengajuan.status = 'Pending' or acc_t_pengajuan.status is null", "and");        
+    }
+    $models     = $db->findAll();
+    $totalItem  = $db->count();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];

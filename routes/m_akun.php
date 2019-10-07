@@ -233,7 +233,6 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         ")
             ->from("acc_trans_detail")
             ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-            ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
             ->groupBy("acc_m_akun.id");
     $trans = $db->findAll();
     $arrTrans = [];
@@ -324,6 +323,15 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         } else {
             $model = $sql->insert("acc_m_akun", $data);
         }
+
+        $sql->run("update acc_m_akun set saldo_normal = 1 where tipe = 'HARTA'");
+        $sql->run("update acc_m_akun set saldo_normal = -1 where tipe = 'KEWAJIBAN'");
+        $sql->run("update acc_m_akun set saldo_normal = -1 where tipe = 'MODAL'");
+        $sql->run("update acc_m_akun set saldo_normal = -1 where tipe = 'PENDAPATAN'");
+        $sql->run("update acc_m_akun set saldo_normal = -1 where tipe = 'PENDAPATAN DILUAR USAHA'");
+        $sql->run("update acc_m_akun set saldo_normal = 1 where tipe = 'BEBAN'");
+        $sql->run("update acc_m_akun set saldo_normal = 1 where tipe = 'BEBAN DILUAR USAHA'");
+
         return successResponse($response, $model);
     } else {
         return unprocessResponse($response, $validasi);

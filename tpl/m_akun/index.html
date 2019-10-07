@@ -72,7 +72,8 @@
                         <thead>
                             <tr>
                                 <th style="text-align: left;" scope="col">Kode Akun</th>
-                                <th style="text-align: left;" scope="col">Saldo Normal</th>
+                                <th style="text-align: left;" scope="col">Tipe Klasifikasi</th>
+                                <!-- <th style="text-align: left;" scope="col">Saldo Normal</th> -->
                                 <th style="text-align: left;" scope="col">Saldo Berjalan</th>
                                 <th style="text-align: left;" scope="col">Tipe Arus</th>
                                 <th></th>
@@ -87,10 +88,13 @@
                                     <span ng-if="row.is_tipe == 0">{{ row.nama_lengkap}}</span>
                                     <span ng-if="row.is_deleted == 1">(dihapus pada {{ row.tgl_nonaktif| date: "dd MMM yyyy" }})</span>
                                 </td>
-                                <td style="text-align: left;">
+                                <td class="align-left">
+                                    {{row.tipe}}
+                                </td>
+                                <!-- <td style="text-align: left;">
                                     <span ng-if="row.saldo_normal == 1 && row.is_tipe == 0">Debit</span>
                                     <span ng-if="row.saldo_normal == - 1 && row.is_tipe == 0">Kredit</span>
-                                </td>
+                                </td> -->
                                 <td style="text-align: right;"><span ng-if="row.is_tipe == 0">{{ row.saldo|number }}</span></td>
                                 <td style="text-align: left;">{{ row.tipe_arus}}</td>
                                 <td>
@@ -152,7 +156,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <!-- <div class="form-group row">
                                 <label class="col-md-3 col-form-label-sm required">Saldo Normal</label>
                                 <div class="col-md-3">
                                     <div class="btn-group">
@@ -160,7 +164,7 @@
                                         <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.saldo_normal" ng-disabled="is_view" uib-btn-radio="-1">Kredit</label>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </form>

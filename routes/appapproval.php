@@ -50,10 +50,14 @@ $app->get("/acc/appapproval/index", function ($request, $response) {
         $countuser = $db->count();
         $getuser = $db->findAll();
         $arr_id = [];
-        foreach ($getuser as $keys => $vals) {
-            $models[$key]['detail'][$keys] = (array) $vals;
-            $arr_id[] = $vals->id;
-            $models[$key]['detail'][$keys]['acc_m_user_id'] = ["id"=>$vals->acc_m_user_id, "nama"=>$vals->namaUser];
+        if(empty($getuser)){
+            $models[$key]['detail'] = [];
+        }else{
+            foreach ($getuser as $keys => $vals) {
+                $models[$key]['detail'][$keys] = (array) $vals;
+                $arr_id[] = $vals->id;
+                $models[$key]['detail'][$keys]['acc_m_user_id'] = ["id"=>$vals->acc_m_user_id, "nama"=>$vals->namaUser];
+            }
         }
         $models[$key]['arr_id'] = implode(", ", $arr_id);
         $models[$key]['jumlah_approval'] = $countuser;
@@ -70,7 +74,7 @@ $app->post("/acc/appapproval/save", function ($request, $response) {
     $validasi = validasi($data["data"]);
     if ($validasi === true) {
         try {
-            if ($data['data']['status'] == "update") {
+            if ($data['data']['status'] == "update" && isset($data["data"]["arr_id"]) && !empty($data["data"]["arr_id"])) {
                 $db->run("DELETE FROM acc_m_setting_approval WHERE id IN(".$data["data"]["arr_id"].")");
             }
             /**
