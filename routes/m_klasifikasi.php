@@ -128,7 +128,7 @@ $app->post('/acc/m_klasifikasi/save', function ($request, $response) {
          */
         $childId =getChildId("acc_m_akun", $model->id);
         if(!empty($childId)){
-            $db->update("acc_m_akun", ["tipe" => $model->tipe], "id in (".implode(",", $childId).")");            
+            $db->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus], "id in (".implode(",", $childId).")");            
         }
         return successResponse($response, $model);
     } else {
