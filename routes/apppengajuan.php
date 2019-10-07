@@ -192,7 +192,7 @@ $app->get("/acc/apppengajuan/listapprove", function ($request, $response) {
     $tableuser  = tableUser();
     $db         = $this->db;
     $userId     = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : '';
-    $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, " . $tableuser . ".nama as namaUser, acc_approval_pengajuan.status")
+    $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, " . $tableuser . ".nama as namaUser, acc_t_pengajuan.status")
             ->from("acc_approval_pengajuan")
             ->leftJoin("acc_t_pengajuan", "acc_t_pengajuan.id = acc_approval_pengajuan.t_pengajuan_id and acc_approval_pengajuan.level <= acc_t_pengajuan.levelapproval")
             ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_t_pengajuan.m_lokasi_id")

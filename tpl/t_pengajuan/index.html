@@ -102,10 +102,9 @@
                                 <td class="align-left">{{ row.tanggal | date:'dd-MM-yyyy' }} {{row.created_at | date:'H:mm'}}</td>
                                 <td class="align-right">{{ row.jumlah_perkiraan | number }}</td>
                                 <td class="align-center">
-                                    <span class="bg-primary p-1" ng-if="row.status == 'Terbayar'">{{ row.status }}</span>
-                                    <span class="bg-success p-1" ng-if="row.status == 'Approved'">{{ row.status }}</span>
+                                    <span class="bg-success p-1" ng-if="row.status == 'Terbayar'">{{ row.status }}</span>
+                                    <span class="bg-info p-1" ng-if="row.status == 'Approved'">{{ row.status }}</span>
                                     <span class="bg-danger p-1" ng-if="row.status == 'Canceled'">{{ row.status }}</span>
-                                    <span class="bg-danger p-1" ng-if="row.status == 'Rejected'">{{ row.status }}</span>
                                     <span class="bg-danger p-1" ng-if="row.status == 'Rejected'">{{ row.status }}</span>
                                     <span class="bg-warning p-1" ng-if="row.status == ''">Pending</span>
                                 </td>
@@ -347,14 +346,14 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-md-12" ng-if="user.m_roles_id == 1 && is_create == false">
+                        <div class="col-md-12" ng-if="is_create == false">
                             <hr/>
                             <h6 class="tittle-header">
                                 <i class="fa fa-check-square-o"></i>
                                 Detail Approval
                             </h6>
                         </div>
-                        <div class="col-md-12" ng-if="user.m_roles_id == 1 && is_create == false">
+                        <div class="col-md-12" ng-if="is_create == false">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -388,6 +387,7 @@
                                             <span class="bg-success p-1" ng-if="v.status == 'Approved'">Disetujui</span>
                                             <span class="bg-danger p-1" ng-if="v.status == 'Rejected'">Ditolak</span>
                                             <span class="bg-warning p-1" ng-if="v.status == 'Pending'">Pending</span>
+                                            <span class="bg-primary p-1" ng-if="v.status == 'Terbayar'">Terbayar</span>
                                         </td>
                                     </tr>
                                 </tbody>

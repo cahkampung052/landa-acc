@@ -22,14 +22,12 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $tanggal->setTimezone(new DateTimeZone('Asia/Jakarta'));
     $tanggal = $tanggal->format("Y-m-d");
     /**
-     * Ambil laba / rugi
-     */
-    $totalLabaRugi = getLabaRugi("1970-01-01", $tanggal, null, false);
-    /**
      * Ambil akun laba rugi
      */
-    $labarugi = getPemetaanAkun("Laba Rugi Berjalan");
-    $akunLabaRugi = isset($labarugi[0]) ? $labarugi[0] : 0;
+    $labarugi       = getPemetaanAkun("Laba Rugi Berjalan");
+    $akunLabaRugi   = isset($labarugi[0]) ? $labarugi[0] : 0;
+    $saldoLabaRugi  = getLabaRugiNominal(null, $tanggal, null);
+    $totalLabaRugi  = $saldoLabaRugi["total"];
     /*
      * ambil akun pengecualian
      */
@@ -199,22 +197,14 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     /*
      * panggil function saldo laba rugi, karena digunakan juga di laporan neraca
      */
-    $labarugi = getLabaRugi($tanggal);
-    $arr = $labarugi['data'];
-    $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
-    $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
-    $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
-    $saldo_labarugi = $pendapatan - $biaya - $beban;
     $totalModal = 0;
-    $arrModal = [];
+    $arrModal   = [];
     foreach ($modelModal as $key => $val) {
-        $db->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                ->from("acc_trans_detail");
+        $db->select("SUM(debit) as debit, SUM(kredit) as kredit")->from("acc_trans_detail");
         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
             $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
         }
-        $db->where('m_akun_id', '=', $val->id)
-                ->andWhere('date(tanggal)', '<=', $tanggal);
+        $db->where('m_akun_id', '=', $val->id)->andWhere('date(tanggal)', '<=', $tanggal);
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
         if ($val->id == $akunLabaRugi) {
@@ -270,7 +260,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             [
                 "list" => $arrModal,
                 "total" => $totalModal,
-                "labarugi" => $saldo_labarugi,
+                "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
             [
@@ -301,7 +291,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             [
                 "list" => $arrModal,
                 "total" => $totalModal,
-                "labarugi" => $saldo_labarugi,
+                "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
             [
@@ -330,7 +320,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             [
                 "list" => $arrModal,
                 "total" => $totalModal,
-                "labarugi" => $saldo_labarugi,
+                "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
             [

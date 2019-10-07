@@ -14,8 +14,8 @@ app.controller("tapprovalCtrl", function($scope, Data, $rootScope, $uibModal) {
     $scope.master = master;
     $scope.cari = {
         periode: {
-            endDate: moment().add(1, 'M'),
-            startDate: moment()
+            endDate : moment().add(1, 'M'),
+            startDate: moment().subtract(1, 'M')
         }
     };
     $scope.filterTanggal = function() {

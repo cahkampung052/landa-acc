@@ -249,7 +249,7 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     $listAkun   = buildTreeAkun($models, 0);
     $arrModel   = flatten($listAkun);
     $arr        = [];
-    foreach ($arrModel as $key => $value) {
+    foreach ($models as $key => $value) {
         $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
         $spasi = ($value->level == 1) ? '' : str_repeat("···", $value->level - 1);
         $arr[$key] = (array) $value;
@@ -386,7 +386,7 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     $tipe_arus = $objPHPExcel->getSheet(0)->getCell('F' . $row)->getValue();
                     if (isset($tipe_arus)) {
                         if ($tipe_arus == "AO") {
-                            $data['tipe_arus'] = "Aktvitas Operasi";
+                            $data['tipe_arus'] = "Aktivitas Operasi";
                         } elseif ($tipe_arus == "IN") {
                             $data['tipe_arus'] = "Investasi";
                         } elseif ($tipe_arus == "PD") {

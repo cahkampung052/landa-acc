@@ -32,16 +32,18 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
         ->where("is_deleted", "=", 0);
     if (isset($_SESSION['user']['lokasi']) && !empty($_SESSION['user']['lokasi'])) {
         $lokasi = getSessionLokasi();
+        // echo $lokasi;
         $db->customWhere("id IN ($lokasi)", "AND");
     }
     $models = $db->findAll();
-    $arr = getChildFlat($models, 0);
-    foreach ($arr as $key => $val) {
-        $spasi                            = ($val->level == 0) ? '' : str_repeat("---", $val->level);
+    // $arr = getChildFlat($models, 0);
+    foreach ($models as $key => $val) {
+        $spasi = '';
+        // $spasi                    = ($val->level == 0) ? '' : str_repeat("---", $val->level);
         $val->nama_lengkap        = $spasi . $val->kode . ' - ' . $val->nama;
     }
     return successResponse($response, [
-      'list'        => $arr
+      'list'        => $models
     ]);
 });
 $app->get('/acc/m_lokasi/index', function ($request, $response) {

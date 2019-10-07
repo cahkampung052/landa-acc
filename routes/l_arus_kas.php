@@ -69,7 +69,7 @@ $app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
     /**
      * Ambil Semua Akun dengan tipe arus kas
      */
-    $sql->select("acc_m_akun.*, induk.id as id_induk, induk.nama as nama_induk, induk.kode as kode_induk")
+    $sql->select("acc_m_akun.*, induk.id as id_induk, induk.nama as nama_induk, induk.kode as kode_induk, acc_m_akun.saldo_normal, acc_m_akun.tipe")
         ->from("acc_m_akun")
         ->leftJoin("acc_m_akun as induk", "induk.id = acc_m_akun.parent_id")
         ->customWhere("induk.tipe_arus IN('Aktivitas Operasi', 'Investasi', 'Pendanaan')")
@@ -85,34 +85,32 @@ $app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
         /**
          * Ambil saldo periode
          */
-        $saldoPeriode = isset($neracaAfter[$value->id]) ? $neracaAfter[$value->id] : 0;
-        if ($value->tipe == "HARTA") {
-            $saldo = ($saldoPeriode - $saldoAwal) * -1;
-            $data['total_saldo'] += ($saldoPeriode - $saldoAwal) * -1;
-        } else {
-            $saldo = ($saldoPeriode - $saldoAwal);
-            $data['total_saldo'] += ($saldoPeriode - $saldoAwal);
-        }
+        $saldoPeriode   = isset($neracaAfter[$value->id]) ? $neracaAfter[$value->id] : 0;
+        $saldo          = ($saldoPeriode) - ($saldoAwal);
         $arr[$value->tipe_arus][$value->parent_id]["nama"] = $value->nama_induk;
         $arr[$value->tipe_arus][$value->parent_id]["kode"] = $value->kode_induk;
-        $arr[$value->tipe_arus][$value->parent_id]["id"] = $value->id_induk;
-        if($saldo > 0){
+        $arr[$value->tipe_arus][$value->parent_id]["id"] = $value->id;
+        // if($saldo != 0){
+            if($value->tipe == "HARTA"){
+                $saldo = $saldo * -1;
+            }
+            $data['total_saldo'] += $saldo;
             $arr[$value->tipe_arus][$value->parent_id]["detail"][] = [
                 "saldo" => $saldo,
                 "nama" => $value->kode." - ".$value->nama,
             ];
-        }
+        // }
     }
     /**
      * Hapus akun yang tidak ada transaksi
      */
-    foreach ($arr as $key => $value) {
-        foreach ($value as $k => $v) {
-            if(!isset($arr[$key][$k]['detail'])){
-                unset($arr[$key][$k]);
-            }
-        }
-    }
+    // foreach ($arr as $key => $value) {
+    //     foreach ($value as $k => $v) {
+    //         if(!isset($arr[$key][$k]['detail'])){
+    //             unset($arr[$key][$k]);
+    //         }
+    //     }
+    // }
     $data["saldo_akhir"] = $data["saldo_awal"] + $data["total_saldo"];
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
