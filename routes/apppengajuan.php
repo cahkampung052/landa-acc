@@ -118,9 +118,9 @@ $app->get("/acc/apppengajuan/getAcc", function ($request, $response) {
  * Ambil semua t pengajuan
  */
 $app->get("/acc/apppengajuan/index", function ($request, $response) {
-    $params = $request->getParams();
-    $tableuser = tableUser();
-    $db = $this->db;
+    $params     = $request->getParams();
+    $tableuser  = tableUser();
+    $db         = $this->db;
     $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, " . $tableuser . ".nama as namaUser")
             ->from("acc_t_pengajuan")
             ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_t_pengajuan.m_lokasi_id")
@@ -132,12 +132,20 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
     if (isset($params["filter"])) {
         $filter = (array) json_decode($params["filter"]);
         foreach ($filter as $key => $val) {
-            $db->where($key, "like", $val);
+            if($key == 'acc_t_pengajuan.status' && $val == 'Pending'){
+                $db->customWhere("acc_t_pengajuan.status like '%Pending%' or acc_t_pengajuan.status is null", "AND");
+            }else{
+                $db->where($key, "like", $val);
+            }
         }
     }
     /**
      * Set limit dan offset
      */
+    if(!isset($filter['m_lokasi_id']) || (isset($filter['m_lokasi_id']) && !empty($filter['m_lokasi_id']))){
+        $lokasi = getSessionLokasi();
+        $db->customWhere("m_lokasi_id in ($lokasi)", "AND");
+    }
     if (isset($params["limit"]) && !empty($params["limit"])) {
         $db->limit($params["limit"]);
     }
@@ -423,7 +431,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
                     ->andWhere("status", "!=", "approved")
                     ->find();
             if(isset($cek->id)){
-                $statusapproval = ""; 
+                $statusapproval = "Pending"; 
                 $date = null;        
             }else{
                 $statusapproval = "approved";  

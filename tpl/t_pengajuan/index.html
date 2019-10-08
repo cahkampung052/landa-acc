@@ -107,17 +107,18 @@
                                     <span class="bg-danger p-1" ng-if="row.status == 'Canceled'">{{ row.status }}</span>
                                     <span class="bg-danger p-1" ng-if="row.status == 'Rejected'">{{ row.status }}</span>
                                     <span class="bg-warning p-1" ng-if="row.status == ''">Pending</span>
+                                    <span class="bg-warning p-1" ng-if="row.status == 'Pending'">Pending</span>
                                 </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-primary fa fa-print" ng-click="print(row)"></button>
-                                        <button type="button" class="btn btn-info fa fa-pencil" ng-click="update(row)" ng-if="row.status == ''"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row)" ng-if="row.status == ''"></button>
-                                        <button type="button" class="btn btn-success fa fa-whatsapp" ng-click="modalWhatsapp(row)" ng-if="row.status != 'Approved'"></button>
-                                        <button type="button" class="btn btn-info fa fa-book" ui-sref="keuangan.pengeluaran({no_proposal: row.no_proposal, bon_sementara: ya})" ng-if="row.status == 'Approved'">
+                                        <button type="button" class="btn btn-info fa fa-pencil" ng-click="update(row)" ng-if="row.status == '' && row.created_by == user.id"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row)" ng-if="row.status == ''  && row.created_by == user.id"></button>
+                                        <button type="button" class="btn btn-success fa fa-whatsapp" ng-click="modalWhatsapp(row)" ng-if="row.status != 'Approved' && row.status != 'Terbayar'"></button>
+                                        <button type="button" class="btn btn-info fa fa-book" ui-sref="keuangan.pengeluaran({no_proposal: row.no_proposal, total: row.jumlah_perkiraan})" ng-if="row.status == 'Approved' && user.akses.pengajuan_bs">
                                             <span style="font-family: 'Arial'">BS</span>
                                         </button>
-                                        <button type="button" class="btn btn-success fa fa-dollar" ui-sref="keuangan.pengeluaran({no_proposal: row.no_proposal, bon_sementara: tidak})" ng-if="row.status == 'Approved'">
+                                        <button type="button" class="btn btn-success fa fa-dollar" ui-sref="keuangan.pengeluaran({no_proposal: row.no_proposal, bon_sementara: tidak})" ng-if="row.status == 'Approved' && user.akses.pengajuan_pengeluaran">
                                             <span style="font-family: 'Arial'">PJ</span>
                                         </button>
                                     </div>
@@ -327,7 +328,7 @@
                                             </div>
                                         </td>
                                         <td ng-if="user.akses.pengajuan_detail">
-                                            <button type="button" class="btn btn-sm btn-info fa fa-list" ng-click="modalDetail(v, $index)"></button>
+                                            <button type="button" class="btn btn-sm btn-info fa fa-list" ng-click="modalDetail(v, $index)" ng-hide="form.status == 'Pending' && v.detail.length == 0"></button>
                                         </td>
                                     </tr>
                                     <tr>

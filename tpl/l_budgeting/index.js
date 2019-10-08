@@ -1,4 +1,4 @@
-app.controller('l_budgetingCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('l_budgetingCtrl', function ($scope, Data, $rootScope, $uibModal) {
     var control_link = "acc/l_budgeting";
     $scope.form = {};
     $scope.form.tahun = new Date();
