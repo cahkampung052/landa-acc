@@ -54,7 +54,7 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
                 "css" => modulUrl().'/assets/css/style.css',
             ]);
         echo $content;
-        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+//        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
     } else {
         return successResponse($response, ["data" => $data, "detail" => $arr]);
     }
