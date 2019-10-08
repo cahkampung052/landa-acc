@@ -121,7 +121,7 @@ function getChildId($tabelName, $parentId) {
 /**
  * Ambil saldo awal
  */
-function getSaldo($akunId, $lokasiId, $tanggal) {
+function getSaldo($akunId, $lokasiId, $tanggalStart, $tanggalEnd) {
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $db->select("sum(debit) as debit, sum(kredit) as kredit")
             ->from("acc_trans_detail")
@@ -135,10 +135,54 @@ function getSaldo($akunId, $lokasiId, $tanggal) {
             $db->customWhere("acc_trans_detail.m_lokasi_id in (" . implode(",", $child) . ")", "and");
         }
     }
-    $model = $db->find();
-    $debit = isset($model->debit) ? $model->debit : 0;
+    if(!empty($tanggalStart)){
+        $db->andWhere("acc_trans_detail.tanggal", ">=", $tanggalStart);
+    }
+    if(!empty($tanggalEnd)){
+        $db->andWhere("acc_trans_detail.tanggal", "<=", $tanggalEnd);        
+    }
+    $model  = $db->find();
+    $debit  = isset($model->debit) ? $model->debit : 0;
     $kredit = isset($model->kredit) ? $model->kredit : 0;
     return $debit - $kredit;
+}
+/**
+ * Saldo Neraca berdasarkan tipe
+ */
+function getSaldoTipeNeraca($tanggal, $tipeAkun) {
+    $sql = new Cahkampung\Landadb(config('DB')['db']);
+    /**
+     * Ambil transaksi
+     */
+    $sql->select("sum(acc_trans_detail.debit) as debit, sum(acc_trans_detail.kredit) as kredit, acc_m_akun.saldo_normal, acc_m_akun.id as m_akun_id")
+            ->from("acc_trans_detail")
+            ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+            ->customWhere("acc_m_akun.tipe IN ('HARTA', 'KEWAJIBAN', 'MODAL')")
+            ->groupBy("acc_m_akun.tipe")
+            ->findAll();
+    /**
+     * Set parameter Tanggal
+     */
+    if (!empty($tanggal)) {
+        $sql->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal);
+    }
+    $model  = $sql->findAll();
+    $arr    = [];
+    foreach ($model as $key => $value) {
+        $subTotal = intval($value->debit) - intval($value->kredit);
+        $arr[$value->tipe] = $subTotal * $value->saldo_normal;
+    }
+    /**
+     * Ambil laba rugi
+     */
+    if($tipeAkun == 'MODAL'){
+        /**
+         * Ambil laba rugi nominal
+         */
+        $labaRugi = getLabaRugiNominal(null, $tanggal, null);
+        $arr[$tipeAkun] += $labaRugi['total'];
+    }
+    return $arr[$tipeAkun];
 }
 /**
  * Saldo Neraca
@@ -411,7 +455,7 @@ function getPemetaanAkun($tipe = '') {
         }
     }
     if (!empty($tipe)) {
-        return isset($arrAkun[$tipe]) ? $arrAkun[$tipe] : 0;
+        return isset($arrAkun[$tipe]) ? $arrAkun[$tipe] : [0 => 0];
     } else {
         return $arrAkun;
     }

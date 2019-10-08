@@ -136,12 +136,12 @@
                                         <b>{{ data.kredit_mutasi| number }}</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <span ng-if="data.debit_akhir >= 0">{{data.debit_akhir| number}}</span>
-                                        <span ng-if="data.debit_akhir < 0">{{data.debit_akhir * -1| number}}</span>
+                                        <span ng-if="data.debit_akhir >= 0"><b>{{data.debit_akhir| number}}</b></span>
+                                        <span ng-if="data.debit_akhir < 0"><b>{{data.debit_akhir * -1| number}}</b></span>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <span ng-if="data.kredit_akhir >= 0">{{data.kredit_akhir| number}}</span>
-                                        <span ng-if="data.kredit_akhir < 0">{{data.kredit_akhir * -1| number}}</span>
+                                        <span ng-if="data.kredit_akhir >= 0"><b>{{data.kredit_akhir| number}}</b></span>
+                                        <span ng-if="data.kredit_akhir < 0"><b>{{data.kredit_akhir * -1| number}}</b></span>
                                     </td>
                                 </tr>
                             </tfoot>
