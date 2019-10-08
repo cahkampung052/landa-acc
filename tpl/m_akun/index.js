@@ -42,7 +42,12 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
     /*
      * cek kode
      */
-    $scope.cekKode = function (kode) {
+    $scope.cekKode = function (induk, kode) {
+        console.log(induk)
+        console.log(kode)
+        if(induk != undefined){
+            kode = induk + "." + kode;
+        }
         Data.get('/acc/m_akun/getKode/' + kode).then(function (response) {
             $scope.form.status_kode = response.data.status_kode;
             $scope.form.message = response.data.message;

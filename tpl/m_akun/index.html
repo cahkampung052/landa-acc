@@ -135,7 +135,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ form.kode_induk}}</span>
                                         </div>
-                                        <input type="text" class="form-control form-control-sm angka" style="text-align: left" ng-model="form.kode" ng-disabled="is_view" ng-change="cekKode(form.kode)" required/>
+                                        <input type="text" class="form-control form-control-sm angka" style="text-align: left" ng-model="form.kode" ng-disabled="is_view" ng-change="cekKode(form.kode_induk, form.kode)" required/>
                                         
                                     </div>
                                     <small>{{form.message}}</small>
