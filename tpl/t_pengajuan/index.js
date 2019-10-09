@@ -59,7 +59,7 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
             $scope.listDetail = response.data;
         })
     };
-    if (typeof $stateParams.tahun != "undefined" && $stateParams.tahun != "" && $stateParams.tahun !== null) {
+    if (typeof $stateParams.lokasi != "undefined" && $stateParams.lokasi != "" && $stateParams.lokasi !== null) {
         $scope.special_filter = {
             tahun: new Date($stateParams.tahun),
             lokasi: $stateParams.lokasi

@@ -14,6 +14,7 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
     $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
     $tanggal_start  = $tanggal_awal->format("Y-m-d");
     $tanggal_end    = $tanggal_akhir->format("Y-m-d");
+    $lokasi         = isset($params['m_lokasi_id']) ? $params['m_lokasi_id'] : '';
     $data['tanggal']    = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
     $data['disiapkan']  = date("d-m-Y, H:i");
     $data['debit_awal']     = 0;
@@ -38,6 +39,9 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
                     ->from("acc_trans_detail")
                     ->where('m_akun_id', '=', $val->id)
                     ->andWhere('date(tanggal)', '<', $tanggal_start);
+        if(!empty($lokasi)){
+            $sql->andWhere("m_lokasi_id", "=", $lokasi);
+        }
         $getsaldoawal = $sql->find();
         $arr2 = [];
         $arr2['kode'] = $val->kode;
@@ -55,6 +59,9 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
                     ->where('m_akun_id', '=', $val->id)
                     ->andWhere('date(tanggal)', '>=', $tanggal_start)
                     ->andWhere('date(tanggal)', '<=', $tanggal_end);
+        if(!empty($lokasi)){
+            $sql->andWhere("m_lokasi_id", "=", $lokasi);
+        }
         $detail = $sql->find();
         $arr2['debit']          = intval($detail->debit);
         $arr2['kredit']         = intval($detail->kredit);
