@@ -50,8 +50,7 @@ function buildTree($elements, $parentId = 0) {
 /**
  * Buat nested akun
  */
-function buildTreeAkun($listAkun, $parentId = 0)
-{
+function buildTreeAkun($listAkun, $parentId = 0) {
     $branch = array();
     foreach ($listAkun as $key => $element) {
         $kode = str_replace(".", "", $element->kode);
@@ -66,6 +65,7 @@ function buildTreeAkun($listAkun, $parentId = 0)
     // ksort($branch);
     return $branch;
 }
+
 /**
  * ubah id child jadi numerical array
  */
@@ -362,11 +362,11 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             acc_m_akun.saldo_normal,
             acc_m_akun.tipe
         ")
-        ->from("acc_trans_detail")
-        ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-        ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
-        ->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND")
-        ->groupBy("acc_m_akun.id");
+            ->from("acc_trans_detail")
+            ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+            ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
+            ->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND")
+            ->groupBy("acc_m_akun.id");
     /**
      * Filter tanggal
      */
@@ -379,7 +379,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      * Filter pengecualian
      */
     if (!empty($arrPengecualian)) {
-        $sql->customWhere("m_akun_id NOT INT (".implode(",", $arrPengecualian).")", "And");
+        $sql->customWhere("m_akun_id NOT INT (" . implode(",", $arrPengecualian) . ")", "And");
     }
     $trans = $sql->findAll();
     $arrTrans = [];
@@ -396,13 +396,13 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      * ambil akun (jika saldo 0 ikut ditampilkan)
      */
     $sql->select("id, nama, kode, tipe, level, is_tipe, parent_id")
-        ->from("acc_m_akun")
-        ->customWhere("tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
-        ->andWhere("is_deleted", "=", 0)
-        ->orderBy("acc_m_akun.kode");
+            ->from("acc_m_akun")
+            ->customWhere("tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
+            ->andWhere("is_deleted", "=", 0)
+            ->orderBy("acc_m_akun.kode");
     $model = $sql->findAll();
-    $listAkun   = buildTreeAkun($model, 0);
-    $arrModel   = flatten($listAkun);
+    $listAkun = buildTreeAkun($model, 0);
+    $arrModel = flatten($listAkun);
     $grandTotal = ['PENDAPATAN' => 0, 'BEBAN' => 0, 'PENDAPATAN DILUAR USAHA' => 0, 'BEBAN DILUAR USAHA' => 0];
     $arr        = ['PENDAPATAN' => ['detail' => []], 'BEBAN' => ['detail' => []], 'PENDAPATAN_DILUAR_USAHA' => ['detail' => []], 'BEBAN_DILUAR_USAHA' => ['detail' => []]];
     /*
@@ -410,23 +410,28 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      */
     $testing = 0;
     foreach ($arrModel as $key => $value) {
-        $total  = (isset($arrTrans[$value->id]) ? intval($arrTrans[$value->id]) : 0);
-        $tipe   = str_replace(" ", "_", $value->tipe);
+        $total = (isset($arrTrans[$value->id]) ? intval($arrTrans[$value->id]) : 0);
+        $tipe = str_replace(" ", "_", $value->tipe);
         $grandTotal[$value->tipe] += $total;
-        $spasi      = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
-        $fullName   = $spasi . $value->kode . ' - ' . $value->nama;
-        $arr[$tipe]['detail'][$key]['kode']     = $value->kode;
-        $arr[$tipe]['detail'][$key]['is_tipe']  = $value->is_tipe;
+        $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
+        $fullName = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$tipe]['detail'][$key]['kode'] = $value->kode;
+        $arr[$tipe]['detail'][$key]['is_tipe'] = $value->is_tipe;
         $arr[$tipe]['detail'][$key]['parent_id'] = $value->parent_id;
-        $arr[$tipe]['detail'][$key]['nama']     = ($value->is_tipe == 0) ? $fullName : "<b>".$fullName."</b>";
-        $arr[$tipe]['detail'][$key]['nominal']  = ($value->is_tipe == 1) ? 0 : $total;
+        $arr[$tipe]['detail'][$key]['nama'] = ($value->is_tipe == 0) ? $fullName : "<b>" . $fullName . "</b>";
+        $arr[$tipe]['detail'][$key]['nominal'] = ($value->is_tipe == 1) ? '' : $total;
         $arr[$tipe]['total'] = (isset($arr[$tipe]['total']) ? $arr[$tipe]['total'] : 0) + $total;
+
         /*
          * tanya adi
          */
-        // if($value->is_tipe == 1){
-        //     $arr[$tipe]['detail'][$key]['nominal'] += intval($total);
-        // }
+        if ($value->is_tipe == 0) {
+            $arr[$tipe]['detail'][$key]['testing'] = $testing;
+            $arr[$tipe]['detail'][$testing]['nominal'] += intval($total);
+        } else {
+            $arr[$tipe]['detail'][$key]['testing'] = $key;
+            $testing = $key;
+        }
     }
     ksort($arr['PENDAPATAN']['detail']);
     ksort($arr['BEBAN']['detail']);
@@ -580,4 +585,13 @@ function tableUser() {
     } else {
         return config('TABLE_USER');
     }
+}
+
+function sortKode($kode) {
+    $listkode = explode(".", $kode);
+    foreach ($listkode as $k => $v) {
+        $listkode[$k] = substr('000' . $v, -3);
+    }
+
+    return implode(".", $listkode);
 }
