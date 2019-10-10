@@ -17,17 +17,11 @@ td, th {
 /**
  * Tabel Laporan
  */
-.table-white tbody tr:nth-of-type(odd){
-    background-color: #fff !important;
-}
-.table-white tbody tr{
-    background-color: #fff !important;
-}
-.table-white tbody tr:hover{
-    background-color: #f2f7fb !important;   
+.font-10px{
+    font-size: 10px !important;
 }
 .table-laporan tr {
-    background-color: #3fa8d82e;
+    background-color: #fff;
     border-bottom: none;
 }
 .table-laporan td {
@@ -37,21 +31,21 @@ td, th {
     border-top: none;
 }
 .table-laporan tbody tr:nth-of-type(odd) {
-    background-color: #e3f1f31f;
+    background-color: #f2f7fb;
 }
 .table-laporan thead tr {
-    background-color: #3798C4;
+    background-color: #263444;
     color: white;
 }
 .table-laporan tbody tr th {
-    background-color: #3798C4;
+    background-color: #263444;
     color: white;
 }
 .table-laporan tbody tr:hover {
-    background-color: #e3f1f31f;
+    background-color: #f2f7fb;
 }
 .table-laporan tfoot tr {
-    background-color: #3798C4;
+    background-color: #263444;
     color: white;
 }
 .table-laporan-border tr {
@@ -59,7 +53,7 @@ td, th {
     border-bottom: none;
 }
 .table-laporan-border td, .table-laporan-border th {
-    border: 1px solid #096894
+    border: 1px solid #263444
 }
 .table-laporan-border tbody+tbody {
     border-top: none;
@@ -68,45 +62,45 @@ td, th {
     border-bottom: none;
 }
 .table-laporan-border thead tr {
-    background-color: #3798C4;
+    background-color: #263444 !important;
     color: white;
-    border: 1px solid #096894;
+    border: 1px solid #263444;
 }
 .table-laporan-border tbody tr th {
     color: white;
-    border: 1px solid #096894;
+    border: 1px solid #263444;
 }
 .table-laporan-border tbody tr:hover {
-    background-color: #e3f1f31f;
+    background-color: #f2f7fb;
 }
 .table-laporan-border tfoot tr {
-    background-color: #3798C4;
+    background-color: #263444;
     color: white;
 }
 .table-laporan-striped tr {
     background-color: #ffffff;
-    border: 1px solid #096894;
+    border: 1px solid #263444;
 }
 .table-laporan-striped tbody+tbody {
     border-top: none;
 }
 .table-laporan-striped th, .table-laporan-striped td{
-    border-bottom: 1px solid #096894;
-    border-top: 1px solid #096894;
+    /*border-bottom: 1px solid #263444;*/
+    /*border-top: 1px solid #263444;*/
 }
 .table-laporan-striped thead tr th {
-    background-color: #3798C4;
+    background-color: #263444;
     color: white;
-    border-bottom: 1px solid #096894;
+    border-bottom: 1px solid #263444;
 }
 .table-laporan-striped tbody tr th {
     color: white;
 }
 .table-laporan-striped tbody tr:hover {
-    background-color: #e3f1f31f;
+    background-color: #f2f7fb;
 }
 .table-laporan-striped tfoot tr {
-    background-color: #3798C4;
+    background-color: #263444;
     color: white;
 }
 .header-laporan {
@@ -117,12 +111,6 @@ td, th {
 }
 .content-center {
     text-align: center;
-}
-.text-center {
-    text-align: center;
-}
-.text-right {
-    text-align: right;
 }
 .header-laporan-wrapper {
     margin-bottom: 15px;
@@ -151,6 +139,6 @@ td, th {
     width: 225px;
 }
 .non-body {
-    background-color: #3798C4!important;
+    background-color: #263444!important;
     color: white;
 }

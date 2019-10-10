@@ -360,13 +360,15 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             SUM(kredit) as kredit,
             acc_m_akun.id,
             acc_m_akun.saldo_normal,
-            acc_m_akun.tipe
+            acc_m_akun.tipe,
+            acc_m_akun.parent_id
         ")
             ->from("acc_trans_detail")
             ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
             ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
             ->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND")
-            ->groupBy("acc_m_akun.id");
+            ->groupBy("acc_m_akun.id")
+            ->orderBy("acc_m_akun.is_tipe ASC, parent_id DESC, acc_m_akun.level DESC");
     /**
      * Filter tanggal
      */
@@ -385,7 +387,8 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
     $arrTrans = [];
     $total = 0;
     foreach ($trans as $key => $value) {
-        $arrTrans[$value->id] = ($value->debit - $value->kredit) * $value->saldo_normal;
+        $arrTrans[$value->id]        = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
+        $arrTrans[$value->parent_id] = (isset($arrTrans[$value->parent_id]) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
         if ($value->tipe == "PENDAPATAN" || $value->tipe == "PENDAPATAN DILUAR USAHA") {
             $total += ($value->debit - $value->kredit) * $value->saldo_normal;
         } else {
@@ -410,28 +413,30 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      */
     $testing = 0;
     foreach ($arrModel as $key => $value) {
-        $total = (isset($arrTrans[$value->id]) ? intval($arrTrans[$value->id]) : 0);
-        $tipe = str_replace(" ", "_", $value->tipe);
-        $grandTotal[$value->tipe] += $total;
-        $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
-        $fullName = $spasi . $value->kode . ' - ' . $value->nama;
+        $total      = (isset($arrTrans[$value->id]) ? intval($arrTrans[$value->id]) : 0);
+        $tipe       = str_replace(" ", "_", $value->tipe);
+        $spasi      = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
+        $fullName   = $spasi . $value->kode . ' - ' . $value->nama;
         $arr[$tipe]['detail'][$key]['kode'] = $value->kode;
         $arr[$tipe]['detail'][$key]['is_tipe'] = $value->is_tipe;
         $arr[$tipe]['detail'][$key]['parent_id'] = $value->parent_id;
         $arr[$tipe]['detail'][$key]['nama'] = ($value->is_tipe == 0) ? $fullName : "<b>" . $fullName . "</b>";
-        $arr[$tipe]['detail'][$key]['nominal'] = ($value->is_tipe == 1) ? '' : $total;
-        $arr[$tipe]['total'] = (isset($arr[$tipe]['total']) ? $arr[$tipe]['total'] : 0) + $total;
+        $arr[$tipe]['detail'][$key]['nominal'] = $total;
+        if($value->is_tipe == 0){
+            $arr[$tipe]['total'] = (isset($arr[$tipe]['total']) ? $arr[$tipe]['total'] : 0) + $total;       
+            $grandTotal[$value->tipe] += $total;     
+        }
 
         /*
          * tanya adi
          */
-        if ($value->is_tipe == 0) {
-            $arr[$tipe]['detail'][$key]['testing'] = $testing;
-            $arr[$tipe]['detail'][$testing]['nominal'] += intval($total);
-        } else {
-            $arr[$tipe]['detail'][$key]['testing'] = $key;
-            $testing = $key;
-        }
+        // if ($value->is_tipe == 0) {
+        //     $arr[$tipe]['detail'][$key]['testing'] = $testing;
+        //     $arr[$tipe]['detail'][$testing]['nominal'] += intval($total);
+        // } else {
+        //     $arr[$tipe]['detail'][$key]['testing'] = $key;
+        //     $testing = $key;
+        // }
     }
     ksort($arr['PENDAPATAN']['detail']);
     ksort($arr['BEBAN']['detail']);

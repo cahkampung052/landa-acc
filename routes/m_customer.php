@@ -1,6 +1,6 @@
 <?php
-
-function validasi($data, $custom = array()) {
+function validasi($data, $custom = array())
+{
     $validasi = array(
         'nama' => 'required',
         'kode' => 'required'
@@ -8,11 +8,9 @@ function validasi($data, $custom = array()) {
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
-
 $app->get('/acc/m_customer/kode', function ($request, $response) {
     return generateNoTransaksi("customer", 0);
 });
-
 $app->get('/acc/m_customer/getKontak', function ($request, $response) {
     $db = $this->db;
     $params = $request->getParams();
@@ -20,11 +18,9 @@ $app->get('/acc/m_customer/getKontak', function ($request, $response) {
             ->from("acc_m_kontak")
             ->orderBy("acc_m_kontak.nama")
             ->where("is_deleted", "=", 0);
-
     if (isset($params['nama']) && !empty($params['nama'])) {
         $db->customWhere("nama LIKE '%" . $params['nama'] . "%'", "AND");
     }
-
     $models = $db->findAll();
     foreach ($models as $key => $val) {
         $val->type = ucfirst($val->type);
@@ -33,7 +29,6 @@ $app->get('/acc/m_customer/getKontak', function ($request, $response) {
         'list' => $models
     ]);
 });
-
 $app->get('/acc/m_customer/getKaryawan', function ($request, $response) {
     $db = $this->db;
     $params = $request->getParams();
@@ -41,25 +36,22 @@ $app->get('/acc/m_customer/getKaryawan', function ($request, $response) {
             ->from("karyawan")
             ->where("is_deleted", "=", 0)
             ->findAll();
-
     return successResponse($response, [
         'list' => $models
     ]);
 });
-
 $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
-    $db = $this->db;
+    $db     = $this->db;
     $params = $request->getParams();
     $db->select("*")
             ->from("acc_m_kontak")
             ->orderBy("acc_m_kontak.nama")
             ->where("is_deleted", "=", 0)
-            ->where("type", "=", "customer");
-
+            ->andWhere("type", "=", "customer")
+            ->andWhere("nama", "!=", "");
     if (isset($params['nama']) && !empty($params['nama'])) {
         $db->customWhere("nama LIKE '%" . $params['nama'] . "%' OR kode LIKE '%" . $params['nama'] . "%'", "AND");
     }
-
     $models = $db->limit(20)->findAll();
     return successResponse($response, [
         'list' => $models
@@ -74,7 +66,6 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
             ->from("acc_m_kontak")
             ->where("type", "=", "customer")
             ->orderBy('acc_m_kontak.nama');
-
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
         foreach ($filter as $key => $val) {
@@ -103,12 +94,10 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
 $app->post('/acc/m_customer/save', function ($request, $response) {
     $params = $request->getParams();
     $sql = $this->db;
-
     /*
      * generate kode
      */
 //    $kode = generateNoTransaksi("customer", 0);
-
     $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
     $validasi = validasi($params);
     if ($validasi === true) {
