@@ -24,44 +24,44 @@
         <div>
 
             <div class="table-responsive">
-                <table class="table table-striped table-hover table-laporan" style="border-collapse: collapse;">
-                        <tr class="non-body"> 
-                            <th width="80">
-                                <b>
-                                    TANGGAL
-                                </b>
-                            </th>
-                            <th width="80">
-                                <b>
-                                    REFF
-                                </b>
-                            </th>
-                            <th>
-                                <b>
-                                    LOKASI
-                                </b>
-                            </th>
-                            <th>
-                                <b>
-                                    AKUN
-                                </b>
-                            </th>
-                            <th>
-                                <b>
-                                    KETERANGAN
-                                </b>
-                            </th>
-                            <th width="100">
-                                <b>
-                                    DEBIT
-                                </b>
-                            </th>
-                            <th width="100">
-                                <b>
-                                    KREDIT
-                                </b>
-                            </th>
-                        </tr>
+                <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
+                    <tr class="non-body"> 
+                        <th width="80">
+                            <b>
+                                TANGGAL
+                            </b>
+                        </th>
+                        <th width="80">
+                            <b>
+                                REFF
+                            </b>
+                        </th>
+                        <th>
+                            <b>
+                                LOKASI
+                            </b>
+                        </th>
+                        <th>
+                            <b>
+                                AKUN
+                            </b>
+                        </th>
+                        <th>
+                            <b>
+                                KETERANGAN
+                            </b>
+                        </th>
+                        <th width="100">
+                            <b>
+                                DEBIT
+                            </b>
+                        </th>
+                        <th width="100">
+                            <b>
+                                KREDIT
+                            </b>
+                        </th>
+                    </tr>
                     <tbody>
                         {%for key, val in detail%}
                         <tr>
@@ -93,24 +93,24 @@
                         </tr>
                         {%endfor%}
                     </tbody>
-                        <tr class="non-body">
-                            <td align="right" class="text-center" colspan="5">
-                                <b>
-                                    Total
-                                </b>
-                            </td>
-                            <td align="right" class="text-right">
-                                <b>
-                                    {{data.total_debit}}
-                                </b>
-                            </td>
-                            <td align="right" class="text-right">
-                                <b>
-                                    {{data.total_kredit}}
-                                </b>
-                            </td>
+                    <tr class="non-body">
+                        <td align="right" class="text-center" colspan="5">
+                            <b>
+                                Total
+                            </b>
+                        </td>
+                        <td align="right" class="text-right">
+                            <b>
+                                {{data.total_debit}}
+                            </b>
+                        </td>
+                        <td align="right" class="text-right">
+                            <b>
+                                {{data.total_kredit}}
+                            </b>
+                        </td>
 
-                        </tr>
+                    </tr>
                 </table>
             </div>
         </div>
