@@ -8,14 +8,21 @@
                 <div class="pl-15px pr-15px">
                     <div class="row mt-15px">
                         <div class="col-md-3">
-                            <div class="form-group">
+                            <div class="form-group row">
                                 <div class="col-sm-12">
+                                    <div class="input-group">
                                     <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                    <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group">
+                            <div class="form-group row">
                                 <div class="col-sm-12">
                                     <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
                                         <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
@@ -25,7 +32,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group">
+                            <div class="form-group row">
                                 <div class="col-sm-12">
                                     <ui-select ng-disabled="is_view" ng-model="form.m_kontak_id" theme="bootstrap">
                                         <ui-select-match placeholder="Pilih Supplier">
@@ -39,7 +46,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group">
+                            <div class="form-group row">
                                 <div class="col-sm-12">
                                     <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view">
                                         <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
@@ -48,16 +55,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <div class="form-group row">
-                                <div class="col-sm-12 content-center">
-                                    <button class="btn btn-primary btn-sm center" ng-click="view(0, 0)">
-                                        <i class="fa fa-search"></i>
-                                        Tampilkan
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary btn-sm pull-right" ng-click="view(0, 0)">
+                            <i class="fa fa-search"></i>
+                            Tampilkan
+                        </button>
                     </div>
                 </div>
             </div>
@@ -65,14 +72,14 @@
         <div class="card" ng-show="tampilkan">
             <div class="card-header card-header-white">
                 <div class="btn-group pull-right">
-                    <!-- <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1, 0)">
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1, 0)">
                         <i class="fa fa-file"></i>
                         Excel
                     </button>
                     <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0, 1)">
                         <i class="fa fa-print"></i>
                         Print
-                    </button> -->
+                    </button>
                 </div>
             </div>
             <div class="card-body">

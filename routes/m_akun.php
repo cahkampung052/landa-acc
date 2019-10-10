@@ -639,10 +639,11 @@ $app->get('/acc/m_akun/akunPendapatan', function ($request, $response) {
  */
 $app->get('/acc/m_akun/akunHutang', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")->from("acc_m_akun")
-            ->customWhere("nama LIKE '%HUTANG%'")
+    $models = $db->select("*")
+            ->from("acc_m_akun")
             ->where("is_tipe", "=", 0)
-            ->where("is_deleted", "=", 0)
+            ->andWhere("is_deleted", "=", 0)
+            ->andWhere("tipe", "=", "KEWAJIBAN")
             ->findAll();
     return successResponse($response, ['list' => $models]);
 });
@@ -674,11 +675,16 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
  * Ambil akun saja tanpa klasifikasinya
  */
 $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
-    $db = $this->db;
-    $models = $db->select("*")->from("acc_m_akun")
+    $params = $request->getParams();
+    $db     = $this->db;
+    $db->select("*")
+            ->from("acc_m_akun")
             ->where("is_tipe", "=", 0)
-            ->where("is_deleted", "=", 0)
-            ->findAll();
+            ->andWhere("is_deleted", "=", 0);
+    if(isset($params['nama'])){
+        $db->andWhere("nama", "like", $params['nama']);
+    }
+    $models = $db->findAll();
     return successResponse($response, ['list' => $models]);
 });
 /**
