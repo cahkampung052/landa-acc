@@ -51,11 +51,11 @@ $app->get('/acc/m_akun_peta/index', function ($request, $response) {
             if ($val->is_multiple == 1) {
                 $listAkun = [];
                 $akun = json_decode($val->m_akun_id);
-                // foreach ($akun as $keys => $vals) {
-                //     $getAkun = $db->select("kode, nama")->from("acc_m_akun")->where("id", "=", $vals)->find();
-                //     $getAkun = ["id" => $vals, "kode" => $getAkun->kode, "nama" => $getAkun->nama];
-                //     array_push($listAkun, $getAkun);
-                // }
+                foreach ($akun as $keys => $vals) {
+                    $getAkun = $db->select("kode, nama")->from("acc_m_akun")->where("id", "=", $vals)->find();
+                    $getAkun = ["id" => $vals, "kode" => $getAkun->kode, "nama" => $getAkun->nama];
+                    array_push($listAkun, $getAkun);
+                }
                 $val->m_akun_id = $listAkun;
             } else {
                 $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kode, "nama" => $val->nama];
