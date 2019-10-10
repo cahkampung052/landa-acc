@@ -250,7 +250,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         }
         $scope.form.subtotal = $scope.form.total;
         $scope.form.total = parseInt($scope.form.total) + parseInt($scope.form.ppn);
-        $scope.form.tanggal = new Date(form.tanggal);
+        $scope.form.tanggal = new Date(form.tanggal2);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
@@ -271,7 +271,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         }
         $scope.form.subtotal = $scope.form.total;
         $scope.form.total = parseInt($scope.form.total) + parseInt($scope.form.ppn);
-        $scope.form.tanggal = new Date(form.tanggal);
+        $scope.form.tanggal = new Date(form.tanggal2);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);

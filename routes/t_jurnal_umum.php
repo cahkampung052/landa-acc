@@ -168,7 +168,8 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
 
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
-        $models[$key]['tanggal'] = date("Y-m-d", strtotime($val->tanggal));
+        $models[$key]['tanggal'] = date("Y-m-d", $val->modified_at);
+        $models[$key]['tanggal2'] = date("Y-m-d", strtotime($val->tanggal));
         $models[$key]['tanggal_formated'] = date("d-m-Y h:i", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i", $val->created_at);
         $models[$key]['m_lokasi_id'] = ["id" => $val->idLokasi, "kode" => $val->kodeLokasi, "nama" => $val->namaLokasi];
