@@ -116,47 +116,6 @@ app.controller('pengeluaranCtrl', function($scope, Data, $rootScope, $uibModal, 
     };
     /* sampe di sini*/
     /*
-     * cek jika ada param no_proposal
-     */
-    if (typeof $stateParams.no_proposal != "undefined" && $stateParams.no_proposal != "" && $stateParams.no_proposal !== null) {
-        Data.get("acc/apppengajuan/getAll", {
-            no_proposal: $stateParams.no_proposal,
-            global: true
-        }).then(function(response) {
-            var data = response.data[0];
-            Data.get("acc/apppengajuan/view", {
-                t_pengajuan_id: data.id,
-                global: true
-            }).then(function(response) {
-                $scope.create();
-                $scope.is_pengajuan = true;
-                $scope.form.no_proposal = data.no_proposal;
-                $scope.form.m_lokasi_id = data.m_lokasi_id;
-                $scope.form.t_pengajuan_id = data.id;
-                $scope.form.penerima = data.penerima;
-                $scope.form.tanggal = new Date();
-                $scope.form.keterangan = data.catatan;
-                if (data.norek != "") {
-                    $scope.form.keterangan += " (Nomer rekening : " + data.norek + ")";
-                }
-                $scope.form.total = data.jumlah_perkiraan;
-                $scope.form.t_pengajuan_id = data.id;
-                $scope.listDetail = [];
-                console.log(response.data)
-                var index = 0;
-                angular.forEach(response.data, function(value, key) {
-                    $scope.listDetail[index] = {
-                        m_akun_id: value.m_akun_id,
-                        keterangan: value.keterangan + " (" + value.jumlah + "" + value.jenis_satuan + "@" + value.harga_satuan + ")",
-                        debit: value.sub_total
-                    }
-                    index++;
-                });
-                $scope.sumTotal();
-            });
-        });
-    }
-    /*
      * ambil detail pengeluaran
      */
     $scope.getDetail = function(id) {
@@ -378,6 +337,78 @@ app.controller('pengeluaranCtrl', function($scope, Data, $rootScope, $uibModal, 
                 if (response.data == undefined) {} else {}
             });
         })
+    }
+    /*
+     * cek jika ada param no_proposal
+     */
+    if (typeof $stateParams.no_proposal != "undefined" && $stateParams.no_proposal != "" && $stateParams.no_proposal !== null) {
+        if (typeof $stateParams.total != "undefined" && $stateParams.total != "" && $stateParams.total !== null) {
+            Data.get("acc/apppengajuan/getAll", {
+                no_proposal: $stateParams.no_proposal,
+                global: true
+            }).then(function(response) {
+                var data = response.data[0];
+                Data.get("acc/apppengajuan/view", {
+                    t_pengajuan_id: data.id,
+                    global: true
+                }).then(function(response) {
+                    $scope.create();
+                    $scope.is_pengajuan = true;
+                    $scope.form.no_proposal = data.no_proposal;
+                    $scope.form.m_lokasi_id = $scope.listLokasi[0];
+                    $scope.form.m_akun_id = $scope.akunDetail[0];
+                    $scope.form.t_pengajuan_id = data.id;
+                    $scope.form.penerima = data.penerima;
+                    $scope.form.tanggal = new Date();
+                    $scope.form.keterangan = data.catatan;
+                    $scope.form.total = data.jumlah_perkiraan;
+                    $scope.form.t_pengajuan_id = data.id;
+                    var index = 0;
+                    $scope.listDetail[index] = {
+                        m_akun_id: $scope.akunDetail[0],
+                        m_lokasi_id: data.m_lokasi_id,
+                        keterangan: "Bon sementara",
+                        debit: $stateParams.total
+                    }
+                });
+            });
+        }else{
+            Data.get("acc/apppengajuan/getAll", {
+                no_proposal: $stateParams.no_proposal,
+                global: true
+            }).then(function(response) {
+                var data = response.data[0];
+                Data.get("acc/apppengajuan/view", {
+                    t_pengajuan_id: data.id,
+                    global: true
+                }).then(function(response) {
+                    $scope.create();
+                    $scope.is_pengajuan = true;
+                    $scope.form.no_proposal = data.no_proposal;
+                    $scope.form.m_lokasi_id = data.m_lokasi_id;
+                    $scope.form.t_pengajuan_id = data.id;
+                    $scope.form.penerima = data.penerima;
+                    $scope.form.tanggal = new Date();
+                    $scope.form.keterangan = data.catatan;
+                    if (data.norek != "") {
+                        $scope.form.keterangan += " (Nomer rekening : " + data.norek + ")";
+                    }
+                    $scope.form.total = data.jumlah_perkiraan;
+                    $scope.form.t_pengajuan_id = data.id;
+                    $scope.listDetail = [];
+                    var index = 0;
+                    angular.forEach(response.data, function(value, key) {
+                        $scope.listDetail[index] = {
+                            m_akun_id: value.m_akun_id,
+                            keterangan: value.keterangan + " (" + value.jumlah + "" + value.jenis_satuan + "@" + value.harga_satuan + ")",
+                            debit: value.sub_total
+                        }
+                        index++;
+                    });
+                    $scope.sumTotal();
+                });
+            });
+        }
     }
 });
 app.controller("settingPrintCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope) {

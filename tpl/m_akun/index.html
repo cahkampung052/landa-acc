@@ -5,9 +5,7 @@
                 <strong>Master Akun</strong>
                 <div class="btn-group pull-right mt-5px d-lg-none" role="group">
                     <div class="dropdown">
-                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Menu
-                        </button>
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <button accept=".xls" class="dropdown-item" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
                                 <i class="fa fa-upload"></i>
@@ -67,39 +65,49 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-12">
+                    <div class="pull-right" style="margin-bottom: 10px;">
+                        <label class="i-checks">
+                            <input ng-disabled="is_view" ng-model="SembunyikanSub" ng-true-value="1" ng-false-value="0" type="checkbox"/>
+                            <i></i>
+                            Sembunyikan Sub Akun
+                        </label>
+                    </div>
+                </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-mobile">
+                    <table class="table table-hover table-mobile">
                         <thead>
                             <tr>
                                 <th style="text-align: left;" scope="col">Kode Akun</th>
-                                <th style="text-align: left;" scope="col">Tipe Klasifikasi</th>
-                                <!-- <th style="text-align: left;" scope="col">Saldo Normal</th> -->
-                                <th style="text-align: left;" scope="col">Saldo Berjalan</th>
-                                <th style="text-align: left;" scope="col">Tipe Arus</th>
-                                <th></th>
+                                <th style="text-align: left;" scope="col" width="200">Tipe Klasifikasi</th>
+                                <th style="text-align: left;" scope="col" width="200">Saldo Berjalan</th>
+                                <th style="text-align: left;" scope="col" width="200">Tipe Arus</th>
+                                <th width="80"></th>
                             </tr>
                         </thead>
                         <tbody ng-show="!isLoading">
-                            <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
+                            <tr ng-repeat="row in displayed" ng-dblclick="view(row)" ng-hide="SembunyikanSub == 1 && row.is_tipe == 0">
                                 <td style="text-align: left;">
                                     <span ng-if="row.is_tipe == 1">
-                                        <b>{{ row.nama_lengkap}}</b>
+                                        <b>
+                                            <div ng-bind-html="row.nama_lengkap"></div>
+                                        </b>
                                     </span>
-                                    <span ng-if="row.is_tipe == 0">{{ row.nama_lengkap}}</span>
+                                    <span ng-if="row.is_tipe == 0">
+                                        <div ng-bind-html="row.nama_lengkap"></div>
+                                    </span>
                                     <span ng-if="row.is_deleted == 1">(dihapus pada {{ row.tgl_nonaktif| date: "dd MMM yyyy" }})</span>
                                 </td>
-                                <td class="align-left">
-                                    {{row.tipe}}
+                                <td class="align-left">{{ row.tipe }}</td>
+                                <td style="text-align: right;">
+                                    <span ng-if="row.is_tipe == 1">
+                                        <b>{{ row.saldo|number }}</b>
+                                    </span>
+                                    <span ng-if="row.is_tipe == 0">{{ row.saldo|number }}</span>
                                 </td>
-                                <!-- <td style="text-align: left;">
-                                    <span ng-if="row.saldo_normal == 1 && row.is_tipe == 0">Debit</span>
-                                    <span ng-if="row.saldo_normal == - 1 && row.is_tipe == 0">Kredit</span>
-                                </td> -->
-                                <td style="text-align: right;"><span ng-if="row.is_tipe == 0">{{ row.saldo|number }}</span></td>
-                                <td style="text-align: left;">{{ row.tipe_arus}}</td>
+                                <td style="text-align: left;">{{ row.tipe_arus }}</td>
                                 <td>
-                                    <div class="btn-group pull-right" role="group" ng-show="row.is_tipe == 0">
-                                        <!--<button type="button" class="btn btn-success fa fa-briefcase" ng-if="row.is_deleted == 0" ng-click="modalBudget(row)"></button>-->
+                                    <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
                                         <button type="button" class="btn btn-danger fa fa-trash" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
                                         <button type="button" class="btn btn-warning fa fa-refresh" ng-if="row.is_deleted == 1" ng-click="restore(row);"></button>
@@ -113,38 +121,56 @@
         </div>
         <div class="card" ng-if="is_edit">
             <div class="card-header">
-                <strong>{{ formtitle}}</strong>
+                <strong>{{ formtitle }}</strong>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group row">
-                                <label class="col-md-3 col-form-label-sm required">Akun</label>
+                                <label class="col-md-3 col-form-label-sm required">Tipe Klasifikasi</label>
                                 <div class="col-md-9">
-                                    <select class="form-control form-control-sm" ng-change="getakun(form.parent_id)" id="parent" ng-disabled="is_view" ng-model="form.parent_id">
-                                        <option value="">- Pilih Akun -</option>
-                                        <option ng-repeat="value in dataakun" ng-selected="value.id == form.parent_id" ng-value="{{ value.id}}">{{ value.kode}} - {{ value.nama}}</option>
+                                    <select class="form-control form-control-sm" ng-disabled="is_view || !is_create" ng-model="form.tipe" ng-change="getAkun(form.tipe)">
+                                        <option value="">- Pilih Tipe -</option>
+                                        <option value="HARTA">HARTA</option>
+                                        <option value="KEWAJIBAN">KEWAJIBAN</option>
+                                        <option value="MODAL">MODAL</option>
+                                        <option value="PENDAPATAN">PENDAPATAN</option>
+                                        <option value="PENDAPATAN DILUAR USAHA">PENDAPATAN DILUAR USAHA</option>
+                                        <option value="BEBAN">BEBAN</option>
+                                        <option value="BEBAN DILUAR USAHA">BEBAN DILUAR USAHA</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="i-checks col-md-3 col-form-label-sm">
+                                    <input ng-disabled="is_view" ng-model="form.is_induk" ng-true-value="0" ng-false-value="1" type="checkbox"/>
+                                    <i></i>
+                                    Sub Akun
+                                </label>
+                                <div class="col-md-9">
+                                    <select class="form-control form-control-sm" ng-change="getakun(form.parent_id)" ng-if="form.is_induk == 0" ng-disabled="is_view" ng-model="form.parent_id">
+                                        <option value="">- Pilih Akun Induk -</option>
+                                        <option ng-repeat="value in dataakun" ng-selected="value.id == form.parent_id" ng-value="{{ value.id }}" ng-hide="!is_create && value.level > form.level">{{ value.kode }} - {{ value.nama }}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label-sm required">Kode Akun</label>
                                 <div class="col-md-9">
-                                    <div class="input-group input-group-sm">
+                                    <div class="input-group input-group-sm" ng-if="form.is_induk == 0">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">{{ form.kode_induk}}</span>
+                                            <span class="input-group-text">{{ form.kode_induk }}</span>
                                         </div>
-                                        <input type="text" class="form-control form-control-sm angka" style="text-align: left" ng-model="form.kode" ng-disabled="is_view" ng-change="cekKode(form.kode)" required/>
-                                        
+                                        <input type="text" class="form-control form-control-sm angka align-left" ng-model="form.kode" ng-disabled="is_view"/>
                                     </div>
-                                    <small>{{form.message}}</small>
+                                    <input type="text" class="form-control form-control-sm angka align-left" ng-if="form.is_induk == 1" ng-model="form.kode" ng-disabled="is_view"/>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label-sm required">Nama Akun</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view" required/>
+                                    <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view"/>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -156,26 +182,28 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div class="form-group row">
-                                <label class="col-md-3 col-form-label-sm required">Saldo Normal</label>
-                                <div class="col-md-3">
-                                    <div class="btn-group">
-                                        <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.saldo_normal" ng-disabled="is_view" uib-btn-radio="1">Debit</label>
-                                        <label class="btn btn-primary btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.saldo_normal" ng-disabled="is_view" uib-btn-radio="-1">Kredit</label>
-                                    </div>
+                            <div class="form-group row" ng-if="form.is_induk == 1">
+                                <label class="col-md-3 col-form-label-sm">Tipe Arus Kas</label>
+                                <div class="col-md-9">
+                                    <select class="form-control form-control-sm" id="tipearus" ng-disabled="is_view" ng-model="form.tipe_arus">
+                                        <option value="">- Tidak Digunakan Sebagai Arus Kas -</option>
+                                        <option value="Aktivitas Operasi">Aktivitas Operasi</option>
+                                        <option value="Investasi">Investasi</option>
+                                        <option value="Pendanaan">Pendanaan</option>
+                                    </select>
                                 </div>
-                            </div> -->
+                            </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="card-footer">
-                <div class="pull-right btn-group">
+                <div class="pull-right">
                     <button type="submit" class="btn btn-secondary btn-sm" ng-click="cancel()">
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
                     </button>
-                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek <= 3 || loading || form.status_kode == 0" ng-click="save(form)">
+                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek     <= 3 || loading || form.status_kode == 0" ng-click="save(form)">
                         <i class="fa fa-save"></i>
                         &nbsp;Simpan
                     </button>

@@ -22,6 +22,14 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
+                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
                                             <button class="btn btn-primary btn-sm" ng-click="view(0, 0)">
                                                 <i class="fa fa-search"></i>
                                                 Tampilkan
@@ -38,14 +46,14 @@
         <div class="card" ng-show="tampilkan">
             <div class="card-header card-header-white">
                 <div class="btn-group pull-right">
-                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1,0)">
+                    <!-- <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1,0)">
                         <i class="fa fa-file"></i>
                         Excel
                     </button>
                     <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0,1)">
                         <i class="fa fa-print"></i>
                         Print
-                    </button>
+                    </button> -->
                 </div>
             </div>
             <div class="card-body">
