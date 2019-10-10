@@ -1,10 +1,7 @@
 <?php
-
 $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
     $params = $request->getParams();
-    $sql = $this->db;
-
-//    print_r($params);die();
+    $sql    = $this->db;
     /**
      * tanggal awal
      */
@@ -38,20 +35,14 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
         if (!empty($lokasiId)) {
             $lokasiId[] = $params['m_lokasi_id'];
             $lokasiId = implode(",", $lokasiId);
-        }
-        /*
-         * jika lokasi tidak punya child
-         */ else {
+        } else {
             $lokasiId = $params['m_lokasi_id'];
         }
     }
-
-
     /**
      * Proses laporan
      */
     if (isset($params['m_akun_id']) && isset($params['m_lokasi_id'])) {
-
         /*
          * ambil supplier
          */
@@ -60,7 +51,6 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
 //                ->where("is_deleted", "=", 0)
 //                ->where("type", "=", "customer")
 //                ->findAll();
-
         $data['totalSaldoAwal'] = 0;
         $data['totalDebit'] = 0;
         $data['totalKredit'] = 0;
@@ -80,9 +70,7 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
         $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id'])
 //                ->andWhere('acc_trans_detail.m_kontak_id', '=', $val->id)
                 ->andWhere('date(acc_trans_detail.tanggal)', '<', $tanggal_start);
-
         $getsaldoawal = $sql->findAll();
-
         $arrkontak = [];
         $arrawal = [];
         foreach ($getsaldoawal as $key => $val) {
@@ -96,7 +84,6 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
                 }
             }
         }
-
         /*
          * ambil saldo hutang di rentan tanggal dari customer
          */
@@ -110,9 +97,7 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
 //                ->andWhere('acc_trans_detail.m_kontak_id', '=', $val->id)
                 ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
                 ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
-
         $getsaldopiutang = $sql->findAll();
-
         $arrperiode = [];
         foreach ($getsaldopiutang as $key => $val) {
             if (isset($arrperiode[$val->m_kontak_id])) {
@@ -125,7 +110,6 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
                 }
             }
         }
-
         /*
          * gabungkan keduanya
          */
@@ -142,7 +126,6 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
             } else {
                 $arr[$val]['saldoAwal'] = 0;
             }
-
             if (isset($arrperiode[$val])) {
                 $arr[$val]['debit'] = $arrperiode[$val]['debit'];
                 $arr[$val]['kredit'] = $arrperiode[$val]['kredit'];
@@ -152,18 +135,13 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
                 $arr[$val]['debit'] = 0;
                 $arr[$val]['kredit'] = 0;
             }
-
             $arr[$val]['saldoAkhir'] = $arr[$val]['saldoAwal'] + $arr[$val]['debit'] - $arr[$val]['kredit'];
-
             $data['totalSaldoAwal'] += $arr[$val]["saldoAwal"];
             $data['totalDebit'] += $arr[$val]["debit"];
             $data['totalKredit'] += $arr[$val]["kredit"];
             $data['totalSaldoAkhir'] += $arr[$val]["saldoAkhir"];
         }
-
 //        }
-
-
         if (isset($params['export']) && $params['export'] == 1) {
             $view = twigViewPath();
             $content = $view->fetch('laporan/rekapPiutang.html', [
@@ -174,7 +152,7 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
             header("Content-type: application/vnd.ms-excel");
             header("Content-Disposition: attachment;Filename=laporan-rekap-piutang.xls");
             echo $content;
-        } else if (isset($params['print']) && $params['print'] == 1) {
+        } elseif (isset($params['print']) && $params['print'] == 1) {
             $view = twigViewPath();
             $content = $view->fetch('laporan/rekapPiutang.html', [
                 "data" => $data,

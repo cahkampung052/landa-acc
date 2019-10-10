@@ -19,12 +19,12 @@ $app->get("/acc/m_akun_peta/getPemetaanAkun", function($request, $response) {
 
     $arr = [];
     foreach ($akunpeta as $key => $val) {
-        if(isset($val->id))
+        if (isset($val->id))
             array_push($arr, $val->id);
         else
             array_push($arr, $val);
     }
-    
+
     $arr = implode(",", $arr);
     $db = $this->db;
     $models = $db->select("*")->from("acc_m_akun")->customWhere("id IN ($arr)", "AND")->findAll();
@@ -49,7 +49,16 @@ $app->get('/acc/m_akun_peta/index', function ($request, $response) {
     foreach ($akunpeta as $key => $val) {
         if ($val->m_akun_id != NULL) {
             if ($val->is_multiple == 1) {
-                $val->m_akun_id = json_decode($val->m_akun_id);
+                $listAkun = [];
+                if(!empty($val->m_akun_id)){
+                    $akun = json_decode($val->m_akun_id);
+                    foreach ($akun as $keys => $vals) {
+                        $getAkun = $db->select("kode, nama")->from("acc_m_akun")->where("id", "=", $vals)->find();
+                        $getAkun = ["id" => $vals, "kode" => $getAkun->kode, "nama" => $getAkun->nama];
+                        array_push($listAkun, $getAkun);
+                    }
+                }
+                $val->m_akun_id = $listAkun;
             } else {
                 $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kode, "nama" => $val->nama];
             }
@@ -69,14 +78,23 @@ $app->post('/acc/m_akun_peta/save', function ($request, $response) {
 
     $params = $request->getParams();
     $data = $params;
+
+//    print_r($data);die;
+
     $sql = $this->db;
     foreach ($data as $key => $val) {
         if ($val['is_multiple'] == 1) {
-            $val['m_akun_id'] = isset($val['m_akun_id']) ? json_encode($val['m_akun_id']) : '';
+            $akun = [];
+            if (isset($val['m_akun_id'])) {
+                foreach ($val['m_akun_id'] as $keys => $vals) {
+                    array_push($akun, $vals['id']);
+                }
+            }
+            $val['m_akun_id'] = !empty($akun) ? json_encode($akun) : '';
         } else {
             $val['m_akun_id'] = isset($val['m_akun_id']) ? $val['m_akun_id']['id'] : '';
         }
-        
+
         $cek = $sql->select("*")->from("acc_m_akun_peta")->where("type", "=", $val["type"])->find();
         if ($cek) {
             $model = $sql->update("acc_m_akun_peta", $val, ["id" => $cek->id]);
