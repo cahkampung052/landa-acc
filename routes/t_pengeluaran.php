@@ -167,7 +167,7 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
     $totalItem  = $db->count();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
-        $models[$key]['tanggal']            = date("Y-m-d", $val->modified_at);
+        $models[$key]['tanggal']            = date("Y-m-d", strtotime($val->tanggal));
         $models[$key]['tanggal_formated']   = date("d-m-Y", strtotime($val->tanggal));
         $models[$key]['created_at']         = date("d-m-Y h:i", $val->created_at);
         $models[$key]['m_akun_id']          = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
