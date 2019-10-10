@@ -10,9 +10,9 @@ $app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
     $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
     $tanggal_start = $tanggal_awal->format("Y-m-d");
     $tanggal_end = $tanggal_akhir->format("Y-m-d");
-    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
-    $data['disiapkan'] = date("d-m-Y, H:i");
-    $data['lokasi'] = $params['nama_lokasi'];
+    $data['tanggal']    = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['disiapkan']  = date("d-m-Y, H:i");
+    $data['lokasi']     = $params['nama_lokasi'];
     if (isset($params['m_lokasi_id'])) {
         $lokasiId = getChildId("acc_m_lokasi", $params['m_lokasi_id']);
         /*
@@ -33,10 +33,11 @@ $app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
         "total_saldo" => 0,
         "saldo_awal" => 0,
         "saldo_akhir" => 0,
+        "saldo_akhir_neraca" => 0,
     ];
-    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
-    $data['disiapkan'] = date("d-m-Y, H:i");
-    $data['lokasi'] = $params['nama_lokasi'];
+    $data['tanggal']    = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['disiapkan']  = date("d-m-Y, H:i");
+    $data['lokasi']     = $params['nama_lokasi'];
     $arr["Aktivitas Operasi"] = [];
     $arr["Investasi"] = [];
     $arr["Pendanaan"] = [];
@@ -90,27 +91,18 @@ $app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
         $arr[$value->tipe_arus][$value->parent_id]["nama"] = $value->nama_induk;
         $arr[$value->tipe_arus][$value->parent_id]["kode"] = $value->kode_induk;
         $arr[$value->tipe_arus][$value->parent_id]["id"] = $value->id;
-        // if($saldo != 0){
-            if($value->tipe == "HARTA"){
-                $saldo = $saldo * -1;
-            }
-            $data['total_saldo'] += $saldo;
-            $arr[$value->tipe_arus][$value->parent_id]["detail"][] = [
+        if ($value->tipe == "HARTA") {
+            $saldo = $saldo * -1;
+        }
+        $data['total_saldo'] += $saldo;
+        $arr[$value->tipe_arus][$value->parent_id]["detail"][] = [
                 "saldo" => $saldo,
                 "nama" => $value->kode." - ".$value->nama,
             ];
-        // }
     }
     /**
      * Hapus akun yang tidak ada transaksi
      */
-    // foreach ($arr as $key => $value) {
-    //     foreach ($value as $k => $v) {
-    //         if(!isset($arr[$key][$k]['detail'])){
-    //             unset($arr[$key][$k]);
-    //         }
-    //     }
-    // }
     $data["saldo_akhir"] = $data["saldo_awal"] + $data["total_saldo"];
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
