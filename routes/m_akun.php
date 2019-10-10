@@ -283,7 +283,7 @@ $app->get('/acc/m_akun/listakun', function ($request, $response) {
     $data = $sql->findAll('select * from acc_m_akun where is_deleted = 0 order by kode');
     foreach ($data as $key => $val) {
         $data[$key] = (array) $val;
-        $spasi = ($val->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $val->level - 1);
+        $spasi = ($val->level == 1) ? '' : str_repeat("--", $val->level - 1);
         $data[$key]['nama_lengkap'] = $spasi . $val->kode . ' - ' . $val->nama;
     }
     return successResponse($response, $data);
