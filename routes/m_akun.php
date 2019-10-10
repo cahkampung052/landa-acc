@@ -1,21 +1,20 @@
 <?php
-
 /**
  * validasi akun
  */
 function validasi($data, $custom = array()) {
     $validasi = array(
-        'parent_id' => 'required',
-        'kode' => 'required',
-        'nama' => 'required',
-        'is_kas' => 'required',
+        'tipe' => 'required',
+        'kode'      => 'required',
+        'nama'      => 'required',
+        'is_kas'    => 'required',
     );
-    GUMP::set_field_name("parent_id", "Akun");
+    GUMP::set_field_name("parent_id", "Akun Induk");
     GUMP::set_field_name("is_kas", "Kas");
+    GUMP::set_field_name("is_tipe", "Sub Akun");
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
-
 /**
  * validasi saldo awal
  */
@@ -28,7 +27,6 @@ function validasiSaldo($data, $custom = array()) {
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
-
 /**
  * setLevelTipeAkun
  */
@@ -37,24 +35,19 @@ function setLevelTipeAkun($parent_id) {
     $parent = $db->find("select * from acc_m_akun where id = '" . $parent_id . "'");
     return $parent->level + 1;
 }
-
 /*
  * get kode
  */
 $app->get('/acc/m_akun/getKode/{kode}', function($request, $response) {
-
-    $kode = $request->getAttribute('kode');
-    $db = $this->db;
-
+    $kode   = $request->getAttribute('kode');
+    $db     = $this->db;
     $models = $db->select('kode')->from('acc_m_akun')->where('kode', '=', $kode)->count();
-//    print_r($models);die;
     if ($models > 0) {
         return successResponse($response, ['status_kode' => 0, 'message' => "Kode sudah digunakan"]);
     }else{
         return successResponse($response, ['status_kode' => 1, 'message' => ""]);
     }
 });
-
 /**
  * Ambil saldo awal
  */
@@ -81,7 +74,7 @@ $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
      */
     $tanggal = $params['tanggal'];
     foreach ($models as $key => $value) {
-        $spasi = ($value->level == 1) ? '' : str_repeat("···", $value->level - 1);
+        $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $value->nama_lengkap = $spasi . $value->kode . ' - ' . $value->nama;
         if (empty($value->kredit)) {
             $value->kredit = 0;
@@ -99,8 +92,8 @@ $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
  * Simpan saldo awal
  */
 $app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
-    $params = $request->getParams();
-    $validasi = validasiSaldo($params['form']);
+    $params     = $request->getParams();
+    $validasi   = validasiSaldo($params['form']);
     if ($validasi === true) {
         $tanggal = new DateTime($params['form']['tanggal']);
         $tanggal->setTimezone(new DateTimeZone('Asia/Jakarta'));
@@ -162,7 +155,7 @@ $app->get('/acc/m_akun/exportSaldoAwal', function ($request, $response) {
     $objPHPExcel->getActiveSheet()->setCellValue('H' . 4, $tanggalsetting);
     $rows = 6;
     foreach ($akun as $key => $val) {
-        $spasi = ($val->level == 1) ? '' : str_repeat("···", $val->level - 1);
+        $spasi = ($val->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $val->level - 1);
         $val->nama_lengkap = $spasi . $val->kode . ' - ' . $val->nama;
         $objPHPExcel->getActiveSheet()->setCellValue('G' . $rows, $val->id);
         $objPHPExcel->getActiveSheet()->setCellValue('H' . $rows, $val->nama_lengkap);
@@ -202,7 +195,7 @@ $app->post('/acc/m_akun/importSaldoAwal', function ($request, $response) {
             for ($row = 6; $row <= $highestRow; $row++) {
                 $akun = $db->select("*")->from("acc_m_akun")->where("id", "=", $objPHPExcel->getSheet(0)->getCell('G' . $row)->getValue())->find();
                 $models[$row] = (array) $akun;
-                $spasi = ($akun->level == 1) ? '' : str_repeat("···", $akun->level - 1);
+                $spasi = ($akun->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $akun->level - 1);
                 $models[$row]['nama_lengkap'] = $spasi . $akun->kode . ' - ' . $akun->nama;
                 $models[$row]['debit'] = $objPHPExcel->getSheet(0)->getCell('I' . $row)->getValue();
                 $models[$row]['kredit'] = $objPHPExcel->getSheet(0)->getCell('J' . $row)->getValue();
@@ -229,15 +222,18 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
             SUM(debit) as debit, 
             SUM(kredit) as kredit,
             acc_m_akun.id,
-            acc_m_akun.saldo_normal
+            acc_m_akun.saldo_normal,
+            acc_m_akun.parent_id
         ")
-            ->from("acc_trans_detail")
-            ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-            ->groupBy("acc_m_akun.id");
+            ->from("acc_m_akun")
+            ->leftJoin("acc_trans_detail", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+            ->groupBy("acc_m_akun.id")
+            ->orderBy("acc_m_akun.is_tipe ASC, parent_id DESC, acc_m_akun.level DESC");
     $trans = $db->findAll();
     $arrTrans = [];
     foreach ($trans as $key => $value) {
-        $arrTrans[$value->id] = (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
+        $arrTrans[$value->id]        = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
+        $arrTrans[$value->parent_id] = (isset($arrTrans[$value->parent_id]) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
     }
     /**
      * List akun
@@ -265,17 +261,17 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     $listAkun   = buildTreeAkun($models, 0);
     $arrModel   = flatten($listAkun);
     $arr        = [];
-    foreach ($models as $key => $value) {
+    foreach ($arrModel as $key => $value) {
         $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
-        $spasi = ($value->level == 1) ? '' : str_repeat("···", $value->level - 1);
+        $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $arr[$key] = (array) $value;
-        $arr[$key]['nama_lengkap'] = $spasi . $value->kode . ' - ' . $value->nama;
-        $arr[$key]['parent_id'] = (int) $value->parent_id;
-        $arr[$key]['saldo_normal'] = (int) $value->saldo_normal;
-        $arr[$key]['is_kas'] = (int) $value->is_kas;
-        $arr[$key]['kode'] = str_replace($value->kode_induk . ".", "", $value->kode);
-        $arr[$key]['saldo'] = $saldo;
-        $arr[$key]['tipe'] = ($value->tipe == 'No Type') ? '' : $value->tipe;
+        $arr[$key]['nama_lengkap']  = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$key]['parent_id']     = (int) $value->parent_id;
+        $arr[$key]['saldo_normal']  = (int) $value->saldo_normal;
+        $arr[$key]['is_kas']        = (int) $value->is_kas;
+        $arr[$key]['kode']          = str_replace($value->kode_induk . ".", "", $value->kode);
+        $arr[$key]['saldo']         = $saldo;
+        $arr[$key]['tipe']          = ($value->tipe == 'No Type') ? '' : $value->tipe;
     }
     return successResponse($response, ['list' => $arr, 'totalItems' => $totalItem]);
 });
@@ -287,7 +283,7 @@ $app->get('/acc/m_akun/listakun', function ($request, $response) {
     $data = $sql->findAll('select * from acc_m_akun where is_deleted = 0 order by kode');
     foreach ($data as $key => $val) {
         $data[$key] = (array) $val;
-        $spasi = ($val->level == 1) ? '' : str_repeat("···", $val->level - 1);
+        $spasi = ($val->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $val->level - 1);
         $data[$key]['nama_lengkap'] = $spasi . $val->kode . ' - ' . $val->nama;
     }
     return successResponse($response, $data);
@@ -296,24 +292,45 @@ $app->get('/acc/m_akun/listakun', function ($request, $response) {
  * Simpan akun
  */
 $app->post('/acc/m_akun/save', function ($request, $response) {
-    $data = $request->getParams();
-    $sql = $this->db;
-    $data['tipe'] = isset($data['tipe']) ? $data['tipe'] : '';
-    $data['parent_id'] = isset($data['parent_id']) ? $data['parent_id'] : '';
-    $validasi = validasi($data);
+    $data   = $request->getParams();
+    $sql    = $this->db;
+    $id     = isset($data['id']) ? $data['id'] : '';
+    $data['tipe']       = isset($data['tipe']) ? $data['tipe'] : '';
+    $data['parent_id']  = isset($data['parent_id']) ? $data['parent_id'] : '';
+    $data['is_tipe']    = isset($data['is_tipe']) ? $data['is_tipe'] : 0;
+    $data['is_induk']   = isset($data['is_induk']) ? $data['is_induk'] : 0;
+    $data['kode']       = isset($data['kode']) ? $data['kode'] : '';
+    if($data['is_induk'] == 0){
+        $validasi = validasi($data, ["parent_id" => "required"]);        
+    }else{
+        $validasi = validasi($data);        
+    }
     if ($validasi === true) {
-        $data['is_tipe'] = 0;
-        $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '.' . $data['kode'];
+        if($data['is_induk'] == 0){
+            $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '.' . $data['kode'];            
+        }
+        /**
+         * Cek kode
+         */
+        $cekKode = $sql->select("kode, nama")
+                    ->from("acc_m_akun")
+                    ->where("kode", "=", $data['kode'])
+                    ->andWhere("id", "!=", $id)
+                    ->find();
+        if(isset($cekKode->kode)){
+            return unprocessResponse($response, ["kode sudah digunakan untuk akun '". $cekKode->nama. "'"]);
+        }
+        /**
+         * Set level dan tipe arus kas
+         */
         if ($data['parent_id'] == 0) {
             $data['level'] = 1;
         } else {
             $data['level'] = setLevelTipeAkun($data['parent_id']);
             /**
-             * Update tipe akun di atasnya
+             * Update is_tipe akun di atasnya
              */
-            $akun = $sql->find("select * from acc_m_akun where id = '" . $data['parent_id'] . "'");
-            $data['tipe'] = isset($akun->tipe) ? $akun->tipe : '';
-            $data['tipe_arus'] = isset($akun->tipe_arus) ? $akun->tipe_arus : '';
+            $sql->update("acc_m_akun", ["is_tipe" => 1], ["id" => $data['parent_id']]);
         }
         /**
          * Simpan ke database
@@ -323,7 +340,9 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         } else {
             $model = $sql->insert("acc_m_akun", $data);
         }
-
+        /**
+         * Update saldo Normal
+         */
         $sql->run("update acc_m_akun set saldo_normal = 1 where tipe = 'HARTA'");
         $sql->run("update acc_m_akun set saldo_normal = -1 where tipe = 'KEWAJIBAN'");
         $sql->run("update acc_m_akun set saldo_normal = -1 where tipe = 'MODAL'");
@@ -331,7 +350,22 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         $sql->run("update acc_m_akun set saldo_normal = -1 where tipe = 'PENDAPATAN DILUAR USAHA'");
         $sql->run("update acc_m_akun set saldo_normal = 1 where tipe = 'BEBAN'");
         $sql->run("update acc_m_akun set saldo_normal = 1 where tipe = 'BEBAN DILUAR USAHA'");
-
+        /**
+         * Update tipe akun dibawahnya
+         */
+        $childId =getChildId("acc_m_akun", $model->id);
+        if(!empty($childId)){
+            $sql->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus], "id in (".implode(",", $childId).")");            
+            /**
+             * Jika punya child berarti is_tipe = 1
+             */
+            $sql->update("acc_m_akun", ["is_tipe" => 1], ["id" => $model->id]);
+        }else{
+             /**
+             * Jika punya child berarti is_tipe = 0
+             */
+            $sql->update("acc_m_akun", ["is_tipe" => 0], ["id" => $model->id]);            
+        }
         return successResponse($response, $model);
     } else {
         return unprocessResponse($response, $validasi);
@@ -456,7 +490,6 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
  */
 $app->get('/acc/m_akun/export', function ($request, $response) {
     $db = $this->db;
-    //load themeplate
     $path = 'acc/landaacc/file/format_masterakun.xls';
     $objReader = PHPExcel_IOFactory::createReader('Excel5');
     $objPHPExcel = $objReader->load($path);
@@ -563,6 +596,31 @@ $app->get('/acc/m_akun/akunKas', function ($request, $response) {
     $models = $db->findAll();
     return successResponse($response, ['list' => $models]);
 });
+/**
+ * Ambil akun berdasarkan tipe
+ */
+$app->get('/acc/m_akun/getByType', function ($request, $response) {
+    $params = $request->getParams();
+    $db     = $this->db;
+    $tipe   = isset($params['tipe']) ? $params['tipe'] : '';
+    if(!empty($tipe)){
+        $db->select("*")
+            ->from("acc_m_akun")
+            ->where("is_deleted", "=", 0)
+            ->andWhere("tipe", "=", $tipe);
+        $models = $db->findAll();
+        $arr    = [];
+        foreach ($models as $key => $value) {
+            $saldo = getSaldo($value->id, null, null, date("Y-m-d"));
+            if($saldo <= 0){
+                $arr[] = (array) $value;
+            }
+        }
+        return successResponse($response, ['list' => $arr]);
+    }else{
+        return successResponse($response, ['list' => []]); 
+    }
+});
 /*
  * Ambil akun pendapatan
  */
@@ -611,7 +669,6 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
             ->findAll();
     return successResponse($response, ['list' => $models]);
 });
-
 /**
  * Ambil akun saja tanpa klasifikasinya
  */

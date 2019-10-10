@@ -41,6 +41,8 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
                     ->andWhere('date(tanggal)', '<', $tanggal_start);
         if(!empty($lokasi)){
             $sql->andWhere("m_lokasi_id", "=", $lokasi);
+            // $lokasi = getSessionLokasi();
+            // $sql->customWhere("m_lokasi_id = '".$lokasi."' or m_lokasi_id in ($lokasi)", "AND");
         }
         $getsaldoawal = $sql->find();
         $arr2 = [];
@@ -61,6 +63,8 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
                     ->andWhere('date(tanggal)', '<=', $tanggal_end);
         if(!empty($lokasi)){
             $sql->andWhere("m_lokasi_id", "=", $lokasi);
+            // $lokasi = getSessionLokasi();
+            // $sql->customWhere("m_lokasi_id = '".$lokasi."' or m_lokasi_id in ($lokasi)", "AND");
         }
         $detail = $sql->find();
         $arr2['debit']          = intval($detail->debit);

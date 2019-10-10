@@ -93,7 +93,8 @@ $app->get("/acc/apppengajuan/view", function ($request, $response) {
             $arr[$val->t_pengajuan_det_id]['detail'][] = $val;
         }
     }
-    return successResponse($response, $arr);
+    $list = array_values($arr);
+    return successResponse($response, $list);
 });
 /*
  * get t_acc_pengajuan
@@ -133,7 +134,7 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
         $filter = (array) json_decode($params["filter"]);
         foreach ($filter as $key => $val) {
             if($key == 'acc_t_pengajuan.status' && $val == 'Pending'){
-                // $db->customWhere("acc_t_pengajuan.status like '%Pending%' or acc_t_pengajuan.status is null", "AND");
+                $db->customWhere("acc_t_pengajuan.status like '%Pending%' or acc_t_pengajuan.status is null", "AND");
             }else{
                 $db->where($key, "like", $val);
             }
@@ -412,6 +413,8 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
             $update['levelapproval'] = $data['data']['level'] + 1;
         }
         $model = $db->update("acc_t_pengajuan", $update, ["id" => $data["data"]["id"]]);
+
+        $statusapproval = $$data['status'];
         if ($data['status'] == "open") {
             $statusapproval = "approved";       
         }
@@ -422,7 +425,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
             $statusapproval = "rejected";
         }
         $models = $db->update("acc_approval_pengajuan", ["status" => $statusapproval], ["t_pengajuan_id" => $data["data"]["id"], "acc_m_user_id" => $_SESSION["user"]["id"]]);
-        if ($statusapproval == "approved") {
+        if ($update['status'] == "approved") {
             /**
              * Cek sisa approval
              */
@@ -432,7 +435,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
                     ->andWhere("status", "!=", "approved")
                     ->find();
             if(isset($cek->id)){
-                $statusapproval = "Pending"; 
+                $statusapproval = "pending"; 
                 $date = null;        
             }else{
                 $statusapproval = "approved";  
