@@ -25,7 +25,7 @@ app.controller("userCtrl", function($scope, Data, $rootScope) {
         tableStateRef = tableState;
         $scope.isLoading = true;
         var offset = tableState.pagination.start || 0;
-        var limit = tableState.pagination.number || 10;
+        var limit = tableState.pagination.number || 20;
         var param = {
             offset: offset,
             limit: limit

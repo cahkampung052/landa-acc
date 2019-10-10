@@ -1,4 +1,4 @@
-app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/m_akun";
     var master = 'Master Akun';
@@ -9,8 +9,8 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
     /**
      * Ambil klasifikasi
      */
-    $scope.getKlasifikasi = function() {
-        Data.get('acc/m_klasifikasi/list').then(function(response) {
+    $scope.getAkun = function (tipe) {
+        Data.get('acc/m_akun/getByType', {tipe: tipe}).then(function (response) {
             $scope.dataakun = response.data.list;
         });
     };
@@ -25,7 +25,7 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
         if (tableState.search.predicateObject) {
             param['filter'] = tableState.search.predicateObject;
         }
-        Data.get(control_link + '/index', param).then(function(response) {
+        Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
         });
         $scope.isLoading = false;
@@ -33,26 +33,26 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
     /**
      * Ambil akun
      */
-    $scope.getakun = function(id) {
-        Data.get('acc/m_akun/getakun/' + id).then(function(data) {
+    $scope.getakun = function (id) {
+        Data.get('acc/m_akun/getakun/' + id).then(function (data) {
             $scope.form.kode_induk = data.data.data.kode;
         });
     };
     /**
      * import
      */
-    $scope.uploadFiles = function(file, errFiles) {
+    $scope.uploadFiles = function (file, errFiles) {
         $scope.f = file;
         $scope.errFile = errFiles && errFiles[0];
         if (file) {
-            Data.get('site/url').then(function(data) {
+            Data.get('site/url').then(function (data) {
                 file.upload = Upload.upload({
                     url: data.data + 'acc/m_akun/import',
                     data: {
                         file: file
                     }
                 });
-                file.upload.then(function(response) {
+                file.upload.then(function (response) {
                     var data = response.data;
                     if (data.status_code == 200) {
                         $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
@@ -69,13 +69,13 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
     /**
      * export
      */
-    $scope.export = function() {
+    $scope.export = function () {
         window.location = 'api/acc/m_akun/export';
     };
     /** 
      * create
      */
-    $scope.create = function() {
+    $scope.create = function () {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = true;
@@ -83,23 +83,24 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
         $scope.form = {};
         $scope.form.is_kas = 0;
         $scope.form.saldo_normal = 1;
-        $scope.getKlasifikasi();
+        $scope.form.is_tipe = 1;
+        $scope.form.is_induk = 1;
     };
     /** 
      * update
      */
-    $scope.update = function(form) {
+    $scope.update = function (form) {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = false;
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
-        $scope.getKlasifikasi();
+        $scope.getAkun(form.tipe);
     };
     /** 
      * view
      */
-    $scope.view = function(form) {
+    $scope.view = function (form) {
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_create = false;
@@ -109,8 +110,8 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
     /** 
      * save action
      */
-    $scope.save = function(form) {
-        Data.post(control_link + '/save', form).then(function(result) {
+    $scope.save = function (form) {
+        Data.post(control_link + '/save', form).then(function (result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.cancel();
@@ -122,7 +123,7 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
     /** 
      * cancel action
      */
-    $scope.cancel = function() {
+    $scope.cancel = function () {
         if (!$scope.is_view) {
             $scope.callServer(tableStateRef);
         }
@@ -132,7 +133,7 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
     /**
      * Hapus akun
      */
-    $scope.trash = function(row) {
+    $scope.trash = function (row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -145,7 +146,7 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/trash', row).then(function(result) {
+                Data.post(control_link + '/trash', row).then(function (result) {
                     $rootScope.alert("Berhasil", "Data berhasil dihapus", "success");
                     $scope.cancel();
                 });
@@ -155,7 +156,7 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
     /**
      * Restore akun
      */
-    $scope.restore = function(row) {
+    $scope.restore = function (row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -168,7 +169,7 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 0;
-                Data.post(control_link + '/trash', row).then(function(result) {
+                Data.post(control_link + '/trash', row).then(function (result) {
                     $rootScope.alert("Berhasil", "Data berhasil direstore", "success");
                     $scope.cancel();
                 });
@@ -178,7 +179,7 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
     /**
      * Modal budgetting
      */
-    $scope.modalBudget = function(form) {
+    $scope.modalBudget = function (form) {
         var modalInstance = $uibModal.open({
             templateUrl: $rootScope.pathModulAcc + "tpl/m_akun/modal.html",
             controller: "budgetCtrl",
@@ -189,21 +190,23 @@ app.controller('akunCtrl', function($scope, Data, $rootScope, $uibModal, Upload)
                 form: form,
             }
         });
-        modalInstance.result.then(function(response) {
-            if (response.data == undefined) {} else {}
+        modalInstance.result.then(function (response) {
+            if (response.data == undefined) {
+            } else {
+            }
         });
     }
 });
-app.controller("budgetCtrl", function($state, $scope, Data, $uibModalInstance, form, $rootScope) {
+app.controller("budgetCtrl", function ($state, $scope, Data, $uibModalInstance, form, $rootScope) {
     $scope.form = form;
     $scope.listBudget = [];
-    $scope.getBudget = function(tahun) {
+    $scope.getBudget = function (tahun) {
         var param = {
             tahun: tahun,
             m_akun_id: $scope.form.id
         };
         if (tahun.toString().length > 3) {
-            Data.get('acc/m_akun/getBudget', param).then(function(result) {
+            Data.get('acc/m_akun/getBudget', param).then(function (result) {
                 $scope.listBudget = result.data;
             });
         }
@@ -214,7 +217,7 @@ app.controller("budgetCtrl", function($state, $scope, Data, $uibModalInstance, f
         $scope.getBudget(thisYear2);
         $scope.form.tahun = thisYear;
     }
-    $scope.save = function() {
+    $scope.save = function () {
         if ($scope.form.tahun.toString().length < 4) {
             $rootScope.alert("Terjadi Kesalahan", "Anda harus mengisi tahun dengan benar", "error");
         } else {
@@ -222,7 +225,7 @@ app.controller("budgetCtrl", function($state, $scope, Data, $uibModalInstance, f
                 listBudget: $scope.listBudget,
                 form: $scope.form
             };
-            Data.post('acc/m_akun/saveBudget', params).then(function(result) {
+            Data.post('acc/m_akun/saveBudget', params).then(function (result) {
                 if (result.status_code == 200) {
                     $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                     $uibModalInstance.close({
@@ -234,7 +237,7 @@ app.controller("budgetCtrl", function($state, $scope, Data, $uibModalInstance, f
             });
         }
     };
-    $scope.close = function() {
+    $scope.close = function () {
         $uibModalInstance.close({
             'data': undefined
         });

@@ -5,13 +5,10 @@
                 <strong class="">Daftar Hak Akses</strong>
                 <div class="btn-group pull-right mt-5px d-lg-none" role="group">
                     <div class="dropdown">
-                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Menu
-                        </button>
+                        <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <button class="dropdown-item" ng-click="isCollapsed = !isCollapsed" ng-init="isCollapsed = true">
-                                <i class="fa fa-search">
-                                </i>
+                                <i class="fa fa-search"></i>
                                 Pencarian
                             </button>
                             <button class="dropdown-item" ng-click="create();">
@@ -66,7 +63,7 @@
                         </thead>
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
-                                <td>{{ row.nama}}</td>
+                                <td>{{ row.nama }}</td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
@@ -83,7 +80,7 @@
         </div>
         <div class="card" ng-if="is_edit">
             <div class="card-header">
-                <strong>{{ formtittle}}</strong>
+                <strong>{{ formtittle }}</strong>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
@@ -96,7 +93,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
                     <div class="row">
                         <div class="col-md-4">
@@ -124,13 +120,6 @@
                                             <input ng-disabled="is_view" ng-model="form.akses.pengguna_user" type="checkbox"/>
                                             <i></i>
                                             Pengguna
-                                        </label>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <label class="i-checks">
-                                            <input ng-disabled="is_view" ng-model="form.akses.klasifikasi_akun" type="checkbox"/>
-                                            <i></i>
-                                            Klasifikasi Akun
                                         </label>
                                     </div>
                                     <div class="list-group-item">
@@ -202,14 +191,14 @@
                                         <label class="i-checks">
                                             <input ng-disabled="is_view" ng-model="form.akses.saldo_awal_hutang_persupplier" type="checkbox"/>
                                             <i></i>
-                                            Saldo Awal Hutang Persupplier
+                                            Hutang
                                         </label>
                                     </div>
                                     <div class="list-group-item">
                                         <label class="i-checks">
                                             <input ng-disabled="is_view" ng-model="form.akses.pembayaran_hutang_persupplier" type="checkbox"/>
                                             <i></i>
-                                            Pembayaran Hutang Persupplier
+                                            Pembayaran Hutang
                                         </label>
                                     </div>
                                     <div class="list-group-item">
@@ -223,14 +212,14 @@
                                         <label class="i-checks">
                                             <input ng-disabled="is_view" ng-model="form.akses.saldo_awal_piutang_percustomer" type="checkbox"/>
                                             <i></i>
-                                            Saldo Awal Piutang Percustomer
+                                            Piutang Percustomer
                                         </label>
                                     </div>
                                     <div class="list-group-item">
                                         <label class="i-checks">
                                             <input ng-disabled="is_view" ng-model="form.akses.pembayaran_piutang_percustomer" type="checkbox"/>
                                             <i></i>
-                                            Pembayaran Piutang Percustomer
+                                            Pembayaran Piutang
                                         </label>
                                     </div>
                                     <div class="list-group-item">
@@ -355,7 +344,6 @@
                                             <i></i>
                                             Tutup Bulan
                                         </label>
-
                                     </div>
                                     <div class="list-group-item">
                                         <label class="i-checks">
@@ -363,7 +351,6 @@
                                             <i></i>
                                             Tutup Tahun
                                         </label>
-
                                     </div>
                                     <div class="list-group-item">
                                         <label class="i-checks">
@@ -371,13 +358,27 @@
                                             <i></i>
                                             Pengajuan Proposal
                                         </label>
-
                                     </div>
                                     <div class="list-group-item">
                                         <label class="i-checks" style="padding-left: 15px">
                                             <input ng-disabled="is_view" ng-model="form.akses.pengajuan_detail" type="checkbox"/>
                                             <i></i>
                                             Detail Pengajuan
+                                        </label>
+                                        <label class="i-checks" style="padding-left: 15px">
+                                            <input ng-disabled="is_view" ng-model="form.akses.pengajuan_bs" type="checkbox"/>
+                                            <i></i>
+                                            Bon Sementara
+                                        </label>
+                                        <label class="i-checks" style="padding-left: 15px">
+                                            <input ng-disabled="is_view" ng-model="form.akses.pengajuan_pengeluaran" type="checkbox"/>
+                                            <i></i>
+                                            Pengeluaran
+                                        </label>
+                                        <label class="i-checks" style="padding-left: 15px">
+                                            <input ng-disabled="is_view" ng-model="form.akses.pengajuan_realisasi" type="checkbox"/>
+                                            <i></i>
+                                            Input Realisasi
                                         </label>
                                         <label class="i-checks" style="padding-left: 15px">
                                             <input ng-disabled="is_view" ng-model="form.akses.pengajuan_template" type="checkbox"/>
@@ -391,7 +392,6 @@
                                             <i></i>
                                             Approve Atasan
                                         </label>
-
                                     </div>
                                     <div class="list-group-item">
                                         <label class="i-checks">
@@ -399,7 +399,6 @@
                                             <i></i>
                                             Pertanggungjawaban Pembayaran
                                         </label>
-
                                     </div>
                                     <div class="list-group-item">
                                         <label class="i-checks">
@@ -407,7 +406,6 @@
                                             <i></i>
                                             Umur Ekonomis
                                         </label>
-
                                     </div>
                                     <div class="list-group-item">
                                         <label class="i-checks">
@@ -415,7 +413,6 @@
                                             <i></i>
                                             Pencatatan Asset
                                         </label>
-
                                     </div>
                                     <div class="list-group-item">
                                         <label class="i-checks">
@@ -423,7 +420,6 @@
                                             <i></i>
                                             Penyusutan Asset
                                         </label>
-
                                     </div>
                                     <div class="list-group-item">
                                         <label class="i-checks">
@@ -431,7 +427,6 @@
                                             <i></i>
                                             Pelepasan Asset
                                         </label>
-
                                     </div>
                                 </div>
                             </div>
@@ -547,10 +542,16 @@
                                             Monitoring Pengajuan
                                         </label>
                                     </div>
+                                    <div class="list-group-item">
+                                        <label class="i-checks" style="padding-left: 15px">
+                                            <input ng-disabled="is_view" ng-model="form.akses.monitoring_pengajuan_transfer" type="checkbox"/>
+                                            <i></i>
+                                            Drop Kas
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </form>
             </div>

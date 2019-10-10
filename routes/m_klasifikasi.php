@@ -112,7 +112,7 @@ $app->post('/acc/m_klasifikasi/save', function ($request, $response) {
             $data['tipe'] = $getparent->tipe;
         }
         
-        $childId = getChildId("acc_m_akun", $data['id']);
+        // $childId = getChildId("acc_m_akun", $data['id']);
         
         /**
          * Simpan ke database
@@ -122,13 +122,24 @@ $app->post('/acc/m_klasifikasi/save', function ($request, $response) {
         } else {
             $model = $db->insert('acc_m_akun', $data);
         }
+
+        /**
+         * Update saldo Normal
+         */
+        $db->run("update acc_m_akun set saldo_normal = 1 where tipe = 'HARTA'");
+        $db->run("update acc_m_akun set saldo_normal = -1 where tipe = 'KEWAJIBAN'");
+        $db->run("update acc_m_akun set saldo_normal = -1 where tipe = 'MODAL'");
+        $db->run("update acc_m_akun set saldo_normal = -1 where tipe = 'PENDAPATAN'");
+        $db->run("update acc_m_akun set saldo_normal = -1 where tipe = 'PENDAPATAN DILUAR USAHA'");
+        $db->run("update acc_m_akun set saldo_normal = 1 where tipe = 'BEBAN'");
+        $db->run("update acc_m_akun set saldo_normal = 1 where tipe = 'BEBAN DILUAR USAHA'");
         
         /**
          * Update tipe akun dibawahnya
          */
         $childId =getChildId("acc_m_akun", $model->id);
         if(!empty($childId)){
-            $db->update("acc_m_akun", ["tipe" => $model->tipe], "id in (".implode(",", $childId).")");            
+            $db->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus], "id in (".implode(",", $childId).")");            
         }
         return successResponse($response, $model);
     } else {
