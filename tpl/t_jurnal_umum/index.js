@@ -217,7 +217,7 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         $scope.is_disable = true;
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
-        $scope.form.tanggal = new Date(form.tanggal);
+        $scope.form.tanggal = new Date(form.tanggal2);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);
@@ -230,7 +230,7 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         $scope.is_disable = true;
         $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
-        $scope.form.tanggal = new Date(form.tanggal);
+        $scope.form.tanggal = new Date(form.tanggal2);
         $scope.tanggal_foto = new Date(form.tanggal);
         $scope.getDetail(form.id);
         $scope.listgambar(form.id);

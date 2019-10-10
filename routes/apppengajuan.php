@@ -288,6 +288,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
         $tanggal = $data["data"]["tanggal"];
         $data["data"]["tanggal"] = date("Y-m-d H:i", strtotime($tanggal));
         $data["data"]["lokasi_waktu"] .= " " . date("H:i");
+        unset($data["data"]["id"]);
         try {
             if (isset($data["data"]["id"]) && !empty($data["data"]["id"])) {
                 $model = $db->update("acc_t_pengajuan", $data["data"], ["id" => $data["data"]["id"]]);
@@ -328,6 +329,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
                         foreach ($val["detail"] as $keys => $vals) {
                             $vals["t_pengajuan_id"] = $model->id;
                             $vals["t_pengajuan_det_id"] = $modeldetail->id;
+                            unset($vals["id"]);
                             $db->insert("acc_t_pengajuan_det2", $vals);
                         }
                     }
@@ -363,7 +365,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
             }
             return successResponse($response, $model);
         } catch (Exception $e) {
-            return unprocessResponse($response, ['terjadi kesalahan pada server']);
+            return unprocessResponse($response, ["terjadi kesalahan pada server"]);
         }
     }
     return unprocessResponse($response, $validasi);
