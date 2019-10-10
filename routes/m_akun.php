@@ -570,6 +570,7 @@ $app->get('/acc/m_akun/akunPendapatan', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("*")->from("acc_m_akun")
             ->customWhere("nama LIKE '%PENDAPATAN%'")
+            ->andWhere("tipe", "=", "PENDAPATAN")
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
