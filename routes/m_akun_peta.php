@@ -38,8 +38,7 @@ $app->get('/acc/m_akun_peta/index', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
 
-//    DEKLARASI AKUN PEMETAAN
-//    $akunpeta = ["Pengimbang Neraca", "Laba Rugi", "tes"];
+    // DEKLARASI AKUN PEMETAAN
     $akunpeta = $db->select("acc_m_akun_peta.*, acc_m_akun.kode, acc_m_akun.nama")
             ->from("acc_m_akun_peta")
             ->join("left join", "acc_m_akun", "acc_m_akun.id = acc_m_akun_peta.m_akun_id AND acc_m_akun_peta.is_multiple = 0")
