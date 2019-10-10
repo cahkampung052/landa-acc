@@ -93,7 +93,8 @@ $app->get("/acc/apppengajuan/view", function ($request, $response) {
             $arr[$val->t_pengajuan_det_id]['detail'][] = $val;
         }
     }
-    return successResponse($response, $arr);
+    $list = array_values($arr);
+    return successResponse($response, $list);
 });
 /*
  * get t_acc_pengajuan
@@ -118,9 +119,9 @@ $app->get("/acc/apppengajuan/getAcc", function ($request, $response) {
  * Ambil semua t pengajuan
  */
 $app->get("/acc/apppengajuan/index", function ($request, $response) {
-    $params = $request->getParams();
-    $tableuser = tableUser();
-    $db = $this->db;
+    $params     = $request->getParams();
+    $tableuser  = tableUser();
+    $db         = $this->db;
     $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, " . $tableuser . ".nama as namaUser")
             ->from("acc_t_pengajuan")
             ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_t_pengajuan.m_lokasi_id")
@@ -132,12 +133,20 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
     if (isset($params["filter"])) {
         $filter = (array) json_decode($params["filter"]);
         foreach ($filter as $key => $val) {
-            $db->where($key, "like", $val);
+            if($key == 'acc_t_pengajuan.status' && $val == 'Pending'){
+                $db->customWhere("acc_t_pengajuan.status like '%Pending%' or acc_t_pengajuan.status is null", "AND");
+            }else{
+                $db->where($key, "like", $val);
+            }
         }
     }
     /**
      * Set limit dan offset
      */
+    if(!isset($filter['m_lokasi_id']) || (isset($filter['m_lokasi_id']) && !empty($filter['m_lokasi_id']))){
+        $lokasi = getSessionLokasi();
+        $db->customWhere("m_lokasi_id in ($lokasi)", "AND");
+    }
     if (isset($params["limit"]) && !empty($params["limit"])) {
         $db->limit($params["limit"]);
     }
@@ -148,8 +157,9 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
         $db->where("acc_t_pengajuan.tanggal", ">=", date("Y", strtotime($params['special_tahun'])) . "-01-01");
         $db->where("acc_t_pengajuan.tanggal", "<=", date("Y", strtotime($params['special_tahun'])) . "-12-31");
     }
-    if (isset($params["special_lokasi"]) && !empty($params["special_lokasi"])) {
-        $db->where("acc_t_pengajuan.m_lokasi_id", "=", $params['special_lokasi']);
+    if (isset($params["lokasi"]) && !empty($params["lokasi"])) {
+        $db->where("acc_t_pengajuan.m_lokasi_id", "=", $params['lokasi']);
+        $db->andWhere("acc_t_pengajuan.status", "=", "approved");
     }
     if (isset($params["start_date"]) && !empty($params["start_date"])) {
         $db->where("acc_t_pengajuan.tanggal", ">=", $params['start_date']);
@@ -180,9 +190,9 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
         if ($acc) {
             $models[$key]['level'] = intval($acc->level);
         } else {
-            if ($val->created_by != $_SESSION['user']['id']) {
-                unset($models[$key]);
-            }
+            // if ($val->created_by != $_SESSION['user']['id']) {
+            //     unset($models[$key]);
+            // }
         }
     }
     return successResponse($response, ["list" => $models, "totalItems" => $totalItem]);
@@ -403,6 +413,8 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
             $update['levelapproval'] = $data['data']['level'] + 1;
         }
         $model = $db->update("acc_t_pengajuan", $update, ["id" => $data["data"]["id"]]);
+
+        $statusapproval = $$data['status'];
         if ($data['status'] == "open") {
             $statusapproval = "approved";       
         }
@@ -413,7 +425,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
             $statusapproval = "rejected";
         }
         $models = $db->update("acc_approval_pengajuan", ["status" => $statusapproval], ["t_pengajuan_id" => $data["data"]["id"], "acc_m_user_id" => $_SESSION["user"]["id"]]);
-        if ($statusapproval == "approved") {
+        if ($update['status'] == "approved") {
             /**
              * Cek sisa approval
              */
@@ -423,7 +435,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
                     ->andWhere("status", "!=", "approved")
                     ->find();
             if(isset($cek->id)){
-                $statusapproval = ""; 
+                $statusapproval = "pending"; 
                 $date = null;        
             }else{
                 $statusapproval = "approved";  

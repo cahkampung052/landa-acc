@@ -9,8 +9,8 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
     /**
      * Ambil klasifikasi
      */
-    $scope.getKlasifikasi = function () {
-        Data.get('acc/m_klasifikasi/list').then(function (response) {
+    $scope.getAkun = function (tipe) {
+        Data.get('acc/m_akun/getByType', {tipe: tipe}).then(function (response) {
             $scope.dataakun = response.data.list;
         });
     };
@@ -38,22 +38,6 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
             $scope.form.kode_induk = data.data.data.kode;
         });
     };
-
-    /*
-     * cek kode
-     */
-    $scope.cekKode = function (induk, kode) {
-        console.log(induk)
-        console.log(kode)
-        if(induk != undefined){
-            kode = induk + "." + kode;
-        }
-        Data.get('/acc/m_akun/getKode/' + kode).then(function (response) {
-            $scope.form.status_kode = response.data.status_kode;
-            $scope.form.message = response.data.message;
-        })
-    }
-
     /**
      * import
      */
@@ -99,7 +83,8 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
         $scope.form = {};
         $scope.form.is_kas = 0;
         $scope.form.saldo_normal = 1;
-        $scope.getKlasifikasi();
+        $scope.form.is_tipe = 1;
+        $scope.form.is_induk = 1;
     };
     /** 
      * update
@@ -110,7 +95,7 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
         $scope.is_create = false;
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
-        $scope.getKlasifikasi();
+        $scope.getAkun(form.tipe);
     };
     /** 
      * view

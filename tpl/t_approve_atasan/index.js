@@ -208,7 +208,7 @@ app.controller("budgetCtrl", function ($state, $scope, Data, $uibModalInstance, 
 app.controller("modalDetailCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope, form, data) {
     $scope.form = {};
     $scope.form = form;
-    $scope.is_view = data.is_view;
+    $scope.lihatDariApprove = true;
     $scope.status = data.status;
     $scope.listDetail = [];
     if ($scope.form.detail != undefined) {

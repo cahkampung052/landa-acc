@@ -59,7 +59,7 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
             $scope.listDetail = response.data;
         })
     };
-    if (typeof $stateParams.tahun != "undefined" && $stateParams.tahun != "" && $stateParams.tahun !== null) {
+    if (typeof $stateParams.lokasi != "undefined" && $stateParams.lokasi != "" && $stateParams.lokasi !== null) {
         $scope.special_filter = {
             tahun: new Date($stateParams.tahun),
             lokasi: $stateParams.lokasi
@@ -196,7 +196,6 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
          */
         Data.get("acc/apppengajuan/getAll").then(function(response) {
             $scope.listPengajuan = response.data;
-            console.log(response.data)
         });
     };
     $scope.update = function(form) {
@@ -255,7 +254,6 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
             $scope.form = response.data[0];
             $scope.form.tanggal = new Date($scope.form.tanggal)
             $scope.getDetail($scope.form.id)
-            console.log($scope.listDetail)
             $scope.form.no_proposal = "";
             $scope.form.id = "";
             $scope.tersalin_dari = no_proposal;
@@ -313,7 +311,6 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
             }
         })
         modalInstance.result.then(function(response) {
-            console.log(response);
             if (response.detail.length > 0) {
                 form.detail = response.detail;
             }
@@ -375,12 +372,11 @@ app.controller("modalDetailCtrl", function($state, $scope, Data, $uibModalInstan
     $scope.form = form;
     $scope.is_view = data.is_view;
     $scope.status = data.status;
+    $scope.lihatDariApprove = false;
     $scope.listDetail = [];
     if ($scope.form.detail != undefined) {
         $scope.listDetail = $scope.form.detail;
-        //        $scope.sumTotal();
     }
-    //    $scope.sumTotal();
     $scope.addDetail = function(val) {
         var comArr = eval(val);
         var newDet = {
@@ -409,7 +405,7 @@ app.controller("modalDetailCtrl", function($state, $scope, Data, $uibModalInstan
         $scope.form.sub_total = total;
     };
     $scope.save = function() {
-        if ($scope.status == "Terbayar") {
+        if ($scope.status == "Terbayar" || $scope.status == "Approved") {
             Data.post("acc/apppengajuan/saveDetail", $scope.listDetail).then(function(result) {
                 if (result.status_code == 200) {
                     $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");

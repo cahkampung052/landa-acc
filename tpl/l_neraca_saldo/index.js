@@ -5,6 +5,12 @@ app.controller('l_neracasaldoCtrl', function($scope, Data, $rootScope, $uibModal
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+    Data.get('acc/m_lokasi/getLokasi').then(function (response) {
+        $scope.listLokasi = response.data.list;
+        if ($scope.listLokasi.length > 0) {
+            $scope.form.m_lokasi_id = $scope.listLokasi[0];
+        }
+    });
     /**
      * Ambil data dari server
      */
@@ -16,6 +22,8 @@ app.controller('l_neracasaldoCtrl', function($scope, Data, $rootScope, $uibModal
             print: is_print,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
+            m_lokasi_id: $scope.form.m_lokasi_id.id,
+            nama_lokasi: $scope.form.m_lokasi_id.nama,
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan', param).then(function(response) {
