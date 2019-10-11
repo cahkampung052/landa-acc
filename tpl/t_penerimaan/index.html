@@ -75,7 +75,7 @@
                             <td class="align-left">{{ row.no_transaksi }}</td>
                             <td class="align-left">{{ row.namaLokasi }}</td>
                             <td class="align-left">{{ row.tanggal_formated }}</td>
-                            <td class="align-right">{{ row.grandtotal | number }}</td>
+                            <td class="align-right">{{ row.total | number }}</td>
                             <td class="align-left">{{ row.m_kontak_id.nama }}</td>
                             <td class="align-left">{{ row.created_at }}</td>
                             <td class="align-left">{{ row.namaUser }}</td>
@@ -238,7 +238,7 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr>
+<!--                                            <tr>
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
@@ -273,7 +273,7 @@
                                                         <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="true" ng-model="form.total"/>
                                                     </div>
                                                 </td>
-                                            </tr>
+                                            </tr>-->
                                         </tbody>
                                     </table>
                                 </div>

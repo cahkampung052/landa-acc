@@ -174,7 +174,7 @@ $app->post('/acc/t_transfer/delete', function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
     $model = $db->delete("acc_transfer", ['id' => $data['id']]);
-    $model = $db->deleted("acc_trans_detail", ["reff_type" => "acc_transfer", "reff_id" => $data['id']]);
+    $model = $db->delete("acc_trans_detail", ["reff_type" => "acc_transfer", "reff_id" => $data['id']]);
     if ($model) {
         return successResponse($response, $model);
     } else {
