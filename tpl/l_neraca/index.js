@@ -1,4 +1,4 @@
-app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
+app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal, $state) {
     var control_link = "acc/l_neraca";
     $scope.form = {};
     $scope.url = {};
@@ -39,6 +39,17 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal) {
             
         }
     };
+    
+    $scope.viewBukuBesar = function (row) {
+        console.log(row)
+        var akun = {
+            id : row.id,
+            kode : row.kode,
+            nama : row.nama
+        }
+        var akun = btoa(angular.toJson(akun))
+        $state.go("laporan.buku_besar", {akun:akun})
+    }
     
     /**
      * Modal setting pengecualian

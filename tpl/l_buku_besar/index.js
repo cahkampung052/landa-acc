@@ -1,4 +1,4 @@
-app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope) {
+app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $stateParams) {
     var control_link = "acc/l_buku_besar";
     $scope.form = {};
     $scope.form.tanggal = {
@@ -10,7 +10,7 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope) {
      */
     Data.get('acc/m_akun/listakun').then(function (data) {
         $scope.listAkun = data.data;
-        if ($scope.listAkun.length > 0) {
+        if ($scope.listAkun.length > 0 && typeof $stateParams.akun == undefined) {
             $scope.form.m_akun_id = $scope.listAkun[0];
         }
     });
@@ -21,6 +21,15 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
+            if (typeof $stateParams.akun != undefined) {
+                var akun = angular.fromJson(atob($stateParams.akun));
+                $scope.form.m_akun_id = akun;
+                $scope.form.tanggal = {
+                    endDate: moment().add(2, 'M'),
+                    startDate: moment()
+                };
+                $scope.view(0, 0);
+            }
         }
     });
     /**
@@ -56,4 +65,6 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope) {
             });
         }
     };
+
+
 });
