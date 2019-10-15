@@ -151,7 +151,7 @@
                                     <span style="color: #0055ef; font-weight: 700">{{ val.nama}}</span>
                                 </td>
                             </tr>
-                            <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
+                            <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1" ng-dblclick="viewBukuBesar(row)">
                                 <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}</td>
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
                             </tr>
@@ -195,7 +195,7 @@
                                     <span style="color: #0055ef; font-weight: 700">{{ val.nama}}</span>
                                 </td>
                             </tr>
-                            <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
+                            <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1" ng-dblclick="viewBukuBesar(row)">
                                 <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}</td>
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
                             </tr>
