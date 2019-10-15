@@ -276,6 +276,7 @@ $app->get("/acc/apppengajuan/listapprove", function ($request, $response) {
 $app->post("/acc/apppengajuan/save", function ($request, $response) {
     $data       = $request->getParams();
     $db         = $this->db;
+//    print_r($data);die;
     $validasi   = validasi($data["data"]);
     if ($validasi === true) {
         /**
@@ -288,7 +289,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
         $tanggal = $data["data"]["tanggal"];
         $data["data"]["tanggal"] = date("Y-m-d H:i", strtotime($tanggal));
         $data["data"]["lokasi_waktu"] .= " " . date("H:i");
-        unset($data["data"]["id"]);
+//        unset($data["data"]["id"]);
         try {
             if (isset($data["data"]["id"]) && !empty($data["data"]["id"])) {
                 $model = $db->update("acc_t_pengajuan", $data["data"], ["id" => $data["data"]["id"]]);
@@ -314,6 +315,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
              */
             if (isset($data["detail"]) && !empty($data["detail"])) {
                 foreach ($data["detail"] as $key => $val) {
+//                    unset($val["id"]);
                     $detail["id"] = isset($val["id"]) && !empty($val["id"]) ? $val["id"] : '';
                     $detail["m_akun_id"] = isset($val["m_akun_id"]['id']) ? $val["m_akun_id"]['id'] : '';
                     $detail["keterangan"] = isset($val["keterangan"]) ? $val["keterangan"] : '';
@@ -365,7 +367,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
             }
             return successResponse($response, $model);
         } catch (Exception $e) {
-            return unprocessResponse($response, ["terjadi kesalahan pada server"]);
+            return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
         }
     }
     return unprocessResponse($response, $validasi);
