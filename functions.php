@@ -417,6 +417,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
         $tipe       = str_replace(" ", "_", $value->tipe);
         $spasi      = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $fullName   = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$tipe]['detail'][$key]['id'] = $value->id;
         $arr[$tipe]['detail'][$key]['kode'] = $value->kode;
         $arr[$tipe]['detail'][$key]['is_tipe'] = $value->is_tipe;
         $arr[$tipe]['detail'][$key]['parent_id'] = $value->parent_id;

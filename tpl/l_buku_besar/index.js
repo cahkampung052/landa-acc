@@ -25,11 +25,16 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
                 var akun = angular.fromJson(atob($stateParams.akun));
                 $scope.form.m_akun_id = akun;
                 $scope.form.tanggal = {
-                    endDate: moment().add(2, 'M'),
-                    startDate: moment()
+                    endDate: moment(),
+                    startDate: moment().subtract(2, 'M')
                 };
-                $scope.view(0, 0);
             }
+            if (typeof $stateParams.akun != undefined) {
+                var tanggal = angular.fromJson(atob($stateParams.tanggal));
+                $scope.form.tanggal = tanggal;
+            }
+            
+            $scope.view(0, 0);
         }
     });
     /**
