@@ -173,7 +173,7 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
         $models[$key]['tanggal_formated'] = date("d-m-Y h:i", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i", $val->created_at);
         $models[$key]['m_lokasi_id'] = ["id" => $val->idLokasi, "kode" => $val->kodeLokasi, "nama" => $val->namaLokasi];
-//        $models[$key]['status'] = ucfirst($val->status);
+        $models[$key]['status'] = ucfirst($val->status);
         
     }
 
