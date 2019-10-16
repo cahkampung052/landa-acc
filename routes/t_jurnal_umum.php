@@ -205,6 +205,7 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
          * Simpan jurnal
          */
         $jurnal['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
+        $jurnal['m_lokasi_jurnal_id'] = $jurnal['m_lokasi_id'];
         $jurnal['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $jurnal['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $jurnal['total_debit'] = $params['form']['total_debit'];
