@@ -46,10 +46,8 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal, $st
             kode : row.kode,
             nama : row.nama
         }
-        var tanggal = $scope.form.tanggal;
         var akun = btoa(angular.toJson(akun))
-        var tanggal = btoa(angular.toJson(tanggal))
-        $state.go("laporan.buku_besar", {akun:akun, tanggal:tanggal})
+        $state.go("laporan.buku_besar", {akun:akun})
     }
     
     /**
