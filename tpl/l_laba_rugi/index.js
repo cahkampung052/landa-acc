@@ -1,4 +1,4 @@
-app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, Upload, $state) {
     var control_link = "acc/l_laba_rugi";
     $scope.form = {};
     $scope.url = {};
