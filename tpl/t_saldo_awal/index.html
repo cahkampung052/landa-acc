@@ -66,9 +66,9 @@
                             <tr ng-repeat="row in displayed">
                                 <td style="text-align: left;">
                                     <span ng-if="row.is_tipe == 1">
-                                        <b>{{ row.nama_lengkap}}</b>
+                                        <b ng-bind-html="row.nama_lengkap"></b>
                                     </span>
-                                    <span ng-if="row.is_tipe == 0">{{ row.nama_lengkap}}</span>
+                                    <span ng-if="row.is_tipe == 0" ng-bind-html="row.nama_lengkap"></span>
                                 </td>
                                 <td style="text-align: left;">
                                     <div class="input-group input-group-sm" ng-if="row.is_tipe == 0">
