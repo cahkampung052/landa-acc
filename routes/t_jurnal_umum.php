@@ -134,9 +134,9 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
     $limit = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_jurnal.*, acc_m_lokasi.id as idLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi, ".$tableuser.".nama as namaUser")
+    $db->select("acc_jurnal.*, acc_m_lokasi.id as idLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi")
             ->from("acc_jurnal")
-            ->join("join", $tableuser, $tableuser.".id = acc_jurnal.created_by")
+//            ->join("join", $tableuser, $tableuser.".id = acc_jurnal.created_by")
             ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal.m_lokasi_id")
             ->orderBy('acc_jurnal.tanggal DESC')
             ->orderBy('acc_jurnal.created_at DESC');
@@ -173,7 +173,7 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
         $models[$key]['tanggal_formated'] = date("d-m-Y h:i", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i", $val->created_at);
         $models[$key]['m_lokasi_id'] = ["id" => $val->idLokasi, "kode" => $val->kodeLokasi, "nama" => $val->namaLokasi];
-        $models[$key]['status'] = ucfirst($val->status);
+//        $models[$key]['status'] = ucfirst($val->status);
         
     }
 
