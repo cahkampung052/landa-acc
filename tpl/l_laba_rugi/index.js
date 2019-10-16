@@ -58,7 +58,7 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
         var akun = {
             id : row.id,
             kode : row.kode,
-            nama : row.nama
+            nama : row.nama2
         }
         var akun = btoa(angular.toJson(akun))
         $state.go("laporan.buku_besar", {akun:akun})
