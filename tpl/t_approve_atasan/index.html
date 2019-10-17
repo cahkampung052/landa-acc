@@ -52,8 +52,7 @@
                                 <th class="align-left">Perihal</th>
                                 <th class="align-left">Tanggal Pengajuan</th>
                                 <th class="align-right">Total Dana</th>
-                                <th class="align-center">Status Approval</th>
-                                <th class="align-center">Status Proposal</th>
+                                <th class="align-center">Status</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -73,20 +72,12 @@
                                     <span class="bg-warning p-1" ng-if="row.status == 'Pending'">Pending</span>
                                     <span class="bg-success p-1" ng-if="row.status == 'Terbayar'">Terbayar</span>
                                 </td>
-                                <td class="align-center">
-                                    <span class="bg-primary p-1" ng-if="row.status_pengajuan == 'Approved'">{{ row.status_pengajuan }}</span>
-                                    <span class="bg-danger p-1" ng-if="row.status_pengajuan == 'Canceled'">{{ row.status_pengajuan }}</span>
-                                    <span class="bg-danger p-1" ng-if="row.status_pengajuan == 'Rejected'">{{ row.status_pengajuan }}</span>
-                                    <span class="bg-warning p-1" ng-if="row.status_pengajuan == ''">Pending</span>
-                                    <span class="bg-warning p-1" ng-if="row.status_pengajuan == 'Pending'">Pending</span>
-                                    <span class="bg-success p-1" ng-if="row.status_pengajuan == 'Terbayar'">Terbayar</span>
-                                </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group" ng-if="row.status != 'Rejected'">
                                         <button type="button" class="btn btn-info btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="view(row)">
                                             <i class="fa fa-list"></i>
                                         </button>
-                                        <button type="button" class="btn btn-success btn-sm" ui-sref="keuangan.pengeluaran({no_proposal: row.no_proposal})" ng-if="row.status_pengajuan == 'Approved' && user.akses.pengajuan_pengeluaran">
+                                        <button type="button" class="btn btn-success btn-sm" ui-sref="keuangan.pengeluaran({no_proposal: row.no_proposal})" ng-if="row.status == 'Approved' && user.akses.pengajuan_pengeluaran">
                                             <i class="fa fa-dollar"></i>
                                             Bayar
                                         </button>

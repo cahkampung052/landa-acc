@@ -249,8 +249,11 @@ $app->get("/acc/apppengajuan/listapprove", function ($request, $response) {
         $models[$key] = (array) $val;
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
         $models[$key]['created_formated'] = $val->namaUser;
-        $models[$key]['status'] = ucfirst($val->status_approval);
-        $models[$key]['status_pengajuan'] = ucfirst($val->status);
+        if($val->status == 'terbayar'){
+            $models[$key]['status'] = ucfirst($val->status);
+        }else{
+            $models[$key]['status'] = ucfirst($val->status_approval);
+        }
         $models[$key]['levelapproval'] = intval($val->levelapproval);
         /*
          * ambil sisa approve dari acc_approval_pengajuan

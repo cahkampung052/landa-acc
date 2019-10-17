@@ -70,7 +70,6 @@ $app->get("/acc/appapproval/index", function ($request, $response) {
 $app->post("/acc/appapproval/save", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
-//    print_r($data);die;
     $validasi = validasi($data["data"]);
     if ($validasi === true) {
         try {
