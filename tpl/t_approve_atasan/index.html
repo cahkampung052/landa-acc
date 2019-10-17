@@ -65,7 +65,7 @@
                                 <td class="align-left">{{ row.tanggal | date:'dd-MM-yyyy' }} {{ row.created_at| date:'H:mm' }}</td>
                                 <td class="align-right">{{ row.jumlah_perkiraan | number }}</td>
                                 <td class="align-center">
-                                    <span class="bg-info p-1" ng-if="row.status == 'Approved'">{{ row.status }}</span>
+                                    <span class="bg-primary p-1" ng-if="row.status == 'Approved'">{{ row.status }}</span>
                                     <span class="bg-danger p-1" ng-if="row.status == 'Canceled'">{{ row.status }}</span>
                                     <span class="bg-danger p-1" ng-if="row.status == 'Rejected'">{{ row.status }}</span>
                                     <span class="bg-warning p-1" ng-if="row.status == ''">Pending</span>
@@ -77,10 +77,10 @@
                                         <button type="button" class="btn btn-info btn-sm" button-spinner="loading" ng-disabled="loading" ng-click="view(row)">
                                             <i class="fa fa-list"></i>
                                         </button>
-                                        <!-- <button type="button" class="btn btn-success btn-sm" ui-sref="keuangan.pengeluaran({no_proposal: row.no_proposal})" ng-if="row.status == 'Approved'">
+                                        <button type="button" class="btn btn-success btn-sm" ui-sref="keuangan.pengeluaran({no_proposal: row.no_proposal})" ng-if="row.status == 'Approved' && user.akses.pengajuan_pengeluaran">
                                             <i class="fa fa-dollar"></i>
                                             Bayar
-                                        </button> -->
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

@@ -1,19 +1,18 @@
 <?php
-
 /**
  * Validasi
  * @param  array $data
  * @param  array $custom
  * @return array
  */
-function validasi($data, $custom = array()) {
+function validasi($data, $custom = array())
+{
     $validasi = array(
         "m_lokasi_id" => "required",
     );
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
-
 $app->post("/acc/apppengajuan/getBudgeting", function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
@@ -74,7 +73,7 @@ $app->get("/acc/apppengajuan/getAll", function ($request, $response) {
  */
 $app->get("/acc/apppengajuan/view", function ($request, $response) {
     $params = $request->getParams();
-    $db = $this->db;
+    $db     = $this->db;
     $db->select("acc_t_pengajuan_det.*, acc_m_akun.nama as namaAkun, acc_m_akun.kode as kodeAkun")
             ->from("acc_t_pengajuan_det")
             ->join("JOIN", "acc_m_akun", "acc_m_akun.id = acc_t_pengajuan_det.m_akun_id")
@@ -101,9 +100,9 @@ $app->get("/acc/apppengajuan/view", function ($request, $response) {
  * get t_acc_pengajuan
  */
 $app->get("/acc/apppengajuan/getAcc", function ($request, $response) {
-    $params = $request->getParams();
-    $tableuser = tableUser();
-    $db = $this->db;
+    $params     = $request->getParams();
+    $tableuser  = tableUser();
+    $db         = $this->db;
     $db->select("acc_approval_pengajuan.*, " . $tableuser . ".nama as namaUser")
             ->from("acc_approval_pengajuan")
             ->join("JOIN", $tableuser, $tableuser . ".id = acc_approval_pengajuan.acc_m_user_id")
@@ -120,9 +119,9 @@ $app->get("/acc/apppengajuan/getAcc", function ($request, $response) {
  * Ambil semua t pengajuan
  */
 $app->get("/acc/apppengajuan/index", function ($request, $response) {
-    $params = $request->getParams();
-    $tableuser = tableUser();
-    $db = $this->db;
+    $params     = $request->getParams();
+    $tableuser  = tableUser();
+    $db         = $this->db;
     $db->select("acc_t_pengajuan.*, acc_m_lokasi.nama as namaLokasi, acc_m_lokasi.kode as kodeLokasi, " . $tableuser . ".nama as namaUser")
             ->from("acc_t_pengajuan")
             ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_t_pengajuan.m_lokasi_id")
@@ -134,9 +133,9 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
     if (isset($params["filter"])) {
         $filter = (array) json_decode($params["filter"]);
         foreach ($filter as $key => $val) {
-            if ($key == 'acc_t_pengajuan.status' && $val == 'Pending') {
+            if($key == 'acc_t_pengajuan.status' && $val == 'Pending'){
                 $db->customWhere("acc_t_pengajuan.status like '%Pending%' or acc_t_pengajuan.status is null", "AND");
-            } else {
+            }else{
                 $db->where($key, "like", $val);
             }
         }
@@ -144,7 +143,7 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
     /**
      * Set limit dan offset
      */
-    if (!isset($filter['m_lokasi_id']) || (isset($filter['m_lokasi_id']) && !empty($filter['m_lokasi_id']))) {
+    if(!isset($filter['m_lokasi_id']) || (isset($filter['m_lokasi_id']) && !empty($filter['m_lokasi_id']))){
         $lokasi = getSessionLokasi();
         $db->customWhere("m_lokasi_id in ($lokasi)", "AND");
     }
@@ -168,11 +167,11 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
     if (isset($params["end_date"]) && !empty($params["end_date"])) {
         $db->where("acc_t_pengajuan.tanggal", "<=", $params['end_date']);
     }
-    if (isset($params["status"]) && $params["status"] == 'Pending') {
-        $db->customWhere("acc_t_pengajuan.status = '' or acc_t_pengajuan.status = 'Pending' or acc_t_pengajuan.status is null", "and");
+    if(isset($params["status"]) && $params["status"] == 'Pending'){
+        $db->customWhere("acc_t_pengajuan.status = '' or acc_t_pengajuan.status = 'Pending' or acc_t_pengajuan.status is null", "and");        
     }
-    $models = $db->findAll();
-    $totalItem = $db->count();
+    $models     = $db->findAll();
+    $totalItem  = $db->count();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
@@ -250,7 +249,11 @@ $app->get("/acc/apppengajuan/listapprove", function ($request, $response) {
         $models[$key] = (array) $val;
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
         $models[$key]['created_formated'] = $val->namaUser;
-        $models[$key]['status'] = ucfirst($val->status_approval);
+        if($val->status == 'terbayar'){
+            $models[$key]['status'] = ucfirst($val->status);
+        }else{
+            $models[$key]['status'] = ucfirst($val->status_approval);
+        }
         $models[$key]['levelapproval'] = intval($val->levelapproval);
         /*
          * ambil sisa approve dari acc_approval_pengajuan
@@ -275,10 +278,9 @@ $app->get("/acc/apppengajuan/listapprove", function ($request, $response) {
  * Save t pengajuan
  */
 $app->post("/acc/apppengajuan/save", function ($request, $response) {
-    $data = $request->getParams();
-    $db = $this->db;
-//    print_r($data);die;
-    $validasi = validasi($data["data"]);
+    $data       = $request->getParams();
+    $db         = $this->db;
+    $validasi   = validasi($data["data"]);
     if ($validasi === true) {
         /**
          * Generate no_proposal
@@ -290,7 +292,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
         $tanggal = $data["data"]["tanggal"];
         $data["data"]["tanggal"] = date("Y-m-d H:i", strtotime($tanggal));
         $data["data"]["lokasi_waktu"] .= " " . date("H:i");
-//        unset($data["data"]["id"]);
+        unset($data["data"]["id"]);
         try {
             if (isset($data["data"]["id"]) && !empty($data["data"]["id"])) {
                 $model = $db->update("acc_t_pengajuan", $data["data"], ["id" => $data["data"]["id"]]);
@@ -316,7 +318,6 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
              */
             if (isset($data["detail"]) && !empty($data["detail"])) {
                 foreach ($data["detail"] as $key => $val) {
-//                    unset($val["id"]);
                     $detail["id"] = isset($val["id"]) && !empty($val["id"]) ? $val["id"] : '';
                     $detail["m_akun_id"] = isset($val["m_akun_id"]['id']) ? $val["m_akun_id"]['id'] : '';
                     $detail["keterangan"] = isset($val["keterangan"]) ? $val["keterangan"] : '';
@@ -368,7 +369,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
             }
             return successResponse($response, $model);
         } catch (Exception $e) {
-            return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
+            return unprocessResponse($response, ["terjadi kesalahan pada server"]);
         }
     }
     return unprocessResponse($response, $validasi);
@@ -412,12 +413,6 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
     try {
-
-        foreach ($data['detail'] as $key => $val) {
-            $val['m_akun_id'] = (isset($val['m_akun_id'])) ? $val['m_akun_id']['id'] : "";
-            $db->update("acc_t_pengajuan_det", $val, ["id" => $val["id"]]);
-        }
-
         $update['status'] = $data['status'];
         $update['catatan'] = isset($data['catatan']) ? $data['catatan'] : "";
         if ($data['status'] == "open") {
@@ -425,9 +420,9 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
         }
         $model = $db->update("acc_t_pengajuan", $update, ["id" => $data["data"]["id"]]);
 
-        $statusapproval = $data['status'];
+        $statusapproval = $$data['status'];
         if ($data['status'] == "open") {
-            $statusapproval = "approved";
+            $statusapproval = "approved";       
         }
         if ($data['status'] == "canceled") {
             $statusapproval = "canceled";
@@ -436,8 +431,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
             $statusapproval = "rejected";
         }
         $models = $db->update("acc_approval_pengajuan", ["status" => $statusapproval], ["t_pengajuan_id" => $data["data"]["id"], "acc_m_user_id" => $_SESSION["user"]["id"]]);
-
-        if ($models->status == "approved") {
+        if ($update['status'] == "approved") {
             /**
              * Cek sisa approval
              */
@@ -446,17 +440,17 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
                     ->where("t_pengajuan_id", "=", $model->id)
                     ->andWhere("status", "!=", "approved")
                     ->find();
-            if (isset($cek->id)) {
-                $statusapproval = "pending";
-                $date = null;
-            } else {
-                $statusapproval = "approved";
-                $date = date("Y-m-d");
+            if(isset($cek->id)){
+                $statusapproval = "pending"; 
+                $date = null;        
+            }else{
+                $statusapproval = "approved";  
+                $date = date("Y-m-d"); 
             }
             /*
              * if (sudah approve semua), update t_pengajuan jadi approved
              */
-            if ($statusapproval == "approved") {
+            if ($approved == $all) {
                 $model = $db->update("acc_t_pengajuan", ["approval" => $data['data']['level'], "status" => $statusapproval, "tanggal_approve" => $date], ["id" => $data["data"]["id"]]);
             }
         }
@@ -479,9 +473,9 @@ $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response) {
         $val->no = $key + 1 . ".";
     }
     $db->select("acc_approval_pengajuan.*, " . $tableuser . ".nama")
-            ->from("acc_approval_pengajuan")
-            ->join("JOIN", $tableuser, $tableuser . ".id = acc_approval_pengajuan.acc_m_user_id")
-            ->where("t_pengajuan_id", "=", $data['id']);
+        ->from("acc_approval_pengajuan")
+        ->join("JOIN", $tableuser, $tableuser . ".id = acc_approval_pengajuan.acc_m_user_id")
+        ->where("t_pengajuan_id", "=", $data['id']);
     $acc = $db->findAll();
     $a = getMasterSetting();
     $template = $a->print_pengajuan;
