@@ -2,7 +2,8 @@
 /**
  * validasi akun
  */
-function validasi($data, $custom = array()) {
+function validasi($data, $custom = array())
+{
     $validasi = array(
         'tipe' => 'required',
         'kode'      => 'required',
@@ -18,7 +19,8 @@ function validasi($data, $custom = array()) {
 /**
  * validasi saldo awal
  */
-function validasiSaldo($data, $custom = array()) {
+function validasiSaldo($data, $custom = array())
+{
     $validasi = array(
         'tanggal' => 'required',
         'm_lokasi_id' => 'required',
@@ -30,7 +32,8 @@ function validasiSaldo($data, $custom = array()) {
 /**
  * setLevelTipeAkun
  */
-function setLevelTipeAkun($parent_id) {
+function setLevelTipeAkun($parent_id)
+{
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $parent = $db->find("select * from acc_m_akun where id = '" . $parent_id . "'");
     return $parent->level + 1;
@@ -38,13 +41,13 @@ function setLevelTipeAkun($parent_id) {
 /*
  * get kode
  */
-$app->get('/acc/m_akun/getKode/{kode}', function($request, $response) {
+$app->get('/acc/m_akun/getKode/{kode}', function ($request, $response) {
     $kode   = $request->getAttribute('kode');
     $db     = $this->db;
     $models = $db->select('kode')->from('acc_m_akun')->where('kode', '=', $kode)->count();
     if ($models > 0) {
         return successResponse($response, ['status_kode' => 0, 'message' => "Kode sudah digunakan"]);
-    }else{
+    } else {
         return successResponse($response, ['status_kode' => 1, 'message' => ""]);
     }
 });
@@ -52,41 +55,28 @@ $app->get('/acc/m_akun/getKode/{kode}', function($request, $response) {
  * Ambil saldo awal
  */
 $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
-    $params = $request->getParams();
-    $db = $this->db;
-    $db->select("
-        acc_m_akun.*,
-        acc_trans_detail.debit,
-        acc_trans_detail.kredit,
-        acc_trans_detail.tanggal
-    ")
-            ->from('acc_m_akun')
-            ->leftJoin(
-                    'acc_trans_detail', 'acc_trans_detail.m_lokasi_id = ' . $params['m_lokasi_id'] . ' and 
-            acc_trans_detail.m_akun_id = acc_m_akun.id and
-            acc_trans_detail.reff_type = "Saldo Awal"'
-            )
-//            ->where("acc_m_akun.is_deleted", "=", 0)
-            ->orderBy('acc_m_akun.kode');
-    $models = $db->findAll();
-    /*
-     * deklarasi tanggal untuk cek form.tanggal di index
-     */
+    $params  = $request->getParams();
+    $db      = $this->db;
     $tanggal = $params['tanggal'];
+    /**
+     * List akun
+     */
+    $db->select("acc_m_akun.*, sum(acc_trans_detail.debit) as debit, sum(acc_trans_detail.kredit) as kredit, acc_trans_detail.tanggal")
+            ->from("acc_m_akun")
+            ->leftJoin("acc_trans_detail", "acc_trans_detail.m_lokasi_id = '".$params["m_lokasi_id"]."' and m_akun_id = acc_m_akun.id and reff_type = 'Saldo Awal'")
+            ->orderBy('acc_m_akun.kode')
+            ->groupBy("acc_m_akun.id");
+    $models     = $db->findAll();
+    $arr        = [];
     foreach ($models as $key => $value) {
+        $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
         $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
-        $value->nama_lengkap = $spasi . $value->kode . ' - ' . $value->nama;
-        if (empty($value->kredit)) {
-            $value->kredit = 0;
-        }
-        if (empty($value->debit)) {
-            $value->debit = 0;
-        }
-        if (!empty($value->tanggal)) {
-            $tanggal = $value->tanggal;
-        }
+        $arr[$key] = (array) $value;
+        $arr[$key]['nama_lengkap']  = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$key]['debit'] = empty($value->debit) ? 0 : $value->debit;
+        $arr[$key]['kredit'] = empty($value->kredit) ? 0 : $value->kredit;
     }
-    return successResponse($response, ['detail' => $models, 'tanggal' => $tanggal]);
+    return successResponse($response, ['detail' => $arr, 'tanggal' => $tanggal]);
 });
 /**
  * Simpan saldo awal
@@ -300,14 +290,14 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
     $data['is_tipe']    = isset($data['is_tipe']) ? $data['is_tipe'] : 0;
     $data['is_induk']   = isset($data['is_induk']) ? $data['is_induk'] : 0;
     $data['kode']       = isset($data['kode']) ? $data['kode'] : '';
-    if($data['is_induk'] == 0){
-        $validasi = validasi($data, ["parent_id" => "required"]);        
-    }else{
-        $validasi = validasi($data);        
+    if ($data['is_induk'] == 0) {
+        $validasi = validasi($data, ["parent_id" => "required"]);
+    } else {
+        $validasi = validasi($data);
     }
     if ($validasi === true) {
-        if($data['is_induk'] == 0){
-            $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '.' . $data['kode'];            
+        if ($data['is_induk'] == 0) {
+            $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '.' . $data['kode'];
         }
         /**
          * Cek kode
@@ -317,7 +307,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
                     ->where("kode", "=", $data['kode'])
                     ->andWhere("id", "!=", $id)
                     ->find();
-        if(isset($cekKode->kode)){
+        if (isset($cekKode->kode)) {
             return unprocessResponse($response, ["kode sudah digunakan untuk akun '". $cekKode->nama. "'"]);
         }
         /**
@@ -354,17 +344,17 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
          * Update tipe akun dibawahnya
          */
         $childId =getChildId("acc_m_akun", $model->id);
-        if(!empty($childId)){
-            $sql->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus], "id in (".implode(",", $childId).")");            
+        if (!empty($childId)) {
+            $sql->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus], "id in (".implode(",", $childId).")");
             /**
              * Jika punya child berarti is_tipe = 1
              */
             $sql->update("acc_m_akun", ["is_tipe" => 1], ["id" => $model->id]);
-        }else{
-             /**
-             * Jika punya child berarti is_tipe = 0
-             */
-            $sql->update("acc_m_akun", ["is_tipe" => 0], ["id" => $model->id]);            
+        } else {
+            /**
+            * Jika punya child berarti is_tipe = 0
+            */
+            $sql->update("acc_m_akun", ["is_tipe" => 0], ["id" => $model->id]);
         }
         return successResponse($response, $model);
     } else {
@@ -603,7 +593,7 @@ $app->get('/acc/m_akun/getByType', function ($request, $response) {
     $params = $request->getParams();
     $db     = $this->db;
     $tipe   = isset($params['tipe']) ? $params['tipe'] : '';
-    if(!empty($tipe)){
+    if (!empty($tipe)) {
         $db->select("*")
             ->from("acc_m_akun")
             ->where("is_deleted", "=", 0)
@@ -612,13 +602,13 @@ $app->get('/acc/m_akun/getByType', function ($request, $response) {
         $arr    = [];
         foreach ($models as $key => $value) {
             $saldo = getSaldo($value->id, null, null, date("Y-m-d"));
-            if($saldo <= 0){
+            if ($saldo <= 0) {
                 $arr[] = (array) $value;
             }
         }
         return successResponse($response, ['list' => $arr]);
-    }else{
-        return successResponse($response, ['list' => []]); 
+    } else {
+        return successResponse($response, ['list' => []]);
     }
 });
 /*
@@ -681,7 +671,7 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
             ->from("acc_m_akun")
             ->where("is_tipe", "=", 0)
             ->andWhere("is_deleted", "=", 0);
-    if(isset($params['nama'])){
+    if (isset($params['nama'])) {
         $db->andWhere("nama", "like", $params['nama']);
     }
     $models = $db->findAll();
