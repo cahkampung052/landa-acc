@@ -202,6 +202,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
          */
         $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
         $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
+//        print_r($kode);die;
         /**
          * Simpan pengeluaran
          */
@@ -218,6 +219,8 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $pengeluaran['total'] = $params['form']['total'];
         $pengeluaran['t_pengajuan_id'] = (isset($params['form']['t_pengajuan_id']) && !empty($params['form']['t_pengajuan_id']) ? $params['form']['t_pengajuan_id'] : "");
         $pengeluaran['status'] = $params['form']['status'];
+        
+//        print_r($pengeluaran);die;
         /**
          * update atau input pengeluaran
          */
@@ -237,6 +240,8 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
             $pengeluaran['no_transaksi'] = $kode;
             $model = $sql->insert("acc_pengeluaran", $pengeluaran);
         }
+//        echo "asdasd";die;
+//        print_r($model);die;
         /**
          * Simpan ke pengeluaran detail
          */
