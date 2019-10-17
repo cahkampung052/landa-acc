@@ -553,6 +553,11 @@ function generateNoTransaksi($type, $unker) {
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "BS/" . date("Y") . "/" . $no_urut;
+    } elseif ($type == 'pembayaran_honor') {
+        $cek = $db->find("select kode from acc_honor_dokter order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "HD/" . date("Y") . "/" . $no_urut;
     } elseif ($type == 'customer') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;

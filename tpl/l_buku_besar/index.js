@@ -28,13 +28,15 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
                     endDate: moment(),
                     startDate: moment().subtract(2, 'M')
                 };
+                $scope.view(0, 0);
             }
-            if (typeof $stateParams.akun != undefined) {
+            if (typeof $stateParams.tanggal != undefined) {
                 var tanggal = angular.fromJson(atob($stateParams.tanggal));
                 $scope.form.tanggal = tanggal;
+                $scope.view(0, 0);
             }
             
-            $scope.view(0, 0);
+            
         }
     });
     /**
