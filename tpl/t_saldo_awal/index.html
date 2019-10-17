@@ -75,7 +75,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.debit"ng-disabled="tutup || is_view || (row.kredit != 0 && row.kredit != undefined)" ng-blur="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.debit"ng-disabled="tutup || is_view || (row.kredit != 0 && row.kredit != undefined) || row.is_deleted == 1" ng-blur="sumTotal()"/>
                                     </div>
                                 </td>
                                 <td style="text-align: left;">
@@ -83,7 +83,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.kredit"ng-disabled="tutup || is_view || (row.debit != 0 && row.debit != undefined)" ng-blur="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.kredit"ng-disabled="tutup || is_view || (row.debit != 0 && row.debit != undefined) || row.is_deleted == 1" ng-blur="sumTotal()"/>
                                     </div>
                                 </td>
                             </tr>

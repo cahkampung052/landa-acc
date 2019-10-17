@@ -66,7 +66,7 @@ $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
             acc_trans_detail.m_akun_id = acc_m_akun.id and
             acc_trans_detail.reff_type = "Saldo Awal"'
             )
-            ->where("acc_m_akun.is_deleted", "=", 0)
+//            ->where("acc_m_akun.is_deleted", "=", 0)
             ->orderBy('acc_m_akun.kode');
     $models = $db->findAll();
     /*
