@@ -287,6 +287,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
     $validasi = validasi($data["data"]);
+//    print_r($data);die;
     if ($validasi === true) {
         /**
          * Generate no_proposal
@@ -298,7 +299,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
         $tanggal = $data["data"]["tanggal"];
         $data["data"]["tanggal"] = date("Y-m-d H:i", strtotime($tanggal));
         $data["data"]["lokasi_waktu"] .= " " . date("H:i");
-        unset($data["data"]["id"]);
+//        unset($data["data"]["id"]);
         try {
             if (isset($data["data"]["id"]) && !empty($data["data"]["id"])) {
                 $model = $db->update("acc_t_pengajuan", $data["data"], ["id" => $data["data"]["id"]]);
@@ -375,7 +376,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
             }
             return successResponse($response, $model);
         } catch (Exception $e) {
-            return unprocessResponse($response, ["terjadi kesalahan pada server"]);
+            return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
         }
     }
     return unprocessResponse($response, $validasi);
