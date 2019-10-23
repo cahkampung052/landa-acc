@@ -661,6 +661,18 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
             ->findAll();
     return successResponse($response, ['list' => $models]);
 });
+
+$app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
+    $db = $this->db;
+    $models = $db->select("*")->from("acc_m_akun")
+            ->customWhere("nama LIKE '%PENDAPATAN%' OR tipe = 'PENDAPATAN'", "AND")
+            ->customWhere("tipe = 'BEBAN'", "OR")
+            ->where("is_tipe", "=", 0)
+            ->where("is_deleted", "=", 0)
+            ->findAll();
+    return successResponse($response, ['list' => $models]);
+});
+
 /**
  * Ambil akun saja tanpa klasifikasinya
  */

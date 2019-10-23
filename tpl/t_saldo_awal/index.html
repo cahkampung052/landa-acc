@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-white table-hover">
+                    <table class="table table-white">
                         <thead>
                             <tr>
                                 <th style="text-align: left;">Kode Akun</th>
@@ -63,7 +63,7 @@
                             </tr>
                         </thead>
                         <tbody ng-show="!isLoading">
-                            <tr ng-repeat="row in displayed" ng-style="row.is_tipe == 1 && {'background-color' : '#f2f7fb'}">
+                            <tr ng-repeat="row in displayed" ng-style="(row.is_tipe == 1 && row.is_deleted == 0 && {'background-color' : '#f2f7fb'}) || (row.is_tipe == 0 && row.is_deleted == 1 && {'background-color' : '#fbf2f2'})">
                                 <td style="text-align: left;">
                                     <span ng-if="row.is_tipe == 1">
                                         <b ng-bind-html="row.nama_lengkap"></b>
