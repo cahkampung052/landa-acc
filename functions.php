@@ -417,10 +417,12 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
         $tipe       = str_replace(" ", "_", $value->tipe);
         $spasi      = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $fullName   = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$tipe]['detail'][$key]['id'] = $value->id;
         $arr[$tipe]['detail'][$key]['kode'] = $value->kode;
         $arr[$tipe]['detail'][$key]['is_tipe'] = $value->is_tipe;
         $arr[$tipe]['detail'][$key]['parent_id'] = $value->parent_id;
         $arr[$tipe]['detail'][$key]['nama'] = ($value->is_tipe == 0) ? $fullName : "<b>" . $fullName . "</b>";
+        $arr[$tipe]['detail'][$key]['nama2'] = $value->nama;
         $arr[$tipe]['detail'][$key]['nominal'] = $total;
         if($value->is_tipe == 0){
             $arr[$tipe]['total'] = (isset($arr[$tipe]['total']) ? $arr[$tipe]['total'] : 0) + $total;       
@@ -540,6 +542,11 @@ function generateNoTransaksi($type, $unker) {
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "BS/" . date("Y") . "/" . $no_urut;
+    } elseif ($type == 'pembayaran_honor') {
+        $cek = $db->find("select kode from acc_honor_dokter order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "HD/" . date("Y") . "/" . $no_urut;
     } elseif ($type == 'customer') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;

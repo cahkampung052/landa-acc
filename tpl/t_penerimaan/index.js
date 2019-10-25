@@ -212,7 +212,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.form = {};
         if ($scope.listLokasi.length > 0) $scope.form.m_lokasi_id = $scope.listLokasi[0];
         $scope.form.ppn = 0;
-        $scope.form.is_ppn = true;
+        $scope.form.is_ppn = false;
         $scope.form.tanggal = new Date($scope.tanggal_setting);
         if (new Date() >= new Date($scope.tanggal_setting)) {
             $scope.form.tanggal = new Date();

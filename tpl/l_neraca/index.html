@@ -96,7 +96,7 @@
                         <tbody ng-repeat="val in data.modelHarta.list">
                             <tr ng-if="form.is_detail == 0">
                                 <td style="padding-left: 25px!important;">
-                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
                                 </td>
                                 <td style="text-align: right">
                                     <span style="color: #0055ef; font-weight: 700">{{ val.total | number}}</span>
@@ -104,11 +104,11 @@
                             </tr>
                             <tr ng-if="form.is_detail == 1">
                                 <td colspan="2" style="padding-left: 25px!important;">
-                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
                                 </td>
                             </tr>
                             <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
-                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}</td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">
@@ -140,7 +140,7 @@
                         <tbody ng-repeat="val in data.modelKewajiban.list">
                             <tr ng-if="form.is_detail == 0">
                                 <td style="padding-left: 25px!important;">
-                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
                                 </td>
                                 <td style="text-align: right">
                                     <span style="color: #0055ef; font-weight: 700">{{ val.total | number}}</span>
@@ -148,11 +148,11 @@
                             </tr>
                             <tr ng-if="form.is_detail == 1">
                                 <td colspan="2" style="padding-left: 25px!important;">
-                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
                                 </td>
                             </tr>
                             <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
-                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}</td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">
@@ -184,7 +184,7 @@
                         <tbody ng-repeat="val in data.modelModal.list">
                             <tr ng-if="form.is_detail == 0">
                                 <td style="padding-left: 25px!important;">
-                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
                                 </td>
                                 <td style="text-align: right">
                                     <span style="color: #0055ef; font-weight: 700">{{ val.total | number}}</span>
@@ -192,11 +192,11 @@
                             </tr>
                             <tr ng-if="form.is_detail == 1">
                                 <td colspan="2" style="padding-left: 25px!important;">
-                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
                                 </td>
                             </tr>
                             <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
-                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}</td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">

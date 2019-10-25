@@ -156,7 +156,7 @@
                             <div ng-include="'api/acc/landaacc/tpl/m_asset/form_data.html'">
                             </div>
                         </uib-tab>
-                        <uib-tab  heading="Akun" index="1">
+                        <uib-tab  heading="Akun" index="1" ng-if="form.is_penyusutan == 1">
                             <div ng-include="'api/acc/landaacc/tpl/m_asset/form_akun.html'">
                             </div>
                         </uib-tab>

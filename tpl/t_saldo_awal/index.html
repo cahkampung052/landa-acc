@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-white">
                         <thead>
                             <tr>
                                 <th style="text-align: left;">Kode Akun</th>
@@ -63,19 +63,19 @@
                             </tr>
                         </thead>
                         <tbody ng-show="!isLoading">
-                            <tr ng-repeat="row in displayed">
+                            <tr ng-repeat="row in displayed" ng-style="(row.is_tipe == 1 && row.is_deleted == 0 && {'background-color' : '#f2f7fb'}) || (row.is_tipe == 0 && row.is_deleted == 1 && {'background-color' : '#fbf2f2'})">
                                 <td style="text-align: left;">
                                     <span ng-if="row.is_tipe == 1">
-                                        <b>{{ row.nama_lengkap}}</b>
+                                        <b ng-bind-html="row.nama_lengkap"></b>
                                     </span>
-                                    <span ng-if="row.is_tipe == 0">{{ row.nama_lengkap}}</span>
+                                    <span ng-if="row.is_tipe == 0" ng-bind-html="row.nama_lengkap"></span>
                                 </td>
                                 <td style="text-align: left;">
                                     <div class="input-group input-group-sm" ng-if="row.is_tipe == 0">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.debit"ng-disabled="tutup || is_view || (row.kredit != 0 && row.kredit != undefined)" ng-blur="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.debit"ng-disabled="tutup || is_view || (row.kredit != 0 && row.kredit != undefined) || row.is_deleted == 1" ng-blur="sumTotal()"/>
                                     </div>
                                 </td>
                                 <td style="text-align: left;">
@@ -83,7 +83,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.kredit"ng-disabled="tutup || is_view || (row.debit != 0 && row.debit != undefined)" ng-blur="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.kredit"ng-disabled="tutup || is_view || (row.debit != 0 && row.debit != undefined) || row.is_deleted == 1" ng-blur="sumTotal()"/>
                                     </div>
                                 </td>
                             </tr>

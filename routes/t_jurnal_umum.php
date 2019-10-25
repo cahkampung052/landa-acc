@@ -134,9 +134,9 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
     $limit = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_jurnal.*, acc_m_lokasi.id as idLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi, ".$tableuser.".nama as namaUser")
+    $db->select("acc_jurnal.*, acc_m_lokasi.id as idLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi")
             ->from("acc_jurnal")
-            ->join("join", $tableuser, $tableuser.".id = acc_jurnal.created_by")
+//            ->join("join", $tableuser, $tableuser.".id = acc_jurnal.created_by")
             ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal.m_lokasi_id")
             ->orderBy('acc_jurnal.tanggal DESC')
             ->orderBy('acc_jurnal.created_at DESC');
@@ -205,6 +205,7 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
          * Simpan jurnal
          */
         $jurnal['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
+        $jurnal['m_lokasi_jurnal_id'] = $jurnal['m_lokasi_id'];
         $jurnal['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $jurnal['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $jurnal['total_debit'] = $params['form']['total_debit'];

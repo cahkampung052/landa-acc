@@ -1,4 +1,4 @@
-app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, Upload, $state) {
     var control_link = "acc/l_laba_rugi";
     $scope.form = {};
     $scope.url = {};
@@ -33,7 +33,7 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
             m_lokasi_nama: $scope.form.m_lokasi_id.nama,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
-            is_detail : $scope.form.is_detail
+            is_detail: $scope.form.is_detail
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan', param).then(function (response) {
@@ -53,13 +53,26 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
         }
     };
 
+    $scope.viewBukuBesar = function (row) {
+        console.log(row)
+        var akun = {
+            id : row.id,
+            kode : row.kode,
+            nama : row.nama2
+        }
+        var tanggal = $scope.form.tanggal;
+        var akun = btoa(angular.toJson(akun))
+        var tanggal = btoa(angular.toJson(tanggal))
+        $state.go("laporan.buku_besar", {akun:akun, tanggal:tanggal})
+    }
+
     /**
      * Modal setting pengecualian
      */
     $scope.modalSetting = function () {
         var modalInstance = $uibModal.open({
             templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/l_laba_rugi/modal.html",
-                    controller: "settingLabarugiCtrl",
+            controller: "settingLabarugiCtrl",
             size: "md",
             backdrop: "static",
             keyboard: false,

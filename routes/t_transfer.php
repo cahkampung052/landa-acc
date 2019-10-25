@@ -46,7 +46,7 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
                 lok1.nama as namaLokAsal, 
                 lok1.kode as kodeLokAsal, 
                 lok2.nama as namaLokTujuan, 
-                lok2.kode as kodeLokTujuan, " . $tableuser . ".nama as namaUser, 
+                lok2.kode as kodeLokTujuan, 
                 akun2.id as idTujuan, 
                 akun2.nama as namaTujuan, 
                 akun2.kode as kodeTujuan, 
@@ -55,7 +55,7 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
                 akun1.kode as kodeAsal
             ")
                 ->from("acc_transfer")
-                ->join("join", $tableuser, $tableuser . ".id = acc_transfer.created_by ")
+//                ->join("join", $tableuser, $tableuser . ".id = acc_transfer.created_by ")
                 ->join("join", "acc_m_akun akun1", "acc_transfer.m_akun_asal_id = akun1.id")
                 ->join("join", "acc_m_akun akun2", "acc_transfer.m_akun_tujuan_id = akun2.id")
                 ->join("join", "acc_m_lokasi lok1", "acc_transfer.m_lokasi_asal_id = lok1.id")
@@ -174,7 +174,7 @@ $app->post('/acc/t_transfer/delete', function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
     $model = $db->delete("acc_transfer", ['id' => $data['id']]);
-    $model = $db->deleted("acc_trans_detail", ["reff_type" => "acc_transfer", "reff_id" => $data['id']]);
+    $model = $db->delete("acc_trans_detail", ["reff_type" => "acc_transfer", "reff_id" => $data['id']]);
     if ($model) {
         return successResponse($response, $model);
     } else {

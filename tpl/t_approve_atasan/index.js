@@ -111,7 +111,8 @@ app.controller("tapprovalCtrl", function ($scope, Data, $rootScope, $uibModal) {
     $scope.save = function (form, status) {
         var param = {
             status: status,
-            data: form
+            data: form,
+            detail : $scope.listDetail
         }
         if (status == 'rejected') {
             var foo = prompt('Alasan ditolak : ')

@@ -1,4 +1,4 @@
-app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload, $state) {
     var tableStateRef;
     var control_link = "acc/m_akun";
     var master = 'Master Akun';
@@ -107,6 +107,20 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
         $scope.formtitle = master + " | Lihat Data : " + form.nama;
         $scope.form = form;
     };
+
+    $scope.viewBukuBesar = function (row) {
+        console.log(row)
+        var akun = {
+            id: row.id,
+            kode: row.kode,
+            nama: row.nama
+        }
+        var akun = btoa(angular.toJson(akun))
+
+        var url = $state.href('laporan.buku_besar', {akun: akun});
+        window.open(url, '_blank');
+    }
+
     /** 
      * save action
      */
