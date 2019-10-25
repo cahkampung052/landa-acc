@@ -146,6 +146,14 @@
                                         <b>{{ detail.BEBAN.total | number }}</b>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>LABA RUGI USAHA</b>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>{{ data.lr_usaha | number }}</b>
+                                    </td>
+                                </tr>
                                 <tr ng-repeat="vals in detail.PENDAPATAN_DILUAR_USAHA.detail" ng-if="form.is_detail == 0 && vals.is_tipe == 1">
                                     <td align="left" style="vertical-align: top">
                                         <div ng-bind-html="vals.nama"></div>
