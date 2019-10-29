@@ -245,9 +245,9 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.is_ppn = false;
-        if ($scope.form.ppn > 0) {
-            $scope.form.is_ppn = true;
-        }
+//        if ($scope.form.ppn > 0) {
+//            $scope.form.is_ppn = true;
+//        }
         $scope.form.subtotal = $scope.form.total;
         $scope.form.total = parseInt($scope.form.total) + parseInt($scope.form.ppn);
         $scope.form.tanggal = new Date(form.tanggal2);

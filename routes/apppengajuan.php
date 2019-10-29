@@ -298,7 +298,8 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
         $data["data"]["m_lokasi_id"] = $data["data"]["m_lokasi_id"]["id"];
         $tanggal = $data["data"]["tanggal"];
         $data["data"]["tanggal"] = date("Y-m-d H:i", strtotime($tanggal));
-        $data["data"]["lokasi_waktu"] .= " " . date("H:i");
+        $result = explode(' ~', $data["data"]["lokasi_waktu"]);
+        $data["data"]["lokasi_waktu"] = $result[0] . " ~" . date("H:i");
 //        unset($data["data"]["id"]);
         try {
             if (isset($data["data"]["id"]) && !empty($data["data"]["id"])) {
