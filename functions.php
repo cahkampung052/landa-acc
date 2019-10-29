@@ -428,17 +428,6 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             $arr[$tipe]['total'] = (isset($arr[$tipe]['total']) ? $arr[$tipe]['total'] : 0) + $total;       
             $grandTotal[$value->tipe] += $total;     
         }
-
-        /*
-         * tanya adi
-         */
-        // if ($value->is_tipe == 0) {
-        //     $arr[$tipe]['detail'][$key]['testing'] = $testing;
-        //     $arr[$tipe]['detail'][$testing]['nominal'] += intval($total);
-        // } else {
-        //     $arr[$tipe]['detail'][$key]['testing'] = $key;
-        //     $testing = $key;
-        // }
     }
     ksort($arr['PENDAPATAN']['detail']);
     ksort($arr['BEBAN']['detail']);

@@ -33,6 +33,7 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
     $pendapatanLuarUsaha = isset($labarugi['total']['PENDAPATAN DILUAR USAHA']) ? $labarugi['total']['PENDAPATAN DILUAR USAHA'] : 0;
     $bebanLuarUsaha      = isset($labarugi['total']['BEBAN DILUAR USAHA']) ? $labarugi['total']['BEBAN DILUAR USAHA'] : 0;
     $data['total'] = $pendapatan + $pendapatanLuarUsaha - $beban - $bebanLuarUsaha;
+    $data['lr_usaha'] = $pendapatan - $beban;
     $data['is_detail'] = $params['is_detail'];
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
@@ -54,7 +55,7 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
                 "css" => modulUrl().'/assets/css/style.css',
             ]);
         echo $content;
-//        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
     } else {
         return successResponse($response, ["data" => $data, "detail" => $arr]);
     }
