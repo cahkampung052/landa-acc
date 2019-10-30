@@ -439,7 +439,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
             $statusapproval = "rejected";
         }
         $models = $db->update("acc_approval_pengajuan", ["status" => $statusapproval], ["t_pengajuan_id" => $data["data"]["id"], "acc_m_user_id" => $_SESSION["user"]["id"]]);
-        if ($update['status'] == "approved") {
+        if ($models->status == "approved") {
             /**
              * Cek sisa approval
              */
@@ -458,9 +458,9 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
             /*
              * if (sudah approve semua), update t_pengajuan jadi approved
              */
-            if ($approved == $all) {
+//            if ($approved == $all) {
                 $model = $db->update("acc_t_pengajuan", ["approval" => $data['data']['level'], "status" => $statusapproval, "tanggal_approve" => $date], ["id" => $data["data"]["id"]]);
-            }
+//            }
         }
         return successResponse($response, $model);
     } catch (Exception $e) {
