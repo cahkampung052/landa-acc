@@ -65,7 +65,7 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
     $namaLokasi = "";
     foreach ($arr as $key => $val) {
         $arr[$key]['namaLokasi']    = $val['namaLokasiSaldo'];
-        if ($val['kode'] == $kode && $val['kode'] != "" && $val['namaLokasi'] == $namaLokasi && $val['namaLokasi'] != "") {
+        if ($val['kode'] == $kode && $val['kode'] != "") {
             $arr[$key]['kode']          = "";
             $arr[$key]['kodeLokasi']    = "";
             $arr[$key]['tanggal']       = "";
