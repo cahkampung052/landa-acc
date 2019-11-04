@@ -1,14 +1,14 @@
 <?php
+
 /**
  * validasi akun
  */
-function validasi($data, $custom = array())
-{
+function validasi($data, $custom = array()) {
     $validasi = array(
         'tipe' => 'required',
-        'kode'      => 'required',
-        'nama'      => 'required',
-        'is_kas'    => 'required',
+        'kode' => 'required',
+        'nama' => 'required',
+        'is_kas' => 'required',
     );
     GUMP::set_field_name("parent_id", "Akun Induk");
     GUMP::set_field_name("is_kas", "Kas");
@@ -16,11 +16,11 @@ function validasi($data, $custom = array())
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
+
 /**
  * validasi saldo awal
  */
-function validasiSaldo($data, $custom = array())
-{
+function validasiSaldo($data, $custom = array()) {
     $validasi = array(
         'tanggal' => 'required',
         'm_lokasi_id' => 'required',
@@ -29,21 +29,22 @@ function validasiSaldo($data, $custom = array())
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
+
 /**
  * setLevelTipeAkun
  */
-function setLevelTipeAkun($parent_id)
-{
+function setLevelTipeAkun($parent_id) {
     $db = new Cahkampung\Landadb(config('DB')['db']);
     $parent = $db->find("select * from acc_m_akun where id = '" . $parent_id . "'");
     return $parent->level + 1;
 }
+
 /*
  * get kode
  */
 $app->get('/acc/m_akun/getKode/{kode}', function ($request, $response) {
-    $kode   = $request->getAttribute('kode');
-    $db     = $this->db;
+    $kode = $request->getAttribute('kode');
+    $db = $this->db;
     $models = $db->select('kode')->from('acc_m_akun')->where('kode', '=', $kode)->count();
     if ($models > 0) {
         return successResponse($response, ['status_kode' => 0, 'message' => "Kode sudah digunakan"]);
@@ -55,24 +56,24 @@ $app->get('/acc/m_akun/getKode/{kode}', function ($request, $response) {
  * Ambil saldo awal
  */
 $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
-    $params  = $request->getParams();
-    $db      = $this->db;
+    $params = $request->getParams();
+    $db = $this->db;
     $tanggal = $params['tanggal'];
     /**
      * List akun
      */
     $db->select("acc_m_akun.*, sum(acc_trans_detail.debit) as debit, sum(acc_trans_detail.kredit) as kredit, acc_trans_detail.tanggal")
             ->from("acc_m_akun")
-            ->leftJoin("acc_trans_detail", "acc_trans_detail.m_lokasi_id = '".$params["m_lokasi_id"]."' and m_akun_id = acc_m_akun.id and reff_type = 'Saldo Awal'")
+            ->leftJoin("acc_trans_detail", "acc_trans_detail.m_lokasi_id = '" . $params["m_lokasi_id"] . "' and m_akun_id = acc_m_akun.id and reff_type = 'Saldo Awal'")
             ->orderBy('acc_m_akun.kode')
             ->groupBy("acc_m_akun.id");
-    $models     = $db->findAll();
-    $arr        = [];
+    $models = $db->findAll();
+    $arr = [];
     foreach ($models as $key => $value) {
         $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
         $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $arr[$key] = (array) $value;
-        $arr[$key]['nama_lengkap']  = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$key]['nama_lengkap'] = $spasi . $value->kode . ' - ' . $value->nama;
         $arr[$key]['debit'] = empty($value->debit) ? 0 : $value->debit;
         $arr[$key]['kredit'] = empty($value->kredit) ? 0 : $value->kredit;
     }
@@ -82,8 +83,8 @@ $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
  * Simpan saldo awal
  */
 $app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
-    $params     = $request->getParams();
-    $validasi   = validasiSaldo($params['form']);
+    $params = $request->getParams();
+    $validasi = validasiSaldo($params['form']);
     if ($validasi === true) {
         $tanggal = new DateTime($params['form']['tanggal']);
         $tanggal->setTimezone(new DateTimeZone('Asia/Jakarta'));
@@ -222,7 +223,7 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     $trans = $db->findAll();
     $arrTrans = [];
     foreach ($trans as $key => $value) {
-        $arrTrans[$value->id]        = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
+        $arrTrans[$value->id] = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
         $arrTrans[$value->parent_id] = (isset($arrTrans[$value->parent_id]) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
     }
     /**
@@ -246,22 +247,22 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
             }
         }
     }
-    $models     = $db->findAll();
-    $totalItem  = $db->count();
-    $listAkun   = buildTreeAkun($models, 0);
-    $arrModel   = flatten($listAkun);
-    $arr        = [];
+    $models = $db->findAll();
+    $totalItem = $db->count();
+    $listAkun = buildTreeAkun($models, 0);
+    $arrModel = flatten($listAkun);
+    $arr = [];
     foreach ($arrModel as $key => $value) {
         $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
         $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $arr[$key] = (array) $value;
-        $arr[$key]['nama_lengkap']  = $spasi . $value->kode . ' - ' . $value->nama;
-        $arr[$key]['parent_id']     = (int) $value->parent_id;
-        $arr[$key]['saldo_normal']  = (int) $value->saldo_normal;
-        $arr[$key]['is_kas']        = (int) $value->is_kas;
-        $arr[$key]['kode']          = str_replace($value->kode_induk . ".", "", $value->kode);
-        $arr[$key]['saldo']         = $saldo;
-        $arr[$key]['tipe']          = ($value->tipe == 'No Type') ? '' : $value->tipe;
+        $arr[$key]['nama_lengkap'] = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$key]['parent_id'] = (int) $value->parent_id;
+        $arr[$key]['saldo_normal'] = (int) $value->saldo_normal;
+        $arr[$key]['is_kas'] = (int) $value->is_kas;
+        $arr[$key]['kode'] = str_replace($value->kode_induk . ".", "", $value->kode);
+        $arr[$key]['saldo'] = $saldo;
+        $arr[$key]['tipe'] = ($value->tipe == 'No Type') ? '' : $value->tipe;
     }
     return successResponse($response, ['list' => $arr, 'totalItems' => $totalItem]);
 });
@@ -282,14 +283,14 @@ $app->get('/acc/m_akun/listakun', function ($request, $response) {
  * Simpan akun
  */
 $app->post('/acc/m_akun/save', function ($request, $response) {
-    $data   = $request->getParams();
-    $sql    = $this->db;
-    $id     = isset($data['id']) ? $data['id'] : '';
-    $data['tipe']       = isset($data['tipe']) ? $data['tipe'] : '';
-    $data['parent_id']  = isset($data['parent_id']) ? $data['parent_id'] : '';
-    $data['is_tipe']    = isset($data['is_tipe']) ? $data['is_tipe'] : 0;
-    $data['is_induk']   = isset($data['is_induk']) ? $data['is_induk'] : 0;
-    $data['kode']       = isset($data['kode']) ? $data['kode'] : '';
+    $data = $request->getParams();
+    $sql = $this->db;
+    $id = isset($data['id']) ? $data['id'] : '';
+    $data['tipe'] = isset($data['tipe']) ? $data['tipe'] : '';
+    $data['parent_id'] = isset($data['parent_id']) ? $data['parent_id'] : '';
+    $data['is_tipe'] = isset($data['is_tipe']) ? $data['is_tipe'] : 0;
+    $data['is_induk'] = isset($data['is_induk']) ? $data['is_induk'] : 0;
+    $data['kode'] = isset($data['kode']) ? $data['kode'] : '';
     if ($data['is_induk'] == 0) {
         $validasi = validasi($data, ["parent_id" => "required"]);
     } else {
@@ -303,12 +304,12 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
          * Cek kode
          */
         $cekKode = $sql->select("kode, nama")
-                    ->from("acc_m_akun")
-                    ->where("kode", "=", $data['kode'])
-                    ->andWhere("id", "!=", $id)
-                    ->find();
+                ->from("acc_m_akun")
+                ->where("kode", "=", $data['kode'])
+                ->andWhere("id", "!=", $id)
+                ->find();
         if (isset($cekKode->kode)) {
-            return unprocessResponse($response, ["kode sudah digunakan untuk akun '". $cekKode->nama. "'"]);
+            return unprocessResponse($response, ["kode sudah digunakan untuk akun '" . $cekKode->nama . "'"]);
         }
         /**
          * Set level dan tipe arus kas
@@ -343,17 +344,17 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         /**
          * Update tipe akun dibawahnya
          */
-        $childId =getChildId("acc_m_akun", $model->id);
+        $childId = getChildId("acc_m_akun", $model->id);
         if (!empty($childId)) {
-            $sql->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus], "id in (".implode(",", $childId).")");
+            $sql->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus], "id in (" . implode(",", $childId) . ")");
             /**
              * Jika punya child berarti is_tipe = 1
              */
             $sql->update("acc_m_akun", ["is_tipe" => 1], ["id" => $model->id]);
         } else {
             /**
-            * Jika punya child berarti is_tipe = 0
-            */
+             * Jika punya child berarti is_tipe = 0
+             */
             $sql->update("acc_m_akun", ["is_tipe" => 0], ["id" => $model->id]);
         }
         return successResponse($response, $model);
@@ -514,43 +515,83 @@ $app->get("/acc/m_akun/getBudgetPerLokasi", function ($request, $response) {
  */
 $app->get('/acc/m_akun/getBudget', function ($request, $response) {
     $params = $request->getParams();
+
+//    print_r($params);
+//    die;
+
+    $start_month = $params['start'] . "-01";
+    $end_month = date("Y-m-d", strtotime('+1 month', strtotime($params['end'] . "-01")));
+    $current_month = $start_month;
+
+    $name_month = [];
+    $all_year = [];
+    $all_month = [];
+
+    do {
+        if (!in_array(date("Y", strtotime($current_month)), $all_year)) {
+            $all_year[] = (int) date("Y", strtotime($current_month));
+        }
+
+        if (!in_array(date("m", strtotime($current_month)), $all_month)) {
+            $all_month[] = (int) date("m", strtotime($current_month));
+        }
+
+        $name_month[date("m-Y", strtotime($current_month))]["name"] = date("F Y", strtotime($current_month));
+        $name_month[date("m-Y", strtotime($current_month))]["detail"] = ["budget"=>0];
+        $name_month[date("m-Y", strtotime($current_month))]["date"] = $current_month;
+        $current_month = date("Y-m-d", strtotime('+1 month', strtotime($current_month)));
+    } while ($current_month != $end_month);
+
+//    echo json_encode($all_year);
+//    die;
+
     $db = $this->db;
     $getBudget = $db->select("*")
             ->from("acc_budgeting")
-            ->where("tahun", "=", $params['tahun'])
+            ->customWhere("tahun IN (" . implode(", ", $all_year) . ")", "AND")
+            ->customWhere("bulan IN (" . implode(", ", $all_month) . ")", "AND")
             ->andWhere("m_akun_id", "=", $params['m_akun_id'])
             ->andWhere("m_lokasi_id", "=", $params['m_lokasi_id'])
             ->findAll();
-    $list = [];
+
+//    echo json_encode($getBudget);die;
+    $list = $name_month;
     foreach ($getBudget as $key => $value) {
-        $list[$value->bulan] = (array) $value;
+        if($value->bulan < 10)
+            $value->bulan = 0 . "" . $value->bulan;
+        $list[$value->bulan . "-" . $value->tahun]['detail'] = (array) $value;
     }
-    $listBudget = [];
-    for ($i = 1; $i <= 12; $i++) {
-        $j = $i;
-        $listBudget[$i]['id'] = isset($list[$j]) ? $list[$j]['id'] : null;
-        $listBudget[$i]['budget'] = isset($list[$j]) ? $list[$j]['budget'] : 0;
-        $listBudget[$i]['nama_bulan'] = date('F', mktime(0, 0, 0, $i, 10)); // March
-    }
-    return successResponse($response, $listBudget);
+    
+//    echo json_encode($list);die;
+//    $listBudget = [];
+//    for ($i = 1; $i <= 12; $i++) {
+//        $j = $i;
+//        $listBudget[$i]['id'] = isset($list[$j]) ? $list[$j]['id'] : null;
+//        $listBudget[$i]['budget'] = isset($list[$j]) ? $list[$j]['budget'] : 0;
+//        $listBudget[$i]['nama_bulan'] = date('F', mktime(0, 0, 0, $i, 10)); // March
+//    }
+    return successResponse($response, $list);
 });
 /**
  * Simpan budget
  */
 $app->post('/acc/m_akun/saveBudget', function ($request, $response) {
     $params = $request->getParams();
+    
+//    print_r($params);die;
+    
     $db = $this->db;
     try {
         foreach ($params['detail'] as $key => $value) {
             $data = [
                 'm_akun_id' => $params['form']['m_akun_id']['id'],
                 'm_lokasi_id' => $params['form']['m_lokasi_id']['id'],
-                'bulan' => date('m', strtotime($value['nama_bulan'])),
-                'tahun' => $params['form']['tahun'],
-                'budget' => $value['budget']
+                'bulan' => date('m', strtotime($value['date'])),
+                'tahun' => date('Y', strtotime($value['date'])),
+                'budget' => $value['detail']['budget']
             ];
-            if (isset($value['id'])) {
-                $db->update('acc_budgeting', $data, ['id' => $value['id']]);
+            if (isset($value['detail']['id'])) {
+                $db->update('acc_budgeting', $data, ['id' => $value['detail']['id']]);
             } else {
                 $db->insert('acc_budgeting', $data);
             }
@@ -591,15 +632,15 @@ $app->get('/acc/m_akun/akunKas', function ($request, $response) {
  */
 $app->get('/acc/m_akun/getByType', function ($request, $response) {
     $params = $request->getParams();
-    $db     = $this->db;
-    $tipe   = isset($params['tipe']) ? $params['tipe'] : '';
+    $db = $this->db;
+    $tipe = isset($params['tipe']) ? $params['tipe'] : '';
     if (!empty($tipe)) {
         $db->select("*")
-            ->from("acc_m_akun")
-            ->where("is_deleted", "=", 0)
-            ->andWhere("tipe", "=", $tipe);
+                ->from("acc_m_akun")
+                ->where("is_deleted", "=", 0)
+                ->andWhere("tipe", "=", $tipe);
         $models = $db->findAll();
-        $arr    = [];
+        $arr = [];
         foreach ($models as $key => $value) {
             $saldo = getSaldo($value->id, null, null, date("Y-m-d"));
             if ($saldo <= 0) {
@@ -678,7 +719,7 @@ $app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
  */
 $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
     $params = $request->getParams();
-    $db     = $this->db;
+    $db = $this->db;
     $db->select("*")
             ->from("acc_m_akun")
             ->where("is_tipe", "=", 0)
