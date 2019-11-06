@@ -559,8 +559,9 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
 //    echo json_encode($getBudget);die;
     $list = $name_month;
     foreach ($getBudget as $key => $value) {
-        if($value->bulan < 10)
+        if($value->bulan < 10){
             $value->bulan = 0 . "" . $value->bulan;
+        }
         $list[$value->bulan . "-" . $value->tahun]['detail'] = (array) $value;
     }
     
