@@ -37,7 +37,7 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
     /*
      * Ambil akun untuk detail
      */
-    Data.get('acc/m_akun/akunBeban').then(function(data) {
+    Data.get('acc/m_akun/akunDetail').then(function(data) {
         $scope.listAkun = data.data.list;
     });
     /*
@@ -114,8 +114,12 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
                 kode: $scope.listAkun[0].kode,
                 nama: $scope.listAkun[0].nama
             },
+            jenis_satuan : 'unit',
+            harga_satuan : 0,
+            jumlah : 1
         };
         val.push(newDet);
+        $scope.sumTotal();
     };
     $scope.removeDetail = function(val, paramindex) {
         var comArr = eval(val);
@@ -174,12 +178,16 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
                 kode: $scope.listAkun[0].kode,
                 nama: $scope.listAkun[0].nama
             },
+            jenis_satuan : 'unit',
+            harga_satuan : 0,
+            jumlah : 1,
             detail: []
         }];
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
         }
         $scope.listAcc = {};
+        $scope.sumTotal();
     };
     $scope.copy = function(form) {
         $scope.is_edit = true;

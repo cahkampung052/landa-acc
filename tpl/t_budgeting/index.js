@@ -35,7 +35,7 @@ app.controller('budgetingCtrl', function($scope, Data, $rootScope, $uibModal) {
     $scope.sumTotal = function() {
         var totalbudget = 0;
         angular.forEach($scope.displayed, function(value, key) {
-            totalbudget += value.budget;
+            totalbudget += value.detail.budget;
         });
         $scope.totalbudget = totalbudget;
     };
@@ -43,7 +43,8 @@ app.controller('budgetingCtrl', function($scope, Data, $rootScope, $uibModal) {
         if (form.m_lokasi_id !== undefined && form.tanggal !== undefined && form.m_akun_id !== undefined) {
             var param = {
                 m_lokasi_id: form.m_lokasi_id.id,
-                tahun: moment(form.tahun).format('YYYY'),
+                start : moment(form.start).format('YYYY-MM'),
+                end : moment(form.end).format('YYYY-MM'),
                 m_akun_id: form.m_akun_id.id
             };
             $scope.displayed = [];

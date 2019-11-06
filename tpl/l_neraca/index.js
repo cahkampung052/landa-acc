@@ -41,6 +41,7 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal, $st
     };
     
     $scope.viewBukuBesar = function (row) {
+        console.log(row)
         var akun = {
             id : row.id,
             kode : row.kode,

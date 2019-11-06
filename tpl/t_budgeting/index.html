@@ -10,9 +10,10 @@
                         <div class="col-md-12">
                             <div class="alert alert-secondary">
                                 <div class="form-group row mb-0px">
-                                    <label class="col-sm-1 col-form-label-sm required">Tahun</label>
+                                    <label class="col-sm-1 col-form-label-sm required">Periode</label>
                                     <div class="col-sm-3">
-                                        <input class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'year'}" is-open="opened.tgl" ng-click="toggle($event, 'tgl')" ng-model="form.tahun" placeholder="Tahun" type="text" uib-datepicker-popup="yyyy" ng-change="view(form)"/>
+                                        <input style="width: 45%; float: left" class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'month'}" is-open="opened.tgl" ng-click="toggle($event, 'tgl')" ng-model="form.start" placeholder="Bulan Mulai" type="text" uib-datepicker-popup="MMMM yyyy" ng-change="view(form)"/>
+                                        <input style="width: 45%;" class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'month'}" is-open="opened.tgl2" ng-click="toggle($event, 'tgl2')" ng-model="form.end" placeholder="Bulan Selesai" type="text" uib-datepicker-popup="MMMM yyyy" ng-change="view(form)"/>
                                     </div>
                                     <label class="col-sm-1 col-form-label-sm required">Lokasi</label>
                                     <div class="col-sm-3">
@@ -43,13 +44,13 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="row in displayed">
-                                <td style="text-align: left;">{{ row.nama_bulan }}</td>
+                                <td style="text-align: left;">{{ row.name }}</td>
                                 <td style="text-align: left;">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.budget" ng-change="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.detail.budget" ng-change="sumTotal()"/>
                                     </div>
                                 </td>
                             </tr>

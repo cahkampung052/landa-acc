@@ -401,7 +401,8 @@ app.controller('pengeluaranCtrl', function($scope, Data, $rootScope, $uibModal, 
                         $scope.listDetail[index] = {
                             m_akun_id: value.m_akun_id,
                             keterangan: value.keterangan + " (" + value.jumlah + "" + value.jenis_satuan + "@" + value.harga_satuan + ")",
-                            debit: value.sub_total
+                            debit: value.sub_total,
+                            m_lokasi_id : data.m_lokasi_id
                         }
                         index++;
                     });

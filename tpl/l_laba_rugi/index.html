@@ -2,7 +2,7 @@
     <div ng-controller="l_labarugiCtrl">
         <div class="card">
             <div class="card-header">
-                <strong>Laporan Aktifitas</strong>
+                <strong>Laporan Laba Rugi</strong>
                 <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()" ng-if="user.akses.pengecualian_labarugi">
                     <i class="fa fa-gear"></i>
                     Setting Pengecualian
@@ -74,7 +74,7 @@
                     <div class="row header-laporan-wrapper">
                         <div class="col-md-12">
                             <center>
-                                <h2 class="header-laporan">LAPORAN AKTIFITAS</h2>
+                                <h2 class="header-laporan">LAPORAN LABA RUGI</h2>
                                 Lokasi : {{ data.lokasi}}
                                 <br/>
                                 Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
@@ -100,15 +100,15 @@
                             <tbody>
                                 <tr ng-repeat="vals in detail.PENDAPATAN.detail" ng-if="form.is_detail == 0 && vals.is_tipe == 1">
                                     <td align="left" style="vertical-align: top">
-                                        <div ng-bind-html="vals.nama"></div>
+                                        <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td align="right" class="text-right" style="vertical-align: top">
                                         <span>{{ vals.nominal | number }}</span>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in detail.PENDAPATAN.detail" ng-if="form.is_detail == 1" ng-dblclick="viewBukuBesar(vals)">
+                                <tr ng-repeat="vals in detail.PENDAPATAN.detail" ng-if="form.is_detail == 1">
                                     <td align="left" style="vertical-align: top">
-                                        <div ng-bind-html="vals.nama"></div>
+                                        <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td align="right" class="text-right" style="vertical-align: top">
                                         <span ng-if="vals.is_tipe == 0">{{ vals.nominal | number }}</span>
@@ -122,33 +122,9 @@
                                         <b>{{ detail.PENDAPATAN.total | number }}</b>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in detail.BEBAN.detail" ng-if="form.is_detail == 0 && vals.is_tipe == 1">
-                                    <td align="left" style="vertical-align: top">
-                                        <div ng-bind-html="vals.nama"></div>
-                                    </td>
-                                    <td align="right" class="text-right" style="vertical-align: top">
-                                        <span>{{ vals.nominal | number }}</span>
-                                    </td>
-                                </tr>
-                                <tr ng-repeat="vals in detail.BEBAN.detail" ng-if="form.is_detail == 1" ng-dblclick="viewBukuBesar(vals)">
-                                    <td align="left" style="vertical-align: top">
-                                        <div ng-bind-html="vals.nama"></div>
-                                    </td>
-                                    <td align="right" class="text-right" style="vertical-align: top">
-                                        <span ng-if="vals.is_tipe == 0">{{ vals.nominal | number }}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="right" class="text-right" style="vertical-align: top">
-                                        <b>TOTAL BEBAN USAHA</b>
-                                    </td>
-                                    <td align="right" class="text-right" style="vertical-align: top">
-                                        <b>{{ detail.BEBAN.total | number }}</b>
-                                    </td>
-                                </tr>
                                 <tr ng-repeat="vals in detail.PENDAPATAN_DILUAR_USAHA.detail" ng-if="form.is_detail == 0 && vals.is_tipe == 1">
                                     <td align="left" style="vertical-align: top">
-                                        <div ng-bind-html="vals.nama"></div>
+                                        <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td align="right" class="text-right" style="vertical-align: top">
                                         <span>{{ vals.nominal | number }}</span>
@@ -156,7 +132,7 @@
                                 </tr>
                                 <tr ng-repeat="vals in detail.PENDAPATAN_DILUAR_USAHA.detail" ng-if="form.is_detail == 1" ng-dblclick="viewBukuBesar(vals)">
                                     <td align="left" style="vertical-align: top">
-                                        <div ng-bind-html="vals.nama"></div>
+                                        <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td align="right" class="text-right" style="vertical-align: top">
                                         <span ng-if="vals.is_tipe == 0">{{ vals.nominal | number }}</span>
@@ -170,9 +146,34 @@
                                         <b>{{ detail.PENDAPATAN_DILUAR_USAHA.total | number }}</b>
                                     </td>
                                 </tr>
+                                <tr ng-repeat="vals in detail.BEBAN.detail" ng-if="form.is_detail == 0 && vals.is_tipe == 1">
+                                    <td align="left" style="vertical-align: top">
+                                        <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <span>{{ vals.nominal | number }}</span>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="vals in detail.BEBAN.detail" ng-if="form.is_detail == 1" ng-dblclick="viewBukuBesar(vals)">
+                                    <td align="left" style="vertical-align: top">
+                                        <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <span ng-if="vals.is_tipe == 0">{{ vals.nominal | number }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>TOTAL BEBAN USAHA</b>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>{{ detail.BEBAN.total | number }}</b>
+                                    </td>
+                                </tr>
+
                                 <tr ng-repeat="vals in detail.BEBAN_DILUAR_USAHA.detail" ng-if="form.is_detail == 0 && vals.is_tipe == 1">
                                     <td align="left" style="vertical-align: top">
-                                        <div ng-bind-html="vals.nama"></div>
+                                        <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td align="right" class="text-right" style="vertical-align: top">
                                         <span>{{ vals.nominal | number }}</span>
@@ -180,7 +181,7 @@
                                 </tr>
                                 <tr ng-repeat="vals in detail.BEBAN_DILUAR_USAHA.detail" ng-if="form.is_detail == 1" ng-dblclick="viewBukuBesar(vals)">
                                     <td align="left" style="vertical-align: top">
-                                        <div ng-bind-html="vals.nama"></div>
+                                        <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td align="right" class="text-right" style="vertical-align: top">
                                         <span ng-if="vals.is_tipe == 0">{{ vals.nominal | number }}</span>

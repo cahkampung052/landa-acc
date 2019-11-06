@@ -79,6 +79,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         if (($val->saldo < 0 || $val->saldo > 0) || $val->is_tipe == 1) {
             if ($val->is_tipe == 1) {
                 $id = $val->id;
+                $arrHarta[$id]['id'] = $id;
                 $arrHarta[$id]['kode'] = $val->nama;
                 $arrHarta[$id]['nama'] = $val->kode . ' - ' . $val->nama;
             } else {
@@ -146,6 +147,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         if (($val->saldo < 0 || $val->saldo > 0) || $val->is_tipe == 1) {
             if ($val->is_tipe == 1) {
                 $id = $val->id;
+                $arrKewajiban[$id]['id'] = $id;
                 $arrKewajiban[$id]['kode'] = $val->kode;
                 $arrKewajiban[$id]['nama'] = $val->kode . " - " . $val->nama;
             } else {
@@ -216,6 +218,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         if (($val->saldo < 0 || $val->saldo > 0) || $val->is_tipe == 1) {
             if ($val->is_tipe == 1) {
                 $id = $val->id;
+                $arrModal[$id]['id'] = $id;
                 $arrModal[$id]['kode'] = $val->kode;
                 $arrModal[$id]['nama'] = $val->kode . ' - ' . $val->nama;
             } else {

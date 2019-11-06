@@ -50,7 +50,6 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
 
 
 
-
     /*
      * ambil semua akun tipe = 0
      */
@@ -75,11 +74,15 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             /*
              * ambil budget
              */
-            $getBudget = $db->select("*")->from("acc_budgeting")
+            $db->select("*")->from("acc_budgeting")
                     ->where("m_akun_id", "=", $value->id)
                     ->where("tahun", "=", $params['tahun'])
-                    ->where("bulan", "=", $i)
-                    ->find();
+                    ->where("bulan", "=", $i);
+            if (!empty($lokasiId)) {
+                $db->customWhere("acc_budgeting.m_lokasi_id = $lokasiId", "AND");
+            }
+            $getBudget = $db->find();
+//            print_r($getBudget);
 
             /*
              * set nomer bulan
@@ -123,7 +126,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
         }
     }
 
-
+//    die;
 
     /*
      * perulangan bulan untuk header

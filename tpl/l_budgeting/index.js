@@ -13,8 +13,9 @@ app.controller('l_budgetingCtrl', function ($scope, Data, $rootScope, $uibModal)
     /**
      * Ambil list semua akun
      */
-    Data.get('acc/m_akun/listakun').then(function (data) {
-        $scope.listAkun = data.data;
+    Data.get('acc/m_akun/akunBebanPendapatan').then(function (data) {
+        $scope.listAkun = data.data.list;
+
         if ($scope.listAkun.length > 0) {
             $scope.form.m_akun_id = $scope.listAkun[0];
         }
