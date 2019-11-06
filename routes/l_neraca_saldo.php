@@ -26,7 +26,7 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
     /**
      * ambil saldo awal
      */
-    $sql->select("SUM(debit) as debit, SUM(kredit) as kredit, acc_m_akun.id as m_akun_id, acc_m_akun.parent_id")
+    $sql->select("SUM(debit) as debit, SUM(kredit) as kredit, acc_m_akun.id as m_akun_id, acc_m_akun.parent_id, acc_m_akun.is_tipe")
                 ->from("acc_m_akun")
                 ->leftJoin("acc_trans_detail", "acc_m_akun.id = acc_trans_detail.m_akun_id")
                 ->andWhere('date(tanggal)', '<', $tanggal_start)
