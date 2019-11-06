@@ -102,6 +102,7 @@ $app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
             if ($delete) {
                 foreach ($params['detail'] as $val) {
                     if ((isset($val['debit']) && !empty($val['debit'])) || (isset($val['kredit']) && !empty($val['kredit']))) {
+                        $detail['m_lokasi_jurnal_id'] = $m_lokasi_id;
                         $detail['m_lokasi_id'] = $m_lokasi_id;
                         $detail['tanggal'] = $tanggal;
                         $detail['reff_type'] = 'Saldo Awal';
