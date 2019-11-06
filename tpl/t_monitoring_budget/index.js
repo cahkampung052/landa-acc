@@ -62,8 +62,12 @@ app.controller('MonitoringBudgettingCtrl', function($scope, Data, $rootScope, $u
 });
 app.controller("modalDetailCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope, form) {
     $scope.form = form;
+    $scope.total = 0;
+    $scope.totalKegiatan = 0;
     Data.get("acc/t_monitoring_budget/getDetail", {lokasi_id : $scope.form.id, tahun: $scope.form.tahun}).then(function(result) {
         $scope.listDetail = result.data.list;
+        $scope.total = result.data.total;
+        $scope.totalKegiatan = result.data.totalKegiatan;
     });
     $scope.close = function() {
         $uibModalInstance.close({});

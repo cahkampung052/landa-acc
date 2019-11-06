@@ -61,7 +61,10 @@ $app->get('/acc/t_monitoring_budget/getDetail', function ($request, $response) {
     $db = $this->db;
     $lokasi = isset($params['lokasi_id']) ? $params['lokasi_id'] : 0;
     $tahun = isset($params['tahun']) ? date("Y", strtotime($params['tahun'])) : 0;
-    $db->select("acc_m_akun.kode, acc_m_akun.nama, acc_budgeting.bulan, acc_budgeting.tahun, acc_budgeting.budget, acc_budgeting.m_akun_id")
+    /**
+     * Ambil budgeting
+     */
+    $db->select("acc_m_akun.kode, acc_m_akun.nama, acc_budgeting.budget as total, acc_budgeting.m_akun_id")
         ->from("acc_budgeting")
         ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_budgeting.m_akun_id")
         ->where("acc_budgeting.m_lokasi_id", "=", $lokasi)
@@ -69,13 +72,32 @@ $app->get('/acc/t_monitoring_budget/getDetail', function ($request, $response) {
         ->andWhere("acc_budgeting.budget", ">", 0);
     $model = $db->findAll();
     $arr = [];
-    $total = 0;
+    $total = $totalKegiatan = 0;
+    foreach ($model as $key => $value) {
+        $arr[$value->m_akun_id]['nama'] = $value->nama;
+        $arr[$value->m_akun_id]['kode'] = $value->kode;
+        $arr[$value->m_akun_id]['kegiatan'] = 0;
+        $arr[$value->m_akun_id]['budget'] = (isset($arr[$value->m_akun_id]['budget']) ? $arr[$value->m_akun_id]['budget'] : 0) + $value->total;
+        $total += $value->total;
+    }
+    /**
+     * Ambil pengajuan yang sudah di approve
+     */
+    $db->select("acc_m_akun.kode, acc_m_akun.nama, acc_t_pengajuan_det.sub_total, acc_t_pengajuan_det.m_akun_id")
+        ->from("acc_t_pengajuan_det")
+        ->leftJoin("acc_t_pengajuan", "acc_t_pengajuan.id = acc_t_pengajuan_det.t_pengajuan_id")
+        ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_t_pengajuan_det.m_akun_id")
+        ->andWhere("acc_t_pengajuan.m_lokasi_id", "=", $lokasi)
+        ->andWhere("year(acc_t_pengajuan.tanggal)", "=", $tahun);
+    $model = $db->findAll();
     foreach ($model as $key => $value) {
         $arr[$value->m_akun_id] = (array) $value;
-        $arr[$value->m_akun_id]['budget'] = (isset($arr[$value->m_akun_id]['budget']) ? $arr[$value->m_akun_id]['budget'] : 0) + $value->budget;
+        $arr[$value->m_akun_id]['kegiatan'] = (isset($arr[$value->m_akun_id]['kegiatan']) ? $arr[$value->m_akun_id]['kegiatan'] : 0) + $value->sub_total;
+        $totalKegiatan += $value->sub_total;
     }
     return successResponse($response, [
         'list' => $arr,
-        'total' => $total
+        'total' => $total,
+        'totalKegiatan' => $totalKegiatan
     ]);
 });

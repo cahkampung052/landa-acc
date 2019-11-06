@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h5 class="modal-title">Detail Budgeting</h5>
+    <h5 class="modal-title">Detail Budgeting {{form.nama}}</h5>
     <button type="button" class="close" ng-click="close()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -16,10 +16,26 @@
         </thead>
         <tbody>
             <tr ng-repeat="row in listDetail">
-                <td style="text-align: left;">{{ row.kode }} {{row.nama}}</td>
-                <td style="text-align: right;">{{ row.bulan }} / {{ row.tahun }}</td>
-                <th style="text-align: center;" width="100">0</th>
-                <th style="text-align: center;" width="100">0</th>
+                <td style="text-align: left;">{{ row.kode }} {{ row.nama }}</td>
+                <td style="text-align: right;">{{ row.budget | number }}</td>
+                <td style="text-align: right;" width="100">{{ row.kegiatan | number }}</td>
+                <td style="text-align: right;" width="100">{{ row.budget-row.kegiatan | number }}</td>
+            </tr>
+            <tr>
+                <td>
+                    <center>
+                        <b>Grand Total</b>
+                    </center>
+                </td>
+                <td style="text-align: right;">
+                    <b>{{ total | number }}</b>
+                </td>
+                <td style="text-align: right;">
+                    <b>{{ totalKegiatan | number }}</b>
+                </td>
+                <td style="text-align: right;">
+                    <b>{{ total | number }}</b>
+                </td>
             </tr>
         </tbody>
     </table>

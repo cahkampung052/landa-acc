@@ -311,6 +311,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         if (isset($cekKode->kode)) {
             return unprocessResponse($response, ["kode sudah digunakan untuk akun '" . $cekKode->nama . "'"]);
         }
+        unset($data['kode']);
         /**
          * Set level dan tipe arus kas
          */
