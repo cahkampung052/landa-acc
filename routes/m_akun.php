@@ -102,6 +102,7 @@ $app->post('/acc/m_akun/saveSaldoAwal', function ($request, $response) {
             if ($delete) {
                 foreach ($params['detail'] as $val) {
                     if ((isset($val['debit']) && !empty($val['debit'])) || (isset($val['kredit']) && !empty($val['kredit']))) {
+                        $detail['m_lokasi_jurnal_id'] = $m_lokasi_id;
                         $detail['m_lokasi_id'] = $m_lokasi_id;
                         $detail['tanggal'] = $tanggal;
                         $detail['reff_type'] = 'Saldo Awal';
@@ -311,6 +312,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         if (isset($cekKode->kode)) {
             return unprocessResponse($response, ["kode sudah digunakan untuk akun '" . $cekKode->nama . "'"]);
         }
+        unset($data['kode']);
         /**
          * Set level dan tipe arus kas
          */
@@ -557,8 +559,9 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
 //    echo json_encode($getBudget);die;
     $list = $name_month;
     foreach ($getBudget as $key => $value) {
-        if($value->bulan < 10)
+        if($value->bulan < 10){
             $value->bulan = 0 . "" . $value->bulan;
+        }
         $list[$value->bulan . "-" . $value->tahun]['detail'] = (array) $value;
     }
     

@@ -35,7 +35,7 @@ app.controller('budgetingCtrl', function($scope, Data, $rootScope, $uibModal) {
     $scope.sumTotal = function() {
         var totalbudget = 0;
         angular.forEach($scope.displayed, function(value, key) {
-            totalbudget += value.detail.budget;
+            totalbudget += parseInt(value.detail.budget);
         });
         $scope.totalbudget = totalbudget;
     };
