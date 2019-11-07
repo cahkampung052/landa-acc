@@ -95,9 +95,24 @@ $app->get('/acc/t_monitoring_budget/getDetail', function ($request, $response) {
         $arr[$value->m_akun_id]['kegiatan'] = (isset($arr[$value->m_akun_id]['kegiatan']) ? $arr[$value->m_akun_id]['kegiatan'] : 0) + $value->sub_total;
         $totalKegiatan += $value->sub_total;
     }
-    return successResponse($response, [
-        'list' => $arr,
-        'total' => $total,
-        'totalKegiatan' => $totalKegiatan
-    ]);
+    if (isset($params['is_export']) && $params['is_export'] == 1) {
+        $view = twigViewPath();
+        // echo json_encode($para); die();
+        $content = $view->fetch('laporan/detailBudget.html', [
+                'list' => $arr,
+                'total' => $total,
+                'totalKegiatan' => $totalKegiatan,
+                "css" => modulUrl() . '/assets/css/style.css',
+            ]);
+        header("Content-type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment;Filename=detail-budget.xls");
+        echo $content;
+    }else{
+        return successResponse($response, [
+            'list' => $arr,
+            'total' => $total,
+            'totalKegiatan' => $totalKegiatan
+        ]);
+    }
+
 });

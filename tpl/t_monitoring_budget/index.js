@@ -64,11 +64,25 @@ app.controller("modalDetailCtrl", function($state, $scope, Data, $uibModalInstan
     $scope.form = form;
     $scope.total = 0;
     $scope.totalKegiatan = 0;
+    Data.get('site/base_url').then(function(response) {
+        $scope.url = response.data;
+    });
     Data.get("acc/t_monitoring_budget/getDetail", {lokasi_id : $scope.form.id, tahun: $scope.form.tahun}).then(function(result) {
         $scope.listDetail = result.data.list;
         $scope.total = result.data.total;
         $scope.totalKegiatan = result.data.totalKegiatan;
     });
+
+    $scope.exportDetail = function(){
+        console.log($scope.url);
+        var param = {lokasi_id : $scope.form.id, tahun: moment($scope.form.tahun).format('YYYY-MM-DD'), is_export :1};
+        window.open($scope.url.base_url + "api/acc/t_monitoring_budget/getDetail?" + $.param(param), "_blank");
+        /*Data.get("acc/t_monitoring_budget/getDetail", {lokasi_id : $scope.form.id, tahun: $scope.form.tahun, is_export : 1}).then(function(result) {
+            $scope.listDetail = result.data.list;
+            $scope.total = result.data.total;
+            $scope.totalKegiatan = result.data.totalKegiatan;
+        });*/
+    }
     $scope.close = function() {
         $uibModalInstance.close({});
     };
