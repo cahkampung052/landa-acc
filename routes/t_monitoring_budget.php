@@ -1,4 +1,5 @@
 <?php
+
 function validasi($data, $custom = array()) {
     $validasi = array(
         'kode' => 'required',
@@ -8,6 +9,7 @@ function validasi($data, $custom = array()) {
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
+
 $app->get('/acc/t_monitoring_budget/index', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
@@ -39,6 +41,10 @@ $app->get('/acc/t_monitoring_budget/index', function ($request, $response) {
         $db->where("tanggal", ">=", $tahun . "-01-01")
                 ->where("tanggal", "<=", $tahun . "-12-31");
     }
+
+    if (isset($params['kategori']) && !empty($params['kategori'])) {
+        $db->where("m_kategori_pengajuan_id", "=", $params['kategori']);
+    }
 //            ->where("tipe", "=", "Budgeting")
     $usedbudget = $db->customWhere("status = 'approved' OR status = 'terbayar'", "AND")
             ->findAll();
@@ -65,11 +71,11 @@ $app->get('/acc/t_monitoring_budget/getDetail', function ($request, $response) {
      * Ambil budgeting
      */
     $db->select("acc_m_akun.kode, acc_m_akun.nama, acc_budgeting.budget as total, acc_budgeting.m_akun_id")
-        ->from("acc_budgeting")
-        ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_budgeting.m_akun_id")
-        ->where("acc_budgeting.m_lokasi_id", "=", $lokasi)
-        ->andWhere("acc_budgeting.tahun", "=", $tahun)
-        ->andWhere("acc_budgeting.budget", ">", 0);
+            ->from("acc_budgeting")
+            ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_budgeting.m_akun_id")
+            ->where("acc_budgeting.m_lokasi_id", "=", $lokasi)
+            ->andWhere("acc_budgeting.tahun", "=", $tahun)
+            ->andWhere("acc_budgeting.budget", ">", 0);
     $model = $db->findAll();
     $arr = [];
     $total = $totalKegiatan = 0;
@@ -84,11 +90,11 @@ $app->get('/acc/t_monitoring_budget/getDetail', function ($request, $response) {
      * Ambil pengajuan yang sudah di approve
      */
     $db->select("acc_m_akun.kode, acc_m_akun.nama, acc_t_pengajuan_det.sub_total, acc_t_pengajuan_det.m_akun_id")
-        ->from("acc_t_pengajuan_det")
-        ->leftJoin("acc_t_pengajuan", "acc_t_pengajuan.id = acc_t_pengajuan_det.t_pengajuan_id")
-        ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_t_pengajuan_det.m_akun_id")
-        ->andWhere("acc_t_pengajuan.m_lokasi_id", "=", $lokasi)
-        ->andWhere("year(acc_t_pengajuan.tanggal)", "=", $tahun);
+            ->from("acc_t_pengajuan_det")
+            ->leftJoin("acc_t_pengajuan", "acc_t_pengajuan.id = acc_t_pengajuan_det.t_pengajuan_id")
+            ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_t_pengajuan_det.m_akun_id")
+            ->andWhere("acc_t_pengajuan.m_lokasi_id", "=", $lokasi)
+            ->andWhere("year(acc_t_pengajuan.tanggal)", "=", $tahun);
     $model = $db->findAll();
     foreach ($model as $key => $value) {
         $arr[$value->m_akun_id] = (array) $value;
@@ -99,20 +105,19 @@ $app->get('/acc/t_monitoring_budget/getDetail', function ($request, $response) {
         $view = twigViewPath();
         // echo json_encode($para); die();
         $content = $view->fetch('laporan/detailBudget.html', [
-                'list' => $arr,
-                'total' => $total,
-                'totalKegiatan' => $totalKegiatan,
-                "css" => modulUrl() . '/assets/css/style.css',
-            ]);
+            'list' => $arr,
+            'total' => $total,
+            'totalKegiatan' => $totalKegiatan,
+            "css" => modulUrl() . '/assets/css/style.css',
+        ]);
         header("Content-type: application/vnd.ms-excel");
         header("Content-Disposition: attachment;Filename=detail-budget.xls");
         echo $content;
-    }else{
+    } else {
         return successResponse($response, [
             'list' => $arr,
             'total' => $total,
             'totalKegiatan' => $totalKegiatan
         ]);
     }
-
 });

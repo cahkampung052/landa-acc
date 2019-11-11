@@ -28,6 +28,10 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
     Data.get('site/base_url').then(function(response) {
         $scope.url = response.data;
     });
+    
+    Data.get('acc/apppengajuan/getKategori').then(function (response){
+        $scope.listKategori = response.data;
+    })
     /**
      * Ambil semua lokasi
      */
@@ -185,6 +189,10 @@ app.controller("tpengajuanCtrl", function($scope, Data, $rootScope, $uibModal, $
         }];
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
+        }
+        
+        if ($scope.listKategori.length > 0) {
+            $scope.form.m_kategori_pengajuan_id = $scope.listKategori[0];
         }
         $scope.listAcc = {};
         $scope.sumTotal();

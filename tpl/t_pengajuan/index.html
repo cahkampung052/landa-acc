@@ -2,7 +2,7 @@
     <div ng-controller="tpengajuanCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong class="">{{ master }}</strong>
+                <strong class="">{{ master}}</strong>
                 <div class="btn-group pull-right mt-5px d-lg-none" role="group">
                     <div class="dropdown">
                         <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</button>
@@ -57,7 +57,7 @@
                                         <div class="col-sm-2">
                                             <select class="form-control form-control-sm" st-search="m_lokasi_id">
                                                 <option value="">- Semua Lokasi -</option>
-                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{ val.nama_lengkap }}</option>
+                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{ val.nama_lengkap}}</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-2">
@@ -95,17 +95,17 @@
                         </thead>
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
-                                <td class="align-left">{{ row.no_proposal }}</td>
-                                <td class="align-left">{{ row.created_formated }}</td>
-                                <td class="align-left">{{ row.namaLokasi }}</td>
-                                <td class="align-left">{{ row.perihal }}</td>
-                                <td class="align-left">{{ row.tanggal | date:'dd-MM-yyyy' }} {{row.created_at | date:'H:mm'}}</td>
+                                <td class="align-left">{{ row.no_proposal}}</td>
+                                <td class="align-left">{{ row.created_formated}}</td>
+                                <td class="align-left">{{ row.namaLokasi}}</td>
+                                <td class="align-left">{{ row.perihal}}</td>
+                                <td class="align-left">{{ row.tanggal | date:'dd-MM-yyyy' }} {{row.created_at| date:'H:mm'}}</td>
                                 <td class="align-right">{{ row.jumlah_perkiraan | number }}</td>
                                 <td class="align-center">
-                                    <span class="bg-success p-1" ng-if="row.status == 'Terbayar'">{{ row.status }}</span>
-                                    <span class="bg-info p-1" ng-if="row.status == 'Approved'">{{ row.status }}</span>
-                                    <span class="bg-danger p-1" ng-if="row.status == 'Canceled'">{{ row.status }}</span>
-                                    <span class="bg-danger p-1" ng-if="row.status == 'Rejected'">{{ row.status }}</span>
+                                    <span class="bg-success p-1" ng-if="row.status == 'Terbayar'">{{ row.status}}</span>
+                                    <span class="bg-info p-1" ng-if="row.status == 'Approved'">{{ row.status}}</span>
+                                    <span class="bg-danger p-1" ng-if="row.status == 'Canceled'">{{ row.status}}</span>
+                                    <span class="bg-danger p-1" ng-if="row.status == 'Rejected'">{{ row.status}}</span>
                                     <span class="bg-warning p-1" ng-if="row.status == ''">Pending</span>
                                     <span class="bg-warning p-1" ng-if="row.status == 'Pending'">Pending</span>
                                     <span class="bg-warning p-1" ng-if="row.status == 'Open'">Pending</span>
@@ -114,7 +114,7 @@
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-primary fa fa-print" ng-click="print(row)"></button>
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-click="update(row)" ng-if="row.status == '' && row.created_by == user.id"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row)" ng-if="row.status == ''  && row.created_by == user.id"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row)" ng-if="row.status == '' && row.created_by == user.id"></button>
                                         <button type="button" class="btn btn-success fa fa-whatsapp" ng-click="modalWhatsapp(row)" ng-if="row.status != 'Approved' && row.status != 'Terbayar'"></button>
                                         <button type="button" class="btn btn-info fa fa-book" ui-sref="keuangan.pengeluaran({no_proposal: row.no_proposal, total: row.jumlah_perkiraan})" ng-if="row.status == 'Approved' && user.akses.pengajuan_bs">
                                             <span style="font-family: 'Arial'">BS</span>
@@ -133,7 +133,7 @@
         </div>
         <div class="card" ng-if="is_edit">
             <div class="card-header">
-                <strong>{{ formtittle }}</strong>
+                <strong>{{ formtittle}}</strong>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
@@ -142,8 +142,8 @@
                             <label class="col-sm-3 col-form-label-sm">Tersalin dari</label>
                             <div class="col-sm-9">
                                 <ui-select class="ui-select-sm ui-select-container" ng-model="tersalin_dari" theme="bootstrap" ng-disabled="is_view" ng-change="getPengajuan(tersalin_dari)">
-                                    <ui-select-match placeholder="Pilih No Proposal">{{ $select.selected.no_proposal }}</ui-select-match>
-                                    <ui-select-choices position="down" repeat="val in listPengajuan | filter : $select.search">{{ val.no_proposal }}</ui-select-choices>
+                                    <ui-select-match placeholder="Pilih No Proposal">{{ $select.selected.no_proposal}}</ui-select-match>
+                                    <ui-select-choices position="down" repeat="val in listPengajuan | filter : $select.search">{{ val.no_proposal}}</ui-select-choices>
                                 </ui-select>
                             </div>
                         </div>
@@ -152,8 +152,8 @@
                             <label class="col-sm-3 col-form-label-sm">Lokasi</label>
                             <div class="col-sm-9">
                                 <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view" on-select="getBudgeting(form.m_lokasi_id.id, form.tanggal)">
-                                    <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                    <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
+                                    <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                    <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                 </ui-select>
                             </div>
                         </div>
@@ -212,6 +212,15 @@
                             <label class="col-sm-3 col-form-label-sm">Lokasi & Waktu</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control form-control-sm" ng-model="form.lokasi_waktu" ng-disabled="is_view || is_update"  />
+                            </div>
+                        </div>
+                        <div class="form-group row col-md-6">
+                            <label class="col-sm-3 col-form-label-sm">Kat. Pengajuan</label>
+                            <div class="col-sm-9">
+                                <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_kategori_pengajuan_id" theme="bootstrap" ng-disabled="is_view">
+                                    <ui-select-match placeholder="Pilih Kategori">{{ $select.selected.nama }}</ui-select-match>
+                                    <ui-select-choices position="down" repeat="val in listKategori | filter : $select.search">{{ val.nama}}</ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
                     </div>
@@ -282,8 +291,8 @@
                                         <td>
                                             <div>
                                                 <ui-select class="ui-select-sm ui-select-container" ng-model="v.m_akun_id" theme="bootstrap" ng-disabled="is_view" on-select="getBudgeting(form.m_lokasi_id.id, form.tanggal)">
-                                                    <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                                    <ui-select-choices repeat="val in listAkun | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
+                                                    <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                                    <ui-select-choices repeat="val in listAkun | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
                                                 </ui-select>
                                             </div>
                                         </td>
@@ -374,24 +383,24 @@
                                             <button type="button" class="btn btn-sm btn-danger fa fa-trash" ng-click="removeDetail(listAcc, $index)" ng-disabled="true"></button>
                                         </td>
                                         <td class="align-left">
-                                            <ui-select class="ui-select-sm ui-select-container" ng-model="v.acc_m_user_id" theme="bootstrap" ng-disabled="true">
-                                                <ui-select-match placeholder="Pilih User">{{ $select.selected.nama }}</ui-select-match>
-                                                <ui-select-choices position="down" repeat="val in listUser | filter : $select.search">{{ val.nama }}</ui-select-choices>
-                                            </ui-select>
-                                        </td>
-                                        <td class="align-left">
-                                            <input type="text" class="form-control form-control-sm" maxlength="255" ng-model="v.sebagai" ng-disabled="true"/>
-                                        </td>
-                                        <td class="align-left">
-                                            <input type="text" class="form-control form-control-sm angka rp" maxlength="11" ng-model="v.level" ng-disabled="true"/>
-                                        </td>
-                                        <td class="align-center">
-                                            <span class="bg-success p-1" ng-if="v.status == 'Approved'">Disetujui</span>
-                                            <span class="bg-danger p-1" ng-if="v.status == 'Rejected'">Ditolak</span>
-                                            <span class="bg-warning p-1" ng-if="v.status == 'Pending'">Pending</span>
-                                            <span class="bg-primary p-1" ng-if="v.status == 'Terbayar'">Terbayar</span>
-                                        </td>
-                                    </tr>
+                                <ui-select class="ui-select-sm ui-select-container" ng-model="v.acc_m_user_id" theme="bootstrap" ng-disabled="true">
+                                    <ui-select-match placeholder="Pilih User">{{ $select.selected.nama}}</ui-select-match>
+                                    <ui-select-choices position="down" repeat="val in listUser | filter : $select.search">{{ val.nama}}</ui-select-choices>
+                                </ui-select>
+                                </td>
+                                <td class="align-left">
+                                    <input type="text" class="form-control form-control-sm" maxlength="255" ng-model="v.sebagai" ng-disabled="true"/>
+                                </td>
+                                <td class="align-left">
+                                    <input type="text" class="form-control form-control-sm angka rp" maxlength="11" ng-model="v.level" ng-disabled="true"/>
+                                </td>
+                                <td class="align-center">
+                                    <span class="bg-success p-1" ng-if="v.status == 'Approved'">Disetujui</span>
+                                    <span class="bg-danger p-1" ng-if="v.status == 'Rejected'">Ditolak</span>
+                                    <span class="bg-warning p-1" ng-if="v.status == 'Pending'">Pending</span>
+                                    <span class="bg-primary p-1" ng-if="v.status == 'Terbayar'">Terbayar</span>
+                                </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>

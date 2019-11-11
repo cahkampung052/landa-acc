@@ -2,7 +2,7 @@
     <div ng-controller="MonitoringBudgettingCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed">
             <div class="card-header">
-                <strong class="">{{ master }}</strong>
+                <strong class="">{{ master}}</strong>
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
@@ -13,6 +13,12 @@
                                     <div class="form-group row mb-0px">
                                         <div class="col-md-2">
                                             <input ng-disabled="is_view" class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'year', maxMode: 'year'}" is-open="opened.tgl" ng-click="toggle($event, 'tgl')" ng-model="form.tahun" placeholder="Tahun" type="text" uib-datepicker-popup="yyyy" ng-change="filterTahun(form.tahun)"/>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_kategori_pengajuan_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select-match placeholder="Pilih Kategori">{{$select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listKategori | filter : $select.search">{{ val.nama}}</ui-select-choices>
+                                            </ui-select>
                                         </div>
                                     </div>
                                 </form>
@@ -32,7 +38,7 @@
                         </thead>
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed">
-                                <td style="text-align: left;">{{ row.nama }}</td>
+                                <td style="text-align: left;">{{ row.nama}}</td>
                                 <td style="text-align: right;">
                                     <span class="bg-success p-1" ng-click="modal(row)">{{ row.budget| number }}</span>
                                 </td>
