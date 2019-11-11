@@ -79,7 +79,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
                     ->where("tahun", "=", $params['tahun'])
                     ->where("bulan", "=", $i);
             if (!empty($lokasiId)) {
-                $db->customWhere("acc_budgeting.m_lokasi_id = $lokasiId", "AND");
+                $db->customWhere("acc_budgeting.m_lokasi_id = '".$lokasiId."'", "AND");
             }
             $getBudget = $db->find();
 //            print_r($getBudget);

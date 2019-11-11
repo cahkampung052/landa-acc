@@ -8,7 +8,12 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal, $st
     Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
     });
-    
+     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
+        $scope.listLokasi = response.data.list;
+        if ($scope.listLokasi.length > 0) {
+            $scope.form.m_lokasi_id = $scope.listLokasi[0];
+        }
+    });
      /**
      * Ambil laporan dari server
      */
@@ -18,8 +23,8 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal, $st
             export: is_export,
             print: is_print,
             tanggal: moment($scope.form.tanggal).format('YYYY-MM-DD'),
-            is_detail : $scope.form.is_detail
-//            m_lokasi_id : $scope.form.m_lokasi_id.id
+            is_detail : $scope.form.is_detail,
+           m_lokasi_id : $scope.form.m_lokasi_id.id
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan', param).then(function(response) {

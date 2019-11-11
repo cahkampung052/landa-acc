@@ -45,7 +45,7 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
             ->leftJoin("acc_m_lokasi as lokasi_saldo", "lokasi_saldo.id = acc_trans_detail.m_lokasi_id")
             ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
             ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end)
-            ->orderBy("acc_trans_detail.tanggal ASC, acc_trans_detail.id ASC");
+            ->orderBy("acc_trans_detail.tanggal ASC, acc_trans_detail.kode ASC");
     $gettransdetail = $sql->findAll();
     foreach ($gettransdetail as $keys => $vals) {
         if ($vals->debit == null) {
@@ -65,7 +65,7 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
     $namaLokasi = "";
     foreach ($arr as $key => $val) {
         $arr[$key]['namaLokasi']    = $val['namaLokasiSaldo'];
-        if ($val['kode'] == $kode && $val['kode'] != "" && $val['namaLokasi'] == $namaLokasi && $val['namaLokasi'] != "") {
+        if ($val['kode'] == $kode && $val['kode'] != "") {
             $arr[$key]['kode']          = "";
             $arr[$key]['kodeLokasi']    = "";
             $arr[$key]['tanggal']       = "";
