@@ -1,0 +1,73 @@
+<link href="{{ css}}" rel="stylesheet" type="text/css"/>
+<div class="card-body">
+    <div class="row header-laporan-wrapper">
+        <div class="col-md-12">
+            <center>
+                <h2 class="header-laporan">
+                    DETAIL  BUDGETING
+                </h2>
+                <!-- Disiapkan Tanggal : {{ data.disiapkan }} -->
+                <br/>
+            </center>
+            <hr/>
+        </div>
+    </div>
+    <div>
+        <div class="table-responsive">
+            <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="width: 100px">
+                            <b>
+                                Akun
+                            </b>
+                        </th>
+                        <th style="width: 100px">
+                            <b>
+                                Budget
+                            </b>
+                        </th>
+                        <th>
+                            <b>
+                                Kegiatan
+                            </b>
+                        </th>
+                        <th style="width: 100px">
+                            <b>
+                                Sisa
+                            </b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for k, row in list %}
+                    <tr>
+                        <td style="text-align: left;">{{ row.kode }} {{ row.nama }}</td>
+                        <td style="text-align: right;">{{ row.budget  }}</td>
+                        <td style="text-align: right;" width="100">{{ row.kegiatan  }}</td>
+                        <td style="text-align: right;" width="100">{{ row.budget-row.kegiatan  }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                       <td>
+                            <center>
+                                <b>Grand Total</b>
+                            </center>
+                        </td>
+                        <td style="text-align: right;">
+                            <b>{{ total  }}</b>
+                        </td>
+                        <td style="text-align: right;">
+                            <b>{{ totalKegiatan  }}</b>
+                        </td>
+                        <td style="text-align: right;">
+                            <b>{{ total  }}</b>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

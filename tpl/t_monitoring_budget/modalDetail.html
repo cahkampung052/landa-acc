@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <h5 class="modal-title">Detail Budgeting {{form.nama}}</h5>
+    <button type="button" class="close" ng-click="close()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <button class="btn btn-success fa fa-excel" ng-click="exportDetail()">Export Excel</button>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th style="text-align: center;">Akun</th>
+                <th style="text-align: center;" width="100">Budget</th>
+                <th style="text-align: center;" width="100">Kegiatan</th>
+                <th style="text-align: center;" width="100">Sisa</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in listDetail">
+                <td style="text-align: left;">{{ row.kode }} {{ row.nama }}</td>
+                <td style="text-align: right;">{{ row.budget | number }}</td>
+                <td style="text-align: right;" width="100">{{ row.kegiatan | number }}</td>
+                <td style="text-align: right;" width="100">{{ row.budget-row.kegiatan | number }}</td>
+            </tr>
+            <tr>
+                <td>
+                    <center>
+                        <b>Grand Total</b>
+                    </center>
+                </td>
+                <td style="text-align: right;">
+                    <b>{{ total | number }}</b>
+                </td>
+                <td style="text-align: right;">
+                    <b>{{ totalKegiatan | number }}</b>
+                </td>
+                <td style="text-align: right;">
+                    <b>{{ total | number }}</b>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <br/>
+</div>
