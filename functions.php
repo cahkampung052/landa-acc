@@ -500,6 +500,7 @@ function generateNoTransaksi($type, $unker) {
     $db = config('DB');
     $db = new Cahkampung\Landadb($db['db']);
     $custom = getMasterSetting();
+    $no_transaksi = '';
     if ($type == 'penerimaan') {
         $cek = $db->find("select no_transaksi from acc_pemasukan order by no_transaksi desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
@@ -596,7 +597,7 @@ function generateNoTransaksi($type, $unker) {
         $no_urut = substr('0000' . $urut, -4);
         $no_transaksi = "ASR" . "/" . $no_urut;
     }
-    return @$no_transaksi;
+    return $no_transaksi;
 }
 
 function tableUser() {
