@@ -261,7 +261,7 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $arr[$key]['parent_id'] = (int) $value->parent_id;
         $arr[$key]['saldo_normal'] = (int) $value->saldo_normal;
         $arr[$key]['is_kas'] = (int) $value->is_kas;
-        $arr[$key]['kode'] = str_replace($value->kode_induk . ".", "", $value->kode);
+        $arr[$key]['kode'] = str_replace($value->kode_induk . "", "", $value->kode);
         $arr[$key]['saldo'] = $saldo;
         $arr[$key]['tipe'] = ($value->tipe == 'No Type') ? '' : $value->tipe;
     }
@@ -420,6 +420,7 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     $data['kode'] = $kode;
                     $data['nama'] = $objPHPExcel->getSheet(0)->getCell('C' . $row)->getValue();
                     $data['level'] = 1;
+                    $data['is_induk'] = 1;
                     /*
                      * ambil id dari kode induk
                      */
@@ -429,6 +430,7 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                         if ($model) {
                             $data['parent_id'] = $model->id;
                             $data['level'] = $model->level + 1;
+                            $data['is_induk'] = 0;
                         }
                     }
                     $data['tipe'] = $objPHPExcel->getSheet(0)->getCell('E' . $row)->getValue();
