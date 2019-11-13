@@ -259,6 +259,7 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $arr[$key] = (array) $value;
         $arr[$key]['nama_lengkap'] = $spasi . $value->kode . ' - ' . $value->nama;
         $arr[$key]['parent_id'] = (int) $value->parent_id;
+        $arr[$key]['is_induk'] = (int) $value->is_induk;
         $arr[$key]['saldo_normal'] = (int) $value->saldo_normal;
         $arr[$key]['is_kas'] = (int) $value->is_kas;
         $arr[$key]['kode'] = str_replace($value->kode_induk . "", "", $value->kode);
