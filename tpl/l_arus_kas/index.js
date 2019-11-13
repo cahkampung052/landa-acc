@@ -7,7 +7,7 @@ app.controller('l_aruskasCtrl', function ($scope, Data, $rootScope, $uibModal, U
     };
 
     Data.get('site/base_url').then(function (response) {
-        $.getJSON(response.data.base_url + "api/" + response.data.acc_dir + "/file/data.json", function (json) {
+        $.getJSON(response.data.base_url + "/data.json", function (json) {
             angular.forEach(json, function (val, key) {
                 $scope[key] = val;
             })
