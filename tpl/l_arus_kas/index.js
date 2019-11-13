@@ -5,6 +5,15 @@ app.controller('l_aruskasCtrl', function ($scope, Data, $rootScope, $uibModal, U
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+
+    Data.get('site/base_url').then(function (response) {
+        $.getJSON(response.data.base_url + "api/" + response.data.acc_dir + "/file/data.json", function (json) {
+            angular.forEach(json, function (val, key) {
+                $scope[key] = val;
+            })
+        });
+    });
+
     /*
      * ambil lokasi
      */
