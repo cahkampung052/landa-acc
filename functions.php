@@ -500,6 +500,7 @@ function generateNoTransaksi($type, $unker) {
     $db = config('DB');
     $db = new Cahkampung\Landadb($db['db']);
     $custom = getMasterSetting();
+    $no_transaksi = '';
     if ($type == 'penerimaan') {
         $cek = $db->find("select no_transaksi from acc_pemasukan order by no_transaksi desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
@@ -555,21 +556,11 @@ function generateNoTransaksi($type, $unker) {
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = date("Y") . "/" . date("m") . "/" . $unker . "/BYRKSBN/" . $no_urut;
-    } elseif ($type == 'pembayaran_hutang') {
-        $cek = $db->find("select kode from acc_bayar_hutang order by kode desc");
-        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
-        $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "BS/" . date("Y") . "/" . $no_urut;
     } elseif ($type == 'pembayaran_honor') {
         $cek = $db->find("select kode from acc_honor_dokter order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "HD/" . date("Y") . "/" . $no_urut;
-    } elseif ($type == 'pembayaran_asuransi') {
-        $cek = $db->find("select kode from acc_bayar_asuransi order by kode desc");
-        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
-        $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "BA/" . date("Y") . "/" . $no_urut;
     } elseif ($type == 'customer') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
@@ -601,7 +592,7 @@ function generateNoTransaksi($type, $unker) {
         $no_urut = substr('0000' . $urut, -4);
         $no_transaksi = "ASR" . "/" . $no_urut;
     }
-    return @$no_transaksi;
+    return $no_transaksi;
 }
 
 function tableUser() {
