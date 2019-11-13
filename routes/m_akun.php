@@ -299,7 +299,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
     }
     if ($validasi === true) {
         if ($data['is_induk'] == 0) {
-            $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '-' . $data['kode'];
+            $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '' . $data['kode'];
         }
         /**
          * Cek kode
