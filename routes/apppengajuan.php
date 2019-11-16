@@ -14,6 +14,16 @@ function validasi($data, $custom = array()) {
     return $cek;
 }
 
+$app->get("/acc/apppengajuan/getKategori", function ($request, $response) {
+    $params = $request->getParams();
+    $db = $this->db;
+
+    $db->select("*")->from("acc_m_kategori_pengajuan");
+
+    $data = $db->findAll();
+    return successResponse($response, $data);
+});
+
 $app->post("/acc/apppengajuan/getBudgeting", function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
@@ -300,6 +310,7 @@ $app->post("/acc/apppengajuan/save", function ($request, $response) {
         $data["data"]["tanggal"] = date("Y-m-d H:i", strtotime($tanggal));
         $result = explode(' ~', $data["data"]["lokasi_waktu"]);
         $data["data"]["lokasi_waktu"] = $result[0] . " ~ " . date("H:i");
+        $data['data']['m_kategori_pengajuan_id'] = isset($data['data']['m_kategori_pengajuan_id']) ? $data['data']['m_kategori_pengajuan_id']['id'] : '';
 //        unset($data["data"]["id"]);
         try {
             if (isset($data["data"]["id"]) && !empty($data["data"]["id"])) {
@@ -459,7 +470,7 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
              * if (sudah approve semua), update t_pengajuan jadi approved
              */
 //            if ($approved == $all) {
-                $model = $db->update("acc_t_pengajuan", ["approval" => $data['data']['level'], "status" => $statusapproval, "tanggal_approve" => $date], ["id" => $data["data"]["id"]]);
+            $model = $db->update("acc_t_pengajuan", ["approval" => $data['data']['level'], "status" => $statusapproval, "tanggal_approve" => $date], ["id" => $data["data"]["id"]]);
 //            }
         }
         return successResponse($response, $model);

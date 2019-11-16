@@ -100,7 +100,7 @@ $app->post('/acc/m_klasifikasi/save', function ($request, $response) {
         $validasi = validasi($data);
     }
     if ($validasi === true) {
-        $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '.' . $data['kode'];
+        $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '' . $data['kode'];
         if ($data['parent_id'] == 0 || $data['parent_id'] == '') {
             $data['level'] = 1;
         } else {
