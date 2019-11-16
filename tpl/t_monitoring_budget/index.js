@@ -9,6 +9,9 @@ app.controller('MonitoringBudgettingCtrl', function ($scope, Data, $rootScope, $
     $scope.is_view = false;
     $scope.is_create = false;
     $scope.form = {};
+    $scope.form.m_kategori_pengajuan_id = {
+        id : ''
+    }
     $scope.form.tahun = new Date();
     Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
