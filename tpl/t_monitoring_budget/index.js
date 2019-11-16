@@ -47,6 +47,10 @@ app.controller('MonitoringBudgettingCtrl', function ($scope, Data, $rootScope, $
         $scope.form.tahun = tahun;
         $scope.callServer(tableStateRef);
     }
+    
+    $scope.filterKategori = function () {
+        $scope.callServer(tableStateRef)
+    }
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
