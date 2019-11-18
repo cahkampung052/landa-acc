@@ -557,6 +557,7 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
             ->customWhere("bulan IN (" . implode(", ", $all_month) . ")", "AND")
             ->andWhere("m_akun_id", "=", $params['m_akun_id'])
             ->andWhere("m_lokasi_id", "=", $params['m_lokasi_id'])
+            ->andWhere("m_kategori_pengajuan_id", "=", $params['m_kategori_pengajuan_id'])
             ->findAll();
 
 //    echo json_encode($getBudget);die;
@@ -592,6 +593,7 @@ $app->post('/acc/m_akun/saveBudget', function ($request, $response) {
             $data = [
                 'm_akun_id' => $params['form']['m_akun_id']['id'],
                 'm_lokasi_id' => $params['form']['m_lokasi_id']['id'],
+                'm_kategori_pengajuan_id' => $params['form']['m_kategori_pengajuan_id']['id'],
                 'bulan' => date('m', strtotime($value['date'])),
                 'tahun' => date('Y', strtotime($value['date'])),
                 'budget' => $value['detail']['budget']
