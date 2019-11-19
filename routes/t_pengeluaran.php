@@ -201,6 +201,19 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
          * Generate kode pengeluaran
          */
         $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
+
+        //ganti preffix kode berdasarkan nama parent diatasnya
+        $preffix = $sql->select("*")->from("acc_m_akun")->where("id","=",$params['form']['m_akun_id']['parent_id'])->find();
+        if ($preffix) {
+            if ($preffix->nama == 'CASH ON HAND') {
+                $kode = str_replace("BK", "KK", $kode);
+            }else{
+                $fitst_char = strtoupper(substr($kode, 0,1));
+                $string = $fitst_char."K";
+                $kode = str_replace("BK", $string, $kode);
+            }
+        }
+
         $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
 //        print_r($kode);die;
         /**

@@ -206,6 +206,19 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
          * Generate kode penerimaan
          */
         $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode']);
+        //ganti preffix kode berdasarkan nama parent diatasnya
+        $preffix = $sql->select("*")->from("acc_m_akun")->where("id","=",$params['form']['m_akun_id']['parent_id'])->find();
+        if ($preffix) {
+            if ($preffix->nama == 'CASH ON HAND') {
+                $kode = str_replace("BM", "KM", $kode);
+            }else{
+                $fitst_char = strtoupper(substr($kode, 0,1));
+                $string = $fitst_char."M";
+                $kode = str_replace("BM", $string, $kode);
+            }
+        }
+
+
         $penerimaan['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
         /**
          * Simpan penerimaan

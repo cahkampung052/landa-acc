@@ -500,47 +500,78 @@ function generateNoTransaksi($type, $unker) {
     $db = config('DB');
     $db = new Cahkampung\Landadb($db['db']);
     $custom = getMasterSetting();
+    if (!isset($custom->digit_kode) || empty($custom->digit_kode)) {
+        $custom->digit_kode = -5;
+    }else{
+        $custom->digit_kode = (int) -$custom->digit_kode;
+    }
+
+    if (!isset($custom->reset_kode) || empty($custom->reset_kode)) {
+        $custom->reset_kode = 'tahunan';
+    }
+
     $no_transaksi = '';
     if ($type == 'penerimaan') {
-        $cek = $db->find("select no_transaksi from acc_pemasukan order by no_transaksi desc");
-        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
-        $no_urut = substr('00000' . $urut, -5);
+        if ($custom->reset_kode=='bulanan') {
+            $cek = $db->find("select no_transaksi from acc_pemasukan WHERE MONTH(FROM_UNIXTIME(created_at)) = '".date("m")."' AND YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."'  order by no_transaksi desc");
+        }else{
+            $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' order by no_transaksi desc");
+        }
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
+        $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_pemasukan;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } elseif ($type == 'pengeluaran') {
-        $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran order by no_urut desc");
-        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
-        $no_urut = substr('00000' . $urut, -5);
+        if ($custom->reset_kode=='bulanan') {
+            $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE MONTH(FROM_UNIXTIME(created_at)) = '".date("m")."' AND YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' order by no_urut desc");
+        }else{
+            $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' order by no_urut desc");
+        }
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
+        $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_pengeluaran;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } elseif ($type == 'transfer') {
-        $cek = $db->find("select no_transaksi from acc_transfer order by no_transaksi desc");
-        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
-        $no_urut = substr('00000' . $urut, -5);
+         if ($custom->reset_kode=='bulanan') {
+            $cek = $db->find("select no_transaksi from acc_transfer WHERE MONTH(FROM_UNIXTIME(created_at)) = '".date("m")."' AND YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' order by no_transaksi desc");
+        }else{
+            $cek = $db->find("select no_transaksi from acc_transfer WHERE YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' order by no_transaksi desc");
+        }
+
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
+        $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_transfer;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } elseif ($type == 'jurnal') {
-        $cek = $db->find("select no_transaksi from acc_jurnal order by no_transaksi desc");
-        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, -5)) + 1;
-        $no_urut = substr('00000' . $urut, -5);
+         if ($custom->reset_kode=='bulanan') {
+            $cek = $db->find("select no_transaksi from acc_jurnal WHERE MONTH(FROM_UNIXTIME(created_at)) = '".date("m")."' AND YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' order by no_transaksi desc");
+        }else{
+            $cek = $db->find("select no_transaksi from acc_jurnal WHERE YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' order by no_transaksi desc");
+        }
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
+        $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_jurnal;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     } elseif ($type == 'pengajuan') {
-        $cek = $db->find("select no_proposal, no_urut from acc_t_pengajuan order by no_urut desc");
-        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_proposal, -5)) + 1;
-        $no_urut = substr('00000' . $urut, -5);
+         if ($custom->reset_kode=='bulanan') {
+            $cek = $db->find("select no_proposal, no_urut from acc_t_pengajuan WHERE MONTH(FROM_UNIXTIME(created_at)) = '".date("m")."' AND YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' order by no_urut desc");
+        }else{
+            $cek = $db->find("select no_proposal, no_urut from acc_t_pengajuan WHERE YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' order by no_urut desc");
+        }
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_proposal, $custom->digit_kode)) + 1;
+        $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_pengajuan;
         $no_transaksi = str_replace("TAHUN", date("y"), $no_transaksi);
         $no_transaksi = str_replace("BULAN", date("m"), $no_transaksi);

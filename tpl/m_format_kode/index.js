@@ -6,6 +6,7 @@ app.controller('formatkodeCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.displayed = [];
     $scope.base_url = '';
     $scope.form = {};
+    $scope.form.reset_kode = 'tahunan';
     $scope.is_edit = false;
     $scope.is_view = false;
 
@@ -13,9 +14,12 @@ app.controller('formatkodeCtrl', function ($scope, Data, $rootScope, $uibModal, 
     
     Data.get(control_link + '/index').then(function (response) {
             $scope.form = response.data.list;
-            $scope.form.tanggal = new Date($scope.form.tanggal)
+            $scope.form.tanggal = new Date($scope.form.tanggal);
             $scope.base_url = response.data.base_url;
-        });
+            if ($scope.form.reset_kode == undefined || $scope.form.reset_kode == null || $scope.form.reset_kode == '') {
+                $scope.form.reset_kode = 'tahunan';
+            }
+    });
     
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
