@@ -197,12 +197,24 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
     $sql = $this->db;
     $validasi = validasi($params['form']);
     if ($validasi === true) {
+        //ganti preffix kode berdasarkan nama parent diatasnya
+        $preffix = $sql->select("*")->from("acc_m_akun")->where("id","=",$params['form']['m_akun_id']['parent_id'])->find();
+        if ($preffix) {
+            if ($preffix->nama == 'CASH ON HAND') {
+                $string = "KK";
+            }else{
+                $fitst_char = strtoupper(substr($preffix->nama, 0,1));
+                $string = $fitst_char."K";
+            }
+        }
+
         /**
          * Generate kode pengeluaran
          */
-        $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
+        $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $string);
+        $kode = str_replace("BK", $string, $kode);
         $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
-//        print_r($kode);die;
+        
         /**
          * Simpan pengeluaran
          */
@@ -341,11 +353,10 @@ $app->get('/acc/t_pengeluaran/print', function ($request, $response) {
             ->findAll();
     foreach ($detail as $key => $val) {
         $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kodeAkun, "nama" => $val->namaAkun];
-        $val->debit = rp($val->debit);
     }
     $data['tanggalsekarang'] = date("d-m-Y H:i");
     $data['terbilang'] = terbilang($data['total']);
-    $data['total'] = rp($data['total']);
+    $data['total'] = (int) $data['total'];
     $data['url_img'] = config('SITE_IMG');
     $setting = getMasterSetting();
     $template = $setting->print_pengeluaran;

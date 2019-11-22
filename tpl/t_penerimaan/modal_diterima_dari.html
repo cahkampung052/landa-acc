@@ -1,0 +1,154 @@
+<div class="modal-header bg-blue text-white">
+    <h5 class="modal-title">
+        Tambah Data Diterima Dari
+    </h5>
+    <button aria-label="Close" class="close" ng-click="close()" type="button">
+        <span aria-hidden="true">
+            ×
+        </span>
+    </button>
+</div>
+<div class="modal-body" style="margin-left: 10px">
+    <form name="landaform" novalidate="">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label-sm">
+                        Perusahaan
+                    </label>
+                    <div class="col-sm-9">
+                        <ui-select class="w-100" ng-disabled="is_view" ng-model="form.perusahaan_id" on-select="onSelected(form.perusahaan_id)" theme="bootstrap">
+                            <ui-select-match placeholder="Pilih Perusahaan">
+                                {{$select.selected.nama}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="val in listPerusahaan | filter : $select.search">
+                                {{val.nama}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label-sm required">
+                        Jenis
+                    </label>
+                    <div class="col-sm-4">
+                        <div class="btn-group">
+                            <label class="btn {{ form.jenis=='customer' ? 'btn-primary' : 'btn-secondary' }} btn-sm" ng-disabled="is_view" ng-model="form.jenis" uib-btn-radio="'customer'">
+                                <i class="{{ form.jenis=='customer' ? 'fa fa-check-square' : '' }}">
+                                </i>
+                                Customer
+                            </label>
+                            <label class="btn {{ form.jenis=='lain' ? 'btn-success' : 'btn-secondary' }} btn-sm text-white" ng-disabled="is_view" ng-model="form.jenis" uib-btn-radio="'lain'">
+                                <i class="{{ form.jenis=='lain' ? 'fa fa-check-square' : '' }}">
+                                </i>
+                                Lain - Lain
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row" ng-if="form.jenis == 'customer'">
+                    <label class="col-sm-3 col-form-label-sm">
+                        Nomor KTP
+                    </label>
+                    <div class="col-sm-9">
+                        <input class="form-control form-control-sm" maxlength="50" ng-disabled="is_view" ng-model="form.no_ktp" placeholder="Nomor KTP" type="text"/>
+                    </div>
+                </div>
+                <div class="form-group row" ng-if="form.jenis == 'customer'">
+                    <label class="col-sm-3 col-form-label-sm">
+                        Nomor NPWP
+                    </label>
+                    <div class="col-sm-9">
+                        <input class="form-control form-control-sm" maxlength="50" ng-disabled="is_view" ng-model="form.no_npwp" placeholder="Nomor NPWP" type="text"/>
+                    </div>
+                </div>
+                <div class="form-group row" ng-if="form.jenis == 'customer'">
+                    <label class="col-sm-3 col-form-label-sm required">
+                        Type
+                    </label>
+                    <div class="col-sm-4">
+                        <div class="btn-group">
+                            <label class="btn {{ form.type=='company' ? 'btn-primary' : 'btn-secondary' }} btn-sm" ng-disabled="is_view" ng-model="form.type" uib-btn-radio="'company'">
+                                <i class="{{ form.type=='company' ? 'fa fa-check-square' : '' }}">
+                                </i>
+                                Company
+                            </label>
+                            <label class="btn {{ form.type=='individu' ? 'btn-success' : 'btn-secondary' }} btn-sm text-white" ng-disabled="is_view" ng-model="form.type" uib-btn-radio="'individu'">
+                                <i class="{{ form.type=='individu' ? 'fa fa-check-square' : '' }}">
+                                </i>
+                                Individu
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label-sm">
+                        Nama
+                    </label>
+                    <div class="col-sm-9">
+                        <input class="form-control form-control-sm" maxlength="50" ng-disabled="is_view" ng-model="form.nama" placeholder="Nama" type="text"/>
+                    </div>
+                </div>
+                <!-- ALAMAT -->
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label-sm">
+                        Alamat
+                    </label>
+                    <div class="col-sm-9">
+                        <input class="form-control form-control-sm" maxlength="50" ng-disabled="is_view" ng-model="form.alamat" type="text"/>
+                    </div>
+                </div>
+                <!-- END OF ALAMAT -->
+                <!-- ALAMAT -->
+                <div class="form-group row" ng-if="form.jenis == 'customer'">
+                    <label class="col-sm-3 col-form-label-sm">
+                        Address
+                    </label>
+                    <div class="col-sm-9">
+                        <input class="form-control form-control-sm" maxlength="50" ng-disabled="is_view" ng-model="form.address" type="text"/>
+                    </div>
+                </div>
+                <!-- END OF ALAMAT -->
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label-sm">
+                        Kontak
+                    </label>
+                    <div class="col-sm-9">
+                        <input class="form-control form-control-sm" maxlength="50" ng-disabled="is_view" ng-model="form.cp" placeholder="Kontak" type="text"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label-sm">
+                        Jabatan
+                    </label>
+                    <div class="col-sm-9">
+                        <input class="form-control form-control-sm" maxlength="50" ng-disabled="is_view" ng-model="form.jabatan" placeholder="Jabatan" type="text"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label-sm">
+                        Telepon
+                    </label>
+                    <div class="col-sm-9">
+                        <input class="form-control form-control-sm" maxlength="50" ng-disabled="is_view" ng-model="form.tlp" placeholder="Telepon" type="text"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label-sm">
+                        Email
+                    </label>
+                    <div class="col-sm-9">
+                        <input class="form-control form-control-sm" maxlength="50" ng-disabled="is_view" ng-model="form.email" placeholder="Email" type="text"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button button-spinner="loading" class="btn btn-primary btn-sm" ng-click="save(form)" ng-disabled="loading" ng-hide="is_view" type="submit">
+                        <i class="fa fa-save">
+                        </i>
+                        Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
