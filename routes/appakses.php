@@ -28,7 +28,8 @@ $app->get("/acc/appakses/index", function ($request, $response) {
     $params = $request->getParams();
     $db     = $this->db;
     $db->select("*")
-        ->from("acc_m_roles");
+        ->from("acc_m_roles")
+            ->where("is_deleted", "=", 0);
     /**
      * Filter
      */
