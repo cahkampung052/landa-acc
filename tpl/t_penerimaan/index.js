@@ -384,6 +384,7 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
      */
     $scope.modalSetting = function() {
         Data.get('site/base_url').then(function(response) {
+            console.log(response)
             var modalInstance = $uibModal.open({
                 templateUrl: response.data.base_url + "api/" + response.data.acc_dir + "/tpl/t_penerimaan/modal.html",
                 controller: "settingPrintCtrl",

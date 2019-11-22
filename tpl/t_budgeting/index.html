@@ -11,22 +11,29 @@
                             <div class="alert alert-secondary">
                                 <div class="form-group row mb-0px">
                                     <label class="col-sm-1 col-form-label-sm required">Periode</label>
-                                    <div class="col-sm-3">
-                                        <input style="width: 45%; float: left" class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'month'}" is-open="opened.tgl" ng-click="toggle($event, 'tgl')" ng-model="form.start" placeholder="Bulan Mulai" type="text" uib-datepicker-popup="MMMM yyyy" ng-change="view(form)"/>
-                                        <input style="width: 45%;" class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'month'}" is-open="opened.tgl2" ng-click="toggle($event, 'tgl2')" ng-model="form.end" placeholder="Bulan Selesai" type="text" uib-datepicker-popup="MMMM yyyy" ng-change="view(form)"/>
+                                    <div class="col-sm-2">
+                                        <input style="width: 45%; float: left" class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'month'}" is-open="opened.tgl" ng-click="toggle($event, 'tgl')" ng-model="form.start" placeholder="Mulai" type="text" uib-datepicker-popup="MMMM yyyy" ng-change="view(form)"/>
+                                        <input style="width: 45%;" class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'month'}" is-open="opened.tgl2" ng-click="toggle($event, 'tgl2')" ng-model="form.end" placeholder="Selesai" type="text" uib-datepicker-popup="MMMM yyyy" ng-change="view(form)"/>
                                     </div>
                                     <label class="col-sm-1 col-form-label-sm required">Lokasi</label>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <ui-select class="ui-select-sm ui-select-container" ng-change="view(form)" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view" ng-change="view(form)">
                                             <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
                                             <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
                                         </ui-select>
                                     </div>
                                     <label class="col-sm-1 col-form-label-sm required">Akun</label>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <ui-select class="ui-select-sm ui-select-container" ng-change="view(form)" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view" ng-change="view(form)">
                                             <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
                                             <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.kode +" - "+ val.nama }}</ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                    <label class="col-sm-1 col-form-label-sm required">Kategori</label>
+                                    <div class="col-sm-2">
+                                        <ui-select class="ui-select-sm ui-select-container" ng-change="view(form)" ng-model="form.m_kategori_pengajuan_id" theme="bootstrap" ng-disabled="is_view" ng-change="view(form)">
+                                            <ui-select-match placeholder="Pilih Kategori">{{ $select.selected.nama }}</ui-select-match>
+                                            <ui-select-choices position="down" repeat="val in listKategori | filter : $select.search">{{ val.nama }}</ui-select-choices>
                                         </ui-select>
                                     </div>
                                 </div>

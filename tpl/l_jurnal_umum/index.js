@@ -5,6 +5,14 @@ app.controller('l_jurnalumumCtrl', function ($scope, Data, $rootScope, $uibModal
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+    
+    Data.get('site/base_url').then(function (response) {
+        $.getJSON(response.data.base_url + "/data.json", function (json) {
+            angular.forEach(json, function (val, key) {
+                $scope[key] = val;
+            })
+        });
+    });
     /**
      * Ambil list lokasi
      */

@@ -512,7 +512,7 @@ function generateNoTransaksi($type, $unker, $preffix = null) {
 
     $no_transaksi = '';
     if ($type == 'penerimaan') {
-        if ($custom->reset_kode=='bulanan') {
+        if ($custom->reset_kode=='bulanan') {}
             if (!empty($preffix)) {
                 $cek = $db->find("select no_transaksi from acc_pemasukan WHERE MONTH(FROM_UNIXTIME(created_at)) = '".date("m")."' AND YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' AND no_transaksi LIKE '{$preffix}%' order by no_transaksi desc");
             } else {
@@ -526,7 +526,6 @@ function generateNoTransaksi($type, $unker, $preffix = null) {
                 $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(FROM_UNIXTIME(created_at)) = '".date("Y")."' order by no_transaksi desc");
             }
         }
-       
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
         $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_pemasukan;
