@@ -211,7 +211,9 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         /**
          * Generate kode pengeluaran
          */
-        $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $string);
+        $get_bulan = date("m", strtotime($params['form']['tanggal']));
+        $get_tahun = date("Y", strtotime($params['form']['tanggal']));
+        $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $string,$get_bulan,$get_tahun);
         $kode = str_replace("BK", $string, $kode);
         $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
         

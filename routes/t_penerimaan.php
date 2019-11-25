@@ -216,7 +216,9 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         /**
          * Generate kode penerimaan
          */
-        $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $string);
+        $get_bulan = date("m", strtotime($params['form']['tanggal']));
+        $get_tahun = date("Y", strtotime($params['form']['tanggal']));
+        $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $string,$get_bulan,$get_tahun);
         $kode = str_replace("BM", $string, $kode);
         $penerimaan['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
         /**

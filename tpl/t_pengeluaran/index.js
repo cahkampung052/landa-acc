@@ -230,6 +230,41 @@ app.controller('pengeluaranCtrl', function($scope, Data, $rootScope, $uibModal, 
         $scope.gambar = {};
         $scope.url = "";
     };
+    
+    $scope.createDiterimaDari = function(form, index, is_view) {
+        Data.get('site/base_url').then(function(response) {
+            if (index == null && is_view == 0) {
+                var params = {
+                    is_create: 1,
+                    is_view: 0
+                };
+            } else if (index != null && is_view == 0) {
+                var params = $scope.form.listKorban[index];
+                params.is_create = 0;
+                params.is_view = 0;
+            } else if (index != null && is_view == 1) {
+                var params = $scope.form.listKorban[index];
+                params.is_create = 0;
+                params.is_view = 1;
+            }
+            var modalInstance = $uibModal.open({
+                templateUrl: response.data.base_url+"api/acc/landaacc/tpl/t_penerimaan/modal_diterima_dari.html",
+                controller: "modalDiterimaDari",
+                size: "lg",
+                backdrop: "static",
+                keyboard: false,
+                resolve: {
+                    'form': params,
+                }
+            });
+            modalInstance.result.then(function(result) {
+                Data.get("t_booking/getCustomer").then(function(response) {
+                    $scope.listCustomer = response.data;
+                });
+            }, function() {});
+        });
+    };
+    
     /** update */
     $scope.update = function(form) {
         $scope.is_edit = true;
@@ -436,4 +471,33 @@ app.controller("settingPrintCtrl", function($state, $scope, Data, $uibModalInsta
             }
         });
     }
+});
+
+app.controller("modalDiterimaDari", function($state, $scope, Data, $uibModalInstance, form, $rootScope) {
+    $scope.form = form;
+    $scope.form.type = 'individu';
+    $scope.form.jenis = 'lain';
+    var control_link = "m_supplier";
+    Data.get("m_perusahaan/index").then(function(response) {
+        $scope.listPerusahaan = response.data.list;
+        $scope.form.perusahaan_id = $scope.listPerusahaan[0];
+    });
+    
+    $scope.save = function(form) {
+        $scope.loading = true;
+        Data.post(control_link + "/save", form).then(function(result) {
+            if (result.status_code == 200) {
+                $rootScope.alert("Berhasil", "Data berhasil tersimpan", "success");
+                $scope.close(form);
+            } else {
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+            }
+            $scope.loading = false;
+        });
+    };
+    $scope.close = function(listKorban) {
+        $uibModalInstance.close({
+            'data': listKorban
+        });
+    };
 });

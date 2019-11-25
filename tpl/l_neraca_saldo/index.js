@@ -5,15 +5,6 @@ app.controller('l_neracasaldoCtrl', function($scope, Data, $rootScope, $uibModal
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
-    
-    Data.get('site/base_url').then(function (response) {
-        $.getJSON(response.data.base_url + "/data.json", function (json) {
-            angular.forEach(json, function (val, key) {
-                $scope[key] = val;
-            })
-        });
-    });
-    
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
