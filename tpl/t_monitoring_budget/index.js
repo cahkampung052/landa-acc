@@ -10,7 +10,8 @@ app.controller('MonitoringBudgettingCtrl', function ($scope, Data, $rootScope, $
     $scope.is_create = false;
     $scope.form = {};
     $scope.form.m_kategori_pengajuan_id = {
-        id : ''
+        id : '2',
+        nama: 'Operasional'
     }
     $scope.form.tahun = new Date();
     Data.get('site/base_url').then(function (response) {
@@ -86,15 +87,15 @@ app.controller("modalDetailCtrl", function ($state, $scope, Data, $uibModalInsta
     Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
     });
-    Data.get("acc/t_monitoring_budget/getDetail", {lokasi_id: $scope.form.id, tahun: $scope.form.tahun}).then(function (result) {
+    Data.get("acc/t_monitoring_budget/getDetail", {kategori_id:  $scope.form.m_kategori_pengajuan_id.id, lokasi_id: $scope.form.id, tahun: $scope.form.tahun}).then(function (result) {
         $scope.listDetail = result.data.list;
         $scope.total = result.data.total;
         $scope.totalKegiatan = result.data.totalKegiatan;
     });
 
     $scope.exportDetail = function () {
-        console.log($scope.url);
-        var param = {lokasi_id: $scope.form.id, tahun: moment($scope.form.tahun).format('YYYY-MM-DD'), is_export: 1};
+        // console.log($scope.url);
+        var param = {kategori_id:  $scope.form.m_kategori_pengajuan_id,lokasi_id: $scope.form.id, tahun: moment($scope.form.tahun).format('YYYY-MM-DD'), is_export: 1};
         window.open($scope.url.base_url + "api/acc/t_monitoring_budget/getDetail?" + $.param(param), "_blank");
         /*Data.get("acc/t_monitoring_budget/getDetail", {lokasi_id : $scope.form.id, tahun: $scope.form.tahun, is_export : 1}).then(function(result) {
          $scope.listDetail = result.data.list;
