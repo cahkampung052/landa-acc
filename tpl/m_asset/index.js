@@ -8,9 +8,9 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
     $scope.is_edit = false;
     $scope.is_view = false;
 
-//    Data.get(control_link + '/cabang').then(function(data) {
-//        $scope.cabang = data.data.data;
-//    });
+    Data.get(control_link + '/getLokasi').then(function(data) {
+        $scope.listLokasi = data.data;
+    });
 
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
@@ -40,11 +40,11 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
         $scope.listakun = response.data.list;
     });
 
-    Data.get('acc/m_lokasi/index', {filter: {is_deleted: 0}}).then(function (response) {
-        $scope.listLokasi = response.data.list;
-        // $scope.listLokasi.push({"id":-1,"nama":"Lainya" });
-
-    });
+//    Data.get('acc/m_lokasi/index', {filter: {is_deleted: 0}}).then(function (response) {
+//        $scope.listLokasi = response.data.list;
+//        // $scope.listLokasi.push({"id":-1,"nama":"Lainya" });
+//
+//    });
 
     Data.get('acc/m_umur_ekonomis/index', {filter: {is_deleted: 0}}).then(function (response) {
         $scope.listUmur = response.data.list;
