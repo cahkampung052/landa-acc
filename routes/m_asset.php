@@ -32,6 +32,16 @@ function validasi_pelepasan($data, $custom = array()) {
     return $cek;
 }
 
+$app->get('/acc/m_asset/getLokasi', function ($request, $response) {
+   $db = $this->db;
+   
+   $db->select("*")->from("acc_m_lokasi_asset");
+   
+   $lokasi = $db->findAll();
+   return successResponse($response, $lokasi);
+   
+});
+
 $app->get('/acc/m_asset/cekPenyusutanBulanini', function ($request, $response) {
     $sql = $this->db;
     $y = date("Y");

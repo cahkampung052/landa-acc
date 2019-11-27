@@ -9,6 +9,7 @@ app.controller('MonitoringBudgettingCtrl', function ($scope, Data, $rootScope, $
     $scope.is_view = false;
     $scope.is_create = false;
     $scope.form = {};
+
     $scope.form.m_kategori_pengajuan_id = {
         id : '2',
         nama: 'Operasional'
@@ -49,10 +50,6 @@ app.controller('MonitoringBudgettingCtrl', function ($scope, Data, $rootScope, $
     $scope.filterTahun = function (tahun) {
         $scope.form.tahun = tahun;
         $scope.callServer(tableStateRef);
-    }
-    
-    $scope.filterKategori = function () {
-        $scope.callServer(tableStateRef)
     }
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {

@@ -7,14 +7,6 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
         startDate: moment()
     };
     $scope.form.is_detail = 1;
-    
-    Data.get('site/base_url').then(function (response) {
-        $.getJSON(response.data.base_url + "/data.json", function (json) {
-            angular.forEach(json, function (val, key) {
-                $scope[key] = val;
-            })
-        });
-    });
 
     Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
