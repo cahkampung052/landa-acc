@@ -47,7 +47,7 @@ $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
         ->from("acc_m_kontak")
         ->orderBy("acc_m_kontak.nama")
         ->where("is_deleted", "=", 0)
-        ->andWhere("jenis", "=", "customer")
+        ->andWhere("type", "=", "customer")
         ->andWhere("nama", "!=", "");
     if (isset($params['nama']) && !empty($params['nama'])) {
         $db->customWhere("nama LIKE '%" . $params['nama'] . "%' OR kode LIKE '%" . $params['nama'] . "%'", "AND");
