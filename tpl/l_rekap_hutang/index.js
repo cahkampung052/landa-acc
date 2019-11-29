@@ -10,14 +10,6 @@ app.controller('l_rekaphutangCtrl', function ($scope, Data, $rootScope) {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
-    
-    Data.get('site/base_url').then(function (response) {
-        $.getJSON(response.data.base_url + "/data.json", function (json) {
-            angular.forEach(json, function (val, key) {
-                $scope[key] = val;
-            })
-        });
-    });
     /**
      * Ambil list semua akun
      */

@@ -153,9 +153,9 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
         foreach ($filter as $key => $val) {
             if ($key == 'is_deleted') {
                 $db->where("acc_pengeluaran.is_deleted", '=', $val);
-            } else if($key == 'no_transaksi'){
+            } else if ($key == 'no_transaksi') {
                 $db->customWhere("(acc_pengeluaran.no_transaksi LIKE '%$val%' OR acc_t_pengajuan.no_proposal LIKE '%$val%')", "AND");
-            }else {
+            } else {
                 $db->where($key, 'LIKE', $val);
             }
         }
@@ -198,23 +198,30 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
     $validasi = validasi($params['form']);
     if ($validasi === true) {
         //ganti preffix kode berdasarkan nama parent diatasnya
-        $preffix = $sql->select("*")->from("acc_m_akun")->where("id","=",$params['form']['m_akun_id']['parent_id'])->find();
-        if ($preffix) {
-            if ($preffix->nama == 'CASH ON HAND') {
-                $string = "KK";
-            }else{
-                $fitst_char = strtoupper(substr($preffix->nama, 0,1));
-                $string = $fitst_char."K";
+        if (isset($params['form']['m_akun_id']['parent_id'])) {
+            $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
+            if ($preffix) {
+                if ($preffix->nama == 'CASH ON HAND') {
+                    $string = "KK";
+                } else {
+                    $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
+                    $string = $fitst_char . "K";
+                }
             }
+
+            /**
+             * Generate kode pengeluaran
+             */
+            $get_bulan = date("m", strtotime($params['form']['tanggal']));
+            $get_tahun = date("Y", strtotime($params['form']['tanggal']));
+            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $string, $get_bulan, $get_tahun);
+            $kode = str_replace("BK", $string, $kode);
+        } else {
+            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
         }
 
-        /**
-         * Generate kode pengeluaran
-         */
-        $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $string);
-        $kode = str_replace("BK", $string, $kode);
         $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
-        
+
         /**
          * Simpan pengeluaran
          */
@@ -231,7 +238,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $pengeluaran['total'] = $params['form']['total'];
         $pengeluaran['t_pengajuan_id'] = (isset($params['form']['t_pengajuan_id']) && !empty($params['form']['t_pengajuan_id']) ? $params['form']['t_pengajuan_id'] : "");
         $pengeluaran['status'] = $params['form']['status'];
-        
+
 //        print_r($pengeluaran);die;
         /**
          * update atau input pengeluaran

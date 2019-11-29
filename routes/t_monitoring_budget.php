@@ -29,6 +29,9 @@ $app->get('/acc/t_monitoring_budget/index', function ($request, $response) {
     if (isset($params['tahun'])) {
         $db->where("tahun", "=", $tahun)->findAll();
     }
+        if (isset($params['kategori']) && !empty($params['kategori'])) {
+        $db->where("m_kategori_pengajuan_id", "=", $params['kategori']);
+    }
     $budget = $db->findAll();
     foreach ($budget as $key => $val) {
         if (isset($arr[$val->m_lokasi_id]) && !empty($arr[$val->m_lokasi_id])) {
@@ -76,6 +79,9 @@ $app->get('/acc/t_monitoring_budget/getDetail', function ($request, $response) {
             ->where("acc_budgeting.m_lokasi_id", "=", $lokasi)
             ->andWhere("acc_budgeting.tahun", "=", $tahun)
             ->andWhere("acc_budgeting.budget", ">", 0);
+        if (isset($params['kategori_id']) && !empty($params['kategori_id'])) {
+        $db->where("m_kategori_pengajuan_id", "=", $params['kategori_id']);
+    }
     $model = $db->findAll();
     $arr = [];
     $total = $totalKegiatan = 0;
@@ -95,6 +101,9 @@ $app->get('/acc/t_monitoring_budget/getDetail', function ($request, $response) {
             ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_t_pengajuan_det.m_akun_id")
             ->andWhere("acc_t_pengajuan.m_lokasi_id", "=", $lokasi)
             ->andWhere("year(acc_t_pengajuan.tanggal)", "=", $tahun);
+            if (isset($params['kategori_id']) && !empty($params['kategori_id'])) {
+        $db->where("m_kategori_pengajuan_id", "=", $params['kategori_id']);
+    }
     $model = $db->findAll();
     foreach ($model as $key => $value) {
         $arr[$value->m_akun_id] = (array) $value;
