@@ -146,8 +146,8 @@ $app->get('/acc/m_lokasi/default_lokasi', function ($request, $response) {
     
     $db = $this->db;
     
-    $pemasukan = isset(config('LOKASI_PEMASUKAN')) && !empty(config('LOKASI_PEMASUKAN')) ? $db->find("SELECT * FROM acc_m_lokasi WHERE id = " . config('LOKASI_PEMASUKAN')) : 0;
-    $pengeluaran = isset(config('LOKASI_PENGELUARAN')) && !empty(config('LOKASI_PENGELUARAN')) ? $db->find("SELECT * FROM acc_m_lokasi WHERE id = " . config('LOKASI_PENGELUARAN')) : 0;
+    $pemasukan = !empty(config('LOKASI_PEMASUKAN')) ? $db->find("SELECT * FROM acc_m_lokasi WHERE id = " . config('LOKASI_PEMASUKAN')) : 0;
+    $pengeluaran = !empty(config('LOKASI_PENGELUARAN')) ? $db->find("SELECT * FROM acc_m_lokasi WHERE id = " . config('LOKASI_PENGELUARAN')) : 0;
 
     return successResponse($response, ['lokasi_pemasukan' => $pemasukan, 'lokasi_pengeluaran' => $pengeluaran]);
 });
