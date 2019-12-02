@@ -6,14 +6,6 @@ app.controller('l_neracaCtrl', function($scope, Data, $rootScope, $uibModal, $st
     $scope.form.is_detail = 1;
     
     Data.get('site/base_url').then(function (response) {
-        $.getJSON(response.data.base_url + "api/" + response.data.acc_dir + "/file/data.json", function (json) {
-            angular.forEach(json, function (val, key) {
-                $scope[key] = val;
-            })
-        });
-    });
-    
-    Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
     });
      Data.get('acc/m_lokasi/getLokasi').then(function (response) {
