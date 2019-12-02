@@ -677,6 +677,15 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "RJ" . date("y") . "/" . $no_urut;
+    } else if ($type == 'pembelian') {
+        $cek = $db->find("select kode from inv_pembelian order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = $custom->format_pembelian;
+        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun)), $no_transaksi);
+        $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
+        $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
+        $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
     }
     return $no_transaksi;
 }
