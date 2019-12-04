@@ -250,8 +250,9 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
                 params.is_create = 0;
                 params.is_view = 1;
             }
+            var time = new Date().getTime();
             var modalInstance = $uibModal.open({
-                templateUrl: response.data.base_url+"api/acc/landaacc/tpl/t_penerimaan/modal_diterima_dari.html",
+                templateUrl: response.data.base_url+"api/acc/landaacc/tpl/t_penerimaan/modal_diterima_dari.html?"+time,
                 controller: "modalDiterimaDari",
                 size: "lg",
                 backdrop: "static",
