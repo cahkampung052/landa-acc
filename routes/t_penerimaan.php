@@ -195,31 +195,36 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
  */
 $app->post('/acc/t_penerimaan/save', function ($request, $response) {
     $params = $request->getParams();
-    
+
 //    print_r($params);die;
-    
-    
+
+
     $sql = $this->db;
     $validasi = validasi($params['form']);
     if ($validasi === true) {
-        //ganti preffix kode berdasarkan nama parent diatasnya
-        $preffix = $sql->select("*")->from("acc_m_akun")->where("id","=",$params['form']['m_akun_id']['parent_id'])->find();
-        if ($preffix) {
-            if ($preffix->nama == 'CASH ON HAND') {
-                $string = "KM";
-            }else{
-                $fitst_char = strtoupper(substr($preffix->nama, 0,1));
-                $string = $fitst_char."M";
+        if (isset($params['form']['m_akun_id']['parent_id'])) {
+            //ganti preffix kode berdasarkan nama parent diatasnya
+            $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
+            if ($preffix) {
+                if ($preffix->nama == 'CASH ON HAND') {
+                    $string = "KM";
+                } else {
+                    $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
+                    $string = $fitst_char . "M";
+                }
             }
+
+            /**
+             * Generate kode penerimaan
+             */
+            $get_bulan = date("m", strtotime($params['form']['tanggal']));
+            $get_tahun = date("Y", strtotime($params['form']['tanggal']));
+            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $string, $get_bulan, $get_tahun);
+            $kode = str_replace("BM", $string, $kode);
+        } else {
+            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode']);
         }
 
-        /**
-         * Generate kode penerimaan
-         */
-        $get_bulan = date("m", strtotime($params['form']['tanggal']));
-        $get_tahun = date("Y", strtotime($params['form']['tanggal']));
-        $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $string,$get_bulan,$get_tahun);
-        $kode = str_replace("BM", $string, $kode);
         $penerimaan['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
         /**
          * Simpan penerimaan

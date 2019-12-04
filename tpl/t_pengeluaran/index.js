@@ -208,7 +208,7 @@ app.controller('pengeluaranCtrl', function($scope, Data, $rootScope, $uibModal, 
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-        if ($scope.listLokasi.length > 0) $scope.form.m_lokasi_id = $scope.listLokasi[0];
+        if ($scope.listLokasi.length > 0) $scope.form.m_lokasi_id = $scope.lokasi_default.lokasi_pengeluaran;
         $scope.form.tanggal = new Date($scope.tanggal_setting);
         if (new Date() >= new Date($scope.tanggal_setting)) {
             $scope.form.tanggal = new Date();
