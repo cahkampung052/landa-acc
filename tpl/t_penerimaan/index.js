@@ -127,11 +127,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
                 kode: $scope.akunDetail[0].kode,
                 nama: $scope.akunDetail[0].nama
             },
-            m_lokasi_id: {
-                id: $scope.listLokasi[0].id,
-                nama: $scope.listLokasi[0].nama,
-                kode: $scope.listLokasi[0].kode
-            },
+            m_lokasi_id: val[0].m_lokasi_id,
             keterangan: '',
             kredit: 0,
             is_label: false,

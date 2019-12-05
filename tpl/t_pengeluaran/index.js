@@ -137,10 +137,7 @@ app.controller('pengeluaranCtrl', function($scope, Data, $rootScope, $uibModal, 
                 kode: $scope.akunDetail[0].kode,
                 nama: $scope.akunDetail[0].nama
             },
-            m_lokasi_id: {
-                id: $scope.listLokasi[0].id,
-                nama: $scope.listLokasi[0].nama
-            },
+            m_lokasi_id: val[0].m_lokasi_id,
             keterangan: '',
             debit: 0,
             is_label: false,
@@ -208,7 +205,6 @@ app.controller('pengeluaranCtrl', function($scope, Data, $rootScope, $uibModal, 
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-        if ($scope.listLokasi.length > 0) $scope.form.m_lokasi_id = $scope.lokasi_default.lokasi_pengeluaran;
         $scope.form.tanggal = new Date($scope.tanggal_setting);
         if (new Date() >= new Date($scope.tanggal_setting)) {
             $scope.form.tanggal = new Date();
@@ -229,6 +225,14 @@ app.controller('pengeluaranCtrl', function($scope, Data, $rootScope, $uibModal, 
         $scope.sumTotal();
         $scope.gambar = {};
         $scope.url = "";
+    };
+    $scope.lokasi = function(select) {
+        angular.forEach($scope.listDetail, function(val, key) {
+            val.m_lokasi_id = {
+                id : select.id,
+                nama : select.nama
+            }
+        });
     };
     
     $scope.createDiterimaDari = function(form, index, is_view) {

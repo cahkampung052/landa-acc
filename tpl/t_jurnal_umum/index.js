@@ -120,10 +120,7 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
                 kode: $scope.akunKas[0].kode,
                 nama: $scope.akunKas[0].nama
             },
-            m_lokasi_id: {
-                id: $scope.listLokasi[0].id,
-                nama: $scope.listLokasi[0].nama
-            },
+            m_lokasi_id: val[0].m_lokasi_id,
             keterangan: '',
             kredit: 0,
             debit: 0,
@@ -261,6 +258,14 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         $scope.is_edit = false;
         $scope.is_view = false;
         $scope.urlfoto = "api/file/jurnal-umum/";
+    };
+    $scope.lokasi = function(select) {
+        angular.forEach($scope.listDetail, function(val, key) {
+            val.m_lokasi_id = {
+                id : select.id,
+                nama : select.nama
+            }
+        });
     };
     /*
      * delete action

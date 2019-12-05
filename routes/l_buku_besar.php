@@ -165,6 +165,7 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
             $saldo_sekarang = $arr[0]['saldo_awal'];
             $total_debit = $arr[0]['debit_awal'];
             $total_kredit = $arr[0]['kredit_awal'];
+           
             foreach ($detail as $key2 => $val2) {
                 $arr[0]['detail'][$key2]['tanggal'] = $val2->tanggal;
                 $arr[0]['detail'][$key2]['kode'] = $val2->kode;
