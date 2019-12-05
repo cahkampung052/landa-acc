@@ -197,7 +197,9 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
         /**
          * Generate kode jurnal
          */
-        $kode = generateNoTransaksi("jurnal", $params['form']['m_lokasi_id']['kode']);
+        $get_bulan = date("m", strtotime($params['form']['tanggal']));
+        $get_tahun = date("Y", strtotime($params['form']['tanggal']));
+        $kode = generateNoTransaksi("jurnal", $params['form']['m_lokasi_id']['kode'], "JM", $get_bulan, $get_tahun);
 //        print_r($kode);die();
         $jurnal['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
         
@@ -206,11 +208,17 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
          */
         $jurnal['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
         $jurnal['m_lokasi_jurnal_id'] = $jurnal['m_lokasi_id'];
-        $jurnal['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
+        
         $jurnal['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $jurnal['total_debit'] = $params['form']['total_debit'];
         $jurnal['total_kredit'] = $params['form']['total_kredit'];
         $jurnal['status'] = $params['form']['status'];
+
+        foreach ($params['detail'] as $key => $value) {
+            $keterangan[$key] = $value['keterangan'];
+        }
+        $keteranganJurnal = join("<br>",$keterangan);
+        $jurnal['keterangan'] = (isset($keteranganJurnal) && !empty($keteranganJurnal) ? $keteranganJurnal : NULL);
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $jurnal['no_urut'] = $params['form']['no_urut'];
             $jurnal['no_transaksi'] = $params['form']['no_transaksi'];
