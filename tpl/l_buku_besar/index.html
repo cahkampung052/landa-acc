@@ -125,7 +125,7 @@
                                 <tr ng-repeat="valdetail in val.detail">
                                     <td align="center" class="text-center" style="vertical-align: top">{{ valdetail.tanggal|date }}</td>
                                     <td align="center" style="vertical-align: top">{{ valdetail.kode }}</td>
-                                    <td style="vertical-align: top">{{ valdetail.keterangan }}</td>
+                                    <td style="vertical-align: top" ng-bind-html="valdetail.keterangan"></td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ valdetail.debit | number }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ valdetail.kredit | number }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ valdetail.saldo_sekarang | number }}</td>

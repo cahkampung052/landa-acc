@@ -233,13 +233,17 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         } else {
             $pengeluaran['penerima'] = (isset($params['form']['m_kontak_id']['id']) && !empty($params['form']['m_kontak_id']['id'])) ? $params['form']['m_kontak_id']['nama'] : '';
         }
-        $pengeluaran['keterangan'] = (isset($params['form']['keterangan']) && !empty($params['form']['keterangan']) ? $params['form']['keterangan'] : '');
         $pengeluaran['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $pengeluaran['total'] = $params['form']['total'];
         $pengeluaran['t_pengajuan_id'] = (isset($params['form']['t_pengajuan_id']) && !empty($params['form']['t_pengajuan_id']) ? $params['form']['t_pengajuan_id'] : "");
         $pengeluaran['status'] = $params['form']['status'];
 
-//        print_r($pengeluaran);die;
+        foreach ($params['detail'] as $key => $value) {
+            $keterangan[$key] = $value['keterangan'];
+        }
+        $keteranganPengeluaran = join("<br>",$keterangan);
+        $pengeluaran['keterangan'] = (isset($keteranganPengeluaran) && !empty($keteranganPengeluaran) ? $keteranganPengeluaran : NULL);
+
         /**
          * update atau input pengeluaran
          */
@@ -259,8 +263,6 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
             $pengeluaran['no_transaksi'] = $kode;
             $model = $sql->insert("acc_pengeluaran", $pengeluaran);
         }
-//        echo "asdasd";die;
-//        print_r($model);die;
         /**
          * Simpan ke pengeluaran detail
          */
