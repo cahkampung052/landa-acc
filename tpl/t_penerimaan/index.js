@@ -213,8 +213,8 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-        if ($scope.lokasi_default.lokasi_pemasukan != 0)
-            $scope.form.m_lokasi_id = $scope.lokasi_default.lokasi_pemasukan;
+        // if ($scope.lokasi_default.lokasi_pemasukan != 0)
+        //     $scope.form.m_lokasi_id = $scope.lokasi_default.lokasi_pemasukan;
         $scope.form.ppn = 0;
         $scope.form.is_ppn = false;
         $scope.form.tanggal = new Date($scope.tanggal_setting);
@@ -237,6 +237,14 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.sumTotal();
         $scope.gambar = [];
         $scope.urlfoto = "";
+    };
+    $scope.lokasi = function(select) {
+        angular.forEach($scope.listDetail, function(val, key) {
+            val.m_lokasi_id = {
+                id : select.id,
+                nama : select.nama
+            }
+        });
     };
     $scope.createDiterimaDari = function (form, index, is_view) {
         Data.get('site/base_url').then(function (response) {

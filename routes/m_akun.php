@@ -226,10 +226,11 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     $arrTrans = [];
     foreach ($trans as $key => $value) {
         $arrTrans[$value->id] = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
-
         $arrTrans[$value->parent_id] = (isset($arrTrans[$value->parent_id]) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
     }
-    //echo json_encode($arrTrans); exit();
+
+    
+    //echo json_encode($coba);exit();
     /**
      * List akun
      */
