@@ -20,6 +20,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
 
     Data.get('acc/m_lokasi/default_lokasi').then(function (data) {
         $scope.lokasi_default = data.data;
+        
     });
 
     /*
