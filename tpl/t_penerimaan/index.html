@@ -161,21 +161,21 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label-sm required">Masuk Ke</label>
                                     <div class="col-sm-9">
-                                        <ui-select class="ui-select-sm" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view">
+                                        <ui-select class="ui-select-sm" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view" on-select="lokasi($select.selected)">
                                             <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
                                             <ui-select-choices repeat="val in akun | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
                                         </ui-select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label-sm">Keterangan</label>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control form-control-sm" ng-model="form.keterangan" ng-disabled="is_view" required/>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-md-12">
                                 <hr/>
                                 <h6 style="margin-bottom: 15px">
@@ -224,7 +224,7 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">Rp</span>
                                                         </div>
-                                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="is_view" ng-model="val.kredit" ng-change="sumTotal()"/>
+                                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="22" ng-disabled="is_view" ng-model="val.kredit" ng-change="sumTotal()"/>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -240,7 +240,7 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">Rp</span>
                                                         </div>
-                                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-model="form.subtotal" ng-disabled="true"/>
+                                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="22" ng-model="form.subtotal" ng-disabled="true"/>
                                                     </div>
                                                 </td>
                                             </tr>

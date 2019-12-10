@@ -47,7 +47,7 @@ $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
         ->from("acc_m_kontak")
         ->orderBy("acc_m_kontak.nama")
         ->where("is_deleted", "=", 0)
-        ->andWhere("jenis", "=", "customer")
+        ->andWhere("type", "=", "customer")
         ->andWhere("nama", "!=", "");
     if (isset($params['nama']) && !empty($params['nama'])) {
         $db->customWhere("nama LIKE '%" . $params['nama'] . "%' OR kode LIKE '%" . $params['nama'] . "%'", "AND");
@@ -92,37 +92,37 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
         'totalItems' => $totalItem,
     ]);
 });
-// $app->post('/acc/m_customer/save', function ($request, $response) {
-//     $params = $request->getParams();
-//     $sql    = $this->db;
-//     /*
-//      * generate kode
-//      */
-//     $kode           = generateNoTransaksi("customer", 0);
-//     $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
-//     $validasi       = validasi($params);
-//     if ($validasi === true) {
-//         $params['type'] = "customer";
-//         if (isset($params["id"])) {
-//             if (isset($params["kode"]) && !empty($params["kode"])) {
-//                 $params["kode"] = $params["kode"];
-//             } else {
-//                 $params["kode"] = $kode;
-//             }
-//             $model = $sql->update("acc_m_kontak", $params, array('id' => $params['id']));
-//         } else {
-//             $params["kode"] = $kode;
-//             $model          = $sql->insert("acc_m_kontak", $params);
-//         }
-//         if ($model) {
-//             return successResponse($response, $model);
-//         } else {
-//             return unprocessResponse($response, ['Data Gagal Di Simpan']);
-//         }
-//     } else {
-//         return unprocessResponse($response, $validasi);
-//     }
-// });
+ $app->post('/acc/m_customer/save', function ($request, $response) {
+     $params = $request->getParams();
+     $sql    = $this->db;
+     /*
+      * generate kode
+      */
+     $kode           = generateNoTransaksi("customer", 0);
+     $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
+     $validasi       = validasi($params);
+     if ($validasi === true) {
+         $params['type'] = "customer";
+         if (isset($params["id"])) {
+             if (isset($params["kode"]) && !empty($params["kode"])) {
+                 $params["kode"] = $params["kode"];
+             } else {
+                 $params["kode"] = $kode;
+             }
+             $model = $sql->update("acc_m_kontak", $params, array('id' => $params['id']));
+         } else {
+             $params["kode"] = $kode;
+             $model          = $sql->insert("acc_m_kontak", $params);
+         }
+         if ($model) {
+             return successResponse($response, $model);
+         } else {
+             return unprocessResponse($response, ['Data Gagal Di Simpan']);
+         }
+     } else {
+         return unprocessResponse($response, $validasi);
+     }
+ });
 $app->post('/acc/m_customer/trash', function ($request, $response) {
     $data  = $request->getParams();
     $db    = $this->db;

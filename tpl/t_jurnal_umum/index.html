@@ -104,7 +104,7 @@
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
                                         <div class="col-sm-9">
-                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" on-select="lokasi($select.selected)" theme="bootstrap" ng-disabled="is_view">
                                                 <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
                                                 <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
                                             </ui-select>
@@ -131,12 +131,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
+                                    <!-- <div class="form-group row">
                                         <label class="col-sm-3 col-form-label-sm">Keterangan</label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control form-control-sm" ng-model="form.keterangan"/>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="col-md-12">
                                     <hr/>
@@ -175,7 +175,7 @@
                                                     </td>
                                                     <td>
                                                         <div>
-                                                            <ui-select class="ui-select-sm ui-select-container" ng-model="val.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                            <ui-select class="ui-select-sm ui-select-container" ng-model="val.m_lokasi_id" theme="bootstrap" ng-disabled="true">
                                                                 <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.nama }}</ui-select-match>
                                                                 <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama }}</ui-select-choices>
                                                             </ui-select>
@@ -189,7 +189,7 @@
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
-                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="is_view || (val.kredit != 0 && val.kredit != undefined)" ng-model="val.debit" ng-blur="sumTotal()"/>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="22" ng-disabled="is_view || (val.kredit != 0 && val.kredit != undefined)" ng-model="val.debit" ng-blur="sumTotal()"/>
                                                         </div>
                                                     </td>
                                                     <td>
@@ -197,7 +197,7 @@
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
-                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="is_view || (val.debit != 0 && val.debit != undefined)" ng-model="val.kredit" ng-blur="sumTotal()"/>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="22" ng-disabled="is_view || (val.debit != 0 && val.debit != undefined)" ng-model="val.kredit" ng-blur="sumTotal()"/>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -213,7 +213,7 @@
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
-                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="true" ng-model="form.total_debit"/>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="22" ng-disabled="true" ng-model="form.total_debit"/>
                                                         </div>
                                                     </td>
                                                     <td>
@@ -221,7 +221,7 @@
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
-                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="true" ng-model="form.total_kredit"/>
+                                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="22" ng-disabled="true" ng-model="form.total_kredit"/>
                                                         </div>
                                                     </td>
                                                 </tr>

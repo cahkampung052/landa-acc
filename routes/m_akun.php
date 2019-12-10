@@ -215,7 +215,8 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
             SUM(kredit) as kredit,
             acc_m_akun.id,
             acc_m_akun.saldo_normal,
-            acc_m_akun.parent_id
+            acc_m_akun.parent_id,
+            acc_m_akun.nama
         ")
             ->from("acc_m_akun")
             ->leftJoin("acc_trans_detail", "acc_m_akun.id = acc_trans_detail.m_akun_id")
@@ -227,6 +228,9 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $arrTrans[$value->id] = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
         $arrTrans[$value->parent_id] = (isset($arrTrans[$value->parent_id]) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
     }
+
+    
+    //echo json_encode($coba);exit();
     /**
      * List akun
      */
@@ -302,6 +306,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         if ($data['is_induk'] == 0) {
             $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '' . $data['kode'];
         }
+        
         /**
          * Cek kode
          */
@@ -313,7 +318,6 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         if (isset($cekKode->kode)) {
             return unprocessResponse($response, ["kode sudah digunakan untuk akun '" . $cekKode->nama . "'"]);
         }
-        unset($data['kode']);
         /**
          * Set level dan tipe arus kas
          */
