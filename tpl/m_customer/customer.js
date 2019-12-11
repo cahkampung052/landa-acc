@@ -1,7 +1,7 @@
-app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('customerNewCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
-    var control_link = "acc/m_customer";
-    var master = 'Master Penerima';
+    var control_link = "acc/m_customer_all";
+    var master = 'Master Customer';
     $scope.formTitle = '';
     $scope.displayed = [];
     $scope.is_edit = false;

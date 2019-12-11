@@ -64,14 +64,16 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
     $db     = $this->db;
     $db->select("*")
         ->from("acc_m_kontak")
+        ->where("jenis", "=", 'lain')
         ->orderBy('acc_m_kontak.nama');
+
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
         foreach ($filter as $key => $val) {
             if ($key == 'is_deleted') {
                 $db->where("is_deleted", '=', $val);
             } elseif ($key == "jenis") {
-                $db->where("jenis", '=', $val);
+                $db->where("jenis", '=', 'lain');
             } else {
                 $db->where($key, 'like', $val);
             }
@@ -100,6 +102,7 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
       */
      $kode           = generateNoTransaksi("customer", 0);
      $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
+     $params["jenis"]= 'lain';
      $validasi       = validasi($params);
      if ($validasi === true) {
          $params['type'] = "customer";
