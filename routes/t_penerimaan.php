@@ -107,7 +107,7 @@ $app->get('/acc/t_penerimaan/getDetail', function ($request, $response) {
             ")
             ->from("acc_pemasukan_det")
             ->join("join", "acc_m_akun", "acc_m_akun.id = acc_pemasukan_det.m_akun_id")
-            ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pemasukan_det.m_lokasi_id")
+            ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pemasukan_det.m_lokasi_id")
             ->where("acc_pemasukan_id", "=", $params['id'])
             ->findAll();
     foreach ($models as $key => $val) {
