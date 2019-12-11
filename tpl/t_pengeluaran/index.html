@@ -75,10 +75,7 @@
                                 <td class="align-left">{{ row.namaLokasi }}</td>
                                 <td class="align-left">{{ row.tanggal_formated }}</td>
                                 <td class="align-right">{{ row.total| number }}</td>
-                                <td class="align-left">
-                                    <span ng-if="row.penerima != ''">{{ row.penerima }}</span>
-                                    <span ng-if="row.penerima == ''">{{ row.namaAkun }}</span>
-                                </td>
+                                <td class="align-left">{{ row.penerima }}</td>
                                 <td class="align-left">{{ row.created_at }}</td>
                                 <td class="align-left">{{ row.namaUser }}</td>
                                 <td class="align-center">
