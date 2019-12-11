@@ -182,7 +182,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaCus, "type" => ucfirst($val->typeCus)];
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['tanggal_setting'] = $setting->tanggal;
-        $models[$key]['grandtotal'] = intval($val->total) + intval($val->ppn);
+        $models[$key]['grandtotal'] = intval($val->total);
     }
     return successResponse($response, [
         'list' => $models,
