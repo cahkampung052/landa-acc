@@ -1,11 +1,12 @@
 <?php
+
 $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
     $params = $request->getParams();
-    $tanggal_start      = $params['startDate'];
-    $tanggal_end        = $params['endDate'];
-    $data['tanggal']    = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
-    $data['disiapkan']  = date("d-m-Y, H:i");
-    $data['lokasi']     = $params['nama_lokasi'];
+    $tanggal_start = $params['startDate'];
+    $tanggal_end = $params['endDate'];
+    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['disiapkan'] = date("d-m-Y, H:i");
+    $data['lokasi'] = $params['nama_lokasi'];
     if (isset($params['m_lokasi_id'])) {
         $lokasiId = getChildId("acc_m_lokasi", $params['m_lokasi_id']);
         /*
@@ -18,10 +19,10 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
             $lokasiId = $params['m_lokasi_id'];
         }
     }
-    $arr                    = [];
-    $data['total_debit']    = 0;
-    $data['total_kredit']   = 0;
-    $index                  = 0;
+    $arr = [];
+    $data['total_debit'] = 0;
+    $data['total_kredit'] = 0;
+    $index = 0;
     /*
      * ambil trans detail dari akun
      */
@@ -54,43 +55,48 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
         if ($vals->kredit == null) {
             $vals->kredit = 0;
         }
-        $arr[$keys]             = (array) $vals;
-        $data['total_debit']    += $vals->debit;
-        $data['total_kredit']   += $vals->kredit;
+
+        if ($vals->debit == 0 && $vals->kredit == 0) {
+            
+        } else {
+            $arr[$keys] = (array) $vals;
+            $data['total_debit'] += $vals->debit;
+            $data['total_kredit'] += $vals->kredit;
+        }
     }
     /*
      * sorting array berdasarkan tanggal
      */
-    $kode       = "";
+    $kode = "";
     $namaLokasi = "";
     foreach ($arr as $key => $val) {
-        $arr[$key]['namaLokasi']    = $val['namaLokasiSaldo'];
+        $arr[$key]['namaLokasi'] = $val['namaLokasiSaldo'];
         if ($val['kode'] == $kode && $val['kode'] != "") {
-            $arr[$key]['kode']          = "";
-            $arr[$key]['kodeLokasi']    = "";
-            $arr[$key]['tanggal']       = "";
+            $arr[$key]['kode'] = "";
+            $arr[$key]['kodeLokasi'] = "";
+            $arr[$key]['tanggal'] = "";
         } else {
-            $kode       = $val['kode'];
+            $kode = $val['kode'];
             $namaLokasi = $val['namaLokasi'];
         }
     }
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/jurnalUmum.html', [
-                "data" => $data,
-                "detail" => $arr,
-                "css" => modulUrl() . '/assets/css/style.css',
-            ]);
+            "data" => $data,
+            "detail" => $arr,
+            "css" => modulUrl() . '/assets/css/style.css',
+        ]);
         header("Content-type: application/vnd.ms-excel");
         header("Content-Disposition: attachment;Filename=laporan-buku-besar.xls");
         echo $content;
     } elseif (isset($params['print']) && $params['print'] == 1) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/jurnalUmum.html', [
-                "data" => $data,
-                "detail" => $arr,
-                "css" => modulUrl() . '/assets/css/style.css',
-            ]);
+            "data" => $data,
+            "detail" => $arr,
+            "css" => modulUrl() . '/assets/css/style.css',
+        ]);
         echo $content;
         echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
     } else {
