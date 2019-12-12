@@ -2,7 +2,7 @@
     <div ng-controller="l_aktivitaskeuanganCtrl">
         <div class="card">
             <div class="card-header">
-                <strong>Laporan Aktivitas Keuangan</strong>
+                <strong>Laporan Arus Kas</strong>
                 <!--                <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()" ng-if="user.akses.pengecualian_neraca">
                                     <i class="fa fa-gear"></i>
                                     Setting Pengecualian
@@ -14,6 +14,7 @@
                         <div class="col-md-12">
                             <form name="landaform" novalidate="">
                                 <div class="row">
+                                    <label class="col-md-1 col-form-label-sm">Baru</label>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <div class="input-group">
@@ -26,6 +27,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <label class="col-md-1 col-form-label-sm">Lama</label>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <div class="input-group">
@@ -87,9 +89,9 @@
                 <div class="row header-laporan-wrapper">
                     <div class="col-md-12">
                         <center>
-                            <h2 class="header-laporan">LAPORAN AKTIVITAS KEUANGAN</h2>
-<!--                            Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
-                            <br/>-->
+                            <h2 class="header-laporan">LAPORAN ARUS KAS</h2>
+                            <!--                            Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
+                                                        <br/>-->
                             Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
                             <br/>
                         </center>
@@ -172,7 +174,7 @@
                                     <span class="text-black-neraca"  style="font-weight: bold;">{{ data.modelHarta.total2| number }}</span>
                                 </td>
                                 <td style="text-align: right">
-                                    <span class="text-black-neraca"  style="font-weight: bold;">{{ (data.modelHarta.total - data.modelHarta.total2)| number }}</span>
+                                    <span class="text-black-neraca"  style="font-weight: bold;">{{ (data.modelHarta.total - data.modelHarta.total2) | number}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -207,7 +209,7 @@
                                 <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp2| number }}</td>
-                                <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ (row.saldo_rp - row.saldo_rp2)| number }}</td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ (row.saldo_rp - row.saldo_rp2) | number}}</td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">
                                 <td style="padding-left: 25px!important;">
@@ -236,7 +238,7 @@
                                     <span class="text-blue-neraca"  style="font-weight: bold;">{{ data.modelKewajiban.total2| number }}</span>
                                 </td>
                                 <td style="text-align: right">
-                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ (data.modelKewajiban.total - data.modelKewajiban.total2)| number }}</span>
+                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ (data.modelKewajiban.total - data.modelKewajiban.total2) | number}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -271,7 +273,7 @@
                                 <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
                                 <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp2| number }}</td>
-                                <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ (row.saldo_rp - row.saldo_rp2)| number }}</td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ (row.saldo_rp - row.saldo_rp2) | number}}</td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">
                                 <td style="padding-left: 25px!important;">
@@ -300,7 +302,7 @@
                                     <span class="text-blue-neraca"  style="font-weight: bold;">{{ data.modelModal.total2| number }}</span>
                                 </td>
                                 <td style="text-align: right">
-                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ (data.modelModal.total - data.modelModal.total2)| number }}</span>
+                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ (data.modelModal.total - data.modelModal.total2) | number}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -316,7 +318,7 @@
                                     <span class="text-black-neraca" style="font-weight: bold;">{{ data.modelKewajibanModal.total2| number }}</span>
                                 </td>
                                 <td style="text-align: right">
-                                    <span class="text-black-neraca" style="font-weight: bold;">{{ (data.modelKewajibanModal.total - data.modelKewajibanModal.total2)| number }}</span>
+                                    <span class="text-black-neraca" style="font-weight: bold;">{{ (data.modelKewajibanModal.total - data.modelKewajibanModal.total2) | number}}</span>
                                 </td>
                             </tr>
                         </tbody>
