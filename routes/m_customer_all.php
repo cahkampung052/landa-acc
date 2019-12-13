@@ -9,7 +9,7 @@ function validasi($data, $custom = array())
     return $cek;
 }
 $app->get('/acc/m_customer_all/kode', function ($request, $response) {
-    return generateNoTransaksi("customer", 0);
+    return generateNoTransaksi("customerAll", 0);
 });
 $app->get('/acc/m_customer_all/getKontak', function ($request, $response) {
     $db     = $this->db;
@@ -100,7 +100,7 @@ $app->get('/acc/m_customer_all/index', function ($request, $response) {
      /*
       * generate kode
       */
-     $kode           = generateNoTransaksi("customer", 0);
+     $kode           = generateNoTransaksi("customerAll", 0);
      $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
      $params["jenis"]= 'customer';
      $validasi       = validasi($params);

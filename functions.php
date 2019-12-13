@@ -643,10 +643,16 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "HD/" . $tahun . "/" . $no_urut;
     } elseif ($type == 'customer') {
-        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
+        $cek = $db->find("select kode from acc_m_kontak where jenis = 'lain' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "CUST" . $tahun . "" . $no_urut;
+        $no_transaksi = "CUST" . date('y') . "" . $no_urut;
+    } elseif ($type == 'customerAll') {
+        $cek = $db->find("select kode from acc_m_kontak where jenis = 'customer' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        // var_dump($urut);
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "CUST" . date('y') . "" . $no_urut;
     } elseif ($type == 'supplier') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'supplier' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;

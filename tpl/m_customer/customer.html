@@ -63,6 +63,7 @@
                     <table class="table table-striped table-hover table-mobile">
                         <thead>
                             <tr>
+                                <th class="align-left" scope="col">Kode  Customer</th>
                                 <th class="align-left" scope="col">Nama  Customer</th>
                                 <th class="align-left" scope="col">No Telepon</th>
                                 <th class="align-left" scope="col">Email</th>
@@ -72,6 +73,7 @@
                         </thead>
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
+                                <td class="align-left" data-label="Nama  Customer"><span>{{ row.kode || 'Tidak ada kode'}}</span></td>
                                 <td class="align-left" data-label="Nama  Customer"><span>{{ row.nama }}</span></td>
                                 <td class="align-left" data-label="No Telepon"><span>{{ row.tlp }}</span></td>
                                 <td class="align-left" data-label="Email"><span>{{ row.email }}</span></td>
