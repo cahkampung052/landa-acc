@@ -122,6 +122,9 @@ $app->get('/acc/t_penerimaan/getDetail', function ($request, $response) {
 $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     $params = $request->getParams();
     $tableuser = tableUser();
+
+
+
     $db = $this->db;
     $db->select("
                 acc_pemasukan.*, 
@@ -184,10 +187,21 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key]['tanggal_setting'] = $setting->tanggal;
         $models[$key]['grandtotal'] = intval($val->total);
     }
+    $a = getMasterSetting();
+    $testing = !empty($a->posisi_pemasukan) ? json_decode($a->posisi_pemasukan) : [];
+
+//    print_r($testing);die;
+//    function sortaa($a, $b) {
+//        return $b->checkbox - $a->checkbox;
+//    }
+
+//    usort($testing, "sortaa");
+
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
-        'base_url' => str_replace('api/', '', config('SITE_URL'))
+        'base_url' => str_replace('api/', '', config('SITE_URL')),
+        'field' => $testing
     ]);
 });
 /**
@@ -238,7 +252,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         foreach ($params['detail'] as $key => $value) {
             $keterangan[$key] = $value['keterangan'];
         }
-        $keteranganPenerimaan = join("<br>",$keterangan);
+        $keteranganPenerimaan = join("<br>", $keterangan);
         $penerimaan['keterangan'] = (isset($keteranganPenerimaan) && !empty($keteranganPenerimaan) ? $keteranganPenerimaan : NULL);
 
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
@@ -361,6 +375,19 @@ $app->get("/acc/t_penerimaan/getTemplate", function ($request, $response) {
 $app->post("/acc/t_penerimaan/saveTemplate", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
+    try {
+        $model = $db->update("acc_m_setting", $data, ["id" => 1]);
+        return successResponse($response, $model);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
+    }
+});
+
+$app->post("/acc/t_penerimaan/savePosition", function ($request, $response) {
+    $data = $request->getParams();
+    $db = $this->db;
+
+    $data['posisi_pemasukan'] = json_encode($data);
     try {
         $model = $db->update("acc_m_setting", $data, ["id" => 1]);
         return successResponse($response, $model);
