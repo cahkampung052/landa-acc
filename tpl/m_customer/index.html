@@ -11,7 +11,7 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <button class="dropdown-item" ng-click="create();">
                                 <i class="fa fa-plus"></i>
-                                &nbsp;Buat Penerima Baru
+                                &nbsp;Buat Customer Baru
                             </button>
                         </div>
                     </div>
@@ -19,7 +19,7 @@
                 <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
                     <button class="btn btn-primary btn-sm" ng-click="create();">
                         <i class="fa fa-plus"></i>
-                        &nbsp;Buat Penerima Baru
+                        &nbsp;Buat Customer Baru
                     </button>
                 </div>
             </div>
@@ -38,14 +38,14 @@
                                         <div class="col-md-3">
                                             <input type="text" class="form-control form-control-sm" st-search="tlp" id="telp" placeholder="Telp"/>
                                         </div>
-<!--                                         <label class="col-md-1 col-form-label-sm">Jenis</label>
+                                        <label class="col-md-1 col-form-label-sm">Jenis</label>
                                         <div class="col-md-3">
                                             <select class="form-control form-control-sm" st-search="jenis">
                                                 <option value="">Silakan Pilih</option>
                                                 <option value="customer">Customer</option>
                                                 <option value="lain">Penerima</option>
                                             </select>
-                                        </div> -->
+                                        </div>
                                         <label class="col-md-1 col-form-label-sm">Status</label>
                                         <div class="col-md-3">
                                             <select class="form-control form-control-sm" st-search="is_deleted">
@@ -63,7 +63,7 @@
                     <table class="table table-striped table-hover table-mobile">
                         <thead>
                             <tr>
-                                <th class="align-left" scope="col">Nama  Penerima</th>
+                                <th class="align-left" scope="col">Nama  Customer</th>
                                 <th class="align-left" scope="col">No Telepon</th>
                                 <th class="align-left" scope="col">Email</th>
                                 <th class="align-left" scope="col">Alamat</th>
@@ -72,7 +72,7 @@
                         </thead>
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
-                                <td class="align-left" data-label="Nama  Penerima"><span>{{ row.nama }}</span></td>
+                                <td class="align-left" data-label="Nama  Customer"><span>{{ row.nama }}</span></td>
                                 <td class="align-left" data-label="No Telepon"><span>{{ row.tlp }}</span></td>
                                 <td class="align-left" data-label="Email"><span>{{ row.email }}</span></td>
                                 <td class="align-left" data-label="Alamat"><span>{{ row.alamat }}</span></td>
@@ -105,7 +105,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-3 col-form-label-sm required">Nama Penerima</label>
+                                <label class="col-md-3 col-form-label-sm required">Nama Customer</label>
                                 <div class="col-md-9">
                                     <input type="text" class="form-control form-control-sm" ng-model="form.nama" ng-disabled="is_view" required/>
                                 </div>

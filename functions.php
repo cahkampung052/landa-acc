@@ -646,13 +646,12 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $cek = $db->find("select kode from acc_m_kontak where jenis = 'lain' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "CUST" . date('y') . "" . $no_urut;
+        $no_transaksi = "CUST" . $tahun . "" . $no_urut;
     } elseif ($type == 'customerAll') {
         $cek = $db->find("select kode from acc_m_kontak where jenis = 'customer' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
-        // var_dump($urut);
         $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "CUST" . date('y') . "" . $no_urut;
+        $no_transaksi = "CUST" . $tahun . "" . $no_urut;
     } elseif ($type == 'supplier') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'supplier' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
@@ -692,11 +691,6 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
-    } elseif ($type == 'pelabuhan') {
-        $cek = $db->find("select kode from acc_m_kontak where type = 'pelabuhan' order by kode desc");
-        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
-        $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "PLB" . $tahun . "" . $no_urut;
     }
     return $no_transaksi;
 }
