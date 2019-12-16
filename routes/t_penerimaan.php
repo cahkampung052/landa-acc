@@ -107,7 +107,7 @@ $app->get('/acc/t_penerimaan/getDetail', function ($request, $response) {
             ")
             ->from("acc_pemasukan_det")
             ->join("join", "acc_m_akun", "acc_m_akun.id = acc_pemasukan_det.m_akun_id")
-            ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pemasukan_det.m_lokasi_id")
+            ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pemasukan_det.m_lokasi_id")
             ->where("acc_pemasukan_id", "=", $params['id'])
             ->findAll();
     foreach ($models as $key => $val) {
@@ -185,7 +185,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaCus, "type" => ucfirst($val->typeCus)];
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['tanggal_setting'] = $setting->tanggal;
-        $models[$key]['grandtotal'] = intval($val->total);
+        $models[$key]['grandtotal'] = intval($val->total) + intval($val->ppn);
     }
     $a = getMasterSetting();
     $testing = !empty($a->posisi_pemasukan) ? json_decode($a->posisi_pemasukan) : [];

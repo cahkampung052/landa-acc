@@ -199,7 +199,7 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
          */
         $format = $sql->select("format_jurnal")->from("acc_m_setting")->find();
         if (substr($format->format_jurnal, 0, 2) == "JM") {
-            var_dump($params['form']['tanggal']);exit();
+            //var_dump($params['form']['tanggal']);exit();
             $get_bulan = date("m", strtotime($params['form']['tanggal']));
             $get_tahun = date("Y", strtotime($params['form']['tanggal']));
             $kode = generateNoTransaksi("jurnal", $params['form']['m_lokasi_id']['kode'], "JM", $get_bulan, $get_tahun);

@@ -9,7 +9,7 @@ function validasi($data, $custom = array())
     return $cek;
 }
 $app->get('/acc/m_customer_all/kode', function ($request, $response) {
-    return generateNoTransaksi("customer", 0);
+    return generateNoTransaksi("customerAll", 0);
 });
 $app->get('/acc/m_customer_all/getKontak', function ($request, $response) {
     $db     = $this->db;
@@ -62,7 +62,7 @@ $app->get('/acc/m_customer_all/index', function ($request, $response) {
     $offset = isset($params['offset']) ? $params['offset'] : 0;
     $limit  = isset($params['limit']) ? $params['limit'] : 10;
     $db     = $this->db;
-    $db->select("*")
+    $db->select("*") 
         ->from("acc_m_kontak")
         ->where("jenis", "=", 'customer')
         ->orderBy('acc_m_kontak.nama');
@@ -100,7 +100,7 @@ $app->get('/acc/m_customer_all/index', function ($request, $response) {
      /*
       * generate kode
       */
-     $kode           = generateNoTransaksi("customer", 0);
+     $kode           = generateNoTransaksi("customerAll", 0);
      $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
      $params["jenis"]= 'customer';
      $validasi       = validasi($params);
