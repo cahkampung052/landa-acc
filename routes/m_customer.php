@@ -12,7 +12,7 @@ $app->get('/acc/m_customer/kode', function ($request, $response) {
     return generateNoTransaksi("customer", 0);
 });
 $app->get('/acc/m_customer/getKontak', function ($request, $response) {
-    $db     = $this->db;
+    $db     = $this->db; 
     $params = $request->getParams();
     $db->select("*")
         ->from("acc_m_kontak")

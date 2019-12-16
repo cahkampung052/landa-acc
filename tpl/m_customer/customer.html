@@ -32,13 +32,13 @@
                                     <div class="form-group row mb-0px">
                                         <label for="nama" class="col-md-1 col-form-label-sm">Nama</label>
                                         <div class="col-md-3">
-                                            <input type="text" class="form-control form-control-sm" st-search="nama" id="nama" placeholder="Nama"/>
+                                            <input type="text" class="form-control form-control-sm" st-search="nama" id="nama" placeholder="Nama" />
                                         </div>
                                         <label for="nama" class="col-md-1 col-form-label-sm">Telp</label>
                                         <div class="col-md-3">
-                                            <input type="text" class="form-control form-control-sm" st-search="tlp" id="telp" placeholder="Telp"/>
+                                            <input type="text" class="form-control form-control-sm" st-search="tlp" id="telp" placeholder="Telp" />
                                         </div>
-<!--                                         <label class="col-md-1 col-form-label-sm">Jenis</label>
+                                        <!--                                         <label class="col-md-1 col-form-label-sm">Jenis</label>
                                         <div class="col-md-3">
                                             <select class="form-control form-control-sm" st-search="jenis">
                                                 <option value="">Silakan Pilih</option>
@@ -60,35 +60,35 @@
                     </div>
                 </div>
                 <!-- <div class="table-responsive"> -->
-                    <table class="table table-striped table-hover table-mobile">
-                        <thead>
-                            <tr>
-                                <th class="align-left" scope="col">Kode  Customer</th>
-                                <th class="align-left" scope="col">Nama  Customer</th>
-                                <th class="align-left" scope="col">No Telepon</th>
-                                <th class="align-left" scope="col">Email</th>
-                                <th class="align-left" scope="col">Alamat</th>
-                                <th scope="col" width="20"></th>
-                            </tr>
-                        </thead>
-                        <tbody ng-show="!isLoading">
-                            <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
-                                <td class="align-left" data-label="Nama  Customer"><span>{{ row.kode || 'Tidak ada kode'}}</span></td>
-                                <td class="align-left" data-label="Nama  Customer"><span>{{ row.nama }}</span></td>
-                                <td class="align-left" data-label="No Telepon"><span>{{ row.tlp }}</span></td>
-                                <td class="align-left" data-label="Email"><span>{{ row.email }}</span></td>
-                                <td class="align-left" data-label="Alamat"><span>{{ row.alamat }}</span></td>
-                                <td>
-                                    <div class="btn-group d-flex btn-table-mobile" role="group">
-                                        <button type="button" class="btn btn-info fa fa-pencil w-100" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash w-100" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
-                                        <button type="button" class="btn btn-warning fa fa-refresh w-100" ng-if="row.is_deleted == 1" ng-click="restore(row);"></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div st-pagination="" st-items-by-page="20" st-template="tpl/common/pagination.custom.html"></div>
+                <table class="table table-striped table-hover table-mobile">
+                    <thead>
+                        <tr>
+                            <th class="align-left" scope="col">Kode Customer</th>
+                            <th class="align-left" scope="col">Nama Customer</th>
+                            <th class="align-left" scope="col">No Telepon</th>
+                            <th class="align-left" scope="col">Email</th>
+                            <th class="align-left" scope="col">Alamat</th>
+                            <th scope="col" width="20"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-show="!isLoading">
+                        <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
+                            <td class="align-left" data-label="Nama  Customer"><span>{{ row.kode || 'Tidak ada kode'}}</span></td>
+                            <td class="align-left" data-label="Nama  Customer"><span>{{ row.nama }}</span></td>
+                            <td class="align-left" data-label="No Telepon"><span>{{ row.tlp }}</span></td>
+                            <td class="align-left" data-label="Email"><span>{{ row.email }}</span></td>
+                            <td class="align-left" data-label="Alamat"><span>{{ row.alamat }}</span></td>
+                            <td>
+                                <div class="btn-group d-flex btn-table-mobile" role="group">
+                                    <button type="button" class="btn btn-info fa fa-pencil w-100" ng-if="row.is_deleted == 0" ng-click="update(row)"></button>
+                                    <button type="button" class="btn btn-danger fa fa-trash w-100" ng-if="row.is_deleted == 0" ng-click="trash(row);"></button>
+                                    <button type="button" class="btn btn-warning fa fa-refresh w-100" ng-if="row.is_deleted == 1" ng-click="restore(row);"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div st-pagination="" st-items-by-page="20" st-template="tpl/common/pagination.custom.html"></div>
                 <!-- </div> -->
             </div>
         </div>
@@ -127,7 +127,7 @@
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label-sm">Contact Person</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control form-control-sm" ng-model="form.cp" ng-disabled="is_view"/>
+                                    <input type="text" class="form-control form-control-sm" ng-model="form.cp" ng-disabled="is_view" />
                                 </div>
                             </div>
                         </div>

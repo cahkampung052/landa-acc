@@ -7,13 +7,13 @@ app.controller('customerNewCtrl', function($scope, Data, $rootScope, $uibModal, 
     $scope.is_edit = false;
     $scope.is_view = false;
     $scope.master = master;
-    
-    $scope.generateKode = function () {
+
+    $scope.generateKode = function() {
         Data.get(control_link + '/kode').then(function(response) {
             $scope.form.kode = response;
         });
     }
-    
+
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -21,8 +21,8 @@ app.controller('customerNewCtrl', function($scope, Data, $rootScope, $uibModal, 
         var limit = tableState.pagination.number || 10;
         /** set offset and limit */
         var param = {
-            offset : offset,
-            limit : limit
+            offset: offset,
+            limit: limit
         };
         /** set sort and order */
         if (tableState.sort.predicate) {
@@ -57,7 +57,7 @@ app.controller('customerNewCtrl', function($scope, Data, $rootScope, $uibModal, 
         $scope.is_disable = true;
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
-        if(!$scope.form.kode){
+        if (!$scope.form.kode) {
             $scope.generateKode();
         }
     };

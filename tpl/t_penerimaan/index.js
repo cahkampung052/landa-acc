@@ -9,7 +9,45 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
+    $scope.is_setting = false;
     $scope.urlfoto = "api/file/penerimaan/";
+
+    $scope.field = [];
+    $scope.setPosition = function ($event, key, vals) {
+        $event.preventDefault()
+        $event.stopPropagation()
+        var ps = 1;
+        if ($event.keyCode == 37) {
+            ps = -1;
+        }
+
+        if ($event.keyCode == 37 || $event.keyCode == 39) {
+            var sw = $scope.field[key + ps].value;
+            var chk = $scope.field[key + ps].checkbox;
+            $scope.field[key + ps].value = vals.value;
+            $scope.field[key + ps].checkbox = vals.checkbox;
+            $scope.field[key].value = sw;
+            $scope.field[key].checkbox = chk;
+            var f = key + ps;
+            setTimeout(function () {
+                $('.input-' + f).focus()
+            }, 1)
+        }
+
+        console.log($scope.field)
+
+    }
+
+    $scope.savePosition = function () {
+        Data.post(control_link + '/savePosition', $scope.field).then(function (result) {
+            if (result.status_code == 200) {
+//                $scope.is_setting = false;
+                $scope.callServer(tableStateRef)
+            } else {
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+            }
+        });
+    }
 
     Data.get('acc/m_lokasi/default_lokasi').then(function (data) {
         $scope.lokasi_default = data.data;
@@ -169,6 +207,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.form.m_kontak_id = [];
     }
     $scope.callServer = function callServer(tableState) {
+        $scope.field = [];
         tableStateRef = tableState;
         $scope.isLoading = true;
         var offset = tableState.pagination.start || 0;
@@ -198,6 +237,19 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         });
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
+            if (response.data.field != undefined) {
+                $scope.field = response.data.field;
+            } else {
+                angular.forEach(response.data.list[0], function (val, key) {
+                    $scope.field.push({
+                        checkbox: true,
+                        value: key
+                    });
+                });
+            }
+
+            console.log($scope.field)
+
             $scope.base_url = response.data.base_url;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
@@ -238,11 +290,11 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.gambar = [];
         $scope.urlfoto = "";
     };
-    $scope.lokasi = function(select) {
-        angular.forEach($scope.listDetail, function(val, key) {
+    $scope.lokasi = function (select) {
+        angular.forEach($scope.listDetail, function (val, key) {
             val.m_lokasi_id = {
-                id : select.id,
-                nama : select.nama
+                id: select.id,
+                nama: select.nama
             }
         });
     };
@@ -264,7 +316,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
             }
             var time = new Date().getTime();
             var modalInstance = $uibModal.open({
-                templateUrl: response.data.base_url+"api/acc/landaacc/tpl/t_penerimaan/modal_diterima_dari.html?"+time,
+                templateUrl: response.data.base_url + "api/acc/landaacc/tpl/t_penerimaan/modal_diterima_dari.html?" + time,
                 controller: "modalDiterimaDari",
                 size: "lg",
                 backdrop: "static",

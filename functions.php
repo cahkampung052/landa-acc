@@ -683,7 +683,7 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "RJ" . date("y") . "/" . $no_urut;
     } else if ($type == 'pembelian') {
-        $cek = $db->find("select kode from inv_pembelian order by kode desc");
+        $cek = $db->find("select kode from inv_pembelian where inv_proses_akhir_id is null order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_pembelian;
@@ -691,6 +691,21 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
+    } elseif ($type == 'pelabuhan') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'pelabuhan' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "PLB" . $tahun . "" . $no_urut;
+    } elseif ($type == 'proses akhir') {
+        $cek = $db->find("select kode from inv_proses_akhir order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "PA" . $no_urut;
+    } elseif ($type == 'stok_opname') {
+        $cek = $db->find("select kode from inv_stok_opname order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "SO" . "/" . $unker . "/" . $no_urut;
     }
     return $no_transaksi;
 }

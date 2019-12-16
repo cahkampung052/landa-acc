@@ -37,7 +37,7 @@ $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
     $labarugi2 = getPemetaanAkun("Laba Rugi Berjalan");
     $akunLabaRugi2 = isset($labarugi[0]) ? $labarugi[0] : 0;
     $saldoLabaRugi2 = getLabaRugiNominal(null, $tanggal2, null);
-    $totalLabaRugi2 = $saldoLabaRugi["total"];
+    $totalLabaRugi2 = $saldoLabaRugi2["total"];
     /*
      * ambil akun pengecualian
      */

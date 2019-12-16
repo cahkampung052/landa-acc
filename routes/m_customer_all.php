@@ -62,7 +62,7 @@ $app->get('/acc/m_customer_all/index', function ($request, $response) {
     $offset = isset($params['offset']) ? $params['offset'] : 0;
     $limit  = isset($params['limit']) ? $params['limit'] : 10;
     $db     = $this->db;
-    $db->select("*")
+    $db->select("*") 
         ->from("acc_m_kontak")
         ->where("jenis", "=", 'customer')
         ->orderBy('acc_m_kontak.nama');
