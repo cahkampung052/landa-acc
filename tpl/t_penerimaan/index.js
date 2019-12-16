@@ -237,7 +237,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         });
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
-            if (response.data.field != undefined) {
+            if (response.data.field != undefined && response.data.field.length > 0 ) {
                 $scope.field = response.data.field;
             } else {
                 angular.forEach(response.data.list[0], function (val, key) {
