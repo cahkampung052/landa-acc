@@ -677,7 +677,9 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -4)) + 1;
         $no_urut = substr('0000' . $urut, -4);
         $no_transaksi = "ASR" . "/" . $no_urut;
-    } else if ($type == 'retur_penjualan') {
+    }
+    //AFU
+    else if ($type == 'retur_penjualan') {
         $cek = $db->find("select kode from inv_retur_penjualan order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
@@ -706,7 +708,23 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "SO" . "/" . $unker . "/" . $no_urut;
+    } elseif ($type == 'afu_customer') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "CUST" . date("y") . "" . $no_urut;
+    } elseif ($type == 'afu_customer') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "CUST" . date("y") . "" . $no_urut;
+    } elseif ($type == 'afu_supplier') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'supplier' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "VND" . date("y") . "" . $no_urut;
     }
+    //END AFU
     return $no_transaksi;
 }
 

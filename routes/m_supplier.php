@@ -10,7 +10,8 @@ function validasi($data, $custom = array()) {
 }
 
 $app->get('/acc/m_supplier/kode', function ($request, $response) {
-    return generateNoTransaksi("supplier", 0);
+    $params = $request->getParams();
+    return isset($params['project']) && !empty($params['project']) && $params['project'] == "afu" ? generateNoTransaksi("afu_supplier", 0) : generateNoTransaksi("supplier", 0);
 });
 
 $app->get('/acc/m_supplier/getSupplier', function ($request, $response) {
