@@ -16,6 +16,10 @@
                                 <i class="fa fa-gear"></i>
                                 &nbsp;Setting Print
                             </button>
+                            <button class="dropdown-item" ng-click="is_setting = !is_setting">
+                                <i class="fa fa-gear"></i>
+                                &nbsp;Setting Field
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -71,7 +75,7 @@
                             </div>
                         </div>
                         <div class="col-md-12" ng-if="is_setting">
-                        <div class="form-group row">
+                            <div class="form-group row">
                                 <div class="col-md-12 text-center">
                                     <div class="btn-group">
                                         <span class="input-group-text"><input type="checkbox" ng-model="checklist" ng-click="fillCheckBox(this.checklist)"></span>
@@ -87,8 +91,6 @@
                         <thead>
                             <tr>
                                 <th class="align-left" ng-repeat="(key, val) in field" ng-if="val.checkbox">
-                                    <!--<input type="text" class="form-control form-control-sm input-{{key}}" ng-model="val.value" ng-keydown="setPosition($event, key, val)"/>-->
-
                                     {{val.alias}}
                                 </th>
                                 <!--                                <th class="align-left">No Transaksi</th>
