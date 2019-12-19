@@ -92,11 +92,17 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
         $models[$key]['m_lokasi_asal_id']   = ["id" => $val->m_lokasi_asal_id, "nama" => $val->namaLokAsal, "kode" => $val->kodeLokAsal];
         $models[$key]['m_lokasi_tujuan_id'] = ["id" => $val->m_lokasi_tujuan_id, "nama" => $val->namaLokTujuan, "kode" => $val->kodeLokTujuan];
         $models[$key]['status']             = ucfirst($val->status);
+        $models[$key]['total'] = number_format(intval($val->total));
     }
+    
+    $a = getMasterSetting();
+    $testing = !empty($a->posisi_transfer) ? json_decode($a->posisi_transfer) : [];
+    
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
-        'base_url' => str_replace('api/', '', config('SITE_URL'))
+        'base_url' => str_replace('api/', '', config('SITE_URL')),
+        'field' => $testing
     ]);
 });
 $app->post('/acc/t_transfer/save', function ($request, $response) {
@@ -181,3 +187,17 @@ $app->post('/acc/t_transfer/delete', function ($request, $response) {
         return unprocessResponse($response, ['Gagal menghapus data']);
     }
 });
+
+$app->post("/acc/t_transfer/savePosition", function ($request, $response) {
+    $data = $request->getParams();
+    $db = $this->db;
+
+    $data['posisi_transfer'] = json_encode($data);
+    try {
+        $model = $db->update("acc_m_setting", $data, ["id" => 1]);
+        return successResponse($response, $model);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
+    }
+});
+

@@ -9,7 +9,8 @@ function validasi($data, $custom = array())
     return $cek;
 }
 $app->get('/acc/m_customer/kode', function ($request, $response) {
-    return generateNoTransaksi("customer", 0);
+    $params = $request->getParams();
+    return isset($params['project']) && !empty($params['project']) && $params['project'] == "afu" ? generateNoTransaksi("afu_customer", 0) : generateNoTransaksi("customer", 0);
 });
 $app->get('/acc/m_customer/getKontak', function ($request, $response) {
     $db     = $this->db; 
@@ -98,7 +99,7 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
      /*
       * generate kode
       */
-     $kode           = generateNoTransaksi("customer", 0);
+     $kode           = isset($params['project']) && !empty($params['project']) && $params['project'] == "afu" ? generateNoTransaksi("afu_customer", 0) : generateNoTransaksi("customer", 0);
      $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
      $validasi       = validasi($params);
      if ($validasi === true) {

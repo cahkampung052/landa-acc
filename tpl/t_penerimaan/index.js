@@ -11,8 +11,11 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.is_view = false;
     $scope.is_setting = false;
     $scope.urlfoto = "api/file/penerimaan/";
+    
+    /*
+     * SETTING FIELD
+     */
     $scope.checklist = false;
-
     $scope.field = [];
     $scope.startFrom = [];
     $scope.limit = 0;
@@ -74,6 +77,9 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
             }
         });
     }
+    /*
+     * END SETTING FIELD
+     */
 
     Data.get('acc/m_lokasi/default_lokasi').then(function (data) {
         $scope.lokasi_default = data.data;
@@ -284,9 +290,6 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
                     $scope.startFrom.push({start: val.no, limit: $scope.limit})
                 }
             })
-
-            console.log($scope.startFrom)
-            console.log($scope.field)
 
             $scope.base_url = response.data.base_url;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);

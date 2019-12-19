@@ -182,11 +182,17 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
             $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup, "type" => ucfirst($val->typeSup)];
         }
         $models[$key]['status'] = ucfirst($val->status);
+        $models[$key]['total'] = number_format(intval($val->total));
     }
+    
+    $a = getMasterSetting();
+    $testing = !empty($a->posisi_pengeluaran) ? json_decode($a->posisi_pengeluaran) : [];
+    
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
-        'base_url' => str_replace('api/', '', config('SITE_URL'))
+        'base_url' => str_replace('api/', '', config('SITE_URL')),
+        'field' => $testing
     ]);
 });
 /*
@@ -391,6 +397,19 @@ $app->get("/acc/t_pengeluaran/getTemplate", function ($request, $response) {
 $app->post("/acc/t_pengeluaran/saveTemplate", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
+    try {
+        $model = $db->update("acc_m_setting", $data, ["id" => 1]);
+        return successResponse($response, $model);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
+    }
+});
+
+$app->post("/acc/t_pengeluaran/savePosition", function ($request, $response) {
+    $data = $request->getParams();
+    $db = $this->db;
+
+    $data['posisi_pengeluaran'] = json_encode($data);
     try {
         $model = $db->update("acc_m_setting", $data, ["id" => 1]);
         return successResponse($response, $model);
