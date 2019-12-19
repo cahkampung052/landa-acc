@@ -171,6 +171,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     $models = $db->findAll();
     $totalItem = $db->count();
     
+    $setting = getMasterSetting();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
         $models[$key]['tanggal'] = date("Y-m-d", $val->modified_at);
