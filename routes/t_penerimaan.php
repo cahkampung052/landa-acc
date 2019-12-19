@@ -186,7 +186,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['tanggal_setting'] = $setting->tanggal;
         $models[$key]['grandtotal'] = number_format(intval($val->total));
-        $models[$key]['total'] = number_format(intval($val->total));
+        $models[$key]['total'] = (int)$val->total;
     }
     $a = getMasterSetting();
     $testing = !empty($a->posisi_pemasukan) ? json_decode($a->posisi_pemasukan) : [];
