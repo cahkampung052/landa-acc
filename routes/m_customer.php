@@ -35,6 +35,7 @@ $app->get('/acc/m_customer/getKaryawan', function ($request, $response) {
     $models = $db->select("*")
         ->from("karyawan")
         ->where("is_deleted", "=", 0)
+        ->andWhere("status", "=", "Aktif")
         ->findAll();
     return successResponse($response, [
         'list' => $models,
