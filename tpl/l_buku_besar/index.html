@@ -29,12 +29,21 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <div class="form-group">
+                                        <div class="btn-group" style="width:100%; float:left">
+                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view" style="width: 100%">
+                                                <ui-select-match placeholder="Pilih Akun">{{ $select.selected.nama }}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
+                                            </ui-select>
+                                            <button class="btn btn-sm btn-danger" ng-click="resetFilter('m_akun_id')" ng-if="!is_view">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+<!--                                        <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view">
                                                 <ui-select-match placeholder="Pilih Akun">{{ $select.selected.nama }}</ui-select-match>
                                                 <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
                                             </ui-select>
-                                        </div>
+                                        </div>-->
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">

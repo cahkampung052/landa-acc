@@ -1,19 +1,19 @@
-app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('customerNewCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
-    var control_link = "acc/m_customer";
-    var master = 'Master Penerima';
+    var control_link = "acc/m_customer_all";
+    var master = 'Master Customer';
     $scope.formTitle = '';
     $scope.displayed = [];
     $scope.is_edit = false;
     $scope.is_view = false;
     $scope.master = master;
-    
-    $scope.generateKode = function () {
+
+    $scope.generateKode = function() {
         Data.get(control_link + '/kode').then(function(response) {
             $scope.form.kode = response;
         });
     }
-    
+
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -21,8 +21,8 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         var limit = tableState.pagination.number || 10;
         /** set offset and limit */
         var param = {
-            offset : offset,
-            limit : limit
+            offset: offset,
+            limit: limit
         };
         /** set sort and order */
         if (tableState.sort.predicate) {
@@ -57,7 +57,7 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         $scope.is_disable = true;
         $scope.formtitle = master + " | Edit Data : " + form.nama;
         $scope.form = form;
-        if(!$scope.form.kode){
+        if (!$scope.form.kode) {
             $scope.generateKode();
         }
     };

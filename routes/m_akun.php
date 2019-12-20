@@ -211,12 +211,13 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
      * Ambil transaksi di akun
      */
     $db->select("
-            SUM(debit) as debit, 
-            SUM(kredit) as kredit,
+            SUM(acc_trans_detail.debit) as debit, 
+            SUM(acc_trans_detail.kredit) as kredit,
             acc_m_akun.id,
             acc_m_akun.saldo_normal,
             acc_m_akun.parent_id,
-            acc_m_akun.nama
+            acc_m_akun.nama,
+            acc_m_akun.kode
         ")
             ->from("acc_m_akun")
             ->leftJoin("acc_trans_detail", "acc_m_akun.id = acc_trans_detail.m_akun_id")
@@ -225,11 +226,15 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     $trans = $db->findAll();
     $arrTrans = [];
     foreach ($trans as $key => $value) {
-        $arrTrans[$value->id] = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
+        $value->kredit = (!empty($value->kredit)) ? (int) $value->kredit : 0;
+        $value->debit = (!empty($value->debit)) ? (int) $value->debit : 0;
 
-        $arrTrans[$value->parent_id] = (isset($arrTrans[$value->parent_id]) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
+        $arrTrans[$value->id] = ((isset($arrTrans[$value->id])) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
+        $arrTrans[$value->parent_id] = ((isset($arrTrans[$value->parent_id])) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
     }
-    //echo json_encode($arrTrans); exit();
+
+    
+    //echo json_encode($trans);exit();
     /**
      * List akun
      */

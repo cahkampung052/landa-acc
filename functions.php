@@ -643,10 +643,15 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "HD/" . $tahun . "/" . $no_urut;
     } elseif ($type == 'customer') {
-        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
+        $cek = $db->find("select kode from acc_m_kontak where jenis = 'lain' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "CUST" . $tahun . "" . $no_urut;
+        $no_transaksi = "CUST" . date("y") . "" . $no_urut;
+    } elseif ($type == 'customerAll') {
+        $cek = $db->find("select kode from acc_m_kontak where jenis = 'customer' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "CUST" . date("y") . "" . $no_urut;
     } elseif ($type == 'supplier') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'supplier' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
@@ -672,13 +677,15 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -4)) + 1;
         $no_urut = substr('0000' . $urut, -4);
         $no_transaksi = "ASR" . "/" . $no_urut;
-    } else if ($type == 'retur_penjualan') {
+    }
+    //AFU
+    else if ($type == 'retur_penjualan') {
         $cek = $db->find("select kode from inv_retur_penjualan order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "RJ" . date("y") . "/" . $no_urut;
     } else if ($type == 'pembelian') {
-        $cek = $db->find("select kode from inv_pembelian order by kode desc");
+        $cek = $db->find("select kode from inv_pembelian where inv_proses_akhir_id is null order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = $custom->format_pembelian;
@@ -686,7 +693,38 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
+    } elseif ($type == 'pelabuhan') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'pelabuhan' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "PLB" . $tahun . "" . $no_urut;
+    } elseif ($type == 'proses akhir') {
+        $cek = $db->find("select kode from inv_proses_akhir order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "PA" . $no_urut;
+    } elseif ($type == 'stok_opname') {
+        $cek = $db->find("select kode from inv_stok_opname order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "SO" . "/" . $unker . "/" . $no_urut;
+    } elseif ($type == 'afu_customer') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "CUST" . date("y") . "" . $no_urut;
+    } elseif ($type == 'afu_customer') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "CUST" . date("y") . "" . $no_urut;
+    } elseif ($type == 'afu_supplier') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'supplier' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "VND" . date("y") . "" . $no_urut;
     }
+    //END AFU
     return $no_transaksi;
 }
 

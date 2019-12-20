@@ -35,10 +35,15 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
                 $scope.form.tanggal = tanggal;
                 $scope.view(0, 0);
             }
-            
-            
+
+
         }
     });
+
+    $scope.resetFilter = function (filter) {
+        $scope.form[filter] = undefined;
+    }
+
     /**
      * Ambil laporan dari server
      */
@@ -50,7 +55,7 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
             print: is_print,
             m_lokasi_id: $scope.form.m_lokasi_id.id,
             nama_lokasi: $scope.form.m_lokasi_id.nama,
-            m_akun_id: $scope.form.m_akun_id.id,
+            m_akun_id: $scope.form.m_akun_id != undefined ? $scope.form.m_akun_id.id : null,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
         };
