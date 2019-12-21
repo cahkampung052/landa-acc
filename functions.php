@@ -519,7 +519,7 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
     $no_transaksi = '';
     if ($type == 'penerimaan') {
         $string = '';
-        if (strpos($custom->format_pemasukan, "BMKK") !== false) {
+        if (strpos($custom->format_pemasukan, "BMKM") !== false) {
             if ($preffix == "DS") {
                 $string = $preffix;
             } else {
@@ -535,13 +535,13 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
             }
         }
         if ($custom->reset_kode == 'bulanan') {
-            if (!empty($preffix) && strpos($custom->format_pemasukan, "BMKK") !== false) {
+            if (!empty($preffix) && strpos($custom->format_pemasukan, "BMKM") !== false) {
                 $cek = $db->find("select no_transaksi from acc_pemasukan WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$string}%' order by no_transaksi desc");
             } else {
                 $cek = $db->find("select no_transaksi from acc_pemasukan WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "'  order by no_transaksi desc");
             }
         } else {
-            if (!empty($preffix) && strpos($custom->format_pemasukan, "BMKK") !== false) {
+            if (!empty($preffix) && strpos($custom->format_pemasukan, "BMKM") !== false) {
                 $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$string}%' order by no_transaksi desc");
             } else {
                 $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(tanggal) = '" . $tahun . "' order by no_transaksi desc");
@@ -555,7 +555,7 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
-        $no_transaksi = str_replace("BMKK", $string, $no_transaksi);
+        $no_transaksi = str_replace("BMKM", $string, $no_transaksi);
     } elseif ($type == 'pengeluaran') {
         $string = "";
         if (strpos($custom->format_pengeluaran, "BKKK") !== false) {
