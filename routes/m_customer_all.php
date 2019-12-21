@@ -45,7 +45,7 @@ $app->get('/acc/m_customer_all/getCustomer', function ($request, $response) {
     $params = $request->getParams();
     $db->select("*")
         ->from("acc_m_kontak")
-        ->orderBy("acc_m_kontak.nama")
+        // ->orderBy("acc_m_kontak.nama")
         ->where("is_deleted", "=", 0)
         ->andWhere("type", "=", "customer")
         ->andWhere("nama", "!=", "");
@@ -87,6 +87,7 @@ $app->get('/acc/m_customer_all/index', function ($request, $response) {
     if (isset($params['offset']) && !empty($params['offset'])) {
         $db->offset($params['offset']);
     }
+    $db->orderBy("acc_m_kontak.id DESC");
     $models    = $db->findAll();
     $totalItem = $db->count();
     return successResponse($response, [
