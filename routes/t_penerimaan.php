@@ -171,6 +171,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     $models = $db->findAll();
     $totalItem = $db->count();
     
+    $setting = getMasterSetting();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
         $models[$key]['tanggal'] = date("Y-m-d", $val->modified_at);
@@ -183,7 +184,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['tanggal_setting'] = $setting->tanggal;
         $models[$key]['grandtotal'] = number_format(intval($val->total));
-        $models[$key]['total'] = number_format(intval($val->total));
+        $models[$key]['total'] = (int)$val->total;
     }
     $a = getMasterSetting();
     $testing = !empty($a->posisi_pemasukan) ? json_decode($a->posisi_pemasukan) : [];
