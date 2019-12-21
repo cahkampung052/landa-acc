@@ -520,13 +520,17 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
     if ($type == 'penerimaan') {
         $string = "";
         if (strpos($custom->format_pemasukan, "BMKK") !== false) {
-            $getpreffix = $db->select("*")->from("acc_m_akun")->where("id", "=", $preffix)->find();
-            if ($getpreffix) {
-                if ($getpreffix->nama == 'CASH ON HAND') {
-                    $string = "KM";
-                } else {
-                    $fitst_char = strtoupper(substr($getpreffix->nama, 0, 1));
-                    $string = $fitst_char . "M";
+            if ($preffix == "DS") {
+                $string = $preffix;
+            } else {
+                $getpreffix = $db->select("*")->from("acc_m_akun")->where("id", "=", $preffix)->find();
+                if ($getpreffix) {
+                    if ($getpreffix->nama == 'CASH ON HAND') {
+                        $string = "KM";
+                    } else {
+                        $fitst_char = strtoupper(substr($getpreffix->nama, 0, 1));
+                        $string = $fitst_char . "M";
+                    }
                 }
             }
         }
@@ -554,7 +558,7 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_transaksi = str_replace("BMKK", $string, $no_transaksi);
     } elseif ($type == 'pengeluaran') {
         $string = "";
-        if (strpos($custom->format_pemasukan, "BMKK") !== false) {
+        if (strpos($custom->format_pengeluaran, "BKKK") !== false) {
             $getpreffix = $db->select("*")->from("acc_m_akun")->where("id", "=", $preffix)->find();
             if ($getpreffix) {
                 if ($getpreffix->nama == 'CASH ON HAND') {
@@ -751,8 +755,8 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_transaksi = "VND" . date("y") . "" . $no_urut;
     }
     //END AFU
-    echo $no_transaksi;
-    die;
+//    echo $no_transaksi;
+//    die;
     return $no_transaksi;
 }
 

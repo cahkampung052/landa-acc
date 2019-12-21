@@ -205,25 +205,25 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
     if ($validasi === true) {
         //ganti preffix kode berdasarkan nama parent diatasnya
 //        if (isset($params['form']['m_akun_id']['parent_id'])) {
-        $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
+//        $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
 
 //        print_r($preffix);die;
-        if ($preffix) {
-            if ($preffix->nama == 'CASH ON HAND') {
-                $string = "KK";
-            } else {
-                $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
-                $string = $fitst_char . "K";
-            }
-        }
+//        if ($preffix) {
+//            if ($preffix->nama == 'CASH ON HAND') {
+//                $string = "KK";
+//            } else {
+//                $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
+//                $string = $fitst_char . "K";
+//            }
+//        }
 //        print_r($string);die;
         /**
          * Generate kode pengeluaran
          */
         $get_bulan = date("m", strtotime($params['form']['tanggal']));
         $get_tahun = date("Y", strtotime($params['form']['tanggal']));
-        $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $string, $get_bulan, $get_tahun);
-        $kode = str_replace("PREFFIX", $string, $kode);
+        $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
+//        $kode = str_replace("PREFFIX", $string, $kode);
 
 //        print_r($kode);
 //        die;

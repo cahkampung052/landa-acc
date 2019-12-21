@@ -219,7 +219,12 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
          */
         $get_bulan = date("m", strtotime($params['form']['tanggal']));
         $get_tahun = date("Y", strtotime($params['form']['tanggal']));
-        $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
+
+        if (isset($params['form']['dana_simpanan_id'])) {
+            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], "DS", $get_bulan, $get_tahun);
+        } else {
+            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
+        }
 
         $penerimaan['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
         /**
