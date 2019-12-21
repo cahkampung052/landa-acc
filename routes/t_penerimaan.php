@@ -170,7 +170,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     }
     $models = $db->findAll();
     $totalItem = $db->count();
-    
+
     $setting = getMasterSetting();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
@@ -184,7 +184,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['tanggal_setting'] = $setting->tanggal;
         $models[$key]['grandtotal'] = number_format(intval($val->total));
-        $models[$key]['total'] = (int)$val->total;
+        $models[$key]['total'] = (int) $val->total;
     }
     $a = getMasterSetting();
     $testing = !empty($a->posisi_pemasukan) ? json_decode($a->posisi_pemasukan) : [];
@@ -193,7 +193,6 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
 //    function sortaa($a, $b) {
 //        return $b->checkbox - $a->checkbox;
 //    }
-
 //    usort($testing, "sortaa");
 
     return successResponse($response, [
@@ -215,28 +214,12 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
     $sql = $this->db;
     $validasi = validasi($params['form']);
     if ($validasi === true) {
-        if (isset($params['form']['m_akun_id']['parent_id'])) {
-            //ganti preffix kode berdasarkan nama parent diatasnya
-            $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
-            if ($preffix) {
-                if ($preffix->nama == 'CASH ON HAND') {
-                    $string = "KM";
-                } else {
-                    $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
-                    $string = $fitst_char . "M";
-                }
-            }
-
-            /**
-             * Generate kode penerimaan
-             */
-            $get_bulan = date("m", strtotime($params['form']['tanggal']));
-            $get_tahun = date("Y", strtotime($params['form']['tanggal']));
-            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $string, $get_bulan, $get_tahun);
-            $kode = str_replace("BM", $string, $kode);
-        } else {
-            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode']);
-        }
+        /**
+         * Generate kode penerimaan
+         */
+        $get_bulan = date("m", strtotime($params['form']['tanggal']));
+        $get_tahun = date("Y", strtotime($params['form']['tanggal']));
+        $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
 
         $penerimaan['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
         /**
@@ -248,7 +231,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $penerimaan['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $penerimaan['total'] = $params['form']['total'];
         $penerimaan['status'] = $params['form']['status'];
-        
+
         /**
          * Tantowi Promise
          */
@@ -256,8 +239,6 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         /**
          * Tantowi Promise
          */
-        
-        
         foreach ($params['detail'] as $key => $value) {
             $keterangan[$key] = $value['keterangan'];
         }
