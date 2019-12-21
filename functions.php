@@ -518,7 +518,7 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
 
     $no_transaksi = '';
     if ($type == 'penerimaan') {
-        $string = "";
+        $string = '';
         if (strpos($custom->format_pemasukan, "BMKK") !== false) {
             if ($preffix == "DS") {
                 $string = $preffix;
