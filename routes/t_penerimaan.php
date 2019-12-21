@@ -248,6 +248,16 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $penerimaan['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $penerimaan['total'] = $params['form']['total'];
         $penerimaan['status'] = $params['form']['status'];
+        
+        /**
+         * Tantowi Promise
+         */
+        $penerimaan['dana_simpanan_id'] = @$params['form']['dana_simpanan_id'];
+        /**
+         * Tantowi Promise
+         */
+        
+        
         foreach ($params['detail'] as $key => $value) {
             $keterangan[$key] = $value['keterangan'];
         }
