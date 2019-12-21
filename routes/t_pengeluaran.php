@@ -184,10 +184,10 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['total'] = number_format(intval($val->total));
     }
-    
+
     $a = getMasterSetting();
     $testing = !empty($a->posisi_pengeluaran) ? json_decode($a->posisi_pengeluaran) : [];
-    
+
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
@@ -204,7 +204,12 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
     $validasi = validasi($params['form']);
     if ($validasi === true) {
         //ganti preffix kode berdasarkan nama parent diatasnya
-        if (isset($params['form']['m_akun_id']['parent_id'])) {
+//        print_r($params['form']);
+//        die;
+        if (isset($params['form']['project']) && $params['form']['project'] == "onko") {
+
+            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
+        } else {
             $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
             if ($preffix) {
                 if ($preffix->nama == 'CASH ON HAND') {
@@ -222,8 +227,6 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
             $get_tahun = date("Y", strtotime($params['form']['tanggal']));
             $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $string, $get_bulan, $get_tahun);
             $kode = str_replace("BK", $string, $kode);
-        } else {
-            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
         }
 
         $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
@@ -247,7 +250,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         foreach ($params['detail'] as $key => $value) {
             $keterangan[$key] = $value['keterangan'];
         }
-        $keteranganPengeluaran = join("<br>",$keterangan);
+        $keteranganPengeluaran = join("<br>", $keterangan);
         $pengeluaran['keterangan'] = (isset($keteranganPengeluaran) && !empty($keteranganPengeluaran) ? $keteranganPengeluaran : NULL);
 
         /**
