@@ -204,30 +204,29 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
     $validasi = validasi($params['form']);
     if ($validasi === true) {
         //ganti preffix kode berdasarkan nama parent diatasnya
-//        print_r($params['form']);
-//        die;
-        if (isset($params['form']['project']) && $params['form']['project'] == "onko") {
-
-            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
-        } else {
-            $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
-            if ($preffix) {
-                if ($preffix->nama == 'CASH ON HAND') {
-                    $string = "KK";
-                } else {
-                    $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
-                    $string = $fitst_char . "K";
-                }
+//        if (isset($params['form']['m_akun_id']['parent_id'])) {
+        $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
+        if ($preffix) {
+            if ($preffix->nama == 'CASH ON HAND') {
+                $string = "KK";
+            } else {
+                $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
+                $string = $fitst_char . "K";
             }
-
-            /**
-             * Generate kode pengeluaran
-             */
-            $get_bulan = date("m", strtotime($params['form']['tanggal']));
-            $get_tahun = date("Y", strtotime($params['form']['tanggal']));
-            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $string, $get_bulan, $get_tahun);
-            $kode = str_replace("BK", $string, $kode);
         }
+
+        /**
+         * Generate kode pengeluaran
+         */
+        $get_bulan = date("m", strtotime($params['form']['tanggal']));
+        $get_tahun = date("Y", strtotime($params['form']['tanggal']));
+        $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $string, $get_bulan, $get_tahun);
+        $kode = str_replace("BK", $string, $kode);
+        
+        print_r($kode);die;
+//        } else {
+//            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
+//        }
 
         $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
 
