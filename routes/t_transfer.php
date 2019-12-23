@@ -52,10 +52,11 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
                 akun2.kode as kodeTujuan, 
                 akun1.id as idAsal, 
                 akun1.nama as namaAsal, 
-                akun1.kode as kodeAsal
+                akun1.kode as kodeAsal,
+                " . $tableuser . ".nama as namaUser
             ")
                 ->from("acc_transfer")
-//                ->join("join", $tableuser, $tableuser . ".id = acc_transfer.created_by ")
+                ->join("join", $tableuser, $tableuser . ".id = acc_transfer.created_by")
                 ->join("join", "acc_m_akun akun1", "acc_transfer.m_akun_asal_id = akun1.id")
                 ->join("join", "acc_m_akun akun2", "acc_transfer.m_akun_tujuan_id = akun2.id")
                 ->join("join", "acc_m_lokasi lok1", "acc_transfer.m_lokasi_asal_id = lok1.id")
