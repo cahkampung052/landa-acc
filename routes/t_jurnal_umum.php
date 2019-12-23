@@ -223,7 +223,7 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
         $jurnal['status'] = $params['form']['status'];
 
         foreach ($params['detail'] as $key => $value) {
-            $keterangan[$key] = $value['keterangan'];
+            $keterangan[$key] = isset($value['keterangan']) && !empty($value['keterangan']) ? $value['keterangan'] : NULL;
         }
         $keteranganJurnal = join("<br>", $keterangan);
         $jurnal['keterangan'] = (isset($keteranganJurnal) && !empty($keteranganJurnal) ? $keteranganJurnal : NULL);
