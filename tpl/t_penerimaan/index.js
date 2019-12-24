@@ -11,7 +11,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.is_view = false;
     $scope.is_setting = false;
     $scope.urlfoto = "api/file/penerimaan/";
-    
+
     /*
      * SETTING FIELD
      */
@@ -20,7 +20,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.startFrom = [];
     $scope.limit = 0;
     $scope.row = 4;
-    $scope.classrow = 12/$scope.row;
+    $scope.classrow = 12 / $scope.row;
     $scope.setPosition = function ($event, key, vals) {
         $event.preventDefault();
         $event.stopPropagation();
@@ -306,8 +306,8 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-        // if ($scope.lokasi_default.lokasi_pemasukan != 0)
-        //     $scope.form.m_lokasi_id = $scope.lokasi_default.lokasi_pemasukan;
+         if ($scope.lokasi_default.lokasi_pemasukan != 0)
+             $scope.form.m_lokasi_id = $scope.lokasi_default.lokasi_pemasukan;
         $scope.form.ppn = 0;
         $scope.form.is_ppn = false;
         $scope.form.tanggal = new Date($scope.tanggal_setting);
@@ -356,16 +356,19 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
                 params.is_view = 1;
             }
             var time = new Date().getTime();
-            var modalInstance = $uibModal.open({
-                templateUrl: response.data.base_url + "api/acc/landaacc/tpl/t_penerimaan/modal_diterima_dari.html?" + time,
-                controller: "modalDiterimaDari",
-                size: "lg",
-                backdrop: "static",
-                keyboard: false,
-                resolve: {
-                    'form': params,
-                }
+            Data.get('site/base_url').then(function (response) {
+                var modalInstance = $uibModal.open({
+                    templateUrl: response.data.base_url + "api/" + response.data.acc_dir + "/tpl/t_penerimaan/modal_diterima_dari.html?" + time,
+                    controller: "modalDiterimaDari",
+                    size: "lg",
+                    backdrop: "static",
+                    keyboard: false,
+                    resolve: {
+                        'form': params,
+                    }
+                });
             });
+
             modalInstance.result.then(function (result) {
                 Data.get("t_booking/getCustomer").then(function (response) {
                     $scope.listCustomer = response.data;

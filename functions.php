@@ -542,9 +542,9 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
             }
         } else {
             if (!empty($preffix) && strpos($custom->format_pemasukan, "BMKM") !== false) {
-                $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$string}%' order by no_transaksi desc");
+                $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$string}%' order by id desc");
             } else {
-                $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(tanggal) = '" . $tahun . "' order by no_transaksi desc");
+                $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(tanggal) = '" . $tahun . "' order by id desc");
             }
         }
 

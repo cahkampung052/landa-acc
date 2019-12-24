@@ -240,7 +240,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         /**
          * Tantowi Promise
          */
-        $penerimaan['dana_simpanan_id'] = @$params['form']['dana_simpanan_id'];
+        $penerimaan['dana_simpanan_id'] = isset($params['form']['dana_simpanan_id']) ? $params['form']['dana_simpanan_id'] : null;
         /**
          * Tantowi Promise
          */
