@@ -220,10 +220,10 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $get_bulan = date("m", strtotime($params['form']['tanggal']));
         $get_tahun = date("Y", strtotime($params['form']['tanggal']));
 
-        if (isset($params['form']['dana_simpanan_id'])) {
+        if (isset($params['form']['dana_simpanan_id']) && !isset($params['form']['id'])) {
             $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], "DS", $get_bulan, $get_tahun);
         } else {
-            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
+            $kode = generateNoTransaksi("penerimaan", @$params['form']['m_lokasi_id']['kode'], @$params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
         }
 
         $penerimaan['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
@@ -251,7 +251,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $penerimaan['keterangan'] = (isset($keteranganPenerimaan) && !empty($keteranganPenerimaan) ? $keteranganPenerimaan : NULL);
 
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
-            $penerimaan['no_urut'] = $params['form']['no_urut'];
+            $penerimaan['no_urut'] = @$params['form']['no_urut'];
             $penerimaan['no_transaksi'] = $params['form']['no_transaksi'];
             $model = $sql->update("acc_pemasukan", $penerimaan, ["id" => $params['form']['id']]);
             /**
