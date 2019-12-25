@@ -42,8 +42,8 @@ $app->get('/acc/m_supplier/index', function ($request, $response) {
     $db = $this->db;
     $db->select("*")
             ->from("acc_m_kontak")
-            ->orderBy('acc_m_kontak.nama')
-            ->where("type", "=", "supplier");
+            ->orderBy('acc_m_kontak.type, acc_m_kontak.nama')
+            ->customWhere("type IN ('supplier', 'angkutan', 'pelabuhan', 'dokumen', 'gudang', 'lain-lain')", "AND");
 
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
@@ -93,7 +93,7 @@ $app->post('/acc/m_supplier/save', function ($request, $response) {
 
     $validasi = validasi($data);
     if ($validasi === true) {
-        $params['type'] = "supplier";
+        $params['type'] = isset($params['type']) && !empty($params['type']) ? $params['type'] : "supplier";
         if (isset($params["id"])) {
 //            if(isset($params["kode"]) && !empty($params["kode"])){
 //                $params["kode"] = $params["kode"];
