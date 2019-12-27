@@ -207,11 +207,12 @@ $app->post('/acc/m_akun/importSaldoAwal', function ($request, $response) {
 $app->get('/acc/m_akun/index', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
+
     /**
      * Ambil transaksi di akun
      */
     $db->select("
-            SUM(acc_trans_detail.debit) as debit, 
+            SUM(acc_trans_detail.debit) as debit,
             SUM(acc_trans_detail.kredit) as kredit,
             acc_m_akun.id,
             acc_m_akun.saldo_normal,
@@ -233,7 +234,6 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $arrTrans[$value->parent_id] = ((isset($arrTrans[$value->parent_id])) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
     }
 
-    
     //echo json_encode($trans);exit();
     /**
      * List akun
@@ -265,7 +265,8 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
         $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $arr[$key] = (array) $value;
-        $arr[$key]['nama_lengkap'] = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$key]['nama'] = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $arr[$key]['nama_lengkap'] =mb_convert_encoding( $spasi . $value->kode . ' - ' . $value->nama, 'UTF-8', 'UTF-8');
         $arr[$key]['parent_id'] = (int) $value->parent_id;
         $arr[$key]['is_induk'] = (int) $value->is_induk;
         $arr[$key]['saldo_normal'] = (int) $value->saldo_normal;
@@ -310,7 +311,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         if ($data['is_induk'] == 0) {
             $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '' . $data['kode'];
         }
-        
+
         /**
          * Cek kode
          */
@@ -576,7 +577,7 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
         }
         $list[$value->bulan . "-" . $value->tahun]['detail'] = (array) $value;
     }
-    
+
 //    echo json_encode($list);die;
 //    $listBudget = [];
 //    for ($i = 1; $i <= 12; $i++) {
@@ -592,9 +593,9 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
  */
 $app->post('/acc/m_akun/saveBudget', function ($request, $response) {
     $params = $request->getParams();
-    
+
 //    print_r($params);die;
-    
+
     $db = $this->db;
     try {
         foreach ($params['detail'] as $key => $value) {
