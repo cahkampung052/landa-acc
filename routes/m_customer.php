@@ -103,6 +103,7 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
       */
      $kode           = isset($params['project']) && !empty($params['project']) && $params['project'] == "afu" ? generateNoTransaksi("afu_customer", 0) : generateNoTransaksi("customer", 0);
      $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
+     $params["acc_m_lokasi_id"] = isset($params["acc_m_lokasi_id"]) ? $params["acc_m_lokasi_id"]['id'] : null;
      $validasi       = validasi($params);
      if ($validasi === true) {
          $params['type'] = "customer";
