@@ -93,6 +93,8 @@ $app->post('/acc/m_supplier/save', function ($request, $response) {
 
     $validasi = validasi($data);
     if ($validasi === true) {
+        $params['kode'] = isset($params['acc_m_akun_id']) && !empty($params['acc_m_akun_id']) ? $params['acc_m_akun_id']['kode'] : $params['kode'];
+        $params['acc_m_akun_id'] = isset($params['acc_m_akun_id']) && !empty($params['acc_m_akun_id']) ? $params['acc_m_akun_id']['id'] : NULL;
         $params['type'] = isset($params['type']) && !empty($params['type']) ? $params['type'] : "supplier";
         if (isset($params["id"])) {
 //            if(isset($params["kode"]) && !empty($params["kode"])){
