@@ -93,13 +93,13 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
 
     //cek kolom, untuk di afu
     $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_lokasi_id")->find();
-    //end
     
     if (!empty($cek_column)) {
         foreach ($models as $key => $value) {
             $value->acc_m_lokasi_id = !empty($value->acc_m_lokasi_id) ? $db->find("SELECT id, kode, nama FROM acc_m_lokasi WHERE id = " . $value->acc_m_lokasi_id) : [];
         }
     }
+    //end
 
     $totalItem = $db->count();
     return successResponse($response, [

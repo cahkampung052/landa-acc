@@ -68,6 +68,17 @@ $app->get('/acc/m_supplier/index', function ($request, $response) {
     }
 
     $models = $db->findAll();
+
+    //cek kolom, untuk di afu
+    $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_akun_id")->find();
+
+    if (!empty($cek_column)) {
+        foreach ($models as $key => $value) {
+            $value->acc_m_akun_id = !empty($value->acc_m_akun_id) ? $db->find("SELECT id, kode, nama FROM acc_m_akun WHERE id = " . $value->acc_m_akun_id) : [];
+        }
+    }
+    //end
+
     $totalItem = $db->count();
 //     print_r($models);exit();
 //      print_r($arr);exit();
