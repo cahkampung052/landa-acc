@@ -739,12 +739,12 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "SO" . "/" . $unker . "/" . $no_urut;
     } elseif ($type == 'afu_customer') {
-        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by id desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "CUST" . date("y") . "" . $no_urut;
     } elseif ($type == 'afu_customer') {
-        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by id desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "CUST" . date("y") . "" . $no_urut;
