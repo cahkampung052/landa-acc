@@ -745,6 +745,10 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
         $db->andWhere("nama", "like", $params['nama']);
     }
     $models = $db->findAll();
+    
+    foreach ($models as $key => $value) {
+        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+    }
     return successResponse($response, ['list' => $models]);
 });
 /**
