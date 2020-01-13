@@ -56,7 +56,21 @@ $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
     if (isset($params['nama']) && !empty($params['nama'])) {
         $db->customWhere("nama LIKE '%" . $params['nama'] . "%' OR kode LIKE '%" . $params['nama'] . "%'", "AND");
     }
+    if (isset($params['lokasi']) && !empty($params['lokasi'])) {
+        $db->customWhere("acc_m_lokasi_id = '" . $params['lokasi'] . "'", "AND");
+    }
     $models = $db->limit(20)->findAll();
+
+    //cek kolom, untuk di afu
+    $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_akun_id")->find();
+
+    if (!empty($cek_column)) {
+        foreach ($models as $key => $value) {
+            $value->acc_m_akun_id = !empty($value->acc_m_akun_id) ? $db->find("SELECT id, kode, nama FROM acc_m_akun WHERE id = " . $value->acc_m_akun_id) : [];
+        }
+    }
+    //end
+
     return successResponse($response, [
         'list' => $models,
     ]);
@@ -93,10 +107,12 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
 
     //cek kolom, untuk di afu
     $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_lokasi_id")->find();
-    
-    if (!empty($cek_column)) {
+    $cek_column2 = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_akun_id")->find();
+
+    if (!empty($cek_column) && !empty($cek_column2)) {
         foreach ($models as $key => $value) {
             $value->acc_m_lokasi_id = !empty($value->acc_m_lokasi_id) ? $db->find("SELECT id, kode, nama FROM acc_m_lokasi WHERE id = " . $value->acc_m_lokasi_id) : [];
+            $value->acc_m_akun_id = !empty($value->acc_m_akun_id) ? $db->find("SELECT id, kode, nama FROM acc_m_akun WHERE id = " . $value->acc_m_akun_id) : [];
         }
     }
     //end
