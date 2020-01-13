@@ -562,10 +562,10 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
             $getpreffix = $db->select("*")->from("acc_m_akun")->where("id", "=", $preffix)->find();
             if ($getpreffix) {
                 if ($getpreffix->nama == 'CASH ON HAND') {
-                    $string = "KM";
+                    $string = "KK";
                 } else {
                     $fitst_char = strtoupper(substr($getpreffix->nama, 0, 1));
-                    $string = $fitst_char . "M";
+                    $string = $fitst_char . "K";
                 }
             }
         }
