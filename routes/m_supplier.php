@@ -28,6 +28,17 @@ $app->get('/acc/m_supplier/getSupplier', function ($request, $response) {
     }
 
     $models = $db->limit(20)->findAll();
+
+    //cek kolom, untuk di afu
+    $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_akun_id")->find();
+
+    if (!empty($cek_column)) {
+        foreach ($models as $key => $value) {
+            $value->acc_m_akun_id = !empty($value->acc_m_akun_id) ? $db->find("SELECT id, kode, nama FROM acc_m_akun WHERE id = " . $value->acc_m_akun_id) : [];
+        }
+    }
+    //end
+
     return successResponse($response, [
         'list' => $models
     ]);
@@ -68,7 +79,9 @@ $app->get('/acc/m_supplier/index', function ($request, $response) {
     }
 
     $models = $db->findAll();
+    $totalItem = $db->count();
 
+//    pd($models);
     //cek kolom, untuk di afu
     $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_akun_id")->find();
 
@@ -78,8 +91,6 @@ $app->get('/acc/m_supplier/index', function ($request, $response) {
         }
     }
     //end
-
-    $totalItem = $db->count();
 //     print_r($models);exit();
 //      print_r($arr);exit();
     return successResponse($response, [
