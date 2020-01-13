@@ -3,8 +3,8 @@
 /**
  * Multi insert ke trans detail
  */
-function insertTransDetail($data) {
-    $db = new Cahkampung\Landadb(config('DB')['db']);
+function insertTransDetail($data, $db = null) {
+    $db = $db != null ? $db : new Cahkampung\Landadb(config('DB')['db']);
     if (!empty($data)) {
         foreach ($data as $key => $value) {
             $db->insert("acc_trans_detail", $value);
