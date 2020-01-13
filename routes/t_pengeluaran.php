@@ -182,7 +182,7 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
             $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup, "type" => ucfirst($val->typeSup)];
         }
         $models[$key]['status'] = ucfirst($val->status);
-        $models[$key]['total'] = intval($val->total);
+        $models[$key]['total'] = intval($val->total) . '';
         $models[$key]['grandtotal'] = number_format(intval($val->total));
     }
 
