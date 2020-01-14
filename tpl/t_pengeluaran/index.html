@@ -89,7 +89,7 @@
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th class="align-left" ng-repeat="(key, val) in field" ng-if="val.checkbox">
+                                <th class="align-left" ng-repeat="(key, val) in field" ng-if="val.checkbox" st-sort="{{val.value}}">
                                     {{val.alias}}
                                 </th>
                                 <th></th>
