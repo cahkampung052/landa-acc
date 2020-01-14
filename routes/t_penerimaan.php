@@ -169,14 +169,19 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $db->offset($params['offset']);
     }
 
-    if (isset($params["sort"]) && !empty($params["sort"]) && ($params['sort'] == "tanggal" || $params['sort'] == "tanggal_formated")) {
-        $params['sort'] = 'tanggal';
-        if ($params['order'] == 'false') {
-            $order = "DESC";
-        } else {
-            $order = "ASC";
+    if (isset($params["sort"]) && !empty($params["sort"])) {
+        if ($params['sort'] == 'no_transaksi' || $params['sort'] == 'tanggal' || $params['sort'] == 'created_at' || $params['sort'] == 'tanggal_formated') {
+            if ($params['sort'] == 'tanggal_formated') {
+                $params['sort'] = 'tanggal';
+            }
+
+            if ($params['order'] == 'false') {
+                $order = "DESC";
+            } else {
+                $order = "ASC";
+            }
+            $db->orderBy($params["sort"] . " " . $order);
         }
-        $db->orderBy($params["sort"] . " " . $order);
     }
 
     $models = $db->findAll();
