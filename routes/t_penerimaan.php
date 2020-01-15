@@ -123,7 +123,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     $params = $request->getParams();
     $tableuser = tableUser();
 
-
+//    pd($params);
 
     $db = $this->db;
     $db->select("
@@ -168,11 +168,25 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     if (isset($params['offset']) && !empty($params['offset'])) {
         $db->offset($params['offset']);
     }
+
+    if (isset($params["sort"]) && !empty($params["sort"])) {
+        if ($params['sort'] == 'no_transaksi' || $params['sort'] == 'tanggal' || $params['sort'] == 'created_at' || $params['sort'] == 'tanggal_formated') {
+            if ($params['sort'] == 'tanggal_formated') {
+                $params['sort'] = 'tanggal';
+            }
+
+            if ($params['order'] == 'false') {
+                $order = "DESC";
+            } else {
+                $order = "ASC";
+            }
+            $db->orderBy($params["sort"] . " " . $order);
+        }
+    }
+
     $models = $db->findAll();
     $totalItem = $db->count();
-    /*
-     * ambil master setting
-     */
+
     $setting = getMasterSetting();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
@@ -185,7 +199,8 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaCus, "type" => ucfirst($val->typeCus)];
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['tanggal_setting'] = $setting->tanggal;
-        $models[$key]['grandtotal'] = intval($val->total) + intval($val->ppn);
+        $models[$key]['grandtotal'] = number_format(intval($val->total));
+        $models[$key]['total'] = (int) $val->total;
     }
     $a = getMasterSetting();
     $testing = !empty($a->posisi_pemasukan) ? json_decode($a->posisi_pemasukan) : [];
@@ -194,7 +209,6 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
 //    function sortaa($a, $b) {
 //        return $b->checkbox - $a->checkbox;
 //    }
-
 //    usort($testing, "sortaa");
 
     return successResponse($response, [
@@ -216,27 +230,16 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
     $sql = $this->db;
     $validasi = validasi($params['form']);
     if ($validasi === true) {
-        if (isset($params['form']['m_akun_id']['parent_id'])) {
-            //ganti preffix kode berdasarkan nama parent diatasnya
-            $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
-            if ($preffix) {
-                if ($preffix->nama == 'CASH ON HAND') {
-                    $string = "KM";
-                } else {
-                    $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
-                    $string = $fitst_char . "M";
-                }
-            }
+        /**
+         * Generate kode penerimaan
+         */
+        $get_bulan = date("m", strtotime($params['form']['tanggal']));
+        $get_tahun = date("Y", strtotime($params['form']['tanggal']));
 
-            /**
-             * Generate kode penerimaan
-             */
-            $get_bulan = date("m", strtotime($params['form']['tanggal']));
-            $get_tahun = date("Y", strtotime($params['form']['tanggal']));
-            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $string, $get_bulan, $get_tahun);
-            $kode = str_replace("BM", $string, $kode);
+        if (isset($params['form']['dana_simpanan_id']) && !isset($params['form']['id'])) {
+            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], "DS", $get_bulan, $get_tahun);
         } else {
-            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode']);
+            $kode = generateNoTransaksi("penerimaan", @$params['form']['m_lokasi_id']['kode'], @$params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
         }
 
         $penerimaan['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
@@ -249,6 +252,14 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $penerimaan['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $penerimaan['total'] = $params['form']['total'];
         $penerimaan['status'] = $params['form']['status'];
+
+        /**
+         * Tantowi Promise
+         */
+        $penerimaan['dana_simpanan_id'] = isset($params['form']['dana_simpanan_id']) ? $params['form']['dana_simpanan_id'] : null;
+        /**
+         * Tantowi Promise
+         */
         foreach ($params['detail'] as $key => $value) {
             $keterangan[$key] = $value['keterangan'];
         }
@@ -256,7 +267,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $penerimaan['keterangan'] = (isset($keteranganPenerimaan) && !empty($keteranganPenerimaan) ? $keteranganPenerimaan : NULL);
 
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
-            $penerimaan['no_urut'] = $params['form']['no_urut'];
+            $penerimaan['no_urut'] = @$params['form']['no_urut'];
             $penerimaan['no_transaksi'] = $params['form']['no_transaksi'];
             $model = $sql->update("acc_pemasukan", $penerimaan, ["id" => $params['form']['id']]);
             /**

@@ -3,8 +3,8 @@
 /**
  * Multi insert ke trans detail
  */
-function insertTransDetail($data) {
-    $db = new Cahkampung\Landadb(config('DB')['db']);
+function insertTransDetail($data, $db = null) {
+    $db = $db != null ? $db : new Cahkampung\Landadb(config('DB')['db']);
     if (!empty($data)) {
         foreach ($data as $key => $value) {
             $db->insert("acc_trans_detail", $value);
@@ -518,37 +518,66 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
 
     $no_transaksi = '';
     if ($type == 'penerimaan') {
+        $string = '';
+        if (strpos($custom->format_pemasukan, "BMKM") !== false) {
+            if ($preffix == "DS") {
+                $string = $preffix;
+            } else {
+                $getpreffix = $db->select("*")->from("acc_m_akun")->where("id", "=", $preffix)->find();
+                if ($getpreffix) {
+                    if ($getpreffix->nama == 'CASH ON HAND') {
+                        $string = "KM";
+                    } else {
+                        $fitst_char = strtoupper(substr($getpreffix->nama, 0, 1));
+                        $string = $fitst_char . "M";
+                    }
+                }
+            }
+        }
         if ($custom->reset_kode == 'bulanan') {
-            if (!empty($preffix)) {
-                $cek = $db->find("select no_transaksi from acc_pemasukan WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$preffix}%' order by no_transaksi desc");
+            if (!empty($preffix) && strpos($custom->format_pemasukan, "BMKM") !== false) {
+                $cek = $db->find("select no_transaksi from acc_pemasukan WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$string}%' order by no_transaksi desc");
             } else {
                 $cek = $db->find("select no_transaksi from acc_pemasukan WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "'  order by no_transaksi desc");
             }
         } else {
-            if (!empty($preffix)) {
-                $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$preffix}%' order by no_transaksi desc");
+            if (!empty($preffix) && strpos($custom->format_pemasukan, "BMKM") !== false) {
+                $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$string}%' order by id desc");
             } else {
-                $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(tanggal) = '" . $tahun . "' order by no_transaksi desc");
+                $cek = $db->find("select no_transaksi from acc_pemasukan WHERE YEAR(tanggal) = '" . $tahun . "' order by id desc");
             }
         }
 
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
         $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_pemasukan;
-        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun)), $no_transaksi);
+        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun . '-01-01')), $no_transaksi);
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
+        $no_transaksi = str_replace("BMKM", $string, $no_transaksi);
     } elseif ($type == 'pengeluaran') {
+        $string = "";
+        if (strpos($custom->format_pengeluaran, "BKKK") !== false) {
+            $getpreffix = $db->select("*")->from("acc_m_akun")->where("id", "=", $preffix)->find();
+            if ($getpreffix) {
+                if ($getpreffix->nama == 'CASH ON HAND') {
+                    $string = "KK";
+                } else {
+                    $fitst_char = strtoupper(substr($getpreffix->nama, 0, 1));
+                    $string = $fitst_char . "K";
+                }
+            }
+        }
         if ($custom->reset_kode == 'bulanan') {
-            if (!empty($preffix)) {
-                $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$preffix}%' order by no_urut desc");
+            if (!empty($preffix) && strpos($custom->format_pengeluaran, "BKKK") !== false) {
+                $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$string}%' order by no_urut desc");
             } else {
                 $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "' order by no_urut desc");
             }
         } else {
-            if (!empty($preffix)) {
-                $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$preffix}%' order by no_urut desc");
+            if (!empty($preffix) && strpos($custom->format_pengeluaran, "BKKK") !== false) {
+                $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '%{$string}%' order by no_urut desc");
             } else {
                 $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE YEAR(tanggal) = '" . $tahun . "' order by no_urut desc");
             }
@@ -557,10 +586,11 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
         $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_pengeluaran;
-        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun)), $no_transaksi);
+        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun . '-01-01')), $no_transaksi);
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
+        $no_transaksi = str_replace("BKKK", $string, $no_transaksi);
     } elseif ($type == 'transfer') {
         if ($custom->reset_kode == 'bulanan') {
             if (!empty($preffix)) {
@@ -646,12 +676,12 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $cek = $db->find("select kode from acc_m_kontak where jenis = 'lain' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "CUST" . $tahun . "" . $no_urut;
+        $no_transaksi = "CUST" . date("y") . "" . $no_urut;
     } elseif ($type == 'customerAll') {
         $cek = $db->find("select kode from acc_m_kontak where jenis = 'customer' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "CUST" . $tahun . "" . $no_urut;
+        $no_transaksi = "CUST" . date("y") . "" . $no_urut;
     } elseif ($type == 'supplier') {
         $cek = $db->find("select kode from acc_m_kontak where type = 'supplier' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
@@ -677,7 +707,9 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -4)) + 1;
         $no_urut = substr('0000' . $urut, -4);
         $no_transaksi = "ASR" . "/" . $no_urut;
-    } else if ($type == 'retur_penjualan') {
+    }
+    //AFU
+    else if ($type == 'retur_penjualan') {
         $cek = $db->find("select kode from inv_retur_penjualan order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
@@ -691,11 +723,11 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
-    } elseif ($type == 'pelabuhan') {
-        $cek = $db->find("select kode from acc_m_kontak where type = 'pelabuhan' order by kode desc");
+    } elseif ($type == 'jasa') {
+        $cek = $db->find("select kode from acc_m_kontak where type in('angkutan', 'pelabuhan', 'pengurusan dokumen', 'pengelolaan gudang', 'lain-lain') order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
-        $no_transaksi = "PLB" . $tahun . "" . $no_urut;
+        $no_transaksi = "JS" . $tahun . "" . $no_urut;
     } elseif ($type == 'proses akhir') {
         $cek = $db->find("select kode from inv_proses_akhir order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
@@ -706,7 +738,25 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "SO" . "/" . $unker . "/" . $no_urut;
+    } elseif ($type == 'afu_customer') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by id desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "CUST" . date("y") . "" . $no_urut;
+    } elseif ($type == 'afu_customer') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by id desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "CUST" . date("y") . "" . $no_urut;
+    } elseif ($type == 'afu_supplier') {
+        $cek = $db->find("select kode from acc_m_kontak where type = 'supplier' order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "VND" . date("y") . "" . $no_urut;
     }
+    //END AFU
+//    echo $no_transaksi;
+//    die;
     return $no_transaksi;
 }
 

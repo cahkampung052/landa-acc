@@ -52,10 +52,11 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
                 akun2.kode as kodeTujuan, 
                 akun1.id as idAsal, 
                 akun1.nama as namaAsal, 
-                akun1.kode as kodeAsal
+                akun1.kode as kodeAsal,
+                " . $tableuser . ".nama as namaUser
             ")
                 ->from("acc_transfer")
-//                ->join("join", $tableuser, $tableuser . ".id = acc_transfer.created_by ")
+                ->join("join", $tableuser, $tableuser . ".id = acc_transfer.created_by")
                 ->join("join", "acc_m_akun akun1", "acc_transfer.m_akun_asal_id = akun1.id")
                 ->join("join", "acc_m_akun akun2", "acc_transfer.m_akun_tujuan_id = akun2.id")
                 ->join("join", "acc_m_lokasi lok1", "acc_transfer.m_lokasi_asal_id = lok1.id")
@@ -92,11 +93,17 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
         $models[$key]['m_lokasi_asal_id']   = ["id" => $val->m_lokasi_asal_id, "nama" => $val->namaLokAsal, "kode" => $val->kodeLokAsal];
         $models[$key]['m_lokasi_tujuan_id'] = ["id" => $val->m_lokasi_tujuan_id, "nama" => $val->namaLokTujuan, "kode" => $val->kodeLokTujuan];
         $models[$key]['status']             = ucfirst($val->status);
+        $models[$key]['total'] = number_format(intval($val->total));
     }
+    
+    $a = getMasterSetting();
+    $testing = !empty($a->posisi_transfer) ? json_decode($a->posisi_transfer) : [];
+    
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
-        'base_url' => str_replace('api/', '', config('SITE_URL'))
+        'base_url' => str_replace('api/', '', config('SITE_URL')),
+        'field' => $testing
     ]);
 });
 $app->post('/acc/t_transfer/save', function ($request, $response) {
@@ -181,3 +188,17 @@ $app->post('/acc/t_transfer/delete', function ($request, $response) {
         return unprocessResponse($response, ['Gagal menghapus data']);
     }
 });
+
+$app->post("/acc/t_transfer/savePosition", function ($request, $response) {
+    $data = $request->getParams();
+    $db = $this->db;
+
+    $data['posisi_transfer'] = json_encode($data);
+    try {
+        $model = $db->update("acc_m_setting", $data, ["id" => 1]);
+        return successResponse($response, $model);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
+    }
+});
+
