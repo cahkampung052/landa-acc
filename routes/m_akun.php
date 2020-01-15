@@ -266,7 +266,7 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $arr[$key] = (array) $value;
         $arr[$key]['nama'] = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
-        $arr[$key]['nama_lengkap'] =mb_convert_encoding( $spasi . $value->kode . ' - ' . $value->nama, 'UTF-8', 'UTF-8');
+        $arr[$key]['nama_lengkap'] = mb_convert_encoding($spasi . $value->kode . ' - ' . $value->nama, 'UTF-8', 'UTF-8');
         $arr[$key]['parent_id'] = (int) $value->parent_id;
         $arr[$key]['is_induk'] = (int) $value->is_induk;
         $arr[$key]['saldo_normal'] = (int) $value->saldo_normal;
@@ -551,7 +551,7 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
         }
 
         $name_month[date("m-Y", strtotime($current_month))]["name"] = date("F Y", strtotime($current_month));
-        $name_month[date("m-Y", strtotime($current_month))]["detail"] = ["budget"=>0];
+        $name_month[date("m-Y", strtotime($current_month))]["detail"] = ["budget" => 0];
         $name_month[date("m-Y", strtotime($current_month))]["date"] = $current_month;
         $current_month = date("Y-m-d", strtotime('+1 month', strtotime($current_month)));
     } while ($current_month != $end_month);
@@ -572,7 +572,7 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
 //    echo json_encode($getBudget);die;
     $list = $name_month;
     foreach ($getBudget as $key => $value) {
-        if($value->bulan < 10){
+        if ($value->bulan < 10) {
             $value->bulan = 0 . "" . $value->bulan;
         }
         $list[$value->bulan . "-" . $value->tahun]['detail'] = (array) $value;
@@ -693,6 +693,11 @@ $app->get('/acc/m_akun/akunHutang', function ($request, $response) {
             ->andWhere("is_deleted", "=", 0)
             ->andWhere("tipe", "=", "KEWAJIBAN")
             ->findAll();
+
+    foreach ($models as $key => $value) {
+        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+    }
+
     return successResponse($response, ['list' => $models]);
 });
 /*
@@ -705,6 +710,11 @@ $app->get('/acc/m_akun/akunPiutang', function ($request, $response) {
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
+    
+    foreach ($models as $key => $value) {
+        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+    }
+    
     return successResponse($response, ['list' => $models]);
 });
 /**
@@ -717,6 +727,11 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
+    
+    foreach ($models as $key => $value) {
+        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+    }
+    
     return successResponse($response, ['list' => $models]);
 });
 
@@ -728,6 +743,11 @@ $app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
+    
+    foreach ($models as $key => $value) {
+        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+    }
+    
     return successResponse($response, ['list' => $models]);
 });
 
@@ -745,7 +765,7 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
         $db->andWhere("nama", "like", $params['nama']);
     }
     $models = $db->findAll();
-    
+
     foreach ($models as $key => $value) {
         $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
     }
