@@ -659,6 +659,7 @@ $app->get('/acc/m_akun/getByType', function ($request, $response) {
         $models = $db->findAll();
         $arr = [];
         foreach ($models as $key => $value) {
+            $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
             $saldo = getSaldo($value->id, null, null, date("Y-m-d"));
             if ($saldo <= 0) {
                 $arr[] = (array) $value;
@@ -710,11 +711,11 @@ $app->get('/acc/m_akun/akunPiutang', function ($request, $response) {
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
-    
+
     foreach ($models as $key => $value) {
         $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
     }
-    
+
     return successResponse($response, ['list' => $models]);
 });
 /**
@@ -727,11 +728,11 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
-    
+
     foreach ($models as $key => $value) {
         $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
     }
-    
+
     return successResponse($response, ['list' => $models]);
 });
 
@@ -743,11 +744,11 @@ $app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
-    
+
     foreach ($models as $key => $value) {
         $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
     }
-    
+
     return successResponse($response, ['list' => $models]);
 });
 
