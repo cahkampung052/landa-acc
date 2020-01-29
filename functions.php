@@ -3,8 +3,8 @@
 /**
  * Multi insert ke trans detail
  */
-function insertTransDetail($data) {
-    $db = new Cahkampung\Landadb(config('DB')['db']);
+function insertTransDetail($data, $db = null) {
+    $db = $db != null ? $db : new Cahkampung\Landadb(config('DB')['db']);
     if (!empty($data)) {
         foreach ($data as $key => $value) {
             $db->insert("acc_trans_detail", $value);
@@ -551,7 +551,7 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
         $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_pemasukan;
-        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun)), $no_transaksi);
+        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun . '-01-01')), $no_transaksi);
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
@@ -562,22 +562,22 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
             $getpreffix = $db->select("*")->from("acc_m_akun")->where("id", "=", $preffix)->find();
             if ($getpreffix) {
                 if ($getpreffix->nama == 'CASH ON HAND') {
-                    $string = "KM";
+                    $string = "KK";
                 } else {
                     $fitst_char = strtoupper(substr($getpreffix->nama, 0, 1));
-                    $string = $fitst_char . "M";
+                    $string = $fitst_char . "K";
                 }
             }
         }
         if ($custom->reset_kode == 'bulanan') {
             if (!empty($preffix) && strpos($custom->format_pengeluaran, "BKKK") !== false) {
-                $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$preffix}%' order by no_urut desc");
+                $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '{$string}%' order by no_urut desc");
             } else {
                 $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE MONTH(tanggal) = '" . $bulan . "' AND YEAR(tanggal) = '" . $tahun . "' order by no_urut desc");
             }
         } else {
             if (!empty($preffix) && strpos($custom->format_pengeluaran, "BKKK") !== false) {
-                $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '%{$preffix}%' order by no_urut desc");
+                $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE YEAR(tanggal) = '" . $tahun . "' AND no_transaksi LIKE '%{$string}%' order by no_urut desc");
             } else {
                 $cek = $db->find("select no_urut, no_transaksi from acc_pengeluaran WHERE YEAR(tanggal) = '" . $tahun . "' order by no_urut desc");
             }
@@ -586,7 +586,7 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
         $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_pengeluaran;
-        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun)), $no_transaksi);
+        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun . '-01-01')), $no_transaksi);
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
