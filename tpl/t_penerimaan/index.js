@@ -286,12 +286,14 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
             }
             $scope.limit = Math.ceil($scope.field.length / $scope.row);
             $scope.startFrom = [];
+            
             angular.forEach($scope.field, function (val, key) {
                 if (val.no % $scope.limit == 0) {
                     $scope.startFrom.push({start: val.no, limit: $scope.limit})
                 }
             })
 
+            console.log($scope.field)
             $scope.base_url = response.data.base_url;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });

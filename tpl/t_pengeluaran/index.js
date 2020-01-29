@@ -290,7 +290,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
                     $scope.startFrom.push({start: val.no, limit: $scope.limit})
                 }
             })
-            
+            console.log($scope.field)
             $scope.base_url = response.data.base_url;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });

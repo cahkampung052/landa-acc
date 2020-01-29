@@ -123,7 +123,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     $params = $request->getParams();
     $tableuser = tableUser();
 
-
+//    pd($params);
 
     $db = $this->db;
     $db->select("
@@ -168,6 +168,22 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     if (isset($params['offset']) && !empty($params['offset'])) {
         $db->offset($params['offset']);
     }
+
+    if (isset($params["sort"]) && !empty($params["sort"])) {
+        if ($params['sort'] == 'no_transaksi' || $params['sort'] == 'tanggal' || $params['sort'] == 'created_at' || $params['sort'] == 'tanggal_formated') {
+            if ($params['sort'] == 'tanggal_formated') {
+                $params['sort'] = 'tanggal';
+            }
+
+            if ($params['order'] == 'false') {
+                $order = "DESC";
+            } else {
+                $order = "ASC";
+            }
+            $db->orderBy($params["sort"] . " " . $order);
+        }
+    }
+
     $models = $db->findAll();
     $totalItem = $db->count();
 

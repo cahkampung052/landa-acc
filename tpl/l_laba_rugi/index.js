@@ -63,7 +63,7 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
         var tanggal = $scope.form.tanggal;
         var akun = btoa(angular.toJson(akun))
         var tanggal = btoa(angular.toJson(tanggal))
-        $state.go("laporan.buku_besar", {akun:akun, tanggal:tanggal})
+        $state.go("laporan.buku_besar", {akun:akun, tanggal:tanggal}, {newtab : true})
     }
 
     /**

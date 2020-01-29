@@ -753,6 +753,16 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "VND" . date("y") . "" . $no_urut;
+    } elseif ($type == 'afu_pembayaran_hutang') {
+        $cek = $db->find("select kode from acc_bayar_hutang order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "PH" . date("y") . "" . $no_urut;
+    } elseif ($type == 'afu_pembayaran_piutang') {
+        $cek = $db->find("select kode from acc_bayar_piutang order by kode desc");
+        $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
+        $no_urut = substr('00000' . $urut, -5);
+        $no_transaksi = "PP" . date("y") . "" . $no_urut;
     }
     //END AFU
 //    echo $no_transaksi;

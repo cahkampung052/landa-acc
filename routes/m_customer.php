@@ -3,7 +3,7 @@
 function validasi($data, $custom = array()) {
     $validasi = array(
         'nama' => 'required',
-        'kode' => 'required',
+        'kode' => 'required'
     );
     $cek = validate($data, $validasi, $custom);
     return $cek;
@@ -130,8 +130,11 @@ $app->post('/acc/m_customer/save', function ($request, $response) {
      * generate kode
      */
     $kode = isset($params['project']) && !empty($params['project']) && $params['project'] == "afu" ? generateNoTransaksi("afu_customer", 0) : generateNoTransaksi("customer", 0);
+    $kode = isset($params['acc_m_akun_id']) && !empty($params['acc_m_akun_id']) ? $params['acc_m_akun_id']['kode'] : $kode;
+    $params['acc_m_akun_id'] = isset($params['acc_m_akun_id']) && !empty($params['acc_m_akun_id']) ? $params['acc_m_akun_id']['id'] : NULL;
+
     $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
-    $params["acc_m_lokasi_id"] = isset($params["acc_m_lokasi_id"]) ? $params["acc_m_lokasi_id"]['id'] : null;
+    $params["acc_m_lokasi_id"] = isset($params["acc_m_lokasi_id"]) && !empty($params['acc_m_lokasi_id']) ? $params["acc_m_lokasi_id"]['id'] : null;
     $validasi = validasi($params);
     if ($validasi === true) {
         $params['type'] = "customer";

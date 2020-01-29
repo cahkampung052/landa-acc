@@ -168,6 +168,22 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
     if (isset($params['offset']) && !empty($params['offset'])) {
         $db->offset($params['offset']);
     }
+
+    if (isset($params["sort"]) && !empty($params["sort"])) {
+        if ($params['sort'] == 'no_transaksi' || $params['sort'] == 'tanggal' || $params['sort'] == 'created_at' || $params['sort'] == 'tanggal_formated') {
+            if ($params['sort'] == 'tanggal_formated') {
+                $params['sort'] = 'tanggal';
+            }
+
+            if ($params['order'] == 'false') {
+                $order = "DESC";
+            } else {
+                $order = "ASC";
+            }
+            $db->orderBy($params["sort"] . " " . $order);
+        }
+    }
+
     $models = $db->findAll();
     $totalItem = $db->count();
     foreach ($models as $key => $val) {
@@ -182,7 +198,8 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
             $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup, "type" => ucfirst($val->typeSup)];
         }
         $models[$key]['status'] = ucfirst($val->status);
-        $models[$key]['total'] = number_format(intval($val->total));
+        $models[$key]['total'] = intval($val->total) . '';
+        $models[$key]['grandtotal'] = number_format(intval($val->total));
     }
 
     $a = getMasterSetting();
@@ -206,7 +223,6 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         //ganti preffix kode berdasarkan nama parent diatasnya
 //        if (isset($params['form']['m_akun_id']['parent_id'])) {
 //        $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
-
 //        print_r($preffix);die;
 //        if ($preffix) {
 //            if ($preffix->nama == 'CASH ON HAND') {
@@ -224,7 +240,6 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $get_tahun = date("Y", strtotime($params['form']['tanggal']));
         $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
 //        $kode = str_replace("PREFFIX", $string, $kode);
-
 //        print_r($kode);
 //        die;
 //        } else {
@@ -258,7 +273,6 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         /**
          * update atau input pengeluaran
          */
-        
 //        print_r($params['form']);die;
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $pengeluaran['no_urut'] = $params['form']['no_urut'];
