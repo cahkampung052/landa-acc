@@ -56,14 +56,19 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.viewBukuBesar = function (row) {
         console.log(row)
         var akun = {
-            id : row.id,
-            kode : row.kode,
-            nama : row.nama2
+            id: row.id,
+            kode: row.kode,
+            nama: row.nama2
         }
         var tanggal = $scope.form.tanggal;
         var akun = btoa(angular.toJson(akun))
         var tanggal = btoa(angular.toJson(tanggal))
-        $state.go("laporan.buku_besar", {akun:akun, tanggal:tanggal}, {newtab : true})
+//        $state.go("laporan.buku_besar", {akun: akun, tanggal: tanggal}, {newtab: true})
+
+        var url = $state.href("laporan.buku_besar", {akun: akun, tanggal: tanggal}
+        , {newtab: true}
+        )
+        window.open(url, '_blank');
     }
 
     /**
