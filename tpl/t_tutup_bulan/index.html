@@ -178,7 +178,7 @@
                                         <tbody>
                                             <tr ng-repeat="val in detail">
                                                 <td>
-                                                    {{val.kode +" - "+ val.nama}}
+                                                    <span ng-bind-html="val.nama"></span>
                                                 </td>
                                                 <td align="right" class="text-right">
                                                     {{val.debit_awal| number}}
