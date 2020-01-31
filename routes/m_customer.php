@@ -90,6 +90,8 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
                 $db->where("is_deleted", '=', $val);
             } elseif ($key == "jenis") {
                 $db->where("jenis", '=', $val);
+            } elseif ($key == "acc_m_kontak.acc_m_lokasi_id") {
+                $db->where($key, '=', $val);
             } else {
                 $db->where($key, 'like', $val);
             }
@@ -104,6 +106,7 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
         $db->offset($params['offset']);
     }
     $models = $db->findAll();
+    $totalItem = $db->count();
 
     //cek kolom, untuk di afu
     $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_lokasi_id")->find();
@@ -117,7 +120,7 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
     }
     //end
 
-    $totalItem = $db->count();
+    
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
