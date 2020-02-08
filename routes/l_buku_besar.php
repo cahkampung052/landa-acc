@@ -66,14 +66,19 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
             $getakun = $sql->where("acc_m_akun.is_tipe", "=", 1)->findAll();
         }
         
-//        print_r($getakun);die;
+//        pd($getakun);
         $index = 0;
+        $arr = [];
         foreach ($getakun as $keys => $vals) {
             if ($vals->is_tipe == 1) {
                 /**
                  * Ambil id akun turunan klasifikasi di parameter
                  */
                 $childId = getChildId("acc_m_akun", $vals->id);
+                
+//                $arr[] = $childId;
+//                return;
+                
                 if (!empty($childId)) {
                     $getchild = $sql->select("acc_m_akun.*, klasifikasi.nama as klasifikasi")
                             ->from("acc_m_akun")
@@ -89,6 +94,7 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                         /**
                          * Ambil Saldo awal akun
                          */
+                        
                         $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
                                 ->from("acc_trans_detail");
                         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
@@ -97,11 +103,12 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                         $sql->where('m_akun_id', '=', $val->id)
                                 ->andWhere('date(tanggal)', '<', $tanggal_start);
                         $getsaldoawal = $sql->find();
-                        $arr[$index]['saldo_awal'] = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
-                        $arr[$index]['debit_awal'] = intval($getsaldoawal->debit);
-                        $arr[$index]['kredit_awal'] = intval($getsaldoawal->kredit);
-                        $arr[$index]['akun'] = $val->kode . ' - ' . $val->nama;
-                        $arr[$index]['klasifikasi'] = $val->klasifikasi;
+                        $arr[$val->id]['saldo_awal'] = intval($getsaldoawal->debit) - intval($getsaldoawal->kredit);
+                        $arr[$val->id]['debit_awal'] = intval($getsaldoawal->debit);
+                        $arr[$val->id]['kredit_awal'] = intval($getsaldoawal->kredit);
+                        $arr[$val->id]['akun'] = $val->kode . ' - ' . $val->nama;
+                        $arr[$val->id]['akun_id'] = $val->id;
+                        $arr[$val->id]['klasifikasi'] = $val->klasifikasi;
                         /**
                          * Ambil detail transaksi
                          */
@@ -116,27 +123,27 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                                 ->orderBy('tanggal');
 
                         $detail = $sql->findAll();
-                        $saldo_sekarang = $arr[$index]['saldo_awal'];
-                        $total_debit = $arr[$index]['debit_awal'];
-                        $total_kredit = $arr[$index]['kredit_awal'];
+                        $saldo_sekarang = $arr[$val->id]['saldo_awal'];
+                        $total_debit = $arr[$val->id]['debit_awal'];
+                        $total_kredit = $arr[$val->id]['kredit_awal'];
                         /**
                          * Siapkan array laporan untuk semua akun
                          */
                         foreach ($detail as $index2 => $val2) {
-                            $arr[$index]['detail'][$index2]['tanggal'] = $val2->tanggal;
-                            $arr[$index]['detail'][$index2]['kode'] = $val2->kode;
-                            $arr[$index]['detail'][$index2]['keterangan'] = $val2->keterangan;
-                            $arr[$index]['detail'][$index2]['debit'] = $val2->debit;
-                            $arr[$index]['detail'][$index2]['kredit'] = $val2->kredit;
-                            $arr[$index]['detail'][$index2]['saldo'] = intval($val2->debit) - intval($val2->kredit);
-                            $saldo_sekarang += $arr[$index]['detail'][$index2]['saldo'];
-                            $arr[$index]['detail'][$index2]['saldo_sekarang'] = $saldo_sekarang;
+                            $arr[$val->id]['detail'][$index2]['tanggal'] = $val2->tanggal;
+                            $arr[$val->id]['detail'][$index2]['kode'] = $val2->kode;
+                            $arr[$val->id]['detail'][$index2]['keterangan'] = $val2->keterangan;
+                            $arr[$val->id]['detail'][$index2]['debit'] = $val2->debit;
+                            $arr[$val->id]['detail'][$index2]['kredit'] = $val2->kredit;
+                            $arr[$val->id]['detail'][$index2]['saldo'] = intval($val2->debit) - intval($val2->kredit);
+                            $saldo_sekarang += $arr[$val->id]['detail'][$index2]['saldo'];
+                            $arr[$val->id]['detail'][$index2]['saldo_sekarang'] = $saldo_sekarang;
                             $total_debit += intval($val2->debit);
                             $total_kredit += intval($val2->kredit);
                         }
-                        $arr[$index]['total_debit'] = $total_debit;
-                        $arr[$index]['total_kredit'] = $total_kredit;
-                        $arr[$index]['total_saldo'] = $total_debit - $total_kredit;
+                        $arr[$val->id]['total_debit'] = $total_debit;
+                        $arr[$val->id]['total_kredit'] = $total_kredit;
+                        $arr[$val->id]['total_saldo'] = $total_debit - $total_kredit;
                         
                         $index += 1;
                     }
@@ -196,6 +203,8 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                 $arr[0]['total_saldo'] = $total_debit - $total_kredit;
             }
         }
+        
+//        pd($arr);
 
         if (isset($params['export']) && $params['export'] == 1) {
             $view = twigViewPath();
