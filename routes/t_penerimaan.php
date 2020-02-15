@@ -236,7 +236,7 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $get_bulan = date("m", strtotime($params['form']['tanggal']));
         $get_tahun = date("Y", strtotime($params['form']['tanggal']));
 
-        if (isset($params['form']['dana_simpanan_id']) && !isset($params['form']['id'])) {
+        if (isset($params['form']['dana_simpanan_id'])) {
             $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], "DS", $get_bulan, $get_tahun);
         } else {
             $kode = generateNoTransaksi("penerimaan", @$params['form']['m_lokasi_id']['kode'], @$params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
@@ -268,7 +268,20 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
 
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $penerimaan['no_urut'] = @$params['form']['no_urut'];
-            $penerimaan['no_transaksi'] = $params['form']['no_transaksi'];
+
+            //DANA SIMPANAN
+            if (isset($params['form']['dana_simpanan_id'])) {
+                $cek_ds = $sql->select("tanggal")->from("acc_pemasukan")->where("id", "=", $params['form']['id'])->find();
+
+//                print
+                if (date("m", strtotime($cek_ds->tanggal)) != date("m", strtotime($penerimaan['tanggal']))) {
+                    $penerimaan['no_transaksi'] = $kode;
+                } else {
+                    $penerimaan['no_transaksi'] = $params['form']['no_transaksi'];
+                }
+            } else {
+                $penerimaan['no_transaksi'] = $params['form']['no_transaksi'];
+            }
             $model = $sql->update("acc_pemasukan", $penerimaan, ["id" => $params['form']['id']]);
             /**
              * Hapus pemasukan detail
