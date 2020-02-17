@@ -133,6 +133,7 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
             " . $tableuser . ".nama as namaUser, 
             acc_m_akun.kode as kodeAkun, 
             acc_m_akun.nama as namaAkun, 
+            acc_m_akun.parent_id,
             acc_m_kontak.nama as namaSup,
             acc_m_kontak.type as typeSup,
             acc_t_pengajuan.no_proposal
@@ -192,7 +193,7 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
         $models[$key]['tanggal2'] = date("Y-m-d", strtotime($val->tanggal));
         $models[$key]['tanggal_formated'] = date("d-m-Y", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i", $val->created_at);
-        $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
+        $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun, "parent_id" => $val->parent_id];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
         if ($val->m_kontak_id != 0) {
             $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup, "type" => ucfirst($val->typeSup)];
@@ -275,8 +276,18 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
          */
 //        print_r($params['form']);die;
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
-            $pengeluaran['no_urut'] = $params['form']['no_urut'];
-            $pengeluaran['no_transaksi'] = $params['form']['no_transaksi'];
+
+            $cek_data = $sql->select("tanggal")->from("acc_pengeluaran")->where("id", "=", $params['form']['id'])->find();
+
+            if (date("m", strtotime($cek_data->tanggal)) != date("m", strtotime($pengeluaran['tanggal']))) {
+                $pengeluaran['no_transaksi'] = $kode;
+                $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
+            } else {
+                $pengeluaran['no_urut'] = $params['form']['no_urut'];
+                $pengeluaran['no_transaksi'] = $params['form']['no_transaksi'];
+            }
+
+
             $model = $sql->update("acc_pengeluaran", $pengeluaran, ["id" => $params['form']['id']]);
             /**
              * Hapus pengeluaran detail

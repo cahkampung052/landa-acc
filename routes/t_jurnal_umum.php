@@ -228,8 +228,17 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
         $keteranganJurnal = join("<br>", $keterangan);
         $jurnal['keterangan'] = (isset($keteranganJurnal) && !empty($keteranganJurnal) ? $keteranganJurnal : NULL);
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
-            $jurnal['no_urut'] = $params['form']['no_urut'];
-            $jurnal['no_transaksi'] = $params['form']['no_transaksi'];
+
+            $cek_data = $sql->select("tanggal")->from("acc_jurnal")->where("id", "=", $params['form']['id'])->find();
+
+            if (date("m", strtotime($cek_data->tanggal)) != date("m", strtotime($jurnal['tanggal']))) {
+                $jurnal['no_transaksi'] = $kode;
+                $jurnal['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
+            } else {
+                $jurnal['no_urut'] = $params['form']['no_urut'];
+                $jurnal['no_transaksi'] = $params['form']['no_transaksi'];
+            }
+
             $model = $sql->update("acc_jurnal", $jurnal, ["id" => $params['form']['id']]);
             /**
              * Hapus jurnal detail

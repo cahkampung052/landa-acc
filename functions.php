@@ -609,7 +609,11 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
         $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_transfer;
-        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun)), $no_transaksi);
+
+//        print_r($tahun);die;
+//        print_r(date("y", strtotime($tahun)));
+//        die;
+        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun . '-01-01')), $no_transaksi);
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
@@ -631,7 +635,7 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->no_transaksi, $custom->digit_kode)) + 1;
         $no_urut = substr('00000' . $urut, $custom->digit_kode);
         $no_transaksi = $custom->format_jurnal;
-        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun)), $no_transaksi);
+        $no_transaksi = str_replace("TAHUN", date("y", strtotime($tahun . '-01-01')), $no_transaksi);
         $no_transaksi = str_replace("BULAN", $bulan, $no_transaksi);
         $no_transaksi = str_replace("KODEUNIT", $unker, $no_transaksi);
         $no_transaksi = str_replace("NOURUT", $no_urut, $no_transaksi);
