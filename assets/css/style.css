@@ -142,3 +142,54 @@ td, th {
     background-color: #263444!important;
     color: white;
 }
+
+.table-smallest {
+    line-height: 5px;
+}
+
+.table-smallest th {
+    line-height: 10px;
+}
+
+.table-smallest td, .table-smallest th {
+    font-size: 7px;
+    padding: 2px;
+    /*letter-spacing: -1px;*/
+    border: 1px solid #263444;
+}
+
+.table-smallest td.empty {
+    font-size: 7px;
+    padding: 5px;
+    /*letter-spacing: -1px;*/
+    border: 1px solid #263444;
+}
+
+.table-smallest tr.empty > td {
+    font-size: 7px;
+    padding: 5px;
+    /*letter-spacing: -1px;*/
+    border: 1px solid #263444;
+}
+
+.table-smaller {
+    line-height: 5px;
+}
+
+.table-smaller th {
+    line-height: 10px;
+}
+
+.table-smaller td, .table-smaller th {
+    font-size: 10px;
+    border: 1px solid #263444;
+}
+
+.header-smaller {
+    font-size: 12px;
+}
+
+tr.padding0 > td {
+        padding-left: 0;
+        padding-right: 1px;
+    }
