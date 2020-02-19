@@ -260,6 +260,8 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     $totalItem = $db->count();
     $listAkun = buildTreeAkun($models, 0);
     $arrModel = flatten($listAkun);
+
+//    pd($arrModel);
     $arr = [];
     foreach ($arrModel as $key => $value) {
         $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
@@ -424,9 +426,12 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     $parentId[] = $kode_induk;
                 }
             }
+
+//            pd($parentId);
             for ($row = 11; $row <= $highestRow; $row++) {
                 $kode = $objPHPExcel->getSheet(0)->getCell('B' . $row)->getValue();
                 if (isset($kode)) {
+                    $data = [];
                     $data['kode'] = $kode;
                     $data['nama'] = $objPHPExcel->getSheet(0)->getCell('C' . $row)->getValue();
                     $data['level'] = 1;
@@ -435,7 +440,7 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                      * ambil id dari kode induk
                      */
                     $kode_induk = $objPHPExcel->getSheet(0)->getCell('D' . $row)->getValue();
-                    if (isset($kode_induk)) {
+                    if (isset($kode_induk) && !empty($kode_induk) && strlen($kode_induk) > 0) {
                         $model = $db->select("*")->from("acc_m_akun")->where("kode", "=", $kode_induk)->find();
                         if ($model) {
                             $data['parent_id'] = $model->id;
@@ -483,6 +488,8 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     }
                 }
             }
+
+//            pd($tes);
             unlink($inputFileName);
             return successResponse($response, 'data berhasil di import');
         } else {
@@ -731,6 +738,8 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
 
     foreach ($models as $key => $value) {
         $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $spasi = ($value->level == 1) ? '' : str_repeat("--", $value->level - 1);
+        $value->nama_lengkap = $spasi . $value->kode . ' - ' . $value->nama;
     }
 
     return successResponse($response, ['list' => $models]);
@@ -747,6 +756,8 @@ $app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
 
     foreach ($models as $key => $value) {
         $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $spasi = ($value->level == 1) ? '' : str_repeat("--", $value->level - 1);
+        $value->nama_lengkap = $spasi . $value->kode . ' - ' . $value->nama;
     }
 
     return successResponse($response, ['list' => $models]);
