@@ -682,7 +682,7 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "CUST" . date("y") . "" . $no_urut;
     } elseif ($type == 'customerAll') {
-        $cek = $db->find("select kode from acc_m_kontak where jenis = 'customer' order by kode desc");
+        $cek = $db->find("select kode from acc_m_kontak where jenis = 'customer' AND DATE_FORMAT( FROM_UNIXTIME( created_at ), '%Y' ) = '".date('Y')."' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "CUST" . date("y") . "" . $no_urut;
