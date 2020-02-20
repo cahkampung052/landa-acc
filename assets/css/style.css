@@ -182,7 +182,7 @@ td, th {
 
 .table-smaller td, .table-smaller th {
     font-size: 10px;
-    border: thin;
+    border: 1px solid black;
 }
 
 .header-smaller {
