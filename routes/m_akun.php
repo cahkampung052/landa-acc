@@ -360,7 +360,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
          */
         $childId = getChildId("acc_m_akun", $model->id);
         if (!empty($childId)) {
-            $sql->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus], "id in (" . implode(",", $childId) . ")");
+            $sql->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus, "is_kas" => $model->is_kas], "id in (" . implode(",", $childId) . ")");
             /**
              * Jika punya child berarti is_tipe = 1
              */
