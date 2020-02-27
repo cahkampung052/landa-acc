@@ -17,7 +17,7 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
     /*
      * return untuk header
      */
-    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['tanggal'] = date("d M Y", strtotime($tanggal_start)) . ' s/d ' . date("d M Y", strtotime($tanggal_end));
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = "Semua";
     if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {

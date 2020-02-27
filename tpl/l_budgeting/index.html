@@ -26,8 +26,8 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view">
-                                                <ui-select-match placeholder="Pilih Akun">{{ $select.selected.nama }}</ui-select-match>
-                                                <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.nama }}</ui-select-choices>
+                                                <ui-select-match placeholder="Pilih Akun">{{ $select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.nama}}</ui-select-choices>
                                             </ui-select>
                                         </div>
                                     </div>
@@ -63,8 +63,9 @@
                 <div class="row header-laporan-wrapper">
                     <div class="col-md-12">
                         <center>
-                            <h2 class="header-laporan">LAPORAN BUDGETING</h2>
-                            Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
+                            <h2 class="header-laporan">{{data.lokasi}}</h2>
+                            <h3 class="header-laporan">Budgeting</h3>
+                            Periode {{ data.tanggal}}
                             <br/>
                         </center>
                         <hr/>
@@ -85,7 +86,7 @@
                                     <th style="text-align: center" width="200">Realisasi</th>
                                 </tr>
                                 <tr ng-repeat="det in row.detail">
-                                    <td style="text-align: left;">{{ det.bulan }}</td>
+                                    <td style="text-align: left;">{{ det.bulan}}</td>
                                     <td class="text-right">{{ det.target | currency }}</td>
                                     <td class="text-right">{{ det.realisasi | currency }}</td>
                                 </tr>

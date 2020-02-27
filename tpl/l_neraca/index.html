@@ -29,8 +29,8 @@
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
-                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
+                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                             </ui-select>
                                         </div>
                                     </div>
@@ -75,10 +75,9 @@
                 <div class="row header-laporan-wrapper">
                     <div class="col-md-12">
                         <center>
-                            <h2 class="header-laporan">LAPORAN POSISI KEUANGAN</h2>
-                            Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
-                            <br/>
-                            Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
+                            <h2 class="header-laporan">{{data.lokasi}}</h2>
+                            <h3 class="header-laporan">Posisi Keuangan</h3>
+                            Periode {{ data.tanggal}}
                             <br/>
                         </center>
                         <hr/>

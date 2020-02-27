@@ -3,13 +3,13 @@
     <div class="row header-laporan-wrapper">
         <div class="col-md-12">
             <center class="header-text">
-                <h2 class="header-laporan">LAPORAN BUKU BESAR</h2>
-                Lokasi : {{ data.lokasi }}
+                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                <h3 class="header-laporan">Buku Besar</h3>
+                Periode {{ data.tanggal }}
                 <br/>
-                Periode : {{ data.tanggal }}
-                <br/>
-                Disiapkan Tanggal : {{ data.disiapkan }}
-                <br/>
+                <!--                <br/>
+                                Disiapkan Tanggal : {{ data.disiapkan }}
+                                <br/>-->
             </center>
             <hr/>
         </div>
@@ -54,8 +54,8 @@
                 <tbody>
                     <tr>
                         <td colspan="3">Saldo Awal</td>
-                        <td align="right" class="text-right">{{ val.debit_awal| number_format }}</td>
-                        <td align="right" class="text-right">{{ val.kredit_awal| number_format }}</td>
+                        <td align="right" class="text-right">{{}}</td>
+                        <td align="right" class="text-right">{{}}</td>
                         <td align="right" class="text-right">{{ val.saldo_awal| number_format }}</td>
                     </tr>
                     {% for k, valdetail in val.detail %}

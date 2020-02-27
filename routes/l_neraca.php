@@ -1,4 +1,5 @@
 <?php
+
 $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $params = $request->getParams();
     $filter = $params;
@@ -24,10 +25,10 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     /**
      * Ambil akun laba rugi
      */
-    $labarugi       = getPemetaanAkun("Laba Rugi Berjalan");
-    $akunLabaRugi   = isset($labarugi[0]) ? $labarugi[0] : 0;
-    $saldoLabaRugi  = getLabaRugiNominal(null, $tanggal, null);
-    $totalLabaRugi  = $saldoLabaRugi["total"];
+    $labarugi = getPemetaanAkun("Laba Rugi Berjalan");
+    $akunLabaRugi = isset($labarugi[0]) ? $labarugi[0] : 0;
+    $saldoLabaRugi = getLabaRugiNominal(null, $tanggal, null);
+    $totalLabaRugi = $saldoLabaRugi["total"];
     /*
      * ambil akun pengecualian
      */
@@ -50,9 +51,9 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             acc_m_akun.parent_id,
             acc_m_akun.saldo_normal
         ")
-        ->from("acc_m_akun")
-        ->groupBy("acc_m_akun.id")
-        ->orderBy("acc_m_akun.kode");
+            ->from("acc_m_akun")
+            ->groupBy("acc_m_akun.id")
+            ->orderBy("acc_m_akun.kode");
     if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
         $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
     }
@@ -129,15 +130,15 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $db->where("tipe", "=", "KEWAJIBAN");
     $modelKewajiban = $db->findAll();
     $totalKewajiban = 0;
-    $arrKewajiban   = [];
+    $arrKewajiban = [];
     foreach ($modelKewajiban as $key => $val) {
         $db->select("SUM(debit) as debit, SUM(kredit) as kredit")->from("acc_trans_detail");
         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
             $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)");
         }
         $db->where('m_akun_id', '=', $val->id)->andWhere('date(tanggal)', '<=', $tanggal);
-        $getsaldoawal   = $db->find();
-        $saldoAwal      = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
+        $getsaldoawal = $db->find();
+        $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
         if ($val->id == $akunLabaRugi) {
             $saldoAwal += $totalLabaRugi;
         }
@@ -200,7 +201,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
      * panggil function saldo laba rugi, karena digunakan juga di laporan neraca
      */
     $totalModal = 0;
-    $arrModal   = [];
+    $arrModal = [];
     foreach ($modelModal as $key => $val) {
         $db->select("SUM(debit) as debit, SUM(kredit) as kredit")->from("acc_trans_detail");
         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
@@ -250,26 +251,27 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neraca.html', [
             "modelHarta" =>
-            [
+                [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-            [
+                [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-            [
+                [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-            [
+                [
                 "total" => $totalKewajibanModal,
             ],
-            "tanggal" => date("d-m-Y", strtotime($tanggal)),
+            "tanggal" => date("d M Y", strtotime($tanggal)),
+            "lokasi" => $params['lokasi_nama'],
             "disiapkan" => date("d-m-Y, H:i"),
             "is_detail" => $filter['is_detail'],
             "css" => modulUrl() . '/assets/css/style.css',
@@ -281,26 +283,27 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neraca.html', [
             "modelHarta" =>
-            [
+                [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-            [
+                [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-            [
+                [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-            [
+                [
                 "total" => $totalKewajibanModal,
             ],
-            "tanggal" => date("d-m-Y", strtotime($tanggal)),
+            "tanggal" => date("d M Y", strtotime($tanggal)),
+            "lokasi" => $params['lokasi_nama'],
             "disiapkan" => date("d-m-Y, H:i"),
             "is_detail" => $filter['is_detail'],
             "css" => modulUrl() . '/assets/css/style.css',
@@ -310,26 +313,27 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     } else {
         return successResponse($response, [
             "modelHarta" =>
-            [
+                [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-            [
+                [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-            [
+                [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-            [
+                [
                 "total" => $totalKewajibanModal,
             ],
-            "tanggal" => date("d-m-Y", strtotime($tanggal)),
+            "tanggal" => date("d M Y", strtotime($tanggal)),
+            "lokasi" => $params['lokasi_nama'],
             "disiapkan" => date("d-m-Y, H:i")
         ]);
     }
