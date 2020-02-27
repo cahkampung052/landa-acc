@@ -1,6 +1,6 @@
 <?php
 
-$app->get('/l_arus_kas_custom/getSetting', function ($request, $response) {
+$app->get('/acc/l_arus_kas_custom/getSetting', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
 
@@ -24,7 +24,7 @@ $app->get('/l_arus_kas_custom/getSetting', function ($request, $response) {
     return successResponse($response, ['data' => $arr, 'status' => !empty($arr) ? true : false]);
 });
 
-$app->post('/l_arus_kas_custom/saveSetting', function ($request, $response) {
+$app->post('/acc/l_arus_kas_custom/saveSetting', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
 
@@ -64,7 +64,7 @@ $app->post('/l_arus_kas_custom/saveSetting', function ($request, $response) {
     }
 });
 
-$app->get('/l_arus_kas_custom/laporan', function ($request, $response) {
+$app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
 

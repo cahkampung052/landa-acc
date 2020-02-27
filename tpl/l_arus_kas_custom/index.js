@@ -1,10 +1,14 @@
 app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal) {
-    var control_link = "l_arus_kas_custom";
+    var control_link = "acc/l_arus_kas_custom";
     $scope.form = {};
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+
+    Data.get('site/base_url').then(function (response) {
+        $scope.url = response.data;
+    });
     /*
      * ambil lokasi
      */
@@ -52,7 +56,7 @@ app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal) 
      */
     $scope.modalSetting = function () {
         var modalInstance = $uibModal.open({
-            templateUrl: "tpl/l_arus_kas_custom/modal.html",
+            templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/l_arus_kas_custom/modal.html",
             controller: "settingcustomCtrl",
             size: "lg",
             backdrop: "static",
@@ -68,7 +72,7 @@ app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal) 
 
 app.controller("settingcustomCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope) {
 
-    Data.get('l_arus_kas_custom/getSetting').then(function (response) {
+    Data.get('acc/l_arus_kas_custom/getSetting').then(function (response) {
         if (response.data.status) {
             $scope.listSetting = response.data.data;
         } else {
@@ -117,7 +121,7 @@ app.controller("settingcustomCtrl", function ($state, $scope, Data, $uibModalIns
             form: $scope.listSetting,
         }
 
-        Data.post('l_arus_kas_custom/saveSetting', params).then(function (result) {
+        Data.post('acc/l_arus_kas_custom/saveSetting', params).then(function (result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $uibModalInstance.close({
