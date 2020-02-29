@@ -1,0 +1,155 @@
+<link href="{{ css}}" rel="stylesheet" type="text/css"/>
+<div class="card-body" id="print">
+    <div align="left">
+        <div class="row header-laporan-wrapper">
+            <div class="col-md-12">
+                <center>
+                    <h2 class="header-laporan">{{data.lokasi}}</h2>
+                    <h3 class="header-laporan">Jurnal {{data.tipe}} Kas</h3>
+                    Periode {{ data.tanggal}}
+                    <br/>
+                </center>
+                <hr/>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-responside table-striped table-hover table-print table-laporan" style="border-collapse: collapse;">
+                <thead style="text-align: center">
+                    <tr>
+                        <th rowspan="2">
+                            Tanggal
+                        </th>
+                        <th rowspan="2">
+                            No. Bukti
+                        </th>
+                        <th rowspan="2">
+                            Keterangan
+                        </th>
+                        <th colspan="3">
+                            Debit
+                        </th>
+                        <th colspan="3">
+                            Kredit
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            No. Akun
+                        </th>
+                        <th>
+                            Akun
+                        </th>
+                        <th>
+                            Nominal
+                        </th>
+                        <th>
+                            No. Akun
+                        </th>
+                        <th>
+                            Akun
+                        </th>
+                        <th>
+                            Nominal
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for val in detail%}
+                    {%for vals in val%}
+                    {%for y, z in vals.detail%}
+                    {%for k, v in z[data.repeat_akun]%}
+                    <tr>
+                        {%if y == 0 and k == 0%}
+                        <td rowspan="{{vals.rowspan}}">{{vals.tanggal}}</td>
+                        <td rowspan="{{vals.rowspan}}">{{vals.kode}}</td>
+                        <td rowspan="{{vals.rowspan}}">{{vals.keterangan}}</td>
+                        {%endif%}
+                        {%if k == 0%}
+                        <td rowspan="{{z.debit[k].rowspan}}" >{{z.debit[k].akun.kode}}</td>
+                        <td rowspan="{{z.debit[k].rowspan}}" >{{z.debit[k].akun.nama}}</td>
+                        <td rowspan="{{z.debit[k].rowspan}}" align="right">{{z.debit[k].total| number_format}}</td>
+                        {%endif%}
+                        <td>{{v.akun.kode}}</td>
+                        <td>{{v.akun.nama}}</td>
+                        <td align="right">{{v.total| number_format}}</td>
+                    </tr>
+                    {%endfor%}
+                    {%endfor%}
+                    {%endfor%}
+                    {%endfor%}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td align="right"><b>TOTAL</b></td>
+                        <td></td>
+                        <td></td>
+                        <td align="right"><b>{{data.total.debit| number_format}}</b></td>
+                        <td></td>
+                        <td></td>
+                        <td align="right"><b>{{data.total.kredit| number_format}}</b></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row header-laporan-wrapper">
+            <div class="col-md-12">
+                <center>
+                    <h3 class="header-laporan">REKAPITULASI</h3>
+                </center>
+                <hr/>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-responside table-striped table-hover table-print table-laporan" style="border-collapse: collapse;">
+                <thead style="text-align: center">
+                    <tr>
+                        <th colspan="3">
+                            Debit
+                        </th>
+                        <th colspan="3">
+                            Kredit
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            No. Akun
+                        </th>
+                        <th>
+                            Akun
+                        </th>
+                        <th>
+                            Nominal
+                        </th>
+                        <th>
+                            No. Akun
+                        </th>
+                        <th>
+                            Akun
+                        </th>
+                        <th>
+                            Nominal
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for k, v in data.total_akun[data.repeat_akun]%}
+                    <tr>
+                        <td>{{data.total_akun.debit[k].akun.kode}}</td>
+                        <td>{{data.total_akun.debit[k].akun.nama}}</td>
+                        <td align="right">{{data.total_akun.debit[k].total| number_format}}</td>
+                        <td>{{data.total_akun.kredit[k].akun.kode}}</td>
+                        <td>{{data.total_akun.kredit[k].akun.nama}}</td>
+                        <td align="right">{{data.total_akun.kredit[k].total| number_format}}</td>
+                    </tr>
+                    {%endfor%}
+                    <tr>
+                        <td align="right" colspan="2"><b>TOTAL</b></td>
+                        <td align="right"><b>{{data.total.debit| number_format}}</b></td>
+                        <td align="right" colspan="2"><b>TOTAL</b></td>
+                        <td align="right"><b>{{data.total.kredit| number_format}}</b></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

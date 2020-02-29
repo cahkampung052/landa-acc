@@ -128,7 +128,8 @@
                                     <td colspan="3">Saldo Awal</td>
                                     <td align="right" class="text-right">{{ }}</td>
                                     <td align="right" class="text-right">{{ }}</td>
-                                    <td align="right" class="text-right">{{ (val.saldo_awal < 0 ? '(' + ((val.saldo_awal * -1) | number) + ')' : val.saldo_awal | number)}}</td>
+                                    <td align="right" class="text-right" ng-if="val.saldo_awal < 0">{{ '(' + ((val.saldo_awal * -1) | number) + ')'}}</td>
+                                    <td align="right" class="text-right" ng-if="val.saldo_awal >= 0">{{ val.saldo_awal | number }}</td>
                                 </tr>
                                 <tr ng-repeat="valdetail in val.detail">
                                     <td align="center" class="text-center" style="vertical-align: top">{{ valdetail.tanggal|date }}</td>
@@ -136,7 +137,10 @@
                                     <td style="vertical-align: top" ng-bind-html="valdetail.keterangan"></td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ valdetail.debit | number }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ (valdetail.kredit | number)}}</td>
-                                    <td align="right" class="text-right" style="vertical-align: top">{{ (valdetail.saldo_sekarang < 0 ? '(' + ((valdetail.saldo_sekarang * -1) | number) + ')' : valdetail.saldo_sekarang | number)}}</td>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <span ng-if="valdetail.saldo_sekarang < 0">{{ '(' + ((valdetail.saldo_sekarang * -1) | number) + ')'}}</span>
+                                        <span ng-if="valdetail.saldo_sekarang >= 0">{{ valdetail.saldo_sekarang | number}}</span>
+                                    </td>
                                 </tr>
                             </tbody>
                             <tfoot>
@@ -148,10 +152,11 @@
                                         <b>{{ val.total_debit | number }}</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b>{{ (val.total_kredit | number) }}</b>
+                                        <b>{{ (val.total_kredit | number)}}</b>
                                     </td>
                                     <td align="right" class="text-right">
-                                        <b>{{ (val.total_saldo < 0 ? '(' + ((val.total_saldo * -1) | number) + ')' : val.total_saldo | number) }}</b>
+                                        <b ng-if="val.total_saldo < 0">{{ '(' + ((val.total_saldo * -1) | number) + ')'}}</b>
+                                        <b ng-if="val.total_saldo >= 0">{{ val.total_saldo | number }}</b>
                                     </td>
                                 </tr>
                             </tfoot>

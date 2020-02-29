@@ -60,12 +60,9 @@
                     <div class="row header-laporan-wrapper">
                         <div class="col-md-12">
                             <center>
-                                <h2 class="header-laporan">LAPORAN ARUS KAS</h2>
-                                Lokasi : {{ data.lokasi}}
-                                <br/>
-                                Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
-                                <br/>
-                                Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
+                                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                                <h3 class="header-laporan">Arus Kas</h3>
+                                Periode {{ data.tanggal}}
                                 <br/>
                             </center>
                             <hr/>
@@ -74,46 +71,63 @@
                     <div class="table-responsive">
                         <table class="table table-hover table-laporan-striped" style="border-collapse: collapse;">
                             <tbody>
-                                <tr ng-repeat-start="(key, val) in detail"></tr>
                                 <tr>
-                                    <td colspan="2"><b>{{val.tipe}}</b></td>
+                                    <td><b>Saldo Kas Awal</b></td>
+                                    <td align="right"><b>{{data.saldo_awal.total| number}}</b></td>
                                 </tr>
-                                <tr>
-                                    <td><b>Nama</b></td>
-                                    <td align="right"><b>Total</b></td>
-                                </tr>
-                                <tr ng-repeat="v in val.detail">
+                                <tr ng-repeat="v in data.saldo_awal.detail">
                                     <td>
                                         {{v.nama}}
                                     </td>
                                     <td align="right">
-                                        {{v.total_akhir| number : 2}}
+                                        {{v.total| number}}
                                     </td>
                                 </tr>
+                                <tr ng-repeat-start="(key, val) in detail"></tr>
+                                <tr>
+                                    <td colspan="2"><b>{{val.tipe}}</b></td>
+                                </tr>
+                                <tr ng-repeat-start="v in val.detail"></tr>
+                                <tr ng-if="v.is_total == 0">
+                                    <td><b>{{v.nama}}</b></td>
+                                    <td align="right"><b></b></td>
+                                </tr>
+                                <tr ng-repeat="y in v.detail">
+                                    <td>
+                                        {{y.nama}}
+                                    </td>
+                                    <td align="right">
+                                        {{y.total| number}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b ng-if="v.is_total == 0">TOTAL {{v.nama}}</b>
+                                        <b ng-if="v.is_total == 1">{{v.nama}}</b>
+                                    </td>
+                                    <td align="right"><b>{{v.total| number}}</b></td>
+                                </tr>
+                                <tr ng-repeat-end=""></tr>
                                 <tr><td colspan="2"><br/></td></tr>
                                 <tr ng-repeat-end=""></tr>
                                 <tr>
                                     <td>
-                                        <b>{{'KENAIKAN (PENURUNAN) BERSIH KAS DAN KAS SETARA'}}</b>
+                                        <b>{{'KENAIKAN (PENURUNAN) KAS'}}</b>
                                     </td>
                                     <td align="right">
-                                        {{data.total| number}}
+                                        <b>{{data.saldo_biaya| number}}</b>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <b>{{'KAS DAN SETARA KAS AWAL PERIODE'}}</b>
-                                    </td>
-                                    <td align="right">
-                                        {{data.total_awal| number}}
-                                    </td>
+                                    <td><b>Saldo Kas Akhir</b></td>
+                                    <td align="right"><b>{{data.saldo_akhir.total| number}}</b></td>
                                 </tr>
-                                <tr>
+                                <tr ng-repeat="v in data.saldo_akhir.detail">
                                     <td>
-                                        <b>{{'KAS DAN SETARA KAS AKHIR PERIODE'}}</b>
+                                        {{v.nama}}
                                     </td>
                                     <td align="right">
-                                        {{(data.total + data.total_awal)| number}}
+                                        {{v.total| number}}
                                     </td>
                                 </tr>
                             </tbody>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Arus Kas</title>
+        <style type="text/css">
+            th, td{
+                padding:5px;
+                color:black;
+                /*border: 1px solid #2f2f2f;*/
+                border-width: thin;
+                vertical-align: middle;
+                font-size: 12px;
+                font-family : Arial, Helvetica, sans-serif;
+            }
+            .align-left{
+                text-align: left;
+            }
+            .align-center{
+                text-align: center;
+            }
+            .align-right{
+                text-align: right;
+            }
+            .header{
+                color: #263544; 
+            }
+            thead tr th{
+                background-color: #263544;
+                color: #FFF;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card-body" id="print">
+            <div align="left">
+                <div class="row header-laporan-wrapper">
+                    <div class="col-md-12">
+                        <center>
+                            <h2 class="header-laporan">{{data.lokasi}}</h2>
+                            <h3 class="header-laporan">Arus Kas</h3>
+                            Periode {{ data.tanggal}}
+                            <br/>
+                        </center>
+                        <hr/>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-laporan-striped" style="border-collapse: collapse; width: 100%">
+                        <tbody>
+                            <tr>
+                                <td><b>Saldo Kas Awal</b></td>
+                                <td align="right"><b>{{data.saldo_awal.total| number_format}}</b></td>
+                            </tr>
+                            {%for v in data.saldo_awal.detail%}
+                            <tr>
+                                <td>
+                                    {{v.nama}}
+                                </td>
+                                <td align="right">
+                                    {{v.total| number_format}}
+                                </td>
+                            </tr>
+                            {%endfor%}
+                            {%for key, val in detail%}
+                            <tr></tr>
+                            <tr>
+                                <td colspan="2"><b>{{val.tipe}}</b></td>
+                            </tr>
+                            {%for v in val.detail%}
+                            <tr></tr>
+                            {%if v.is_total == 0%}
+                            <tr>
+                                <td><b>{{v.nama}}</b></td>
+                                <td align="right"><b></b></td>
+                            </tr>
+                            {%endif%}
+                            {%for y in v.detail%}
+                            <tr>
+                                <td>
+                                    {{y.nama}}
+                                </td>
+                                <td align="right">
+                                    {{y.total| number_format}}
+                                </td>
+                            </tr>
+                            {%endfor%}
+                            <tr>
+                                <td>
+                                    {%if v.is_total == 0%}
+                                    <b>TOTAL {{v.nama}}</b>
+                                    {%else%}
+                                    <b>{{v.nama}}</b>
+                                    {%endif%}
+                                </td>
+                                <td align="right"><b>{{v.total| number_format}}</b></td>
+                            </tr>
+                            {%endfor%}
+                            <tr><td colspan="2"><br/></td></tr>
+                            {%endfor%}
+                            <tr>
+                                <td>
+                                    <b>{{'KENAIKAN (PENURUNAN) KAS'}}</b>
+                                </td>
+                                <td align="right">
+                                    <b>{{data.saldo_biaya| number_format}}</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Saldo Kas Akhir</b></td>
+                                <td align="right"><b>{{data.saldo_akhir.total| number_format}}</b></td>
+                            </tr>
+                            {%for v in data.saldo_akhir.detail%}
+                            <tr>
+                                <td>
+                                    {{v.nama}}
+                                </td>
+                                <td align="right">
+                                    {{v.total| number_format}}
+                                </td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,5 +1,11 @@
 <?php
 
+function pd($data = []) {
+    echo "<pre>";
+    print_r($data);
+    die;
+}
+
 /**
  * Multi insert ke trans detail
  */
@@ -682,7 +688,7 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "CUST" . date("y") . "" . $no_urut;
     } elseif ($type == 'customerAll') {
-        $cek = $db->find("select kode from acc_m_kontak where jenis = 'customer' AND DATE_FORMAT( FROM_UNIXTIME( created_at ), '%Y' ) = '".date('Y')."' order by kode desc");
+        $cek = $db->find("select kode from acc_m_kontak where jenis = 'customer' AND DATE_FORMAT( FROM_UNIXTIME( created_at ), '%Y' ) = '" . date('Y') . "' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "CUST" . date("y") . "" . $no_urut;
@@ -789,4 +795,220 @@ function sortKode($kode) {
     }
 
     return implode(".", $listkode);
+}
+
+function jurnalKas($params) {
+    $sql = new Cahkampung\Landadb(config('DB')['db']);
+
+    //tanggal awal
+    $tanggal_awal = new DateTime($params['startDate']);
+    $tanggal_awal->setTimezone(new DateTimeZone('Asia/Jakarta'));
+    //tanggal akhir
+    $tanggal_akhir = new DateTime($params['endDate']);
+    $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
+    $tanggal_start = $tanggal_awal->format("Y-m-d");
+    $tanggal_end = $tanggal_akhir->format("Y-m-d");
+
+    $var_kas = $params['tipe'] == 'pengeluaran' ? 'kredit' : 'debit';
+    $var_lawan = $params['tipe'] == 'pengeluaran' ? 'debit' : 'kredit';
+    $data['tipe'] = ucfirst($params['tipe']);
+    if (isset($params['m_lokasi_id'])) {
+        $lokasiId = getChildId("acc_m_lokasi", $params['m_lokasi_id']);
+        /*
+         * jika lokasi punya child
+         */
+        if (!empty($lokasiId)) {
+            $lokasiId[] = $params['m_lokasi_id'];
+            $lokasiId = implode(",", $lokasiId);
+        }
+        /*
+         * jika lokasi tidak punya child
+         */ else {
+            $lokasiId = $params['m_lokasi_id'];
+        }
+    }
+
+    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' s/d ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['disiapkan'] = date("d-m-Y, H:i");
+    $data['lokasi'] = $params['nama_lokasi'];
+
+    /*
+     * ambil transdetail akun is_kas
+     */
+    $sql->select("acc_trans_detail.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")->from("acc_trans_detail")
+            ->join("JOIN", "acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+            ->where($var_kas, ">", 0)
+            ->where("acc_m_akun.is_kas", "=", 1)
+            ->where("date(tanggal)", ">=", $tanggal_start)
+            ->where("date(tanggal)", "<=", $tanggal_end)
+            ->orderBy("acc_trans_detail.id");
+
+    if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+        $sql->customWhere("acc_trans_detail.m_lokasi_jurnal_id IN($lokasiId)", "AND");
+    }
+
+    $jurnal_kas = $sql->findAll();
+
+//    pd($jurnal_kas);
+
+    $arr_kas = [];
+    $custom_where = ['type' => [], 'id' => []];
+    foreach ($jurnal_kas as $key => $value) {
+        $arr_kas[$value->reff_type][$value->reff_id][] = (array) $value;
+
+        if (!in_array("'" . $value->reff_type . "'", $custom_where['type'])) {
+            $custom_where['type'][] = "'" . $value->reff_type . "'";
+        }
+
+        if (!in_array($value->reff_id, $custom_where['id'])) {
+            $custom_where['id'][] = $value->reff_id;
+        }
+    }
+
+    $custom_where['type'] = implode(", ", $custom_where['type']);
+    $custom_where['id'] = implode(", ", $custom_where['id']);
+
+//    pd($custom_where);
+//    pd($arr_kas);
+
+    /*
+     * ambil akun lawan
+     */
+    $sql->select("acc_trans_detail.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")->from("acc_trans_detail")
+            ->join("JOIN", "acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+            ->where($var_lawan, ">", 0)
+            ->where("acc_m_akun.is_kas", "=", 0)
+            ->customWhere("reff_type IN($custom_where[type])", "AND")
+            ->customWhere("reff_id IN($custom_where[id])", "AND")
+            ->where("date(tanggal)", ">=", $tanggal_start)
+            ->where("date(tanggal)", "<=", $tanggal_end)
+            ->orderBy("acc_trans_detail.id");
+
+    if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+        $sql->customWhere("acc_trans_detail.m_lokasi_jurnal_id IN($lokasiId)", "AND");
+    }
+
+    $jurnal_lawan = $sql->findAll();
+
+//    pd($jurnal_lawan);
+
+    $arr_lawan = [];
+    foreach ($jurnal_lawan as $key => $value) {
+        $arr_lawan[$value->reff_type][$value->reff_id][] = (array) $value;
+    }
+
+    foreach ($arr_kas as $key => $value) {
+        foreach ($value as $keys => $values) {
+            if (!isset($arr_lawan[$key][$keys])) {
+                unset($arr_kas[$key][$keys]);
+            }
+        }
+        if (empty($arr_kas[$key])) {
+            unset($arr_kas[$key]);
+        }
+    }
+//    pd($arr_kas);
+//    pd($arr_lawan);
+
+    $arr = [];
+//    $index = 0;
+    foreach ($arr_kas as $key => $value) {
+        foreach ($value as $keys => $values) {
+            $index = 0;
+            foreach ($values as $k => $v) {
+
+//                $arr[$index]['tanggal'] = $v['tanggal'];
+//                $arr[$index]['kode'] = $v['kode'];
+//                $arr[$index]['keterangan'] = $v['keterangan'];
+
+                $v['akun'] = ['id' => $v['m_akun_id'], 'kode' => $v['kodeAkun'], 'nama' => $v['namaAkun']];
+                $v['total'] = $v[$var_kas];
+
+                $arr[$v['reff_type']][$v['reff_id']]['key'] = $index;
+                $arr[$v['reff_type']][$v['reff_id']]['tanggal'] = $v['tanggal'];
+                $arr[$v['reff_type']][$v['reff_id']]['kode'] = $v['kode'];
+                $arr[$v['reff_type']][$v['reff_id']]['keterangan'] = $v['keterangan'];
+                $arr[$v['reff_type']][$v['reff_id']]['detail'][$index][$var_kas][] = $v;
+//                $arr[$index]['debit'][] = ['akun' => ['id' => $v['m_akun_id'], 'kode' => $v['kodeAkun'], 'nama' => $v['namaAkun']], 'total' => $v['debit']];
+                $kurang = $v[$var_kas];
+                foreach ($arr_lawan[$key][$keys] as $x => $y) {
+                    if ($kurang > 0) {
+                        $y['all'] = isset($y['all']) ? $y['all'] : 'tidak';
+                        if ($y['all'] == 'tidak') {
+                            if ($y[$var_lawan] > $kurang) {
+                                $y[$var_lawan] = $kurang;
+                                $arr_lawan[$key][$keys][$x][$var_lawan] = $kurang;
+                                $arr_lawan[$key][$keys][$x]['all'] = 'tidak';
+                            } else {
+                                $arr_lawan[$key][$keys][$x]['all'] = 'ya';
+                            }
+
+                            $arr[$y['reff_type']][$y['reff_id']]['detail'][$index][$var_lawan][] = ['akun' => ['id' => $y['m_akun_id'], 'kode' => $y['kodeAkun'], 'nama' => $y['namaAkun']], 'total' => $y[$var_lawan]];
+
+                            $kurang -= $y[$var_lawan];
+                        }
+                    }
+                }
+                $index++;
+            }
+        }
+    }
+
+//    pd($arr);
+    $data['total'] = [];
+    $data['total_akun'] = [];
+    foreach ($arr as $key => $value) {
+        foreach ($value as $keys => $values) {
+            foreach ($values['detail'] as $k => $v) {
+                $arr[$key][$keys]['detail'][$k][$var_kas][0]['rowspan'] = count($arr[$key][$keys]['detail'][$k][$var_lawan]);
+                if (isset($arr[$key][$keys]['rowspan'])) {
+                    $arr[$key][$keys]['rowspan'] += count($arr[$key][$keys]['detail'][$k][$var_lawan]);
+                } else {
+                    $arr[$key][$keys]['rowspan'] = count($arr[$key][$keys]['detail'][$k][$var_lawan]);
+                }
+
+                foreach ($v[$var_kas] as $x => $y) {
+                    if (isset($data['total'][$var_kas])) {
+                        $data['total'][$var_kas] += $y['total'];
+                    } else {
+                        $data['total'][$var_kas] = $y['total'];
+                    }
+
+                    if (isset($data['total_akun'][$var_kas][$y['akun']['id']]['total'])) {
+                        $data['total_akun'][$var_kas][$y['akun']['id']]['total'] += $y['total'];
+                    } else {
+                        $data['total_akun'][$var_kas][$y['akun']['id']]['total'] = $y['total'];
+                        $data['total_akun'][$var_kas][$y['akun']['id']]['akun'] = $y['akun'];
+                    }
+                }
+                foreach ($v[$var_lawan] as $x => $y) {
+                    if (isset($data['total'][$var_lawan])) {
+                        $data['total'][$var_lawan] += $y['total'];
+                    } else {
+                        $data['total'][$var_lawan] = $y['total'];
+                    }
+
+                    if (isset($data['total_akun'][$var_lawan][$y['akun']['id']]['total'])) {
+                        $data['total_akun'][$var_lawan][$y['akun']['id']]['total'] += $y['total'];
+                    } else {
+                        $data['total_akun'][$var_lawan][$y['akun']['id']]['total'] = $y['total'];
+                        $data['total_akun'][$var_lawan][$y['akun']['id']]['akun'] = $y['akun'];
+                    }
+                }
+            }
+        }
+    }
+    $total_akun = [];
+    foreach ($data['total_akun'] as $key => $value) {
+        $index = 0;
+        foreach ($value as $keys => $values) {
+            $total_akun[$key][$index] = $values;
+            $index++;
+        }
+    }
+    $data['total_akun'] = $total_akun;
+    $data['repeat_akun'] = $var_lawan;
+    $data['repeat_lawan'] = $var_kas;
+
+    return ['data' => $data, 'detail' => $arr];
 }

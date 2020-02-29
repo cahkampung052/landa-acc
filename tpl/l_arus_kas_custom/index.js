@@ -47,7 +47,7 @@ app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal) 
         } else {
             Data.get('site/base_url').then(function (response) {
 //                console.log(response)
-                window.open(response.data.base_url + "api/l_arus_kas_custom/laporan?" + $.param(param), "_blank");
+                window.open(response.data.base_url + "api/acc/l_arus_kas_custom/laporan?" + $.param(param), "_blank");
             });
         }
     };
@@ -58,7 +58,7 @@ app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal) 
         var modalInstance = $uibModal.open({
             templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/l_arus_kas_custom/modal.html",
             controller: "settingcustomCtrl",
-            size: "lg",
+            size: "xl",
             backdrop: "static",
             keyboard: false,
         });

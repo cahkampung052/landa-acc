@@ -18,9 +18,9 @@
                         <th width="10">
                             <button type="button" class="btn btn-success fa fa-plus btn-sm" ng-click="addDetail(val.detail)" ng-disabled="is_view"></button>
                         </th>
-                        <th>Nama</th>
+                        <th style="min-width: 300px">Nama</th>
                         <th>Total</th>
-                        <th>Akun</th>
+                        <th style="min-width: 500px; max-width: 500px">Akun</th>
                     </tr>
                     <tr class="tabletr" ng-repeat="v in val.detail">
                         <td>
@@ -36,7 +36,7 @@
                                 <input class="form-control form-control-sm" type="checkbox" ng-model="v.is_total" ng-disabled="is_view" ng-click="v.akun = undefined" ng-checked="v.is_total == 1"/>
                             </div>
                         </td>
-                        <td>
+                        <td style="min-width: 500px; max-width: 500px">
                             <div>
                                 <ui-select multiple="" class="ui-select-sm ui-select-container" ng-model="v.akun" theme="bootstrap" ng-disabled="is_view || v.is_total == 1">
                                     <ui-select-match placeholder="Pilih Akun">{{ $item.kode + " - " + $item.nama}}</ui-select-match>
