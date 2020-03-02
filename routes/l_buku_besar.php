@@ -182,9 +182,9 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                 /**
                  * End ambil detail transaksi
                  */
-                $saldo_sekarang = $arr[0]['saldo_awal'];
-                $total_debit = $arr[0]['debit_awal'];
-                $total_kredit = $arr[0]['kredit_awal'];
+                $saldo_sekarang = 0;
+                $total_debit = 0;
+                $total_kredit = 0;
 
                 foreach ($detail as $key2 => $val2) {
                     $arr[0]['detail'][$key2]['tanggal'] = $val2->tanggal;
@@ -193,14 +193,14 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                     $arr[0]['detail'][$key2]['debit'] = $val2->debit;
                     $arr[0]['detail'][$key2]['kredit'] = $val2->kredit;
                     $arr[0]['detail'][$key2]['saldo'] = intval($val2->debit) - intval($val2->kredit);
-                    $saldo_sekarang += $arr[0]['detail'][$key2]['saldo'];
+                    $saldo_sekarang = $arr[0]['detail'][$key2]['saldo'];
                     $arr[0]['detail'][$key2]['saldo_sekarang'] = $saldo_sekarang;
                     $total_debit += intval($val2->debit);
                     $total_kredit += intval($val2->kredit);
                 }
                 $arr[0]['total_debit'] = $total_debit;
                 $arr[0]['total_kredit'] = $total_kredit;
-                $arr[0]['total_saldo'] = $total_debit - $total_kredit;
+                $arr[0]['total_saldo'] = $arr[0]['saldo_awal'] + $total_debit - $total_kredit;
             }
         }
         

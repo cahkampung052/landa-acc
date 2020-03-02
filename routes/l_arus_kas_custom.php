@@ -114,7 +114,6 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 
 //    pd($penerimaan);
 //    pd($pengeluaran);
-
 //    $akun_merge = array_merge($penerimaan['data']['total_akun']['kredit'], $pengeluaran['data']['total_akun']['debit']);
     $akun_merge_fix = [];
 
@@ -186,11 +185,13 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
         $akun_merge_kas[$index]['kredit'] = $value['total'];
         $index++;
     }
+    
+//    pd($akun_merge_kas);
 
     /*
      * saldo awal & akhir
      */
-    $akun_kas = $db->select("*")->from("acc_m_akun")->where("is_kas", "=", 1)->where("is_deleted", "=", 0)->where("is_tipe", "=", 0)->findAll();
+    $akun_kas = $db->select("*")->from("acc_m_akun")->where("is_kas", "=", 1)->where("is_tipe", "=", 0)->findAll();
     $arrAkun = [];
     $arrAwal = [];
     $arrPeriode = [];
@@ -207,24 +208,26 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 
     $arrAkun = implode(", ", $arrAkun);
 
-    $db->select("debit, kredit, m_akun_id")->from("acc_trans_detail")
+    $db->select("SUM(debit) as debit, SUM(kredit) as kredit, m_akun_id")->from("acc_trans_detail")
             ->customWhere("m_akun_id IN($arrAkun)", "AND")
             ->where("date(tanggal)", "<", $tanggal_start);
 
     if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-        $db->customWhere("acc_trans_detail.m_lokasi_jurnal_id IN($lokasiId)", "AND");
+        $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
-    $saldo_awal = $db->findAll();
+    $saldo_awal = $db->groupBy("m_akun_id")->findAll();
 
-    $db->select("debit, kredit, m_akun_id")->from("acc_trans_detail")
+//    pd($saldo_awal);
+
+    $db->select("SUM(debit) as debit, SUM(kredit) as kredit, m_akun_id")->from("acc_trans_detail")
             ->customWhere("m_akun_id IN($arrAkun)", "AND")
             ->where("date(tanggal)", "<=", $tanggal_end);
 
     if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-        $db->customWhere("acc_trans_detail.m_lokasi_jurnal_id IN($lokasiId)", "AND");
+        $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
 
-    $saldo_akhir = $db->findAll();
+    $saldo_akhir = $db->groupBy("m_akun_id")->findAll();
 
 //    pd($saldo_awal);
 
@@ -290,7 +293,7 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 //    pd($arr);
 
     ksort($arr);
-    
+
     foreach ($arr as $key => $value) {
         ksort($arr[$key]['detail']);
     }

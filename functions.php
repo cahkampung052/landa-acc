@@ -844,7 +844,7 @@ function jurnalKas($params) {
             ->orderBy("acc_trans_detail.id");
 
     if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-        $sql->customWhere("acc_trans_detail.m_lokasi_jurnal_id IN($lokasiId)", "AND");
+        $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
 
     $jurnal_kas = $sql->findAll();
@@ -874,10 +874,10 @@ function jurnalKas($params) {
     /*
      * ambil akun lawan
      */
-    $sql->select("acc_trans_detail.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun, acc_m_akun.tipe_arus, acc_m_akun.saldo_normal")->from("acc_trans_detail")
+    $sql->select("acc_trans_detail.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun, acc_m_akun.tipe_arus, acc_m_akun.saldo_normal, acc_m_akun.is_kas")->from("acc_trans_detail")
             ->join("JOIN", "acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
             ->where($var_lawan, ">", 0)
-            ->where("acc_m_akun.is_kas", "=", 0)
+//            ->where("acc_m_akun.is_kas", "=", 0)
             ->customWhere("reff_type IN($custom_where[type])", "AND")
             ->customWhere("reff_id IN($custom_where[id])", "AND")
             ->where("date(tanggal)", ">=", $tanggal_start)
@@ -885,7 +885,7 @@ function jurnalKas($params) {
             ->orderBy("acc_trans_detail.id");
 
     if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-        $sql->customWhere("acc_trans_detail.m_lokasi_jurnal_id IN($lokasiId)", "AND");
+        $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
 
     $jurnal_lawan = $sql->findAll();
@@ -894,7 +894,9 @@ function jurnalKas($params) {
 
     $arr_lawan = [];
     foreach ($jurnal_lawan as $key => $value) {
-        $arr_lawan[$value->reff_type][$value->reff_id][] = (array) $value;
+        if ($value->is_kas == 0) {
+            $arr_lawan[$value->reff_type][$value->reff_id][] = (array) $value;
+        }
     }
 
     foreach ($arr_kas as $key => $value) {
