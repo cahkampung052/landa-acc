@@ -115,7 +115,7 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 //    pd($penerimaan);
 //    pd($pengeluaran);
 
-    $akun_merge = array_merge($penerimaan['data']['total_akun']['kredit'], $pengeluaran['data']['total_akun']['debit']);
+//    $akun_merge = array_merge($penerimaan['data']['total_akun']['kredit'], $pengeluaran['data']['total_akun']['debit']);
     $akun_merge_fix = [];
 
     foreach ($penerimaan['data']['total_akun']['kredit'] as $key => $value) {
