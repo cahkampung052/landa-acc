@@ -383,7 +383,14 @@ $app->post('/acc/m_akun/trash', function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
     $update['is_deleted'] = $data['is_deleted'];
-    $update['tgl_nonaktif'] = date('Y-m-d');
+    if ($data['is_deleted'] == 1) {
+        $update['tgl_nonaktif'] = date('Y-m-d');
+    }
+
+    if (isset($data['tipe_arus']) && !empty($data['tipe_arus'])) {
+        $update['tipe_arus'] = $data['tipe_arus'];
+    }
+
     $model = $db->update("acc_m_akun", $update, array('id' => $data['id']));
     if ($model) {
         return successResponse($response, $model);

@@ -51,6 +51,19 @@ app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal) 
             });
         }
     };
+
+    $scope.updateAkun = function (akun) {
+        var params = {tipe_arus: akun.tipe_arus, id: akun.id, is_deleted: 0};
+
+        Data.post("acc/m_akun/trash", params).then(function (response) {
+            if (response.status_code == 200) {
+                $scope.view(0, 0);
+            } else {
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(response.errors), "error");
+            }
+        });
+    }
+
     /**
      * Modal setting pengecualian
      */

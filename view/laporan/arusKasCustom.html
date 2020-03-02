@@ -64,20 +64,18 @@
                             {%for key, val in detail%}
                             <tr></tr>
                             <tr>
-                                <td colspan="2"><b>{{val.tipe}}</b></td>
+                                <td colspan="2"><b>{{key}}</b></td>
                             </tr>
-                            {%for v in val.detail%}
-                            <tr></tr>
-                            {%if v.is_total == 0%}
+                            {%for k, v in val.detail%}
                             <tr>
-                                <td><b>{{v.nama}}</b></td>
-                                <td align="right"><b></b></td>
+                                <td colspan="2">
+                                    <b>{{k}}</b>
+                                </td>
                             </tr>
-                            {%endif%}
                             {%for y in v.detail%}
                             <tr>
                                 <td>
-                                    {{y.nama}}
+                                    {{y.akun.nama}}
                                 </td>
                                 <td align="right">
                                     {{y.total| number_format}}
@@ -86,15 +84,17 @@
                             {%endfor%}
                             <tr>
                                 <td>
-                                    {%if v.is_total == 0%}
-                                    <b>TOTAL {{v.nama}}</b>
-                                    {%else%}
-                                    <b>{{v.nama}}</b>
-                                    {%endif%}
+                                    <b>TOTAL</b>
                                 </td>
                                 <td align="right"><b>{{v.total| number_format}}</b></td>
                             </tr>
                             {%endfor%}
+                            <tr>
+                                <td>
+                                    <b>Kenaikan (Penurunan) Kas dari {{key}}</b>
+                                </td>
+                                <td align="right"><b>{{val.total| number_format}}</b></td>
+                            </tr>
                             <tr><td colspan="2"><br/></td></tr>
                             {%endfor%}
                             <tr>

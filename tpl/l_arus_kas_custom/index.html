@@ -85,16 +85,29 @@
                                 </tr>
                                 <tr ng-repeat-start="(key, val) in detail"></tr>
                                 <tr>
-                                    <td colspan="2"><b>{{val.tipe}}</b></td>
+                                    <td colspan="2"><b>{{key}}</b></td>
                                 </tr>
-                                <tr ng-repeat-start="v in val.detail"></tr>
-                                <tr ng-if="v.is_total == 0">
-                                    <td><b>{{v.nama}}</b></td>
-                                    <td align="right"><b></b></td>
+                                <tr ng-repeat-start="(k, v) in val.detail"></tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <b>{{k}}</b>
+                                    </td>
                                 </tr>
                                 <tr ng-repeat="y in v.detail">
                                     <td>
-                                        {{y.nama}}
+                                        <span ng-if="key != 'Tidak Terklasifikasi'">{{y.akun.nama}}</span>
+                                        <div class="row" ng-if="key == 'Tidak Terklasifikasi'">
+                                            <div class="col-md-9">
+                                                <span>{{y.akun.nama}}</span>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-control form-control-sm" ng-model="y.akun.tipe_arus" ng-change="updateAkun(y.akun)">
+                                                    <option value="Aktivitas Operasi">Aktivitas Operasi</option>
+                                                    <option value="Investasi">Investasi</option>
+                                                    <option value="Pendanaan">Pendanaan</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td align="right">
                                         {{y.total| number}}
@@ -102,12 +115,17 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <b ng-if="v.is_total == 0">TOTAL {{v.nama}}</b>
-                                        <b ng-if="v.is_total == 1">{{v.nama}}</b>
+                                        <b>TOTAL</b>
                                     </td>
                                     <td align="right"><b>{{v.total| number}}</b></td>
                                 </tr>
                                 <tr ng-repeat-end=""></tr>
+                                <tr>
+                                    <td>
+                                        <b>Kenaikan (Penurunan) Kas dari {{key}}</b>
+                                    </td>
+                                    <td align="right"><b>{{val.total| number}}</b></td>
+                                </tr>
                                 <tr><td colspan="2"><br/></td></tr>
                                 <tr ng-repeat-end=""></tr>
                                 <tr>

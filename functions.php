@@ -835,7 +835,7 @@ function jurnalKas($params) {
     /*
      * ambil transdetail akun is_kas
      */
-    $sql->select("acc_trans_detail.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")->from("acc_trans_detail")
+    $sql->select("acc_trans_detail.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun, acc_m_akun.tipe_arus, acc_m_akun.saldo_normal")->from("acc_trans_detail")
             ->join("JOIN", "acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
             ->where($var_kas, ">", 0)
             ->where("acc_m_akun.is_kas", "=", 1)
@@ -874,7 +874,7 @@ function jurnalKas($params) {
     /*
      * ambil akun lawan
      */
-    $sql->select("acc_trans_detail.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")->from("acc_trans_detail")
+    $sql->select("acc_trans_detail.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun, acc_m_akun.tipe_arus, acc_m_akun.saldo_normal")->from("acc_trans_detail")
             ->join("JOIN", "acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
             ->where($var_lawan, ">", 0)
             ->where("acc_m_akun.is_kas", "=", 0)
@@ -921,7 +921,7 @@ function jurnalKas($params) {
 //                $arr[$index]['kode'] = $v['kode'];
 //                $arr[$index]['keterangan'] = $v['keterangan'];
 
-                $v['akun'] = ['id' => $v['m_akun_id'], 'kode' => $v['kodeAkun'], 'nama' => $v['namaAkun']];
+                $v['akun'] = ['id' => $v['m_akun_id'], 'kode' => $v['kodeAkun'], 'nama' => $v['namaAkun'], 'tipe_arus' => $v['tipe_arus'], 'saldo_normal' => $v['saldo_normal']];
                 $v['total'] = $v[$var_kas];
 
                 $arr[$v['reff_type']][$v['reff_id']]['key'] = $index;
@@ -943,7 +943,7 @@ function jurnalKas($params) {
                                 $arr_lawan[$key][$keys][$x]['all'] = 'ya';
                             }
 
-                            $arr[$y['reff_type']][$y['reff_id']]['detail'][$index][$var_lawan][] = ['akun' => ['id' => $y['m_akun_id'], 'kode' => $y['kodeAkun'], 'nama' => $y['namaAkun']], 'total' => $y[$var_lawan]];
+                            $arr[$y['reff_type']][$y['reff_id']]['detail'][$index][$var_lawan][] = ['akun' => ['id' => $y['m_akun_id'], 'kode' => $y['kodeAkun'], 'nama' => $y['namaAkun'], 'tipe_arus' => $y['tipe_arus'], 'saldo_normal' => $y['saldo_normal']], 'total' => $y[$var_lawan]];
 
                             $kurang -= $y[$var_lawan];
                         }

@@ -103,7 +103,35 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = $params['nama_lokasi'];
 
-//    $tipe_arus = ["Aktivitas Operasi", "Investasi", "Pendanaan", "Tidak Terklasifikasi"];
+    $akun_custom = $db->select("*")->from("acc_m_setting_arus_kas")->orderBy("id")->findAll();
+
+//    pd($akun_custom);
+
+    $arr = [];
+    $akunId = [];
+    foreach ($akun_custom as $key => $value) {
+        $temp_akun = [];
+        if (!empty($value->m_akun_id)) {
+
+            foreach (json_decode($value->m_akun_id) as $k => $v) {
+                $akun = getChildId('acc_m_akun', $v);
+                if (!empty($akun)) {
+                    foreach ($akun as $x => $y) {
+                        $akunId[] = $y;
+                        $temp_akun[] = $y;
+                    }
+                } else {
+                    $temp_akun[] = $v;
+                }
+            }
+        }
+        $arr[$value->tipe]['tipe'] = $value->tipe;
+        $value->akun = $temp_akun;
+        $arr[$value->tipe]['detail'][] = (array) $value;
+    }
+//    $akunId = implode(", ", $akunId);
+//    pd($akunId);
+//    pd($arr);
 
     $data_penerimaan = $params;
     $data_penerimaan['tipe'] = 'penerimaan';
@@ -112,43 +140,22 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     $penerimaan = jurnalKas($data_penerimaan);
     $pengeluaran = jurnalKas($data_pengeluaran);
 
-//    pd($penerimaan);
-//    pd($pengeluaran);
-
-    $akun_merge = array_merge($penerimaan['data']['total_akun']['kredit'], $pengeluaran['data']['total_akun']['debit']);
-
-    $arr = [];
-    $data['saldo_biaya'] = 0;
-    foreach ($akun_merge as $key => $value) {
-        $value['akun']['tipe_arus'] = !empty($value['akun']['tipe_arus']) ? $value['akun']['tipe_arus'] : 'Tidak Terklasifikasi';
-        $tipe = $value['akun']['saldo_normal'] == 1 ? 'PENGELUARAN' : 'PENERIMAAN';
-        $value['total'] = $value['akun']['saldo_normal'] == 1 ? ($value['total'] * -1) : $value['total'];
-
-        if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['id']])) {
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['id']]['total'] += $value['total'];
-        } else {
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['id']]['total'] = $value['total'];
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['id']]['akun'] = $value['akun'];
-        }
-
-        if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'])) {
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'] += $value['total'];
-        } else {
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'] = $value['total'];
-        }
-
-        if (isset($arr[$value['akun']['tipe_arus']]['total'])) {
-            $arr[$value['akun']['tipe_arus']]['total'] += $value['total'];
-        } else {
-            $arr[$value['akun']['tipe_arus']]['total'] = $value['total'];
-        }
-
-        if ($value['akun']['tipe_arus'] != 'Tidak Terklasifikasi') {
-            $data['saldo_biaya'] += $value['total'];
-        }
+    $akun_merge = [];
+    $index = 0;
+    foreach ($penerimaan['data']['total_akun']['kredit'] as $key => $value) {
+        $akun_merge[$index]['m_akun_id'] = $value['akun']['id'];
+        $akun_merge[$index]['akun'] = $value['akun'];
+        $akun_merge[$index]['total'] = $value['total'];
+        $akun_merge[$index]['tipe'] = 'penerimaan';
+        $index++;
     }
-
-//    pd($arr);
+    foreach ($pengeluaran['data']['total_akun']['debit'] as $key => $value) {
+        $akun_merge[$index]['m_akun_id'] = $value['akun']['id'];
+        $akun_merge[$index]['akun'] = $value['akun'];
+        $akun_merge[$index]['tipe'] = 'pengeluaran';
+        $akun_merge[$index]['total'] = $value['total'];
+        $index++;
+    }
 
     $akun_merge_kas = [];
     $index = 0;
@@ -163,6 +170,80 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
         $akun_merge_kas[$index]['debit'] = 0;
         $akun_merge_kas[$index]['kredit'] = $value['total'];
         $index++;
+    }
+
+//    pd($akun_merge_kas);
+//    pd($akun_merge);
+//    pd($penerimaan);
+    $data['saldo_biaya'] = 0;
+    foreach ($arr as $key => $value) {
+        $total = 0;
+        foreach ($value['detail'] as $keys => $values) {
+//            if ($values['nama'] == "PENERIMAAN") {
+//                foreach ($penerimaan['data']['total_akun']['kredit'] as $k => $v) {
+//                    if (in_array($v['akun']['id'], $arr[$key]['detail'][$keys]['akun'])) {
+//                        if (isset($arr[$key]['detail'][$keys]['detail'][$v['akun']['id']])) {
+//                            $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['total'] += $v['total'];
+//                        } else {
+//                            $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['akun'] = $v['akun'];
+//                            $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['nama'] = $v['akun']['nama'];
+//                            $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['total'] = $v['total'];
+//                        }
+//
+//                        if (isset($arr[$key]['detail'][$keys]['total'])) {
+//                            $arr[$key]['detail'][$keys]['total'] += $v['total'];
+//                        } else {
+//                            $arr[$key]['detail'][$keys]['total'] = $v['total'];
+//                        }
+//                        $total += $v['total'];
+//                    }
+//                }
+//            } else if ($values['nama'] == "PENGELUARAN") {
+//                foreach ($pengeluaran['data']['total_akun']['debit'] as $k => $v) {
+//                    if (in_array($v['akun']['id'], $arr[$key]['detail'][$keys]['akun'])) {
+//                        if (isset($arr[$key]['detail'][$keys]['detail'][$v['akun']['id']])) {
+//                            $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['total'] += $v['total'];
+//                        } else {
+//                            $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['akun'] = $v['akun'];
+//                            $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['nama'] = $v['akun']['nama'];
+//                            $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['total'] = $v['total'];
+//                        }
+//
+//                        if (isset($arr[$key]['detail'][$keys]['total'])) {
+//                            $arr[$key]['detail'][$keys]['total'] += $v['total'];
+//                        } else {
+//                            $arr[$key]['detail'][$keys]['total'] = $v['total'];
+//                        }
+//                        $total += $v['total'];
+//                    }
+//                }
+//            }
+            foreach ($akun_merge as $k => $v) {
+                if (in_array($v['akun']['id'], $arr[$key]['detail'][$keys]['akun'])) {
+                    if (isset($arr[$key]['detail'][$keys]['detail'][$v['akun']['id']])) {
+                        $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['total'] += $v['total'];
+                    } else {
+                        $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['akun'] = $v['akun'];
+                        $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['nama'] = $v['akun']['nama'];
+                        $arr[$key]['detail'][$keys]['detail'][$v['akun']['id']]['total'] = $v['total'];
+                    }
+
+                    if (isset($arr[$key]['detail'][$keys]['total'])) {
+                        $arr[$key]['detail'][$keys]['total'] += $v['total'];
+                    } else {
+                        $arr[$key]['detail'][$keys]['total'] = $v['total'];
+                    }
+                    $total += $v['tipe'] == 'penerimaan' ? $v['total'] : ($v['total'] * -1);
+                    $data['saldo_biaya'] += $v['tipe'] == 'penerimaan' ? $v['total'] : ($v['total'] * -1);
+                }
+            }
+
+
+            if ($values['is_total'] == 1) {
+                $arr[$key]['detail'][$keys]['total'] = $total;
+                $total = 0;
+            }
+        }
     }
 
     /*
