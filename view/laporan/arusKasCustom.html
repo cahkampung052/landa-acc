@@ -57,7 +57,7 @@
                                     {{v.nama}}
                                 </td>
                                 <td align="right">
-                                    {{v.total| number_format}}
+                                    {{not v.total ? '-' : v.total| number_format}}
                                 </td>
                             </tr>
                             {%endfor%}
@@ -115,7 +115,7 @@
                                     {{v.nama}}
                                 </td>
                                 <td align="right">
-                                    {{v.total| number_format}}
+                                    {{not v.total ? '-' : v.total| number_format}}
                                 </td>
                             </tr>
                             {%endfor%}

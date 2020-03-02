@@ -116,13 +116,35 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 //    pd($pengeluaran);
 
     $akun_merge = array_merge($penerimaan['data']['total_akun']['kredit'], $pengeluaran['data']['total_akun']['debit']);
+    $akun_merge_fix = [];
+
+    foreach ($penerimaan['data']['total_akun']['kredit'] as $key => $value) {
+        if (isset($akun_merge_fix[$value['akun']['id']])) {
+            $akun_merge_fix[$value['akun']['id']]['total'] += $value['total'];
+        } else {
+            $akun_merge_fix[$value['akun']['id']] = $value;
+        }
+    }
+//    pd($akun_merge_fix);
+
+    foreach ($pengeluaran['data']['total_akun']['debit'] as $key => $value) {
+        if (isset($akun_merge_fix[$value['akun']['id']])) {
+            $akun_merge_fix[$value['akun']['id']]['total'] -= $value['total'];
+        } else {
+            $akun_merge_fix[$value['akun']['id']] = $value;
+            $akun_merge_fix[$value['akun']['id']]['total'] = ($value['total'] * -1);
+        }
+    }
+
+//    pd($akun_merge_fix);
+//    pd($akun_merge);
 
     $arr = [];
     $data['saldo_biaya'] = 0;
-    foreach ($akun_merge as $key => $value) {
+    foreach ($akun_merge_fix as $key => $value) {
         $value['akun']['tipe_arus'] = !empty($value['akun']['tipe_arus']) ? $value['akun']['tipe_arus'] : 'Tidak Terklasifikasi';
-        $tipe = $value['akun']['saldo_normal'] == 1 ? 'PENGELUARAN' : 'PENERIMAAN';
-        $value['total'] = $value['akun']['saldo_normal'] == 1 ? ($value['total'] * -1) : $value['total'];
+        $tipe = $value['total'] < 0 ? 'PENGELUARAN' : 'PENERIMAAN';
+//        $value['total'] = $value['akun']['saldo_normal'] == 1 ? ($value['total'] * -1) : $value['total'];
 
         if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['id']])) {
             $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['id']]['total'] += $value['total'];
@@ -266,6 +288,12 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 
 //    pd($akun_kas);
 //    pd($arr);
+
+    ksort($arr);
+    
+    foreach ($arr as $key => $value) {
+        ksort($arr[$key]['detail']);
+    }
 
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
