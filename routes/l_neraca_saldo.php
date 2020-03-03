@@ -33,6 +33,7 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
     $tanggal_end = $tanggal_akhir->format("Y-m-d");
     $lokasi = isset($params['m_lokasi_id']) ? $params['m_lokasi_id'] : '';
     $data['tanggal'] = date("d M Y", strtotime($tanggal_start)) . ' s/d ' . date("d M Y", strtotime($tanggal_end));
+    $data['lokasi'] = $params['nama_lokasi'];
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['debit_awal'] = 0;
     $data['kredit_awal'] = 0;

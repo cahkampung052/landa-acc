@@ -828,7 +828,7 @@ function jurnalKas($params) {
         }
     }
 
-    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' s/d ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['tanggal'] = date("d M Y", strtotime($tanggal_start)) . ' s/d ' . date("d M Y", strtotime($tanggal_end));
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = $params['nama_lokasi'];
 

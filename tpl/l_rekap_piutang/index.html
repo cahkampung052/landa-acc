@@ -72,16 +72,11 @@
                 <div class="row header-laporan-wrapper">
                     <div class="col-md-12">
                         <center>
-                            <h2 class="header-laporan">LAPORAN REKAP PIUTANG</h2>
-                            Lokasi : {{ data.lokasi}}
-                            <br/>
-                            Akun : {{ data.akun}}
-                            <br/>
-                            Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
-                            <br/>
-                            Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
-                            <br/>
-                        </center>
+                                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                                <h3 class="header-laporan">Rekap Piutang</h3>
+                                Periode {{ data.tanggal}}
+                                <br/>
+                            </center>
                         <hr/>
                     </div>
                 </div>

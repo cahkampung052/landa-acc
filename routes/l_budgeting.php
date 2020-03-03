@@ -154,6 +154,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
     $data['setiapbulan'] = $listSetiapBulan;
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = $params['nama_lokasi'];
+    $data['tanggal'] = $params['tahun'];
 
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();

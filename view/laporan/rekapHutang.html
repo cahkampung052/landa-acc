@@ -3,14 +3,9 @@
     <div class="row header-laporan-wrapper">
         <div class="col-md-12">
             <center>
-                <h2 class="header-laporan">LAPORAN REKAP HUTANG</h2>
-                Lokasi : {{ data.lokasi}}
-                <br/>
-                Akun : {{ data.akun}}
-                <br/>
-                Periode : {{ data.tanggal}}
-                <br/>
-                Disiapkan Tanggal : {{ data.disiapkan}}
+                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                <h3 class="header-laporan">Rekap Hutang</h3>
+                Periode {{ data.tanggal}}
                 <br/>
             </center>
             <hr/>
@@ -46,18 +41,18 @@
                 <td align="left" style="vertical-align: top">{{ val.nama}}</td>
                 <td align="right" class="text-right" style="vertical-align: top">
                     {%if(val.saldoAwal >= 0)%}
-                        <span>{{ val.saldoAwal }}</span>
+                    <span>{{ val.saldoAwal }}</span>
                     {%else%}
-                        <span>({{ val.saldoAwal * -1 }})</span>
+                    <span>({{ val.saldoAwal * -1 }})</span>
                     {%endif%}
                 </td>
                 <td align="right" class="text-right" style="vertical-align: top">{{ val.debit }}</td>
                 <td align="right" class="text-right" style="vertical-align: top">{{ val.kredit }}</td>
                 <td align="right" class="text-right" style="vertical-align: top">
                     {%if(val.saldoAkhir >= 0)%}
-                        <span>{{ val.saldoAkhir }}</span>
+                    <span>{{ val.saldoAkhir }}</span>
                     {%else%}
-                        <span>({{ val.saldoAkhir * -1 }})</span>
+                    <span>({{ val.saldoAkhir * -1 }})</span>
                     {%endif%}
                 </td>
             </tr>
@@ -70,30 +65,30 @@
                 </td>
                 <td align="right" class="text-right">
                     {%if(data.totalSaldoAwal >= 0)%}
-                        <b>{{ data.totalSaldoAwal }}</b>
+                    <b>{{ data.totalSaldoAwal }}</b>
                     {%else%}
-                        <b>({{ data.totalSaldoAwal * -1 }})</b>
+                    <b>({{ data.totalSaldoAwal * -1 }})</b>
                     {%endif%}
                 </td>
                 <td align="right" class="text-right">
                     {%if(data.totalDebit >= 0)%}
-                        <b>{{ data.totalDebit }}</b>
+                    <b>{{ data.totalDebit }}</b>
                     {%else%}
-                        <b>({{ data.totalDebit * -1 }})</b>
+                    <b>({{ data.totalDebit * -1 }})</b>
                     {%endif%}
                 </td>
                 <td align="right" class="text-right">
                     {%if(data.totalKredit >= 0)%}
-                        <b>{{ data.totalKredit }}</b>
+                    <b>{{ data.totalKredit }}</b>
                     {%else%}
-                        <b>({{ data.totalKredit * -1 }})</b>
+                    <b>({{ data.totalKredit * -1 }})</b>
                     {%endif%}
                 </td>
                 <td align="right" class="text-right">
                     {%if(data.totalSaldoAkhir >= 0)%}
-                        <b>{{ data.totalSaldoAkhir }}</b>
+                    <b>{{ data.totalSaldoAkhir }}</b>
                     {%else%}
-                        <b>({{ data.totalSaldoAkhir * -1 }})</b>
+                    <b>({{ data.totalSaldoAkhir * -1 }})</b>
                     {%endif%}
                 </td>
             </tr>

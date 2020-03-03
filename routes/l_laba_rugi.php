@@ -21,7 +21,7 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = "Semua";
     if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-        $data['lokasi'] = $params['m_lokasi_nama'];
+        $data['lokasi'] = $params['lokasi_nama'];
     }
     /*
      * panggil function saldo laba rugi, karena digunakan juga di laporan neraca

@@ -56,12 +56,9 @@
                     <div class="row header-laporan-wrapper">
                         <div class="col-md-12">
                             <center>
-                                <h2 class="header-laporan">LAPORAN ARUS KAS</h2>
-                                Lokasi : {{ data.lokasi}}
-                                <br/>
-                                Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
-                                <br/>
-                                Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
+                                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                                <h3 class="header-laporan">Arus Kas</h3>
+                                Periode {{ data.tanggal}}
                                 <br/>
                             </center>
                             <hr/>
@@ -90,7 +87,7 @@
                                 </tr>  
                                 <tr ng-repeat="vals in val.detail">
                                     <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
-                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
+                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo| number}}</td>
                                 </tr>
                                 <tr ng-repeat-end style="display: none;">
                                     <td></td>
@@ -105,7 +102,7 @@
                                 </tr>  
                                 <tr ng-repeat="vals in val.detail">
                                     <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
-                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
+                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo| number}}</td>
                                 </tr>
                                 <tr ng-repeat-end style="display: none;">
                                     <td></td>
@@ -120,7 +117,7 @@
                                 </tr>  
                                 <tr ng-repeat="vals in val.detail">
                                     <td align="left" style="vertical-align: top"><span style="margin-left:50px">{{ vals.nama}}</span></td>
-                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo | number}}</td>
+                                    <td align="right" class="text-right" style="vertical-align: top">{{vals.saldo| number}}</td>
                                 </tr>
                                 <tr ng-repeat-end style="display: none;">
                                     <td></td>

@@ -79,7 +79,7 @@ app.controller('l_neracaCtrl', function ($scope, Data, $rootScope, $uibModal, $s
 
 app.controller("settingNeracaCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope) {
 
-    $scope.listAkun = [];
+    $scope.listAkun = [{}];
 
     Data.get('acc/m_akun/getPengecualian').then(function (response) {
         $scope.listAkun = response.data.pengecualian_neraca;

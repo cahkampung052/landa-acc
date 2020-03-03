@@ -4,16 +4,10 @@
     <div align="left">
         <div class="row">
             <div class="col-md-12">
-                <br/>
                 <center>
-                    <h2 class="header-laporan">
-                        LAPORAN ARUS KAS
-                    </h2>
-                    Lokasi : {{data.lokasi}}
-                    <br>
-                    Periode : {{data.tanggal}}
-                    <br/>
-                    Disiapkan Tanggal : {{data.disiapkan}}
+                    <h2 class="header-laporan">{{data.lokasi}}</h2>
+                    <h3 class="header-laporan">Arus Kas</h3>
+                    Periode {{ data.tanggal}}
                     <br/>
                 </center>
                 <hr/>
@@ -25,20 +19,20 @@
 
             <div class="">
                 <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
-                        <tr class="non-body">
+                    <tr class="non-body">
 
-                            <th>
-                                <b>
-                                    AKUN
-                                </b>
-                            </th>
+                        <th>
+                            <b>
+                                AKUN
+                            </b>
+                        </th>
 
-                            <th width="100">
-                                <b>
-                                    Saldo Akhir
-                                </b>
-                            </th>
-                        </tr>
+                        <th width="100">
+                            <b>
+                                Saldo Akhir
+                            </b>
+                        </th>
+                    </tr>
 
                     <tbody>
                         <tr>
@@ -103,38 +97,38 @@
                         {%endfor%}
                     </tbody>
                     {%endfor%}
-                        <tr class="non-body">
-                            <td align="left">
-                                <b>Total Arus Kas</b>
-                            </td>
-                            <td align="right" class="text-right">
-                                <b>{{ data.total_saldo }}</b>
-                            </td>
-                        </tr>
-                        <tr class="non-body">
-                            <td align="left">
-                                <b>Saldo Awal</b>
-                            </td>
-                            <td align="right" class="text-right">
-                                <b>{{ data.saldo_awal }}</b>
-                            </td>
-                        </tr>
-                        <tr class="non-body">
-                            <td align="left">
-                                <b>Saldo Akhir</b>
-                            </td>
-                            <td align="right" class="text-right">
-                                <b>{{ data.saldo_akhir }}</b>
-                            </td>
-                        </tr>
-                        <tr class="non-body">
-                            <td align="left">
-                                <b>Penurunan / Kenaikan Kas</b>
-                            </td>
-                            <td align="right" class="text-right">
-                                <b>{{ data.saldo_akhir - data.saldo_awal }}</b>
-                            </td>
-                        </tr>
+                    <tr class="non-body">
+                        <td align="left">
+                            <b>Total Arus Kas</b>
+                        </td>
+                        <td align="right" class="text-right">
+                            <b>{{ data.total_saldo }}</b>
+                        </td>
+                    </tr>
+                    <tr class="non-body">
+                        <td align="left">
+                            <b>Saldo Awal</b>
+                        </td>
+                        <td align="right" class="text-right">
+                            <b>{{ data.saldo_awal }}</b>
+                        </td>
+                    </tr>
+                    <tr class="non-body">
+                        <td align="left">
+                            <b>Saldo Akhir</b>
+                        </td>
+                        <td align="right" class="text-right">
+                            <b>{{ data.saldo_akhir }}</b>
+                        </td>
+                    </tr>
+                    <tr class="non-body">
+                        <td align="left">
+                            <b>Penurunan / Kenaikan Kas</b>
+                        </td>
+                        <td align="right" class="text-right">
+                            <b>{{ data.saldo_akhir - data.saldo_awal }}</b>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </div>

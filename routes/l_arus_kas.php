@@ -10,7 +10,7 @@ $app->get('/acc/l_arus_kas/laporan', function ($request, $response) {
     $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
     $tanggal_start = $tanggal_awal->format("Y-m-d");
     $tanggal_end = $tanggal_akhir->format("Y-m-d");
-    $data['tanggal']    = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['tanggal']    = date("d M Y", strtotime($tanggal_start)) . ' s/d ' . date("d M Y", strtotime($tanggal_end));
     $data['disiapkan']  = date("d-m-Y, H:i");
     $data['lokasi']     = $params['nama_lokasi'];
     if (isset($params['m_lokasi_id'])) {

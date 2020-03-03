@@ -95,7 +95,8 @@ $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
         $val->nama_lengkap = $val->kode . ' - ' . $val->nama;
         $val->saldo = $saldoAwal;
         $val->saldo2 = $saldoAwal2;
-        $val->saldo_rp = $val->saldo; $val->saldo_rp2 = $val->saldo2;
+        $val->saldo_rp = $val->saldo;
+        $val->saldo_rp2 = $val->saldo2;
         if (($val->saldo < 0 || $val->saldo > 0) || ($val->saldo2 < 0 || $val->saldo2 > 0) || $val->is_tipe == 1) {
             if ($val->is_tipe == 1) {
                 $id = $val->id;
@@ -178,7 +179,8 @@ $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
         $val->saldo = $saldoAwal;
         $val->saldo2 = $saldoAwal2;
 
-        $val->saldo_rp = $val->saldo; $val->saldo_rp2 = $val->saldo2;
+        $val->saldo_rp = $val->saldo;
+        $val->saldo_rp2 = $val->saldo2;
         if (($val->saldo < 0 || $val->saldo > 0) || ($val->saldo2 < 0 || $val->saldo2 > 0) || $val->is_tipe == 1) {
             if ($val->is_tipe == 1) {
                 $id = $val->id;
@@ -263,7 +265,8 @@ $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
         $val->saldo = $saldoAwal;
         $val->saldo2 = $saldoAwal2;
 
-        $val->saldo_rp = $val->saldo; $val->saldo_rp2 = $val->saldo2;
+        $val->saldo_rp = $val->saldo;
+        $val->saldo_rp2 = $val->saldo2;
         if (($val->saldo < 0 || $val->saldo > 0) || ($val->saldo2 < 0 || $val->saldo2 > 0) || $val->is_tipe == 1) {
             if ($val->is_tipe == 1) {
                 $id = $val->id;
@@ -331,6 +334,7 @@ $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
             ],
             "tanggal" => date("d-m-Y", strtotime($tanggal)),
             "tanggal2" => date("d-m-Y", strtotime($tanggal2)),
+            "lokasi" => $params['lokasi_nama'],
             "disiapkan" => date("d-m-Y, H:i"),
             "is_detail" => $filter['is_detail'],
             "css" => modulUrl() . '/assets/css/style.css',
@@ -368,6 +372,7 @@ $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
             ],
             "tanggal" => date("d-m-Y", strtotime($tanggal)),
             "tanggal2" => date("d-m-Y", strtotime($tanggal2)),
+            "lokasi" => $params['lokasi_nama'],
             "disiapkan" => date("d-m-Y, H:i"),
             "is_detail" => $filter['is_detail'],
             "css" => modulUrl() . '/assets/css/style.css',
@@ -403,6 +408,7 @@ $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
             ],
             "tanggal" => date("d-m-Y", strtotime($tanggal)),
             "tanggal2" => date("d-m-Y", strtotime($tanggal2)),
+            "lokasi" => $params['lokasi_nama'],
             "disiapkan" => date("d-m-Y, H:i"),
         ]);
     }
