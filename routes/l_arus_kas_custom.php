@@ -65,6 +65,19 @@ $app->post('/acc/l_arus_kas_custom/saveSetting', function ($request, $response) 
 });
 
 $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
+
+    $subDomain = str_replace('api/', '', site_url());
+
+//    pd($subDomain);
+    $data['img'] = '';
+    if ($subDomain == "http://systems.larensi.com/" || $subDomain == "http://systems.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoLandaSystems.png';
+    } else if ($subDomain == "http://proptech.larensi.com/" || $subDomain == "http://proptech.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoRain.png';
+    } else if ($subDomain == "http://baca.larensi.com/" || $subDomain == "http://baca.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoWajibBaca2.png';
+    }
+
     $params = $request->getParams();
     $db = $this->db;
 
@@ -185,7 +198,7 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
         $akun_merge_kas[$index]['kredit'] = $value['total'];
         $index++;
     }
-    
+
 //    pd($akun_merge_kas);
 
     /*
@@ -295,6 +308,13 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     ksort($arr);
 
     foreach ($arr as $key => $value) {
+        if($key == 'Aktivitas Operasi'){
+            $arr[$key]['nama'] = 'AKTIVITAS OPERASI';
+        }else if($key == 'Investasi'){
+            $arr[$key]['nama'] = 'AKTIVITAS INVESTASI';
+        }else if($key == 'Pendanaan'){
+            $arr[$key]['nama'] = 'AKTIVITAS PENDANAAN';
+        }
         ksort($arr[$key]['detail']);
     }
 

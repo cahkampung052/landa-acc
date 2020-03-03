@@ -63,7 +63,7 @@
                             <br/>
                             <center>
                                 <h2 class="header-laporan">{{data.lokasi}}</h2>
-                                <h3 class="header-laporan">Jurnal Umum</h3>
+                                <h3 class="header-laporan">Laporan Jurnal Umum</h3>
                                 Periode {{ data.tanggal}}
                                 <br/>
                             </center>
@@ -80,11 +80,14 @@
                                     <th width="80" class="align-center">
                                         <b>REFF</b>
                                     </th>
-                                    <th width="300" class="align-center">
-                                        <b>AKUN</b>
-                                    </th>
                                     <th width="200" class="align-center">
                                         <b>LOKASI</b>
+                                    </th>
+                                    <th class="align-center">
+                                        <b>NO. AKUN</b>
+                                    </th>
+                                    <th width="300" class="align-center">
+                                        <b>AKUN</b>
                                     </th>
                                     <th class="align-center">
                                         <b>KETERANGAN</b>
@@ -101,11 +104,15 @@
                                 <tr ng-repeat="val in detail">
                                     <td align="center" class="text-center" style="vertical-align: top">{{ val.tanggal | date:'dd-MM-yyyy' }}</td>
                                     <td align="center" style="vertical-align: top">{{ val.kode}}</td>
-                                    <td style="vertical-align: top">
-                                        <span style="margin-left:25px" ng-if="val.debit == 0">{{ val.kodeAkun + " - " + val.namaAkun}}</span>
-                                        <span ng-if="val.debit != 0">{{ val.kodeAkun + " - " + val.namaAkun}}</span>
-                                    </td>
                                     <td align="left" style="vertical-align: top">{{ val.namaLokasi}}</td>
+                                    <td style="vertical-align: top">
+                                        <span ng-if="val.debit == 0">{{ val.kodeAkun}}</span>
+                                        <span ng-if="val.debit != 0">{{ val.kodeAkun}}</span>
+                                    </td>
+                                    <td style="vertical-align: top">
+                                        <span style="margin-left:25px" ng-if="val.debit == 0">{{ val.namaAkun}}</span>
+                                        <span ng-if="val.debit != 0">{{ val.namaAkun}}</span>
+                                    </td>
                                     <td>{{ val.keterangan}}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ val.debit| number }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ val.kredit| number }}</td>
@@ -113,7 +120,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td align="right" class="text-center" colspan="5">
+                                    <td align="right" class="text-center" colspan="6">
                                         <b>Total</b>
                                     </td>
                                     <td align="right" class="text-right">

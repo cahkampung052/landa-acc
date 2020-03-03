@@ -1,20 +1,21 @@
-<link href="{{ css}}" rel="stylesheet" type="text/css"/>
+<link href="{{ css}}?t=123" rel="stylesheet" type="text/css"/>
 <div class="card-body" id="print" ng-show="tampilkan">
     <div align="left">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 relative-div">
                 <center>
-                <h2 class="header-laporan">{{data.lokasi}}</h2>
-                <h3 class="header-laporan">Aktifitas</h3>
-                Periode {{ data.tanggal}}
-                <br/>
-            </center>
+                    <img src="{{data.img}}" class="absolute-div-center">
+                    <h2 class="header-laporan">{{data.lokasi}}</h2>
+                    <h3 class="header-laporan">Laporan Laba Rugi</h3>
+                    Periode {{ data.tanggal}}
+                    <br/>
+                </center>
             </div>
         </div>
         <br/>
         <div>
             <div class="table-responsive">
-                <table class="table table-striped table-hover table-laporan table-white" style="border-collapse: collapse; width: 100%">
+                <table class="table table-laporan-border-light" style="border-collapse: collapse; width: 100%">
                     <thead>
                         <tr style="background-color: #263444">
                             <th>
@@ -36,13 +37,13 @@
                         {%if data.is_detail == 0 and vals.is_tipe == 1%}
                         <tr style="background-color: #fff">
                             <td align="left" style="vertical-align: top">{{ vals.nama | raw }}</td>
-                            <td align="right" class="text-right" style="vertical-align: top">{{ vals.nominal | number_format }}</td>
+                            <td align="right" class="text-right" style="vertical-align: top">Rp{{ vals.nominal | number_format(0, ',', '.') }}</td>
                         </tr>
                         {%endif%}
                         {%if data.is_detail == 1%}
                         <tr style="background-color: #fff">
                             <td align="left" style="vertical-align: top">{{ vals.nama | raw }}</td>
-                            <td align="right" class="text-right" style="vertical-align: top">{{ vals.nominal | number_format }}</td>
+                            <td align="right" class="text-right" style="vertical-align: top">Rp{{ vals.nominal | number_format(0, ',', '.') }}</td>
                         </tr>
                         {%endif%}
                         {% endfor %}
@@ -51,7 +52,7 @@
                                 <b>TOTAL {{ key|replace({'_': ' '}) }}</b>
                             </td>
                             <td align="right" class="text-right" style="vertical-align: top">
-                                <b>{{ val.total | number_format }}</b>
+                                <b>Rp{{ val.total | number_format(0, ',', '.') }}</b>
                             </td>
                         </tr>
                         {%endfor%}
@@ -65,9 +66,9 @@
                             </td>
                             <td align="right" class="text-right">
                                 {%if totalsemua >= 0%}
-                                <b style="color: #327037">{{ totalsemua | number_format }}</b>
+                                <b style="color: #327037">Rp{{ totalsemua | number_format(0, ',', '.') }}</b>
                                 {%else%}
-                                <b style="color:red">{{ (totalsemua * -1) | number_format}}</b>
+                                <b style="color:red">Rp{{ (totalsemua * -1) | number_format(0, ',', '.')}}</b>
                                 {%endif%}
                             </td>
                         </tr>

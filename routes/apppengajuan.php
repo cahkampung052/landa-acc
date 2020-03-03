@@ -484,6 +484,8 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
  */
 $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response) {
     $data = $request->getParams();
+
+//    pd($data);
     $tableuser = tableUser();
     $db = $this->db;
     $db->select("acc_t_pengajuan_det.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")
@@ -505,6 +507,16 @@ $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response) {
     $template = str_replace("{end}", "{%endfor%}", $template);
     $template = str_replace("{start_acc}", "{%for key, val in acc%}", $template);
     $template = str_replace("<td></td>", "", $template);
+
+    $host = getConfig();
+    if ($host == 'config/landa.php') {
+        $template = str_replace('class="header"', 'style="text-align:center;background-color:#abffab"', $template);
+    } else if ($host == 'config/rain.php') {
+        $template = str_replace('class="header"', 'style="text-align:center;background-color:yellow"', $template);
+    } else if ($host == 'config/wb.php') {
+        $template = str_replace('class="header"', 'style="text-align:center;background-color:red"', $template);
+    }
+
     $view = twigViewPath();
     $content = $view->fetchFromString($template, [
         "data" => $data,

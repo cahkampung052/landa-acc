@@ -1,6 +1,18 @@
 <?php
 
 $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
+
+    $subDomain = str_replace('api/', '', site_url());
+    $data['img'] = '';
+    if ($subDomain == "http://systems.larensi.com/" || $subDomain == "http://systems.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoLandaSystems.png';
+    } else if ($subDomain == "http://proptech.larensi.com/" || $subDomain == "http://proptech.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoRain.png';
+    } else if ($subDomain == "http://baca.larensi.com/" || $subDomain == "http://baca.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoWajibBaca2.png';
+    }
+
+
     $params = $request->getParams();
     $sql = $this->db;
     $arr = [];
@@ -65,7 +77,7 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
         } else {
             $getakun = $sql->where("acc_m_akun.is_tipe", "=", 1)->findAll();
         }
-        
+
 //        pd($getakun);
         $index = 0;
         $arr = [];
@@ -75,10 +87,10 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                  * Ambil id akun turunan klasifikasi di parameter
                  */
                 $childId = getChildId("acc_m_akun", $vals->id);
-                
+
 //                $arr[] = $childId;
 //                return;
-                
+
                 if (!empty($childId)) {
                     $getchild = $sql->select("acc_m_akun.*, klasifikasi.nama as klasifikasi")
                             ->from("acc_m_akun")
@@ -88,13 +100,12 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                             ->andWhere("acc_m_akun.is_tipe", "=", 0)
                             ->orderBy("acc_m_akun.kode ASC")
                             ->findAll();
-                    
+
 //                    print_r($getchild);die;
                     foreach ($getchild as $key => $val) {
                         /**
                          * Ambil Saldo awal akun
                          */
-                        
                         $sql->select("SUM(debit) as debit, SUM(kredit) as kredit")
                                 ->from("acc_trans_detail");
                         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
@@ -144,7 +155,7 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                         $arr[$val->id]['total_debit'] = $total_debit;
                         $arr[$val->id]['total_kredit'] = $total_kredit;
                         $arr[$val->id]['total_saldo'] = $total_debit - $total_kredit;
-                        
+
                         $index += 1;
                     }
                 }
@@ -203,7 +214,7 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                 $arr[0]['total_saldo'] = $arr[0]['saldo_awal'] + $total_debit - $total_kredit;
             }
         }
-        
+
 //        pd($arr);
 
         if (isset($params['export']) && $params['export'] == 1) {

@@ -1,6 +1,11 @@
 <?php
 
 $app->get('/acc/l_neraca/laporan', function ($request, $response) {
+
+    $data['img'] = imgLaporan();
+    
+//    pd($data);
+
     $params = $request->getParams();
     $filter = $params;
     $db = $this->db;
@@ -272,6 +277,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
             "lokasi" => $params['lokasi_nama'],
+            "img" => imgLaporan(),
             "disiapkan" => date("d-m-Y, H:i"),
             "is_detail" => $filter['is_detail'],
             "css" => modulUrl() . '/assets/css/style.css',
@@ -304,6 +310,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
             "lokasi" => $params['lokasi_nama'],
+            "img" => imgLaporan(),
             "disiapkan" => date("d-m-Y, H:i"),
             "is_detail" => $filter['is_detail'],
             "css" => modulUrl() . '/assets/css/style.css',
@@ -334,6 +341,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
             "lokasi" => $params['lokasi_nama'],
+            "img" => imgLaporan(),
             "disiapkan" => date("d-m-Y, H:i")
         ]);
     }

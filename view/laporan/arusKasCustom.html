@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link href="{{ css }}?t=123" rel="stylesheet" type="text/css"/>
         <title>Arus Kas</title>
         <style type="text/css">
             th, td{
@@ -34,10 +35,12 @@
         <div class="card-body" id="print">
             <div align="left">
                 <div class="row header-laporan-wrapper">
-                    <div class="col-md-12">
+                    <div class="col-md-12 relative-div">
                         <center>
+                            <img src="{{data.img}}" class="absolute-div-center">
+
                             <h2 class="header-laporan">{{data.lokasi}}</h2>
-                            <h3 class="header-laporan">Arus Kas</h3>
+                            <h3 class="header-laporan">Laporan Arus Kas</h3>
                             Periode {{ data.tanggal}}
                             <br/>
                         </center>
@@ -47,75 +50,116 @@
                 <div class="table-responsive">
                     <table class="table table-hover table-laporan-striped" style="border-collapse: collapse; width: 100%">
                         <tbody>
-                            <tr>
+                            <tr style="background-color: #3798C4">
                                 <td><b>Saldo Kas Awal</b></td>
-                                <td align="right"><b>{{data.saldo_awal.total| number_format}}</b></td>
+                                <td align="right">
+                                    {%if data.saldo_awal.total >= 0%}
+                                    <b>Rp{{data.saldo_awal.total| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>-Rp{{(data.saldo_awal.total*-1)| number_format(0, ',', '.')}}</b>
+                                    {%endif%}
+                                </td>
                             </tr>
                             {%for v in data.saldo_awal.detail%}
                             <tr>
-                                <td>
+                                <td style="padding-left: 50px">
                                     {{v.nama}}
                                 </td>
                                 <td align="right">
-                                    {{not v.total ? '-' : v.total| number_format}}
+                                    {%if v.total >= 0%}
+                                    <span>Rp{{not v.total ? '-' : v.total| number_format(0, ',', '.')}}</span>
+                                    {%else%}
+                                    <span>-Rp{{not v.total ? '-' : (v.total*-1)| number_format(0, ',', '.')}}</span>
+                                    {%endif%}
                                 </td>
                             </tr>
                             {%endfor%}
                             {%for key, val in detail%}
                             <tr></tr>
-                            <tr>
-                                <td colspan="2"><b>{{key}}</b></td>
+                            <tr style="background-color: #3798C4">
+                                <td colspan="2"><b>{{val.nama}}</b></td>
                             </tr>
                             {%for k, v in val.detail%}
-                            <tr>
+                            <tr style="background-color: #abd8e6">
                                 <td colspan="2">
                                     <b>{{k}}</b>
                                 </td>
                             </tr>
                             {%for y in v.detail%}
                             <tr>
-                                <td>
+                                <td style="padding-left: 50px;">
                                     {{y.akun.nama}}
                                 </td>
                                 <td align="right">
-                                    {{y.total| number_format}}
+                                    {%if y.total >= 0%}
+                                    <span>Rp{{y.total| number_format(0, ',', '.')}}</span>
+                                    {%else%}
+                                    <span>-Rp{{(y.total*-1)| number_format(0, ',', '.')}}</span>
+                                    {%endif%}
                                 </td>
                             </tr>
                             {%endfor%}
-                            <tr>
+                            <tr style="background-color: #dcebf7">
                                 <td>
                                     <b>TOTAL</b>
                                 </td>
-                                <td align="right"><b>{{v.total| number_format}}</b></td>
+                                <td align="right">
+                                    {%if v.total >= 0%}
+                                    <b>Rp{{v.total| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>-Rp{{(v.total*-1)| number_format(0, ',', '.')}}</b>
+                                    {%endif%}
+                                </td>
                             </tr>
+                            <!--<tr><td colspan="2"><br/></td></tr>-->
                             {%endfor%}
-                            <tr>
+                            <tr style="background-color: #3798C4">
                                 <td>
                                     <b>Kenaikan (Penurunan) Kas dari {{key}}</b>
                                 </td>
-                                <td align="right"><b>{{val.total| number_format}}</b></td>
+                                <td align="right">
+                                    {%if val.total >= 0%}
+                                    <b>Rp{{val.total| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>-Rp{{(val.total*-1)| number_format(0, ',', '.')}}</b>
+                                    {%endif%}
+                                </td>
                             </tr>
                             <tr><td colspan="2"><br/></td></tr>
                             {%endfor%}
-                            <tr>
+                            <tr style="background-color: #3798C4">
                                 <td>
                                     <b>{{'KENAIKAN (PENURUNAN) KAS'}}</b>
                                 </td>
                                 <td align="right">
-                                    <b>{{data.saldo_biaya| number_format}}</b>
+                                    {%if data.saldo_biaya >= 0%}
+                                    <b>Rp{{data.saldo_biaya| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>-Rp{{(data.saldo_biaya*-1)| number_format(0, ',', '.')}}</b>
+                                    {%endif%}
                                 </td>
                             </tr>
-                            <tr>
+                            <tr style="background-color: #3798C4">
                                 <td><b>Saldo Kas Akhir</b></td>
-                                <td align="right"><b>{{data.saldo_akhir.total| number_format}}</b></td>
+                                <td align="right">
+                                    {%if data.saldo_akhir.total >= 0%}
+                                    <b>Rp{{data.saldo_akhir.total| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>-Rp{{(data.saldo_akhir.total*-1)| number_format(0, ',', '.')}}</b>
+                                    {%endif%}
+                                </td>
                             </tr>
                             {%for v in data.saldo_akhir.detail%}
                             <tr>
-                                <td>
+                                <td style="padding-left: 50px">
                                     {{v.nama}}
                                 </td>
                                 <td align="right">
-                                    {{not v.total ? '-' : v.total| number_format}}
+                                    {%if v.total >= 0%}
+                                    <span>Rp{{not v.total ? '-' : v.total| number_format(0, ',', '.')}}</span>
+                                    {%else%}
+                                    <span>-Rp{{not v.total ? '-' : (v.total*-1)| number_format(0, ',', '.')}}</span>
+                                    {%endif%}
                                 </td>
                             </tr>
                             {%endfor%}

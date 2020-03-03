@@ -61,7 +61,7 @@
                         <div class="col-md-12">
                             <center>
                                 <h2 class="header-laporan">{{data.lokasi}}</h2>
-                                <h3 class="header-laporan">Arus Kas</h3>
+                                <h3 class="header-laporan">Laporan Arus Kas</h3>
                                 Periode {{ data.tanggal}}
                                 <br/>
                             </center>
@@ -85,7 +85,7 @@
                                 </tr>
                                 <tr ng-repeat-start="(key, val) in detail"></tr>
                                 <tr>
-                                    <td colspan="2"><b>{{key}}</b></td>
+                                    <td colspan="2"><b>{{val.nama}}</b></td>
                                 </tr>
                                 <tr ng-repeat-start="(k, v) in val.detail"></tr>
                                 <tr>

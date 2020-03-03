@@ -1,6 +1,17 @@
 <?php
 
 $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
+
+    $subDomain = str_replace('api/', '', site_url());
+    $data['img'] = '';
+    if ($subDomain == "http://systems.larensi.com/" || $subDomain == "http://systems.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoLandaSystems.png';
+    } else if ($subDomain == "http://proptech.larensi.com/" || $subDomain == "http://proptech.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoRain.png';
+    } else if ($subDomain == "http://baca.larensi.com/" || $subDomain == "http://baca.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoWajibBaca2.png';
+    }
+
     $params = $request->getParams();
     $tanggal_start = $params['startDate'];
     $tanggal_end = $params['endDate'];
