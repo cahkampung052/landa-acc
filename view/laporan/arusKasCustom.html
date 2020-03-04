@@ -6,7 +6,7 @@
         <style type="text/css">
             th, td{
                 padding:5px;
-                color:black;
+                /*color:black;*/
                 /*border: 1px solid #2f2f2f;*/
                 border-width: thin;
                 vertical-align: middle;
@@ -41,16 +41,16 @@
 
                             <h2 class="header-laporan">{{data.lokasi}}</h2>
                             <h3 class="header-laporan">Laporan Arus Kas</h3>
-                            Periode {{ data.tanggal}}
-                            <br/>
+                            <p style="margin-top:3px">Periode {{data.tanggal}}</p>
+                            <!--<br/>-->
                         </center>
-                        <hr/>
+                        <!--<hr/>-->
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover table-laporan-striped" style="border-collapse: collapse; width: 100%">
                         <tbody>
-                            <tr style="background-color: #3798C4">
+                            <tr style="background-color: #263444; color: white!important;">
                                 <td><b>Saldo Kas Awal</b></td>
                                 <td align="right">
                                     {%if data.saldo_awal.total >= 0%}
@@ -61,26 +61,38 @@
                                 </td>
                             </tr>
                             {%for v in data.saldo_awal.detail%}
+                            {%if v.total != 0%}
                             <tr>
                                 <td style="padding-left: 30px">
-                                    {{v.nama}}
+                                    {{v.kode}} - {{v.nama}}
                                 </td>
                                 <td align="right">
-                                    {%if v.total >= 0%}
+                                    {%if v.total and v.total >= 0%}
                                     <span>Rp{{not v.total ? '-' : v.total| number_format(0, ',', '.')}}</span>
                                     {%else%}
                                     <span>(Rp{{not v.total ? '-' : (v.total*-1)| number_format(0, ',', '.')}})</span>
                                     {%endif%}
                                 </td>
                             </tr>
+                            {%endif%}
                             {%endfor%}
+                        </tbody>
+                    </table>
+                    <!--<br/>-->
+                    <table class="table table-hover table-laporan-striped" style="border-collapse: collapse; width: 100%">
+                        <thead>
+                            <tr style="line-height: 20px; border: none">
+                                <td colspan="2" style="border: none; color: white">ENTER</td>
+                            </tr>
+                        </thead>
+                        <tbody>
                             {%for key, val in detail%}
                             <tr></tr>
-                            <tr style="background-color: #3798C4">
+                            <tr style="background-color: #263444; color: white!important;">
                                 <td colspan="2"><b>{{val.nama}}</b></td>
                             </tr>
                             {%for k, v in val.detail%}
-                            <tr style="background-color: #abd8e6">
+                            <tr style="background-color: #26344470">
                                 <td colspan="2">
                                     <b>{{k}}</b>
                                 </td>
@@ -88,18 +100,18 @@
                             {%for y in v.detail%}
                             <tr>
                                 <td style="padding-left: 30px;">
-                                    {{y.akun.nama}}
+                                    {{y.akun.kode}} - {{y.akun.nama}}
                                 </td>
                                 <td align="right">
                                     {%if y.total >= 0%}
                                     <span>Rp{{y.total| number_format(0, ',', '.')}}</span>
                                     {%else%}
-                                    <span>(Rp{{(y.total*-1)| number_format(0, ',', '.')}})</span>
+                                    <span>Rp{{(y.total*-1)| number_format(0, ',', '.')}}</span>
                                     {%endif%}
                                 </td>
                             </tr>
                             {%endfor%}
-                            <tr style="background-color: #dcebf7">
+                            <tr style="background-color: #26344440">
                                 <td>
                                     <b>TOTAL</b>
                                 </td>
@@ -107,13 +119,13 @@
                                     {%if v.total >= 0%}
                                     <b>Rp{{v.total| number_format(0, ',', '.')}}</b>
                                     {%else%}
-                                    <b>(Rp{{(v.total*-1)| number_format(0, ',', '.')}})</b>
+                                    <b>Rp{{(v.total*-1)| number_format(0, ',', '.')}}</b>
                                     {%endif%}
                                 </td>
                             </tr>
                             <!--<tr><td colspan="2"><br/></td></tr>-->
                             {%endfor%}
-                            <tr style="background-color: #3798C4">
+                            <tr style="background-color: #263444; color: white!important;">
                                 <td>
                                     {%if val.total >= 0%}
                                     <b>Kenaikan Kas dari {{key}}</b>
@@ -129,9 +141,19 @@
                                     {%endif%}
                                 </td>
                             </tr>
-                            <tr><td colspan="2"><br/></td></tr>
+                            <!--<tr><td colspan="2"><br/></td></tr>-->
                             {%endfor%}
-                            <tr style="background-color: #3798C4">
+                        </tbody>
+                    </table>
+                    <!--<br/>-->
+                    <table class="table table-hover table-laporan-striped" style="border-collapse: collapse; width: 100%">
+                        <thead>
+                            <tr style="line-height: 20px; border: none">
+                                <td colspan="2" style="border: none; color: white">ENTER</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background-color: #263444; color: white!important;">
                                 <td>
                                     {%if data.saldo_biaya >= 0%}
                                     <b>{{'KENAIKAN KAS'}}</b>
@@ -147,7 +169,7 @@
                                     {%endif%}
                                 </td>
                             </tr>
-                            <tr style="background-color: #3798C4">
+                            <tr style="background-color: #263444; color: white!important;">
                                 <td><b>Saldo Kas Akhir</b></td>
                                 <td align="right">
                                     {%if data.saldo_akhir.total >= 0%}
@@ -158,18 +180,20 @@
                                 </td>
                             </tr>
                             {%for v in data.saldo_akhir.detail%}
+                            {%if v.total != 0%}
                             <tr>
                                 <td style="padding-left: 30px">
-                                    {{v.nama}}
+                                    {{v.kode}} - {{v.nama}}
                                 </td>
                                 <td align="right">
-                                    {%if v.total >= 0%}
+                                    {%if v.total and v.total >= 0%}
                                     <span>Rp{{not v.total ? '-' : v.total| number_format(0, ',', '.')}}</span>
                                     {%else%}
                                     <span>(Rp{{not v.total ? '-' : (v.total*-1)| number_format(0, ',', '.')}})</span>
                                     {%endif%}
                                 </td>
                             </tr>
+                            {%endif%}
                             {%endfor%}
                         </tbody>
                     </table>

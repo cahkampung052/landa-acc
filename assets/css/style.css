@@ -5,7 +5,7 @@ td, th {
 }
 .header-laporan {
     margin: 0px;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
     font-size: 15px;
     font-weight: bold;
 }
@@ -48,6 +48,11 @@ td, th {
     background-color: #263444;
     color: white;
 }
+
+.table-laporan-border{
+    width: 100%;
+}
+
 .table-laporan-border tr {
     background-color: #ffffff;
     border-bottom: none;
@@ -195,7 +200,7 @@ tr.padding0 > td {
 }
 
 /*internal*/
-.relative-div {
+.relative-div center {
     position: relative;
     line-height: 10px;
 }

@@ -1,4 +1,4 @@
-<link href="{{ css }}?t=123" rel="stylesheet" type="text/css"/>
+<link href="{{ css }}?t=521" rel="stylesheet" type="text/css"/>
 <div class="card-body" id="print" >
 
     <div align="left">
@@ -8,18 +8,18 @@
                     <img src="{{data.img}}" class="absolute-div-center">
                     <h2 class="header-laporan">{{data.lokasi}}</h2>
                     <h3 class="header-laporan">Laporan Jurnal Umum</h3>
-                    Periode {{ data.tanggal}}
-                    <br/>
+                    <p style="margin-top:3px">Periode {{data.tanggal}}</p>
+                    <!--<br/>-->
                 </center>
-                <hr/>
+                <!--<hr/>-->
             </div>
 
         </div>
-        <br/>
+        <!--<br/>-->
         <div>
 
             <div class="table-responsive">
-                <table class="table table-laporan-border-light" style="border-collapse: collapse;">
+                <table class="table table-laporan-border" style="border-collapse: collapse;">
                     <thead>
                         <tr> 
                             <th width="80">
@@ -103,7 +103,7 @@
                         {%endfor%}
                     </tbody>
                     <!--<tfoot>-->
-                    <tr class="non-body-light">
+                    <tr class="non-body">
                         <td align="right" class="text-center" colspan="6">
                             <b>
                                 Total

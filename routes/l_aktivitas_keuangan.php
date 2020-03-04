@@ -1,6 +1,9 @@
 <?php
 
 $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
+
+    $data['img'] = imgLaporan();
+
     $params = $request->getParams();
     $filter = $params;
     $db = $this->db;
@@ -332,9 +335,10 @@ $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
                 "total" => $totalKewajibanModal,
                 "total2" => $totalKewajibanModal2,
             ],
-            "tanggal" => date("d-m-Y", strtotime($tanggal)),
-            "tanggal2" => date("d-m-Y", strtotime($tanggal2)),
+            "tanggal" => date("d M Y", strtotime($tanggal)),
+            "tanggal2" => date("d M Y", strtotime($tanggal2)),
             "lokasi" => $params['lokasi_nama'],
+            "img" => imgLaporan(),
             "disiapkan" => date("d-m-Y, H:i"),
             "is_detail" => $filter['is_detail'],
             "css" => modulUrl() . '/assets/css/style.css',
@@ -370,9 +374,10 @@ $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
                 "total" => $totalKewajibanModal,
                 "total2" => $totalKewajibanModal2,
             ],
-            "tanggal" => date("d-m-Y", strtotime($tanggal)),
-            "tanggal2" => date("d-m-Y", strtotime($tanggal2)),
+            "tanggal" => date("d M Y", strtotime($tanggal)),
+            "tanggal2" => date("d M Y", strtotime($tanggal2)),
             "lokasi" => $params['lokasi_nama'],
+            "img" => imgLaporan(),
             "disiapkan" => date("d-m-Y, H:i"),
             "is_detail" => $filter['is_detail'],
             "css" => modulUrl() . '/assets/css/style.css',
@@ -406,8 +411,9 @@ $app->get('/acc/l_aktivitas_keuangan/laporan', function ($request, $response) {
                 "total" => $totalKewajibanModal,
                 "total2" => $totalKewajibanModal2,
             ],
-            "tanggal" => date("d-m-Y", strtotime($tanggal)),
-            "tanggal2" => date("d-m-Y", strtotime($tanggal2)),
+            "tanggal" => date("d M Y", strtotime($tanggal)),
+            "tanggal2" => date("d M Y", strtotime($tanggal2)),
+            "img" => imgLaporan(),
             "lokasi" => $params['lokasi_nama'],
             "disiapkan" => date("d-m-Y, H:i"),
         ]);

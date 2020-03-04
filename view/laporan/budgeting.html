@@ -6,10 +6,10 @@
                 <img src="{{data.img}}" class="absolute-div-center">
                 <h2 class="header-laporan">{{data.lokasi}}</h2>
                 <h3 class="header-laporan">Laporan Budgeting</h3>
-                Periode {{ data.tanggal}}
-                <br/>
+                <p style="margin-top:3px">Periode {{data.tanggal}}</p>
+                <!--<br/>-->
             </center>
-            <hr/>
+            <!--<hr/>-->
         </div>
     </div>
     <div>
@@ -20,9 +20,9 @@
          <div class="col-md-6" style="width: 48%; float: right; margin: 10px">
         {%endif%}
         
-            <table class="table table-laporan-border-light" style="border-collapse: collapse; width: 100%">
+            <table class="table table-laporan-border" style="border-collapse: collapse; width: 100%">
                 <tbody>
-                    <tr class="non-body-light">
+                    <tr class="non-body">
                         <td colspan="3">
                             <b>Nama Akun : </b> {{row.kode}} - {{row.nama}}
                         </td>

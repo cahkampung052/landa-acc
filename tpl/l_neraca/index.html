@@ -73,14 +73,15 @@
             </div>
             <div class="card-body">
                 <div class="row header-laporan-wrapper">
-                    <div class="col-md-12">
+                    <div class="col-md-12 relative-div">
                         <center>
+                            <img src="{{data.img}}" class="absolute-div-center">
                             <h2 class="header-laporan">{{data.lokasi}}</h2>
                             <h3 class="header-laporan">Laporan Posisi Keuangan</h3>
-                            Periode {{ data.tanggal}}
-                            <br/>
+                            <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
+                            <!--<br/>-->
                         </center>
-                        <hr/>
+                        <!--<hr/>-->
                     </div>
                 </div>
                 <div class="table-responsive">

@@ -1,4 +1,4 @@
-<link href="{{ css}}?t=123" rel="stylesheet" type="text/css"/>
+<link href="{{ css}}?t=51" rel="stylesheet" type="text/css"/>
 <div class="card-body">
     <div class="row header-laporan-wrapper">
         <div class="col-md-12 relative-div">
@@ -6,16 +6,17 @@
                 <img src="{{img}}" class="absolute-div-center">
                 <h2 class="header-laporan">{{lokasi}}</h2>
                 <h3 class="header-laporan">Laporan Posisi Keuangan</h3>
-                Periode {{ tanggal}}
-                <br/>
+                <p style="margin-top:3px">Periode {{tanggal}}</p>
+                <!--<br/>-->
             </center>
-            <hr/>
+            <!--<hr/>-->
         </div>
-    </div><br/>
+    </div>
+    <!--<br/>-->
     <div class="table-responsive">
-        <table class="table table-laporan-border-light table-white" style="border-collapse: collapse;width:100%">
+        <table class="table table-laporan-border table-white" style="border-collapse: collapse;width:100%">
             <tbody>
-                <tr class="non-body-light">
+                <tr class="non-body">
                     <th colspan="2" align="left">
                         <span class="text-blue-neraca">Harta</span>
                     </th>
@@ -58,7 +59,7 @@
             </tbody>
             {% endfor %}
             <tbody>
-                <tr class="non-body-light">
+                <tr class="non-body">
                     <th align="left">
                         <span class="text-black-neraca">Total Harta</span>
                     </th>
@@ -68,7 +69,7 @@
                 </tr>
             </tbody>
             <tbody>
-                <tr class="non-body-light">
+                <tr class="non-body">
                     <th colspan="2" align="left">
                         <span class="text-blue-neraca">Kewajiban</span>
                     </th>
@@ -110,7 +111,7 @@
             </tbody>
             {% endfor %}
             <tbody>
-                <tr class="non-body-light">
+                <tr class="non-body">
                     <th align="left">
                         <span class="text-blue-neraca">Total Kewajiban</span>
                     </th>
@@ -120,7 +121,7 @@
                 </tr>
             </tbody>
             <tbody>
-                <tr class="non-body-light">
+                <tr class="non-body">
                     <th colspan="2" align="left">
                         <span class="text-blue-neraca">Modal</span>
                     </th>
@@ -162,7 +163,7 @@
             </tbody>
             {% endfor %}
             <tbody>
-                <tr class="non-body-light">
+                <tr class="non-body">
                     <th align="left">
                         <span class="text-blue-neraca">Total Modal</span>
                     </th>
@@ -172,7 +173,7 @@
                 </tr>
             </tbody>
             <tbody>
-                <tr class="non-body-light">
+                <tr class="non-body">
                     <th align="left">
                         <span class="text-black-neraca">Total Kewajiban dan Modal</span>
                     </th>

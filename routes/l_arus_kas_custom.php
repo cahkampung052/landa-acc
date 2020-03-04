@@ -131,20 +131,20 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     $akun_merge_fix = [];
 
     foreach ($penerimaan['data']['total_akun']['kredit'] as $key => $value) {
-        if (isset($akun_merge_fix[$value['akun']['id']])) {
-            $akun_merge_fix[$value['akun']['id']]['total'] += $value['total'];
+        if (isset($akun_merge_fix[$value['akun']['kode']])) {
+            $akun_merge_fix[$value['akun']['kode']]['total'] += $value['total'];
         } else {
-            $akun_merge_fix[$value['akun']['id']] = $value;
+            $akun_merge_fix[$value['akun']['kode']] = $value;
         }
     }
 //    pd($akun_merge_fix);
 
     foreach ($pengeluaran['data']['total_akun']['debit'] as $key => $value) {
-        if (isset($akun_merge_fix[$value['akun']['id']])) {
-            $akun_merge_fix[$value['akun']['id']]['total'] -= $value['total'];
+        if (isset($akun_merge_fix[$value['akun']['kode']])) {
+            $akun_merge_fix[$value['akun']['kode']]['total'] -= $value['total'];
         } else {
-            $akun_merge_fix[$value['akun']['id']] = $value;
-            $akun_merge_fix[$value['akun']['id']]['total'] = ($value['total'] * -1);
+            $akun_merge_fix[$value['akun']['kode']] = $value;
+            $akun_merge_fix[$value['akun']['kode']]['total'] = ($value['total'] * -1);
         }
     }
 
@@ -158,11 +158,11 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
         $tipe = $value['total'] < 0 ? 'PENGELUARAN' : 'PENERIMAAN';
 //        $value['total'] = $value['akun']['saldo_normal'] == 1 ? ($value['total'] * -1) : $value['total'];
 
-        if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['id']])) {
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['id']]['total'] += $value['total'];
+        if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']])) {
+            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'] += $value['total'];
         } else {
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['id']]['total'] = $value['total'];
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['id']]['akun'] = $value['akun'];
+            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'] = $value['total'];
+            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['akun'] = $value['akun'];
         }
 
         if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'])) {
@@ -188,12 +188,14 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     $index = 0;
     foreach ($penerimaan['data']['total_akun']['debit'] as $key => $value) {
         $akun_merge_kas[$index]['m_akun_id'] = $value['akun']['id'];
+        $akun_merge_kas[$index]['kodeAkun'] = $value['akun']['kode'];
         $akun_merge_kas[$index]['debit'] = $value['total'];
         $akun_merge_kas[$index]['kredit'] = 0;
         $index++;
     }
     foreach ($pengeluaran['data']['total_akun']['kredit'] as $key => $value) {
         $akun_merge_kas[$index]['m_akun_id'] = $value['akun']['id'];
+        $akun_merge_kas[$index]['kodeAkun'] = $value['akun']['kode'];
         $akun_merge_kas[$index]['debit'] = 0;
         $akun_merge_kas[$index]['kredit'] = $value['total'];
         $index++;
@@ -210,9 +212,9 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     $arrPeriode = [];
     $arrAkhir = [];
     foreach ($akun_kas as $key => $value) {
-        $arrAwal['detail'][$value->id] = (array) $value;
-        $arrPeriode['detail'][$value->id] = (array) $value;
-        $arrAkhir['detail'][$value->id] = (array) $value;
+        $arrAwal['detail'][$value->kode] = (array) $value;
+        $arrPeriode['detail'][$value->kode] = (array) $value;
+        $arrAkhir['detail'][$value->kode] = (array) $value;
         $arrAkun[] = $value->id;
     }
 
@@ -221,7 +223,8 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 
     $arrAkun = implode(", ", $arrAkun);
 
-    $db->select("SUM(debit) as debit, SUM(kredit) as kredit, m_akun_id")->from("acc_trans_detail")
+    $db->select("SUM(debit) as debit, SUM(kredit) as kredit, m_akun_id, acc_m_akun.kode as kodeAkun")->from("acc_trans_detail")
+            ->join("left join", "acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
             ->customWhere("m_akun_id IN($arrAkun)", "AND")
             ->where("date(tanggal)", "<", $tanggal_start);
 
@@ -232,7 +235,8 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 
 //    pd($saldo_awal);
 
-    $db->select("SUM(debit) as debit, SUM(kredit) as kredit, m_akun_id")->from("acc_trans_detail")
+    $db->select("SUM(debit) as debit, SUM(kredit) as kredit, m_akun_id, acc_m_akun.kode as kodeAkun")->from("acc_trans_detail")
+            ->join("left join", "acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
             ->customWhere("m_akun_id IN($arrAkun)", "AND")
             ->where("date(tanggal)", "<=", $tanggal_end);
 
@@ -245,56 +249,58 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 //    pd($saldo_awal);
 
     foreach ($saldo_awal as $key => $value) {
-        if (isset($arrAwal['detail'][$value->m_akun_id]['debit'])) {
-            $arrAwal['detail'][$value->m_akun_id]['debit'] += $value->debit;
-            $arrAwal['detail'][$value->m_akun_id]['kredit'] += $value->kredit;
-            $arrAwal['detail'][$value->m_akun_id]['total'] += $value->debit - $value->kredit;
+        if (isset($arrAwal['detail'][$value->kodeAkun]['debit'])) {
+            $arrAwal['detail'][$value->kodeAkun]['debit'] += $value->debit;
+            $arrAwal['detail'][$value->kodeAkun]['kredit'] += $value->kredit;
+            $arrAwal['detail'][$value->kodeAkun]['total'] += $value->debit - $value->kredit;
         } else {
-            $arrAwal['detail'][$value->m_akun_id]['debit'] = $value->debit;
-            $arrAwal['detail'][$value->m_akun_id]['kredit'] = $value->kredit;
-            $arrAwal['detail'][$value->m_akun_id]['total'] = $value->debit - $value->kredit;
+            $arrAwal['detail'][$value->kodeAkun]['debit'] = $value->debit;
+            $arrAwal['detail'][$value->kodeAkun]['kredit'] = $value->kredit;
+            $arrAwal['detail'][$value->kodeAkun]['total'] = $value->debit - $value->kredit;
         }
 
         if (isset($arrAwal['total'])) {
             $arrAwal['total'] += $value->debit - $value->kredit;
         } else {
-            $arrAwal['total'] = $value->debit - $value->kredit;
+            $arrAwal['total'] = !empty($value->debit) ? $value->debit - $value->kredit : 0;
         }
     }
 
+//    pd($akun_merge_kas);
+
     foreach ($akun_merge_kas as $key => $value) {
-        if (isset($arrPeriode['detail'][$value['m_akun_id']]['debit'])) {
-            $arrPeriode['detail'][$value['m_akun_id']]['debit'] += $value['debit'];
-            $arrPeriode['detail'][$value['m_akun_id']]['kredit'] += $value['kredit'];
-            $arrPeriode['detail'][$value['m_akun_id']]['total'] += $value['debit'] - $value['kredit'];
+        if (isset($arrPeriode['detail'][$value['kodeAkun']]['debit'])) {
+            $arrPeriode['detail'][$value['kodeAkun']]['debit'] += $value['debit'];
+            $arrPeriode['detail'][$value['kodeAkun']]['kredit'] += $value['kredit'];
+            $arrPeriode['detail'][$value['kodeAkun']]['total'] += $value['debit'] - $value['kredit'];
         } else {
-            $arrPeriode['detail'][$value['m_akun_id']]['debit'] = $value['debit'];
-            $arrPeriode['detail'][$value['m_akun_id']]['kredit'] = $value['kredit'];
-            $arrPeriode['detail'][$value['m_akun_id']]['total'] = $value['debit'] - $value['kredit'];
+            $arrPeriode['detail'][$value['kodeAkun']]['debit'] = $value['debit'];
+            $arrPeriode['detail'][$value['kodeAkun']]['kredit'] = $value['kredit'];
+            $arrPeriode['detail'][$value['kodeAkun']]['total'] = $value['debit'] - $value['kredit'];
         }
 
         if (isset($arrPeriode['total'])) {
             $arrPeriode['total'] += $value['debit'] - $value['kredit'];
         } else {
-            $arrPeriode['total'] = $value['debit'] - $value['kredit'];
+            $arrPeriode['total'] = !empty($value['debit']) ? $value['debit'] - $value['kredit'] : 0;
         }
     }
 
     foreach ($saldo_akhir as $key => $value) {
-        if (isset($arrAkhir['detail'][$value->m_akun_id]['debit'])) {
-            $arrAkhir['detail'][$value->m_akun_id]['debit'] += $value->debit;
-            $arrAkhir['detail'][$value->m_akun_id]['kredit'] += $value->kredit;
-            $arrAkhir['detail'][$value->m_akun_id]['total'] += $value->debit - $value->kredit;
+        if (isset($arrAkhir['detail'][$value->kodeAkun]['debit'])) {
+            $arrAkhir['detail'][$value->kodeAkun]['debit'] += $value->debit;
+            $arrAkhir['detail'][$value->kodeAkun]['kredit'] += $value->kredit;
+            $arrAkhir['detail'][$value->kodeAkun]['total'] += $value->debit - $value->kredit;
         } else {
-            $arrAkhir['detail'][$value->m_akun_id]['debit'] = $value->debit;
-            $arrAkhir['detail'][$value->m_akun_id]['kredit'] = $value->kredit;
-            $arrAkhir['detail'][$value->m_akun_id]['total'] = $value->debit - $value->kredit;
+            $arrAkhir['detail'][$value->kodeAkun]['debit'] = $value->debit;
+            $arrAkhir['detail'][$value->kodeAkun]['kredit'] = $value->kredit;
+            $arrAkhir['detail'][$value->kodeAkun]['total'] = $value->debit - $value->kredit;
         }
 
         if (isset($arrAkhir['total'])) {
             $arrAkhir['total'] += $value->debit - $value->kredit;
         } else {
-            $arrAkhir['total'] = $value->debit - $value->kredit;
+            $arrAkhir['total'] = !empty($value->debit) ? $value->debit - $value->kredit : 0;
         }
     }
 
@@ -306,16 +312,24 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 //    pd($arr);
 
     ksort($arr);
+    ksort($arrAwal['detail']);
+    ksort($arrAkhir['detail']);
+    ksort($arrPeriode['detail']);
 
     foreach ($arr as $key => $value) {
-        if($key == 'Aktivitas Operasi'){
+        if ($key == 'Aktivitas Operasi') {
             $arr[$key]['nama'] = 'AKTIVITAS OPERASI';
-        }else if($key == 'Investasi'){
+        } else if ($key == 'Investasi') {
             $arr[$key]['nama'] = 'AKTIVITAS INVESTASI';
-        }else if($key == 'Pendanaan'){
+        } else if ($key == 'Pendanaan') {
             $arr[$key]['nama'] = 'AKTIVITAS PENDANAAN';
         }
         ksort($arr[$key]['detail']);
+        foreach ($value['detail'] as $keys => $values) {
+//            foreach ($values['detail'] as $k => $v) {
+            ksort($arr[$key]['detail'][$keys]['detail']);
+//            }
+        }
     }
 
     if (isset($params['export']) && $params['export'] == 1) {
