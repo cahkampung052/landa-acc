@@ -1,11 +1,12 @@
-<link href="{{ css}}" rel="stylesheet" type="text/css"/>
+<link href="{{ css}}?t=4124" rel="stylesheet" type="text/css"/>
 <div class="card-body" id="print">
     <div align="left">
         <div class="row header-laporan-wrapper">
-            <div class="col-md-12">
+            <div class="col-md-12 relative-div">
                 <center>
+                    <img src="{{data.img}}" class="absolute-div-center">
                     <h2 class="header-laporan">{{data.lokasi}}</h2>
-                    <h3 class="header-laporan">Laporan Jurnal {{data.tipe}} Kas</h3>
+                    <h3 class="header-laporan">Jurnal {{data.tipe}} Kas</h3>
                     Periode {{ data.tanggal}}
                     <br/>
                 </center>
@@ -13,7 +14,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-responside table-striped table-hover table-print table-laporan" style="border-collapse: collapse;">
+            <table class="table table-print table-laporan-border-light" style="border-collapse: collapse;">
                 <thead style="text-align: center">
                     <tr>
                         <th rowspan="2">
@@ -58,21 +59,39 @@
                     {%for vals in val%}
                     {%for y, z in vals.detail%}
                     {%for k, v in z[data.repeat_akun]%}
+                    {%if data.repeat_akun == 'debit'%}
                     <tr>
-                        {%if y == 0 and k == 0%}
-                        <td rowspan="{{vals.rowspan}}">{{vals.tanggal}}</td>
-                        <td rowspan="{{vals.rowspan}}">{{vals.kode}}</td>
-                        <td rowspan="{{vals.rowspan}}">{{vals.keterangan}}</td>
-                        {%endif%}
-                        {%if k == 0%}
-                        <td rowspan="{{z.debit[k].rowspan}}" >{{z.debit[k].akun.kode}}</td>
-                        <td rowspan="{{z.debit[k].rowspan}}" >{{z.debit[k].akun.nama}}</td>
-                        <td rowspan="{{z.debit[k].rowspan}}" align="right">{{z.debit[k].total| number_format}}</td>
+                        {%if y==0 and k==0%}
+                        <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.tanggal}}</td>
+                        <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.kode}}</td>
+                        <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.keterangan}}</td>
                         {%endif%}
                         <td>{{v.akun.kode}}</td>
                         <td>{{v.akun.nama}}</td>
-                        <td align="right">{{v.total| number_format}}</td>
+                        <td align="right">Rp{{v.total| number_format(0, ',', '.')}}</td>
+                        {%if k==0%}
+                        <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0">{{z[data.repeat_lawan][k].akun.kode}}</td>
+                        <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0">{{z[data.repeat_lawan][k].akun.nama}}</td>
+                        <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0" align="right">Rp{{z[data.repeat_lawan][k].total| number_format(0, ',', '.')}}</td>
+                        {%endif%}
                     </tr>
+                    {%elseif data.repeat_akun == 'kredit'%}
+                    <tr>
+                        {%if y==0 and k==0%}
+                        <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.tanggal}}</td>
+                        <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.kode}}</td>
+                        <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.keterangan}}</td>
+                        {%endif%}
+                        {%if k==0%}
+                        <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0">{{z[data.repeat_lawan][k].akun.kode}}</td>
+                        <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0">{{z[data.repeat_lawan][k].akun.nama}}</td>
+                        <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0" align="right">Rp{{z[data.repeat_lawan][k].total| number_format(0, ',', '.')}}</td>
+                        {%endif%}
+                        <td>{{v.akun.kode}}</td>
+                        <td>{{v.akun.nama}}</td>
+                        <td align="right">Rp{{v.total| number_format(0, ',', '.')}}</td>
+                    </tr>
+                    {%endif%}
                     {%endfor%}
                     {%endfor%}
                     {%endfor%}
@@ -83,16 +102,16 @@
                         <td align="right"><b>TOTAL</b></td>
                         <td></td>
                         <td></td>
-                        <td align="right"><b>{{data.total.debit| number_format}}</b></td>
+                        <td align="right"><b>Rp{{data.total.debit| number_format(0, ',', '.')}}</b></td>
                         <td></td>
                         <td></td>
-                        <td align="right"><b>{{data.total.kredit| number_format}}</b></th>
+                        <td align="right"><b>Rp{{data.total.kredit| number_format(0, ',', '.')}}</b></th>
                     </tr>
                 </tbody>
             </table>
         </div>
         <div class="row header-laporan-wrapper">
-            <div class="col-md-12">
+            <div class="col-md-12 relative-div">
                 <center>
                     <h3 class="header-laporan">REKAPITULASI</h3>
                 </center>
@@ -100,7 +119,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-responside table-striped table-hover table-print table-laporan" style="border-collapse: collapse;">
+            <table class="table table-print table-laporan-border-light" style="border-collapse: collapse;">
                 <thead style="text-align: center">
                     <tr>
                         <th colspan="3">
@@ -136,17 +155,17 @@
                     <tr>
                         <td>{{data.total_akun.debit[k].akun.kode}}</td>
                         <td>{{data.total_akun.debit[k].akun.nama}}</td>
-                        <td align="right">{{data.total_akun.debit[k].total| number_format}}</td>
+                        <td align="right">Rp{{data.total_akun.debit[k].total| number_format(0, ',', '.')}}</td>
                         <td>{{data.total_akun.kredit[k].akun.kode}}</td>
                         <td>{{data.total_akun.kredit[k].akun.nama}}</td>
-                        <td align="right">{{data.total_akun.kredit[k].total| number_format}}</td>
+                        <td align="right">Rp{{data.total_akun.kredit[k].total| number_format(0, ',', '.')}}</td>
                     </tr>
                     {%endfor%}
                     <tr>
                         <td align="right" colspan="2"><b>TOTAL</b></td>
-                        <td align="right"><b>{{data.total.debit| number_format}}</b></td>
+                        <td align="right"><b>Rp{{data.total.debit| number_format(0, ',', '.')}}</b></td>
                         <td align="right" colspan="2"><b>TOTAL</b></td>
-                        <td align="right"><b>{{data.total.kredit| number_format}}</b></td>
+                        <td align="right"><b>Rp{{data.total.kredit| number_format(0, ',', '.')}}</b></td>
                     </tr>
                 </tbody>
             </table>

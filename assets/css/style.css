@@ -197,6 +197,7 @@ tr.padding0 > td {
 /*internal*/
 .relative-div {
     position: relative;
+    line-height: 10px;
 }
 .absolute-div-center {
     position: absolute;

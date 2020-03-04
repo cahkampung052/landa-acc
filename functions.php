@@ -798,6 +798,9 @@ function sortKode($kode) {
 }
 
 function jurnalKas($params) {
+
+    $data['img'] = imgLaporan();
+
     $sql = new Cahkampung\Landadb(config('DB')['db']);
 
     //tanggal awal

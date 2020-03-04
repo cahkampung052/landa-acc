@@ -56,20 +56,20 @@
                                     {%if data.saldo_awal.total >= 0%}
                                     <b>Rp{{data.saldo_awal.total| number_format(0, ',', '.')}}</b>
                                     {%else%}
-                                    <b>-Rp{{(data.saldo_awal.total*-1)| number_format(0, ',', '.')}}</b>
+                                    <b>(Rp{{(data.saldo_awal.total*-1)| number_format(0, ',', '.')}})</b>
                                     {%endif%}
                                 </td>
                             </tr>
                             {%for v in data.saldo_awal.detail%}
                             <tr>
-                                <td style="padding-left: 50px">
+                                <td style="padding-left: 30px">
                                     {{v.nama}}
                                 </td>
                                 <td align="right">
                                     {%if v.total >= 0%}
                                     <span>Rp{{not v.total ? '-' : v.total| number_format(0, ',', '.')}}</span>
                                     {%else%}
-                                    <span>-Rp{{not v.total ? '-' : (v.total*-1)| number_format(0, ',', '.')}}</span>
+                                    <span>(Rp{{not v.total ? '-' : (v.total*-1)| number_format(0, ',', '.')}})</span>
                                     {%endif%}
                                 </td>
                             </tr>
@@ -87,14 +87,14 @@
                             </tr>
                             {%for y in v.detail%}
                             <tr>
-                                <td style="padding-left: 50px;">
+                                <td style="padding-left: 30px;">
                                     {{y.akun.nama}}
                                 </td>
                                 <td align="right">
                                     {%if y.total >= 0%}
                                     <span>Rp{{y.total| number_format(0, ',', '.')}}</span>
                                     {%else%}
-                                    <span>-Rp{{(y.total*-1)| number_format(0, ',', '.')}}</span>
+                                    <span>(Rp{{(y.total*-1)| number_format(0, ',', '.')}})</span>
                                     {%endif%}
                                 </td>
                             </tr>
@@ -107,7 +107,7 @@
                                     {%if v.total >= 0%}
                                     <b>Rp{{v.total| number_format(0, ',', '.')}}</b>
                                     {%else%}
-                                    <b>-Rp{{(v.total*-1)| number_format(0, ',', '.')}}</b>
+                                    <b>(Rp{{(v.total*-1)| number_format(0, ',', '.')}})</b>
                                     {%endif%}
                                 </td>
                             </tr>
@@ -115,13 +115,17 @@
                             {%endfor%}
                             <tr style="background-color: #3798C4">
                                 <td>
-                                    <b>Kenaikan (Penurunan) Kas dari {{key}}</b>
+                                    {%if val.total >= 0%}
+                                    <b>Kenaikan Kas dari {{key}}</b>
+                                    {%else%}
+                                    <b>Penurunan Kas dari {{key}}</b>
+                                    {%endif%}
                                 </td>
                                 <td align="right">
                                     {%if val.total >= 0%}
                                     <b>Rp{{val.total| number_format(0, ',', '.')}}</b>
                                     {%else%}
-                                    <b>-Rp{{(val.total*-1)| number_format(0, ',', '.')}}</b>
+                                    <b>(Rp{{(val.total*-1)| number_format(0, ',', '.')}})</b>
                                     {%endif%}
                                 </td>
                             </tr>
@@ -129,13 +133,17 @@
                             {%endfor%}
                             <tr style="background-color: #3798C4">
                                 <td>
-                                    <b>{{'KENAIKAN (PENURUNAN) KAS'}}</b>
+                                    {%if data.saldo_biaya >= 0%}
+                                    <b>{{'KENAIKAN KAS'}}</b>
+                                    {%else%}
+                                    <b>{{'PENURUNAN KAS'}}</b>
+                                    {%endif%}
                                 </td>
                                 <td align="right">
                                     {%if data.saldo_biaya >= 0%}
                                     <b>Rp{{data.saldo_biaya| number_format(0, ',', '.')}}</b>
                                     {%else%}
-                                    <b>-Rp{{(data.saldo_biaya*-1)| number_format(0, ',', '.')}}</b>
+                                    <b>(Rp{{(data.saldo_biaya*-1)| number_format(0, ',', '.')}})</b>
                                     {%endif%}
                                 </td>
                             </tr>
@@ -145,20 +153,20 @@
                                     {%if data.saldo_akhir.total >= 0%}
                                     <b>Rp{{data.saldo_akhir.total| number_format(0, ',', '.')}}</b>
                                     {%else%}
-                                    <b>-Rp{{(data.saldo_akhir.total*-1)| number_format(0, ',', '.')}}</b>
+                                    <b>(Rp{{(data.saldo_akhir.total*-1)| number_format(0, ',', '.')}})</b>
                                     {%endif%}
                                 </td>
                             </tr>
                             {%for v in data.saldo_akhir.detail%}
                             <tr>
-                                <td style="padding-left: 50px">
+                                <td style="padding-left: 30px">
                                     {{v.nama}}
                                 </td>
                                 <td align="right">
                                     {%if v.total >= 0%}
                                     <span>Rp{{not v.total ? '-' : v.total| number_format(0, ',', '.')}}</span>
                                     {%else%}
-                                    <span>-Rp{{not v.total ? '-' : (v.total*-1)| number_format(0, ',', '.')}}</span>
+                                    <span>(Rp{{not v.total ? '-' : (v.total*-1)| number_format(0, ',', '.')}})</span>
                                     {%endif%}
                                 </td>
                             </tr>

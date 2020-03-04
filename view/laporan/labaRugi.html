@@ -30,7 +30,7 @@
                         {%for key, val in detail%}
                         <tr style="background-color: #fff">
                             <td align="left" style="vertical-align: top" colspan="2">
-                                <b>{{ val.nama}}</b>
+                                <b>{{ key|replace({'_': ' '})}}</b>
                             </td>
                         </tr>
                         {%for k, vals in val.detail%}
