@@ -69,14 +69,7 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     $subDomain = str_replace('api/', '', site_url());
 
 //    pd($subDomain);
-    $data['img'] = '';
-    if ($subDomain == "http://systems.larensi.com/" || $subDomain == "http://systems.rumahmualaf.com/") {
-        $data['img'] = $subDomain . '/img/logoLandaSystems.png';
-    } else if ($subDomain == "http://proptech.larensi.com/" || $subDomain == "http://proptech.rumahmualaf.com/") {
-        $data['img'] = $subDomain . '/img/logoRain.png';
-    } else if ($subDomain == "http://baca.larensi.com/" || $subDomain == "http://baca.rumahmualaf.com/") {
-        $data['img'] = $subDomain . '/img/logoWajibBaca2.png';
-    }
+    $data['img'] = imgLaporan();
 
     $params = $request->getParams();
     $db = $this->db;
