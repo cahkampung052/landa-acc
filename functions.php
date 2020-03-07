@@ -64,6 +64,9 @@ function buildTree($elements, $parentId = 0) {
  */
 function buildTreeAkun($listAkun, $parentId = 0) {
     $branch = array();
+    
+//    pd($listAkun);
+    
     foreach ($listAkun as $key => $element) {
         $kode = str_replace(".", "", $element->kode);
         if ($element->parent_id == $parentId) {
@@ -379,6 +382,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             SUM(debit) as debit, 
             SUM(kredit) as kredit,
             acc_m_akun.id,
+            acc_m_akun.nama as namaAkun,
             acc_m_akun.saldo_normal,
             acc_m_akun.tipe,
             acc_m_akun.parent_id
@@ -404,6 +408,9 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
         $sql->customWhere("m_akun_id NOT INT (" . implode(",", $arrPengecualian) . ")", "And");
     }
     $trans = $sql->findAll();
+    
+//    pd($trans);
+    
     $arrTrans = [];
     $total = 0;
     foreach ($trans as $key => $value) {
@@ -415,13 +422,16 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             $total -= ($value->debit - $value->kredit) * $value->saldo_normal;
         }
     }
+    
+//    pd($arrTrans);
+    
     /*
      * ambil akun (jika saldo 0 ikut ditampilkan)
      */
     $sql->select("id, nama, kode, tipe, level, is_tipe, parent_id")
             ->from("acc_m_akun")
             ->customWhere("tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
-            ->andWhere("is_deleted", "=", 0)
+//            ->andWhere("is_deleted", "=", 0)
             ->orderBy("acc_m_akun.kode");
     $model = $sql->findAll();
     $listAkun = buildTreeAkun($model, 0);
@@ -432,6 +442,9 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      * tanya adi ya, buat apa 
      */
     $testing = 0;
+    
+//    pd($arrModel);
+    
     foreach ($arrModel as $key => $value) {
         $total = (isset($arrTrans[$value->id]) ? intval($arrTrans[$value->id]) : 0);
         $tipe = str_replace(" ", "_", $value->tipe);
