@@ -514,7 +514,7 @@ $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response) {
     } else if ($host == 'config/rain.php') {
         $template = str_replace('class="header"', 'style="text-align:center;background-color:yellow"', $template);
     } else if ($host == 'config/wb.php') {
-        $template = str_replace('class="header"', 'style="text-align:center;background-color:red"', $template);
+        $template = str_replace('class="header"', 'style="text-align:center;background-color:#20a8d8"', $template);
     }
 
     $view = twigViewPath();
