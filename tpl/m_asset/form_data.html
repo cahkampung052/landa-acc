@@ -73,10 +73,10 @@
                             {{ $select.selected.nama +" - "+ $select.selected.nama }}
                         </ui-select-match>
                         <ui-select-choices position="down" repeat="lb in listLokasi| filter :$select.search">
-                            {{ lb.nama_lengkap }}
+                            {{ lb.nama }}
                         </ui-select-choices>
                     </ui-select>
-                    <input class="form-control form-control-sm mt-2" name="" ng-model="form.nama_lokasi" ng-show="form.lokasi.id==-1" placeholder="Lainya" type="text">
+                    <input class="form-control form-control-sm mt-2" name="" ng-model="form.nama_lokasi" ng-show="form.lokasi.id==-1" placeholder="Lainnya" type="text">
                     </input>
                 </div>
             </div>

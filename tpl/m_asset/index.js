@@ -17,9 +17,12 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
         tableStateRef = tableState;
         $scope.isLoading = true;
         var offset = tableState.pagination.start || 0;
-        var limit = tableState.pagination.number || 1000;
+        var limit = tableState.pagination.number || 20;
         /** set offset and limit */
-        var param = {};
+        var param = {
+            offset: offset,
+            limit: limit
+        };
         /** set sort and order */
         if (tableState.sort.predicate) {
             param['sort'] = tableState.sort.predicate;
@@ -31,6 +34,7 @@ app.controller('AssetCtrl', function ($scope, Data, $rootScope, $uibModal, Uploa
         }
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
+            tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
             $scope.base_url = response.data.base_url;
         });
         $scope.isLoading = false;

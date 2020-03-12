@@ -143,8 +143,7 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
             ->join("left join", "acc_m_akun", "acc_pengeluaran.m_akun_id = acc_m_akun.id")
             ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pengeluaran.m_lokasi_id")
             ->join("left join", "acc_m_kontak", "acc_m_kontak.id = acc_pengeluaran.m_kontak_id")
-            ->orderBy('acc_pengeluaran.tanggal DESC')
-            ->orderBy('acc_pengeluaran.created_at DESC');
+            ->orderBy('acc_pengeluaran.tanggal DESC');
     /*
      * set filter
      */
