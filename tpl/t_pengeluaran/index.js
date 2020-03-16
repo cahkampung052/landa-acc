@@ -200,6 +200,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         }
         Data.get(control_link + '/getDetail', data).then(function (data) {
             $scope.listDetail = data.data.list;
+            $scope.sumTotal();
         });
     }
     /*

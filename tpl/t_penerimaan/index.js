@@ -184,6 +184,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         }
         Data.get(control_link + '/getDetail', data).then(function (data) {
             $scope.listDetail = data.data.list;
+            $scope.sumTotal();
         });
     }
     /**
@@ -286,7 +287,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
             }
             $scope.limit = Math.ceil($scope.field.length / $scope.row);
             $scope.startFrom = [];
-            
+
             angular.forEach($scope.field, function (val, key) {
                 if (val.no % $scope.limit == 0) {
                     $scope.startFrom.push({start: val.no, limit: $scope.limit})
@@ -309,8 +310,8 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-         if ($scope.lokasi_default.lokasi_pemasukan != 0)
-             $scope.form.m_lokasi_id = $scope.lokasi_default.lokasi_pemasukan;
+        if ($scope.lokasi_default.lokasi_pemasukan != 0)
+            $scope.form.m_lokasi_id = $scope.lokasi_default.lokasi_pemasukan;
         $scope.form.ppn = 0;
         $scope.form.is_ppn = false;
         $scope.form.tanggal = new Date($scope.tanggal_setting);
