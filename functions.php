@@ -64,9 +64,9 @@ function buildTree($elements, $parentId = 0) {
  */
 function buildTreeAkun($listAkun, $parentId = 0) {
     $branch = array();
-    
+
 //    pd($listAkun);
-    
+
     foreach ($listAkun as $key => $element) {
         $kode = str_replace(".", "", $element->kode);
         if ($element->parent_id == $parentId) {
@@ -408,9 +408,9 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
         $sql->customWhere("m_akun_id NOT INT (" . implode(",", $arrPengecualian) . ")", "And");
     }
     $trans = $sql->findAll();
-    
+
 //    pd($trans);
-    
+
     $arrTrans = [];
     $total = 0;
     foreach ($trans as $key => $value) {
@@ -422,9 +422,9 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             $total -= ($value->debit - $value->kredit) * $value->saldo_normal;
         }
     }
-    
+
 //    pd($arrTrans);
-    
+
     /*
      * ambil akun (jika saldo 0 ikut ditampilkan)
      */
@@ -442,9 +442,9 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      * tanya adi ya, buat apa 
      */
     $testing = 0;
-    
+
 //    pd($arrModel);
-    
+
     foreach ($arrModel as $key => $value) {
         $total = (isset($arrTrans[$value->id]) ? intval($arrTrans[$value->id]) : 0);
         $tipe = str_replace(" ", "_", $value->tipe);
@@ -1029,4 +1029,18 @@ function jurnalKas($params) {
     $data['repeat_lawan'] = $var_kas;
 
     return ['data' => $data, 'detail' => $arr];
+}
+
+function imgLaporan() {
+    $subDomain = str_replace('api/', '', site_url());
+    $data['img'] = '';
+    if ($subDomain == "http://systems.larensi.com/" || $subDomain == "http://systems.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoLandaSystems.png';
+    } else if ($subDomain == "http://proptech.larensi.com/" || $subDomain == "http://proptech.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoRain.png';
+    } else if ($subDomain == "http://baca.larensi.com/" || $subDomain == "http://baca.rumahmualaf.com/") {
+        $data['img'] = $subDomain . '/img/logoWajibBaca2.png';
+    }
+
+    return $data['img'];
 }
