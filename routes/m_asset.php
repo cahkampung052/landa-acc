@@ -66,9 +66,9 @@ $app->get('/acc/m_asset/list_penyusutan', function ($request, $response) {
     $limit = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_riw_penyusutan.*,acc_m_lokasi.nama as nm_lokasi," . $tableuser . ".nama as nm_user,SUM(penyusutan_perbulan) as total_penyusutan")
+    $db->select("acc_riw_penyusutan.*,acc_m_lokasi_asset.nama as nm_lokasi," . $tableuser . ".nama as nm_user,SUM(penyusutan_perbulan) as total_penyusutan")
             ->from("acc_riw_penyusutan")
-            ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_riw_penyusutan.lokasi_id")
+            ->leftJoin("acc_m_lokasi_asset", "acc_m_lokasi_asset.id = acc_riw_penyusutan.lokasi_id")
             ->leftJoin($tableuser, $tableuser . ".id = acc_riw_penyusutan.created_by")
             ->leftJoin("acc_riw_penyusutan_dt", "acc_riw_penyusutan.id = acc_riw_penyusutan_dt.riw_id")
             ->orderBy('acc_riw_penyusutan.id DESC');
@@ -320,7 +320,7 @@ $app->get('/acc/m_asset/apiPenyusutan', function ($request, $response) {
         $get_lokasi_id = 1;
         $arr_lokasi_id = [];
         if (isset($get_lokasi_id)) {
-            $lokasiId = getChildId("acc_m_lokasi", $get_lokasi_id);
+            $lokasiId = getChildId("acc_m_lokasi_asset", $get_lokasi_id);
             /*
              * jika lokasi punya child
              */
@@ -355,9 +355,9 @@ $app->get('/acc/m_asset/apiPenyusutan', function ($request, $response) {
         }
 
         //select penyusutan
-        $sql->select("acc_asset.*,acc_m_lokasi.nama as nama_lokasi,acc_m_lokasi.kode as kode_lokasi")
+        $sql->select("acc_asset.*,acc_m_lokasi_asset.nama as nama_lokasi,acc_m_lokasi_asset.kode as kode_lokasi")
                 ->from("acc_asset")
-                ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_asset.lokasi_id")
+                ->leftJoin("acc_m_lokasi_asset", "acc_m_lokasi_asset.id = acc_asset.lokasi_id")
                 ->where("status", "=", 'Aktif')
                 ->where("is_penyusutan", "=", 1)
                 // ->where("lokasi_id", "=", $params['lokasi_id'])
@@ -590,9 +590,9 @@ $app->get('/acc/m_asset/index', function ($request, $response) {
     $limit = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_asset.*,acc_m_lokasi.nama as nm_lokasi,acc_m_lokasi.kode as kode_lokasi, acc_umur_ekonomis.nama as nama_umur, acc_umur_ekonomis.tahun as tahun_umur, acc_umur_ekonomis.persentase as persentase_umur, akun_asset.nama as nm_akun_asset, akun_akumulasi.nama as nm_akun_akumulasi, akun_beban.nama as nm_akun_beban, akun_laba_rugi.nama as nm_akun_laba_rugi,akun_kas_pelepasan.nama as nm_akun_kas_pelepasan, acc_riw_penyusutan_dt.id as id_penyusutan")
+    $db->select("acc_asset.*,acc_m_lokasi_asset.nama as nm_lokasi,acc_m_lokasi_asset.kode as kode_lokasi, acc_umur_ekonomis.nama as nama_umur, acc_umur_ekonomis.tahun as tahun_umur, acc_umur_ekonomis.persentase as persentase_umur, akun_asset.nama as nm_akun_asset, akun_akumulasi.nama as nm_akun_akumulasi, akun_beban.nama as nm_akun_beban, akun_laba_rugi.nama as nm_akun_laba_rugi,akun_kas_pelepasan.nama as nm_akun_kas_pelepasan, acc_riw_penyusutan_dt.id as id_penyusutan")
             ->from("acc_asset")
-            ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_asset.lokasi_id")
+            ->leftJoin("acc_m_lokasi_asset", "acc_m_lokasi_asset.id = acc_asset.lokasi_id")
             ->leftJoin("acc_umur_ekonomis", "acc_umur_ekonomis.id = acc_asset.umur_ekonomis")
             ->leftJoin("acc_m_akun akun_asset", "akun_asset.id = acc_asset.akun_asset_id")
             ->leftJoin("acc_m_akun akun_akumulasi", "akun_akumulasi.id = acc_asset.akun_akumulasi_id")
