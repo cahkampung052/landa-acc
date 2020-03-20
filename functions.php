@@ -962,5 +962,5 @@ function jurnalKas($params)
     return ['data' => $data, 'detail' => $arr];
 }
 function imgLaporan() {
-    return config('MODUL_ACC')['PATH'];
+    return config('MODUL_ACC')['LOGO'];
 }
