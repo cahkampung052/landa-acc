@@ -1,0 +1,60 @@
+<div class="modal-header">
+    <h5 class="modal-title">Setting Akun Arus Kas</h5>
+    <button type="button" class="close" ng-click="close()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr ng-repeat-start="val in listSetting"></tr>
+                    <tr>
+                        <th colspan="4">{{val.tipe}}</th>
+                    </tr>
+                    <tr>
+                        <th width="10">
+                            <button type="button" class="btn btn-success fa fa-plus btn-sm" ng-click="addDetail(val.detail)" ng-disabled="is_view"></button>
+                        </th>
+                        <th style="min-width: 300px">Nama</th>
+                        <th>Total</th>
+                        <th style="min-width: 500px; max-width: 500px">Akun</th>
+                    </tr>
+                    <tr class="tabletr" ng-repeat="v in val.detail">
+                        <td>
+                            <button type="button" class="btn btn-danger fa fa-minus btn-sm" ng-click="removeDetail(val.detail, $index)" ng-disabled="is_view"></button>
+                        </td>
+                        <td>
+                            <div>
+                                <input type="text" class="form-control form-control-sm" ng-model="v.nama" ng-disabled="is_view"/>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <input class="form-control form-control-sm" type="checkbox" ng-model="v.is_total" ng-disabled="is_view" ng-click="v.akun = undefined" ng-checked="v.is_total == 1"/>
+                            </div>
+                        </td>
+                        <td style="min-width: 500px; max-width: 500px">
+                            <div>
+                                <ui-select multiple="" class="ui-select-sm ui-select-container" ng-model="v.akun" theme="bootstrap" ng-disabled="is_view || v.is_total == 1">
+                                    <ui-select-match placeholder="Pilih Akun">{{ $item.kode + " - " + $item.nama}}</ui-select-match>
+                                    <ui-select-choices repeat="val in akunDetail | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr><td colspan="4"><br/></td></tr>
+                    <tr ng-repeat-end=""></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-click="save()" ng-hide="is_view">
+        <i class="fa fa-save"></i>
+        Simpan
+    </button>
+</div>

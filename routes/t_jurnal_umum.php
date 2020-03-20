@@ -134,9 +134,9 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
     $limit = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_jurnal.*, acc_m_lokasi.id as idLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi")
+    $db->select("acc_jurnal.*, acc_m_lokasi.id as idLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi," . $tableuser . ".nama as namaUser")
             ->from("acc_jurnal")
-//            ->join("join", $tableuser, $tableuser.".id = acc_jurnal.created_by")
+            ->join("join", $tableuser, $tableuser . ".id = acc_jurnal.created_by")
             ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal.m_lokasi_id")
             ->orderBy('acc_jurnal.tanggal DESC')
             ->orderBy('acc_jurnal.created_at DESC');
@@ -174,7 +174,6 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
         $models[$key]['created_at'] = date("d-m-Y h:i", $val->created_at);
         $models[$key]['m_lokasi_id'] = ["id" => $val->idLokasi, "kode" => $val->kodeLokasi, "nama" => $val->namaLokasi];
         $models[$key]['status'] = ucfirst($val->status);
-        
     }
 
     return successResponse($response, [
@@ -199,7 +198,7 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
          */
         $format = $sql->select("format_jurnal")->from("acc_m_setting")->find();
         if (substr($format->format_jurnal, 0, 2) == "JM") {
-            var_dump($params['form']['tanggal']);exit();
+            //var_dump($params['form']['tanggal']);exit();
             $get_bulan = date("m", strtotime($params['form']['tanggal']));
             $get_tahun = date("Y", strtotime($params['form']['tanggal']));
             $kode = generateNoTransaksi("jurnal", $params['form']['m_lokasi_id']['kode'], "JM", $get_bulan, $get_tahun);
@@ -208,29 +207,38 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
             $get_tahun = date("Y", strtotime($params['form']['tanggal']));
             $kode = generateNoTransaksi("jurnal", $params['form']['m_lokasi_id']['kode'], NULL, $get_bulan, $get_tahun);
         }
-        
+
 
         $jurnal['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
-        
+
         /**
          * Simpan jurnal
          */
         $jurnal['m_lokasi_id'] = $params['form']['m_lokasi_id']['id'];
         $jurnal['m_lokasi_jurnal_id'] = $jurnal['m_lokasi_id'];
-        
+
         $jurnal['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $jurnal['total_debit'] = $params['form']['total_debit'];
         $jurnal['total_kredit'] = $params['form']['total_kredit'];
         $jurnal['status'] = $params['form']['status'];
 
         foreach ($params['detail'] as $key => $value) {
-            $keterangan[$key] = $value['keterangan'];
+            $keterangan[$key] = isset($value['keterangan']) && !empty($value['keterangan']) ? $value['keterangan'] : NULL;
         }
-        $keteranganJurnal = join("<br>",$keterangan);
+        $keteranganJurnal = join("<br>", $keterangan);
         $jurnal['keterangan'] = (isset($keteranganJurnal) && !empty($keteranganJurnal) ? $keteranganJurnal : NULL);
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
-            $jurnal['no_urut'] = $params['form']['no_urut'];
-            $jurnal['no_transaksi'] = $params['form']['no_transaksi'];
+
+            $cek_data = $sql->select("tanggal")->from("acc_jurnal")->where("id", "=", $params['form']['id'])->find();
+
+            if (date("m", strtotime($cek_data->tanggal)) != date("m", strtotime($jurnal['tanggal']))) {
+                $jurnal['no_transaksi'] = $kode;
+                $jurnal['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
+            } else {
+                $jurnal['no_urut'] = $params['form']['no_urut'];
+                $jurnal['no_transaksi'] = $params['form']['no_transaksi'];
+            }
+
             $model = $sql->update("acc_jurnal", $jurnal, ["id" => $params['form']['id']]);
             /**
              * Hapus jurnal detail
@@ -239,12 +247,12 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
             /**
              * Hapus trans detail
              */
-            $sql->delete("acc_trans_detail", ["reff_type"=> "acc_jurnal", "reff_id" => $model->id]);
+            $sql->delete("acc_trans_detail", ["reff_type" => "acc_jurnal", "reff_id" => $model->id]);
         } else {
             $jurnal['no_transaksi'] = $kode;
             $model = $sql->insert("acc_jurnal", $jurnal);
         }
-       
+
         /**
          * Simpan ke pemasukan detail
          */
@@ -257,7 +265,7 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
                 $detail['acc_jurnal_id'] = $model->id;
                 $detail['keterangan'] = (isset($val['keterangan']) && !empty($val['keterangan']) ? $val['keterangan'] : '');
                 $modeldetail = $sql->insert("acc_jurnal_det", $detail);
-                
+
                 /**
                  * Simpan trans detail ke array
                  */
@@ -275,10 +283,10 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
         /**
          * Simpan array trans detail ke database jika simpan dan kunci
          */
-        if($params['form']['status'] == "terposting"){
+        if ($params['form']['status'] == "terposting") {
             insertTransDetail($transDetail);
         }
-        
+
         return successResponse($response, $model);
     } else {
         return unprocessResponse($response, $validasi);
@@ -294,7 +302,7 @@ $app->post('/acc/t_jurnal_umum/delete', function ($request, $response) {
     $db = $this->db;
     $model = $db->delete("acc_jurnal", ['id' => $data['id']]);
     $model = $db->delete("acc_jurnal_det", ['acc_jurnal_id' => $data['id']]);
-    $model = $db->delete("acc_trans_detail", ['reff_type' => 'acc_jurnal','reff_id' => $data['id']]);
+    $model = $db->delete("acc_trans_detail", ['reff_type' => 'acc_jurnal', 'reff_id' => $data['id']]);
     if ($model) {
         return successResponse($response, $model);
     } else {
@@ -311,11 +319,11 @@ $app->get('/acc/t_jurnal_umum/print', function ($request, $response) {
             ->join("join", "acc_m_akun", "acc_m_akun.id = acc_jurnal_det.m_akun_id")
             ->where("acc_jurnal_id", "=", $data['id'])
             ->findAll();
-    
-    foreach($detail as $key => $val){
-        $val->m_akun_id = ["id"=>$val->m_akun_id, "kode"=>$val->kodeAkun, "nama"=>$val->namaAkun];
+
+    foreach ($detail as $key => $val) {
+        $val->m_akun_id = ["id" => $val->m_akun_id, "kode" => $val->kodeAkun, "nama" => $val->namaAkun];
     }
-    
+
     $data['tanggalsekarang'] = date("d-m-Y H:i");
     $a = getMasterSetting();
     $template = $a->print_jurnal;
@@ -323,31 +331,30 @@ $app->get('/acc/t_jurnal_umum/print', function ($request, $response) {
     $template = str_replace("<tr><td>{end}</td></tr>", "{%endfor%}", $template);
 //    echo json_encode($data);die();
     $view = twigViewPath();
-        $content = $view->fetchFromString($template, [
-            "data" => $data,
-            "detail" => (array) $detail,
-        ]);
-        echo $content;
-        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
-    
+    $content = $view->fetchFromString($template, [
+        "data" => $data,
+        "detail" => (array) $detail,
+    ]);
+    echo $content;
+    echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
 });
 
 /*
  * template print
  */
-$app->get("/acc/t_jurnal_umum/getTemplate", function ($request, $response){
+$app->get("/acc/t_jurnal_umum/getTemplate", function ($request, $response) {
     $a = getMasterSetting();
     return successResponse($response, $a->print_jurnal);
 });
 
-$app->post("/acc/t_jurnal_umum/saveTemplate", function ($request, $response){
+$app->post("/acc/t_jurnal_umum/saveTemplate", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
-    
-    try{
-        $model = $db->update("acc_m_setting", $data, ["id"=>1]);
-       return successResponse($response, $model);
+
+    try {
+        $model = $db->update("acc_m_setting", $data, ["id" => 1]);
+        return successResponse($response, $model);
     } catch (Exception $e) {
         return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
-    } 
+    }
 });

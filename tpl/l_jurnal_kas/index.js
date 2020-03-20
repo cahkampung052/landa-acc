@@ -1,49 +1,20 @@
-app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $stateParams) {
-    var control_link = "acc/l_buku_besar";
+app.controller('jurnalpenerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
+    var control_link = "acc/l_jurnal_kas";
     $scope.form = {};
+    $scope.form.tipe = 'penerimaan';
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
-    /**
-     * Ambil list semua akun
-     */
-    Data.get('acc/m_akun/listakun').then(function (data) {
-        $scope.listAkun = data.data;
-        if ($scope.listAkun.length > 0 && typeof $stateParams.akun == undefined) {
-            $scope.form.m_akun_id = $scope.listAkun[0];
-        }
-    });
-    /**
-     * Ambil semua lokasi
+    /*
+     * ambil lokasi
      */
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
-            if (typeof $stateParams.akun != undefined) {
-                var akun = angular.fromJson(atob($stateParams.akun));
-                $scope.form.m_akun_id = akun;
-                $scope.form.tanggal = {
-                    endDate: moment(),
-                    startDate: moment().subtract(2, 'M')
-                };
-                $scope.view(0, 0);
-            }
-            if (typeof $stateParams.tanggal != undefined) {
-                var tanggal = angular.fromJson(atob($stateParams.tanggal));
-                $scope.form.tanggal = tanggal;
-                $scope.view(0, 0);
-            }
-
-
         }
     });
-
-    $scope.resetFilter = function (filter) {
-        $scope.form[filter] = undefined;
-    }
-
     /**
      * Ambil laporan dari server
      */
@@ -55,7 +26,7 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
             print: is_print,
             m_lokasi_id: $scope.form.m_lokasi_id.id,
             nama_lokasi: $scope.form.m_lokasi_id.nama,
-            m_akun_id: $scope.form.m_akun_id != undefined ? $scope.form.m_akun_id.id : null,
+            tipe: $scope.form.tipe,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
         };
@@ -66,17 +37,14 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
                     $scope.detail = response.data.detail;
                     $scope.tampilkan = true;
                 } else {
-                    $rootScope.alert("Terjadi Kesalahan", setErrorMessage(response.errors), "error");
                     $scope.tampilkan = false;
                 }
             });
         } else {
             Data.get('site/base_url').then(function (response) {
 //                console.log(response)
-                window.open(response.data.base_url + "api/acc/l_buku_besar/laporan?" + $.param(param), "_blank");
+                window.open(response.data.base_url + "api/acc/l_jurnal_kas/laporan?" + $.param(param), "_blank");
             });
         }
     };
-
-
 });

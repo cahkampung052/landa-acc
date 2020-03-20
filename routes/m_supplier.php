@@ -10,7 +10,8 @@ function validasi($data, $custom = array()) {
 }
 
 $app->get('/acc/m_supplier/kode', function ($request, $response) {
-    return generateNoTransaksi("supplier", 0);
+    $params = $request->getParams();
+    return isset($params['project']) && !empty($params['project']) && $params['project'] == "afu" ? generateNoTransaksi("afu_supplier", 0) : generateNoTransaksi("supplier", 0);
 });
 
 $app->get('/acc/m_supplier/getSupplier', function ($request, $response) {
@@ -27,6 +28,17 @@ $app->get('/acc/m_supplier/getSupplier', function ($request, $response) {
     }
 
     $models = $db->limit(20)->findAll();
+
+    //cek kolom, untuk di afu
+    $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_akun_id")->find();
+
+    if (!empty($cek_column)) {
+        foreach ($models as $key => $value) {
+            $value->acc_m_akun_id = !empty($value->acc_m_akun_id) ? $db->find("SELECT id, kode, nama FROM acc_m_akun WHERE id = " . $value->acc_m_akun_id) : [];
+        }
+    }
+    //end
+
     return successResponse($response, [
         'list' => $models
     ]);
@@ -41,8 +53,8 @@ $app->get('/acc/m_supplier/index', function ($request, $response) {
     $db = $this->db;
     $db->select("*")
             ->from("acc_m_kontak")
-            ->orderBy('acc_m_kontak.nama')
-            ->where("type", "=", "supplier");
+            ->orderBy('acc_m_kontak.type, acc_m_kontak.nama')
+            ->customWhere("type IN ('supplier', 'angkutan', 'pelabuhan', 'dokumen', 'gudang', 'lain-lain')", "AND");
 
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
@@ -68,6 +80,17 @@ $app->get('/acc/m_supplier/index', function ($request, $response) {
 
     $models = $db->findAll();
     $totalItem = $db->count();
+
+//    pd($models);
+    //cek kolom, untuk di afu
+    $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_akun_id")->find();
+
+    if (!empty($cek_column)) {
+        foreach ($models as $key => $value) {
+            $value->acc_m_akun_id = !empty($value->acc_m_akun_id) ? $db->find("SELECT id, kode, nama FROM acc_m_akun WHERE id = " . $value->acc_m_akun_id) : [];
+        }
+    }
+    //end
 //     print_r($models);exit();
 //      print_r($arr);exit();
     return successResponse($response, [
@@ -92,7 +115,9 @@ $app->post('/acc/m_supplier/save', function ($request, $response) {
 
     $validasi = validasi($data);
     if ($validasi === true) {
-        $params['type'] = "supplier";
+        $params['kode'] = isset($params['acc_m_akun_id']) && !empty($params['acc_m_akun_id']) ? $params['acc_m_akun_id']['kode'] : $params['kode'];
+        $params['acc_m_akun_id'] = isset($params['acc_m_akun_id']) && !empty($params['acc_m_akun_id']) ? $params['acc_m_akun_id']['id'] : NULL;
+        $params['type'] = isset($params['type']) && !empty($params['type']) ? $params['type'] : "supplier";
         if (isset($params["id"])) {
 //            if(isset($params["kode"]) && !empty($params["kode"])){
 //                $params["kode"] = $params["kode"];

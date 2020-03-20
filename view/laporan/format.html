@@ -1,0 +1,89 @@
+<div style="text-align:center"><span style="font-size:30px"><strong>RAIN PROPTECH</strong></span></div>
+
+<hr />
+<p>Nomor : {{data.no_proposal}}</p>
+<p>Perihal : {{data.perihal}}</p>
+<table border="1" bordercolor="#ccc" cellpadding="5" cellspacing="0" style="border-collapse:collapse; width:700px">
+    <tbody>
+        <tr>
+            <td>No.</td>
+            <td>Akun</td>
+            <td>Uraian</td>
+            <td>Jumlah</td>
+            <td>Harga Satuan</td>
+            <td>Subtotal</td>
+        </tr>
+        <tr>
+            <td>{start_detail}</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>{{val.no}}</td>
+            <td>{{val.namaAkun}}</td>
+            <td>{{val.keterangan}}</td>
+            <td style="text-align:right">{{val.jumlah | number_format}} {{val.jenis_satuan}}</td>
+            <td style="text-align:right">{{(val.harga_satuan) | number_format}}</td>
+            <td style="text-align:right">{{(val.jumlah * val.harga_satuan) | number_format}}</td>
+        </tr>
+        <tr>
+            <td>{end}</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td align="center" colspan="5">TOTAL</td>
+            <td>{{data.jumlah_perkiraan | number_format}}</td>
+        </tr>
+    </tbody>
+</table>
+<p>LEMBAR PERSETUJUAN</p>
+
+<p>Malang, {{data.tanggal_formated}}</p>
+
+<table border="1" bordercolor="#ccc" cellpadding="5" cellspacing="0" style="border-collapse:collapse; width:700px">
+    <tbody>
+        <tr>
+            <td style="text-align:center">Bagian Accounting</td>
+            <td style="text-align:center">Pemohon</td>
+            <td>
+                <p style="text-align:center">Disetujui oleh : Direktur Utama</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:center">
+                <p>&nbsp;</p>
+
+                <p>&nbsp;</p>
+
+                <p>&nbsp;</p>
+
+                <p>Aprilia Indriyati</p>
+            </td>
+            <td style="text-align:center">
+                <p>&nbsp;</p>
+
+                <p>&nbsp;</p>
+
+                <p>&nbsp;</p>
+
+                <p>Yulianto Frandi</p>
+            </td>
+            <td style="text-align:center">
+                <p>&nbsp;</p>
+
+                <p>&nbsp;</p>
+
+                <p>&nbsp;</p>
+
+                <p>Yulianto Frandi</p>
+            </td>
+        </tr>
+    </tbody>
+</table>

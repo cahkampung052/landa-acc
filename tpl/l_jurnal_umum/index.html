@@ -23,8 +23,8 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
-                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
+                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                             </ui-select>
                                         </div>
                                     </div>
@@ -59,18 +59,15 @@
             <div class="card-body" id="print">
                 <div align="left">
                     <div class="row">
-                        <div class="col-md-12">
-                            <br/>
+                        <div class="col-md-12 relative-div">
                             <center>
-                                <h2 class="header-laporan">LAPORAN JURNAL UMUM</h2>
-                                Lokasi : {{ data.lokasi }}
-                                <br/>
-                                Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
-                                <br/>
-                                Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
-                                <br/>
+                                <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                                <h3 class="header-laporan">Laporan Jurnal Umum</h3>
+                                <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
+                                <!--<br/>-->
                             </center>
-                            <hr/>
+                            <!--<hr/>-->
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -83,11 +80,14 @@
                                     <th width="80" class="align-center">
                                         <b>REFF</b>
                                     </th>
-                                    <th width="300" class="align-center">
-                                        <b>AKUN</b>
-                                    </th>
                                     <th width="200" class="align-center">
                                         <b>LOKASI</b>
+                                    </th>
+                                    <th class="align-center">
+                                        <b>NO. AKUN</b>
+                                    </th>
+                                    <th width="300" class="align-center">
+                                        <b>AKUN</b>
                                     </th>
                                     <th class="align-center">
                                         <b>KETERANGAN</b>
@@ -103,20 +103,24 @@
                             <tbody>
                                 <tr ng-repeat="val in detail">
                                     <td align="center" class="text-center" style="vertical-align: top">{{ val.tanggal | date:'dd-MM-yyyy' }}</td>
-                                    <td align="center" style="vertical-align: top">{{ val.kode }}</td>
+                                    <td align="center" style="vertical-align: top">{{ val.kode}}</td>
+                                    <td align="left" style="vertical-align: top">{{ val.namaLokasi}}</td>
                                     <td style="vertical-align: top">
-                                        <span style="margin-left:25px" ng-if="val.debit == 0">{{ val.kodeAkun + " - " + val.namaAkun }}</span>
-                                        <span ng-if="val.debit != 0">{{ val.kodeAkun + " - " + val.namaAkun }}</span>
+                                        <span ng-if="val.debit == 0">{{ val.kodeAkun}}</span>
+                                        <span ng-if="val.debit != 0">{{ val.kodeAkun}}</span>
                                     </td>
-                                    <td align="left" style="vertical-align: top">{{ val.namaLokasi }}</td>
-                                    <td>{{ val.keterangan }}</td>
+                                    <td style="vertical-align: top">
+                                        <span style="margin-left:25px" ng-if="val.debit == 0">{{ val.namaAkun}}</span>
+                                        <span ng-if="val.debit != 0">{{ val.namaAkun}}</span>
+                                    </td>
+                                    <td>{{ val.keterangan}}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ val.debit| number }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ val.kredit| number }}</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td align="right" class="text-center" colspan="5">
+                                    <td align="right" class="text-center" colspan="6">
                                         <b>Total</b>
                                     </td>
                                     <td align="right" class="text-right">

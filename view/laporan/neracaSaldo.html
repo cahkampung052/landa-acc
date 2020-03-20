@@ -1,90 +1,123 @@
-<link href="{{ css }}" rel="stylesheet" type="text/css"/>
+<link href="{{ css}}" rel="stylesheet" type="text/css"/>
 <div class="card-body">
-                <div align="left">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <br/>
-                            <center>
-                                <h2 class="header-laporan">LAPORAN NERACA SALDO</h2>
-                                Periode : {{ data.tanggal }}
-                                <br/>
-                                Disiapkan Tanggal : {{ data.disiapkan }}
-                                <br/>
-                            </center>
-                            <hr/>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
-                            <thead>
-                                <tr>
-                                    <th rowspan="2">
-                                        <b>AKUN</b>
-                                    </th>
-                                    <th colspan="2" style="text-align: center">
-                                        <b>SALDO AWAL</b>
-                                    </th>
-                                    <th colspan="2" style="text-align: center">
-                                        <b>MUTASI</b>
-                                    </th>
-                                    <th colspan="2" style="text-align: center">
-                                        <b>SALDO AKHIR</b>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th width="100">
-                                        <b>DEBIT</b>
-                                    </th>
-                                    <th width="100">
-                                        <b>KREDIT</b>
-                                    </th>
-                                    <th width="100">
-                                        <b>DEBIT</b>
-                                    </th>
-                                    <th width="100">
-                                        <b>KREDIT</b>
-                                    </th>
-                                    <th width="100">
-                                        <b>DEBIT</b>
-                                    </th>
-                                    <th width="100">
-                                        <b>KREDIT</b>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {%for key, val in detail%}
-                                <tr>
-                                    <td>{{ val.kode }} - {{val.nama}}</td>
-                                    <td align="right" class="text-right">{{ val.debit_awal }}</td>
-                                    <td align="right" class="text-right">{{ val.kredit_awal }}</td>
-                                    <td align="right" class="text-right">{{ val.debit }}</td>
-                                    <td align="right" class="text-right">{{ val.kredit }}</td>
-                                    <td align="right" class="text-right">
-                                        <span ng-if="val.debit_akhir >= 0">{{val.debit_akhir}}</span>
-                                    </td>
-                                    <td align="right" class="text-right">
-                                        <span ng-if="val.kredit_akhir >= 0">{{val.kredit_akhir}}</span>
-                                    </td>
-                                </tr>
-                                {%endfor%}
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td align="right" class="text-center" colspan="3">
-                                        <b>Saldo Akhir</b>
-                                    </td>
-                                    <td></td>
-                                    <td align="right" class="text-right">
-                                        <b>{{ data.total_debit }}</b>
-                                    </td>
-                                    <td align="right" class="text-right">
-                                        <b>{{ data.total_kredit }}</b>
-                                    </td>
-                                    <td align="right" class="text-right" colspan="2"></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
+    <div align="left">
+        <div class="row">
+            <div class="col-md-12 relative-div">
+                <center>
+                    <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                    <h2 class="header-laporan">{{data.lokasi}}</h2>
+                    <h3 class="header-laporan">Laporan Neraca Saldo</h3>
+                    <p style="margin-top:3px">Periode {{data.tanggal}}</p>
+                    <!--<br/>-->
+                </center>
+                <!--<hr/>-->
             </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th rowspan="2">
+                            <b>AKUN</b>
+                        </th>
+                        <th colspan="2" style="text-align: center">
+                            <b>SALDO AWAL</b>
+                        </th>
+                        <th colspan="2" style="text-align: center">
+                            <b>MUTASI</b>
+                        </th>
+                        <th colspan="2" style="text-align: center">
+                            <b>SALDO AKHIR</b>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th width="100">
+                            <b>DEBIT</b>
+                        </th>
+                        <th width="100">
+                            <b>KREDIT</b>
+                        </th>
+                        <th width="100">
+                            <b>DEBIT</b>
+                        </th>
+                        <th width="100">
+                            <b>KREDIT</b>
+                        </th>
+                        <th width="100">
+                            <b>DEBIT</b>
+                        </th>
+                        <th width="100">
+                            <b>KREDIT</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for key, val in detail%}
+                    <tr>
+                        <td>{{val.nama| raw}}</td>
+                        <td align="right" class="text-right">Rp{{ val.debit_awal | number_format(0, ',', '.')}}</td>
+                        <td align="right" class="text-right">Rp{{ val.kredit_awal | number_format(0, ',', '.')}}</td>
+                        <td align="right" class="text-right">Rp{{ val.debit| number_format(0, ',', '.')}}</td>
+                        <td align="right" class="text-right">Rp{{ val.kredit | number_format(0, ',', '.')}}</td>
+                        <td align="right" class="text-right">
+                            {%if val.debit_akhir >= 0%}
+                            <span>Rp{{val.debit_akhir| number_format(0, ',', '.')}}</span>
+                            {%else%}
+                            <span>Rp{{(val.debit_akhir*-1)| number_format(0, ',', '.')}}</span>
+                            {%endif%}
+                        </td>
+                        <td align="right" class="text-right">
+                            {%if val.kredit_akhir >= 0%}
+                            <span>Rp{{(val.kredit_akhir) | number_format(0, ',', '.')}}</span>
+                            {%else%}
+                            <span>Rp{{(val.kredit_akhir * -1) | number_format(0, ',', '.')}}</span>
+                            {%endif%}
+                        </td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+                <!--<tfoot>-->
+                    <tr class="non-body">
+                        <td align="right" class="text-center">
+                            <b>Saldo Akhir</b>
+                        </td>
+                        <td align="right" class="text-right">
+                            <b>Rp{{ data.debit_awal| number_format(0, ',', '.')}}</b>
+                        </td>
+                        <td align="right" class="text-right">
+                            <b>Rp{{ data.kredit_awal| number_format(0, ',', '.')}}</b>
+                        </td>
+                        <td align="right" class="text-right">
+                            <b>Rp{{ data.debit_mutasi| number_format(0, ',', '.')}}</b>
+                        </td>
+                        <td align="right" class="text-right">
+                            <b>Rp{{ data.kredit_mutasi| number_format(0, ',', '.')}}</b>
+                        </td>
+                        <td align="right" class="text-right">
+                            {%if data.debit_akhir >= 0%}
+                            <span>
+                                <b>Rp{{ data.debit_akhir| number_format(0, ',', '.')}}</b>
+                            </span>
+                            {%else%}
+                            <span>
+                                <b>Rp{{ (data.debit_akhir*-1)| number_format(0, ',', '.')}}</b>
+                            </span>
+                            {%endif%}
+                        </td>
+                        <td align="right" class="text-right">
+                            {%if data.kredit_akhir >= 0%}
+                            <span>
+                                <b>Rp{{ (data.kredit_akhir)| number_format(0, ',', '.')}}</b>
+                            </span>
+                            {%else%}
+                            <span>
+                                <b>Rp{{ (data.kredit_akhir * - 1)| number_format(0, ',', '.')}}</b>
+                            </span>
+                            {%endif%}
+                        </td>
+                    </tr>
+                <!--</tfoot>-->
+            </table>
+        </div>
+    </div>
+</div>

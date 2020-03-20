@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="{{ css }}?t=123" rel="stylesheet" type="text/css"/>
+        <title>Arus Kas</title>
+        <style type="text/css">
+            th, td{
+                padding:5px;
+                /*color:black;*/
+                /*border: 1px solid #2f2f2f;*/
+                border-width: thin;
+                vertical-align: middle;
+                font-size: 12px;
+                font-family : Arial, Helvetica, sans-serif;
+            }
+            .align-left{
+                text-align: left;
+            }
+            .align-center{
+                text-align: center;
+            }
+            .align-right{
+                text-align: right;
+            }
+            .header{
+                color: #263544; 
+            }
+            thead tr th{
+                background-color: #263544;
+                color: #FFF;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card-body" id="print">
+            <div align="left">
+                <div class="row header-laporan-wrapper">
+                    <div class="col-md-12 relative-div">
+                        <center>
+                            <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+
+                            <h2 class="header-laporan">{{data.lokasi}}</h2>
+                            <h3 class="header-laporan">Laporan Arus Kas</h3>
+                            <p style="margin-top:3px">Periode {{data.tanggal}}</p>
+                            <!--<br/>-->
+                        </center>
+                        <!--<hr/>-->
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-laporan-striped" style="border-collapse: collapse; width: 100%">
+                        <tbody>
+                            <tr style="background-color: #263444; color: white!important;">
+                                <td><b>Saldo Kas Awal</b></td>
+                                <td align="right">
+                                    {%if data.saldo_awal.total >= 0%}
+                                    <b>Rp{{data.saldo_awal.total| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>(Rp{{(data.saldo_awal.total*-1)| number_format(0, ',', '.')}})</b>
+                                    {%endif%}
+                                </td>
+                            </tr>
+                            {%for v in data.saldo_awal.detail%}
+                            {%if v.total != 0%}
+                            <tr>
+                                <td style="padding-left: 30px">
+                                    {{v.kode}} - {{v.nama}}
+                                </td>
+                                <td align="right">
+                                    {%if v.total and v.total >= 0%}
+                                    <span>Rp{{not v.total ? '-' : v.total| number_format(0, ',', '.')}}</span>
+                                    {%else%}
+                                    <span>(Rp{{not v.total ? '-' : (v.total*-1)| number_format(0, ',', '.')}})</span>
+                                    {%endif%}
+                                </td>
+                            </tr>
+                            {%endif%}
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                    <!--<br/>-->
+                    <table class="table table-hover table-laporan-striped" style="border-collapse: collapse; width: 100%">
+                        <thead>
+                            <tr style="line-height: 20px; border: none">
+                                <td colspan="2" style="border: none; color: white">ENTER</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for key, val in detail%}
+                            <tr></tr>
+                            <tr style="background-color: #263444; color: white!important;">
+                                <td colspan="2"><b>{{val.nama}}</b></td>
+                            </tr>
+                            {%for k, v in val.detail%}
+                            <tr style="background-color: #26344470">
+                                <td colspan="2">
+                                    <b>{{k}}</b>
+                                </td>
+                            </tr>
+                            {%for y in v.detail%}
+                            <tr>
+                                <td style="padding-left: 30px;">
+                                    {{y.akun.kode}} - {{y.akun.nama}}
+                                </td>
+                                <td align="right">
+                                    {%if y.total >= 0%}
+                                    <span>Rp{{y.total| number_format(0, ',', '.')}}</span>
+                                    {%else%}
+                                    <span>Rp{{(y.total*-1)| number_format(0, ',', '.')}}</span>
+                                    {%endif%}
+                                </td>
+                            </tr>
+                            {%endfor%}
+                            <tr style="background-color: #26344440">
+                                <td>
+                                    <b>TOTAL</b>
+                                </td>
+                                <td align="right">
+                                    {%if v.total >= 0%}
+                                    <b>Rp{{v.total| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>Rp{{(v.total*-1)| number_format(0, ',', '.')}}</b>
+                                    {%endif%}
+                                </td>
+                            </tr>
+                            <!--<tr><td colspan="2"><br/></td></tr>-->
+                            {%endfor%}
+                            <tr style="background-color: #263444; color: white!important;">
+                                <td>
+                                    {%if val.total >= 0%}
+                                    <b>Kenaikan Kas dari {{key}}</b>
+                                    {%else%}
+                                    <b>Penurunan Kas dari {{key}}</b>
+                                    {%endif%}
+                                </td>
+                                <td align="right">
+                                    {%if val.total >= 0%}
+                                    <b>Rp{{val.total| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>(Rp{{(val.total*-1)| number_format(0, ',', '.')}})</b>
+                                    {%endif%}
+                                </td>
+                            </tr>
+                            <!--<tr><td colspan="2"><br/></td></tr>-->
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                    <!--<br/>-->
+                    <table class="table table-hover table-laporan-striped" style="border-collapse: collapse; width: 100%">
+                        <thead>
+                            <tr style="line-height: 20px; border: none">
+                                <td colspan="2" style="border: none; color: white">ENTER</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background-color: #263444; color: white!important;">
+                                <td>
+                                    {%if data.saldo_biaya >= 0%}
+                                    <b>{{'KENAIKAN KAS'}}</b>
+                                    {%else%}
+                                    <b>{{'PENURUNAN KAS'}}</b>
+                                    {%endif%}
+                                </td>
+                                <td align="right">
+                                    {%if data.saldo_biaya >= 0%}
+                                    <b>Rp{{data.saldo_biaya| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>(Rp{{(data.saldo_biaya*-1)| number_format(0, ',', '.')}})</b>
+                                    {%endif%}
+                                </td>
+                            </tr>
+                            <tr style="background-color: #263444; color: white!important;">
+                                <td><b>Saldo Kas Akhir</b></td>
+                                <td align="right">
+                                    {%if data.saldo_akhir.total >= 0%}
+                                    <b>Rp{{data.saldo_akhir.total| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>(Rp{{(data.saldo_akhir.total*-1)| number_format(0, ',', '.')}})</b>
+                                    {%endif%}
+                                </td>
+                            </tr>
+                            {%for v in data.saldo_akhir.detail%}
+                            {%if v.total != 0%}
+                            <tr>
+                                <td style="padding-left: 30px">
+                                    {{v.kode}} - {{v.nama}}
+                                </td>
+                                <td align="right">
+                                    {%if v.total and v.total >= 0%}
+                                    <span>Rp{{not v.total ? '-' : v.total| number_format(0, ',', '.')}}</span>
+                                    {%else%}
+                                    <span>(Rp{{not v.total ? '-' : (v.total*-1)| number_format(0, ',', '.')}})</span>
+                                    {%endif%}
+                                </td>
+                            </tr>
+                            {%endif%}
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

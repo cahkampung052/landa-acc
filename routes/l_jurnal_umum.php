@@ -1,10 +1,14 @@
 <?php
 
 $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
+
+    $subDomain = str_replace('api/', '', site_url());
+    $data['img'] = imgLaporan();
+
     $params = $request->getParams();
     $tanggal_start = $params['startDate'];
     $tanggal_end = $params['endDate'];
-    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' Sampai ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['tanggal'] = date("d M Y", strtotime($tanggal_start)) . ' s/d ' . date("d M Y", strtotime($tanggal_end));
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = $params['nama_lokasi'];
     if (isset($params['m_lokasi_id'])) {

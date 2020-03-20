@@ -207,16 +207,18 @@ $app->post('/acc/m_akun/importSaldoAwal', function ($request, $response) {
 $app->get('/acc/m_akun/index', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
+
     /**
      * Ambil transaksi di akun
      */
     $db->select("
-            SUM(debit) as debit, 
-            SUM(kredit) as kredit,
+            SUM(acc_trans_detail.debit) as debit,
+            SUM(acc_trans_detail.kredit) as kredit,
             acc_m_akun.id,
             acc_m_akun.saldo_normal,
             acc_m_akun.parent_id,
-            acc_m_akun.nama
+            acc_m_akun.nama,
+            acc_m_akun.kode
         ")
             ->from("acc_m_akun")
             ->leftJoin("acc_trans_detail", "acc_m_akun.id = acc_trans_detail.m_akun_id")
@@ -225,12 +227,14 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     $trans = $db->findAll();
     $arrTrans = [];
     foreach ($trans as $key => $value) {
-        $arrTrans[$value->id] = (isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
-        $arrTrans[$value->parent_id] = (isset($arrTrans[$value->parent_id]) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
+        $value->kredit = (!empty($value->kredit)) ? (int) $value->kredit : 0;
+        $value->debit = (!empty($value->debit)) ? (int) $value->debit : 0;
+
+        $arrTrans[$value->id] = ((isset($arrTrans[$value->id])) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
+        $arrTrans[$value->parent_id] = ((isset($arrTrans[$value->parent_id])) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
     }
 
-    
-    //echo json_encode($coba);exit();
+    //echo json_encode($trans);exit();
     /**
      * List akun
      */
@@ -256,12 +260,15 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     $totalItem = $db->count();
     $listAkun = buildTreeAkun($models, 0);
     $arrModel = flatten($listAkun);
+
+//    pd($arrModel);
     $arr = [];
     foreach ($arrModel as $key => $value) {
         $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
         $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $arr[$key] = (array) $value;
-        $arr[$key]['nama_lengkap'] = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$key]['nama'] = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $arr[$key]['nama_lengkap'] = mb_convert_encoding($spasi . $value->kode . ' - ' . $value->nama, 'UTF-8', 'UTF-8');
         $arr[$key]['parent_id'] = (int) $value->parent_id;
         $arr[$key]['is_induk'] = (int) $value->is_induk;
         $arr[$key]['saldo_normal'] = (int) $value->saldo_normal;
@@ -306,7 +313,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         if ($data['is_induk'] == 0) {
             $data['kode'] = $data['parent_id'] == 0 ? $data['kode'] : $data['kode_induk'] . '' . $data['kode'];
         }
-        
+
         /**
          * Cek kode
          */
@@ -353,7 +360,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
          */
         $childId = getChildId("acc_m_akun", $model->id);
         if (!empty($childId)) {
-            $sql->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus], "id in (" . implode(",", $childId) . ")");
+            $sql->update("acc_m_akun", ["tipe" => $model->tipe, "tipe_arus" => $model->tipe_arus, "is_kas" => $model->is_kas], "id in (" . implode(",", $childId) . ")");
             /**
              * Jika punya child berarti is_tipe = 1
              */
@@ -376,7 +383,14 @@ $app->post('/acc/m_akun/trash', function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
     $update['is_deleted'] = $data['is_deleted'];
-    $update['tgl_nonaktif'] = date('Y-m-d');
+    if ($data['is_deleted'] == 1) {
+        $update['tgl_nonaktif'] = date('Y-m-d');
+    }
+
+    if (isset($data['tipe_arus']) && !empty($data['tipe_arus'])) {
+        $update['tipe_arus'] = $data['tipe_arus'];
+    }
+
     $model = $db->update("acc_m_akun", $update, array('id' => $data['id']));
     if ($model) {
         return successResponse($response, $model);
@@ -419,9 +433,12 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     $parentId[] = $kode_induk;
                 }
             }
+
+//            pd($parentId);
             for ($row = 11; $row <= $highestRow; $row++) {
                 $kode = $objPHPExcel->getSheet(0)->getCell('B' . $row)->getValue();
                 if (isset($kode)) {
+                    $data = [];
                     $data['kode'] = $kode;
                     $data['nama'] = $objPHPExcel->getSheet(0)->getCell('C' . $row)->getValue();
                     $data['level'] = 1;
@@ -430,7 +447,7 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                      * ambil id dari kode induk
                      */
                     $kode_induk = $objPHPExcel->getSheet(0)->getCell('D' . $row)->getValue();
-                    if (isset($kode_induk)) {
+                    if (isset($kode_induk) && !empty($kode_induk) && strlen($kode_induk) > 0) {
                         $model = $db->select("*")->from("acc_m_akun")->where("kode", "=", $kode_induk)->find();
                         if ($model) {
                             $data['parent_id'] = $model->id;
@@ -478,6 +495,8 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     }
                 }
             }
+
+//            pd($tes);
             unlink($inputFileName);
             return successResponse($response, 'data berhasil di import');
         } else {
@@ -546,7 +565,7 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
         }
 
         $name_month[date("m-Y", strtotime($current_month))]["name"] = date("F Y", strtotime($current_month));
-        $name_month[date("m-Y", strtotime($current_month))]["detail"] = ["budget"=>0];
+        $name_month[date("m-Y", strtotime($current_month))]["detail"] = ["budget" => 0];
         $name_month[date("m-Y", strtotime($current_month))]["date"] = $current_month;
         $current_month = date("Y-m-d", strtotime('+1 month', strtotime($current_month)));
     } while ($current_month != $end_month);
@@ -567,12 +586,12 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
 //    echo json_encode($getBudget);die;
     $list = $name_month;
     foreach ($getBudget as $key => $value) {
-        if($value->bulan < 10){
+        if ($value->bulan < 10) {
             $value->bulan = 0 . "" . $value->bulan;
         }
         $list[$value->bulan . "-" . $value->tahun]['detail'] = (array) $value;
     }
-    
+
 //    echo json_encode($list);die;
 //    $listBudget = [];
 //    for ($i = 1; $i <= 12; $i++) {
@@ -588,9 +607,9 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
  */
 $app->post('/acc/m_akun/saveBudget', function ($request, $response) {
     $params = $request->getParams();
-    
+
 //    print_r($params);die;
-    
+
     $db = $this->db;
     try {
         foreach ($params['detail'] as $key => $value) {
@@ -654,6 +673,7 @@ $app->get('/acc/m_akun/getByType', function ($request, $response) {
         $models = $db->findAll();
         $arr = [];
         foreach ($models as $key => $value) {
+            $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
             $saldo = getSaldo($value->id, null, null, date("Y-m-d"));
             if ($saldo <= 0) {
                 $arr[] = (array) $value;
@@ -688,6 +708,11 @@ $app->get('/acc/m_akun/akunHutang', function ($request, $response) {
             ->andWhere("is_deleted", "=", 0)
             ->andWhere("tipe", "=", "KEWAJIBAN")
             ->findAll();
+
+    foreach ($models as $key => $value) {
+        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+    }
+
     return successResponse($response, ['list' => $models]);
 });
 /*
@@ -700,6 +725,11 @@ $app->get('/acc/m_akun/akunPiutang', function ($request, $response) {
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
+
+    foreach ($models as $key => $value) {
+        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+    }
+
     return successResponse($response, ['list' => $models]);
 });
 /**
@@ -712,6 +742,13 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
+
+    foreach ($models as $key => $value) {
+        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $spasi = ($value->level == 1) ? '' : str_repeat("--", $value->level - 1);
+        $value->nama_lengkap = $spasi . $value->kode . ' - ' . $value->nama;
+    }
+
     return successResponse($response, ['list' => $models]);
 });
 
@@ -723,6 +760,13 @@ $app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
             ->where("is_tipe", "=", 0)
             ->where("is_deleted", "=", 0)
             ->findAll();
+
+    foreach ($models as $key => $value) {
+        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $spasi = ($value->level == 1) ? '' : str_repeat("--", $value->level - 1);
+        $value->nama_lengkap = $spasi . $value->kode . ' - ' . $value->nama;
+    }
+
     return successResponse($response, ['list' => $models]);
 });
 
@@ -740,6 +784,10 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
         $db->andWhere("nama", "like", $params['nama']);
     }
     $models = $db->findAll();
+
+    foreach ($models as $key => $value) {
+        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+    }
     return successResponse($response, ['list' => $models]);
 });
 /**

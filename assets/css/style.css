@@ -5,7 +5,7 @@ td, th {
 }
 .header-laporan {
     margin: 0px;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
     font-size: 15px;
     font-weight: bold;
 }
@@ -48,6 +48,11 @@ td, th {
     background-color: #263444;
     color: white;
 }
+
+.table-laporan-border{
+    width: 100%;
+}
+
 .table-laporan-border tr {
     background-color: #ffffff;
     border-bottom: none;
@@ -141,4 +146,100 @@ td, th {
 .non-body {
     background-color: #263444!important;
     color: white;
+}
+
+.table-smallest {
+    line-height: 5px;
+}
+
+.table-smallest th {
+    line-height: 10px;
+}
+
+.table-smallest td, .table-smallest th {
+    font-size: 7px;
+    padding: 2px;
+    /*letter-spacing: -1px;*/
+    border: 1px solid #263444;
+}
+
+.table-smallest td.empty {
+    font-size: 7px;
+    padding: 5px;
+    /*letter-spacing: -1px;*/
+    border: 1px solid #263444;
+}
+
+.table-smallest tr.empty > td {
+    font-size: 7px;
+    padding: 5px;
+    /*letter-spacing: -1px;*/
+    border: 1px solid #263444;
+}
+
+.table-smaller {
+    line-height: 5px;
+}
+
+.table-smaller th {
+    line-height: 10px;
+}
+
+.table-smaller td, .table-smaller th {
+    font-size: 10px;
+    border: 1px solid black;
+}
+
+.header-smaller {
+    font-size: 12px;
+}
+
+tr.padding0 > td {
+    padding-left: 0;
+    padding-right: 1px;
+}
+
+/*internal*/
+.relative-div center {
+    position: relative;
+    line-height: 10px;
+}
+.absolute-div-center {
+    position: absolute;
+    left: 15%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+.table-laporan-border-light{
+    width: 100%
+}
+.table-laporan-border-light td, .table-laporan-border-light th {
+    border: 1px solid #263444
+}
+.table-laporan-border-light tbody+tbody {
+    border-top: none;
+}
+.table-laporan-border-light thead tr th{
+    border-bottom: none;
+}
+.table-laporan-border-light thead tr {
+    background-color: rgb(189, 215, 238) !important;
+    color: black;
+    border: 1px solid #263444;
+}
+.table-laporan-border-light tbody tr th {
+    color: black;
+    border: 1px solid #263444;
+}
+.table-laporan-border-light tbody tr:hover {
+    background-color: #f2f7fb;
+}
+.table-laporan-border-light tfoot tr {
+    background-color: rgb(189, 215, 238) !important;
+    color: black;
+}
+
+.non-body-light {
+    background-color: rgb(189, 215, 238) !important;
+    color: black;
 }

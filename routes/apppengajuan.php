@@ -484,9 +484,14 @@ $app->post("/acc/apppengajuan/status", function ($request, $response) {
  */
 $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response) {
     $data = $request->getParams();
+
+//    pd($data);
     $tableuser = tableUser();
     $db = $this->db;
-    $db->select("*")->from("acc_t_pengajuan_det")->where("t_pengajuan_id", "=", $data['id']);
+    $db->select("acc_t_pengajuan_det.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")
+            ->from("acc_t_pengajuan_det")
+            ->join("LEFT JOIN", "acc_m_akun", "acc_m_akun.id = acc_t_pengajuan_det.m_akun_id")
+            ->where("t_pengajuan_id", "=", $data['id']);
     $detail = $db->findAll();
     foreach ($detail as $key => $val) {
         $val->no = $key + 1 . ".";
@@ -502,6 +507,16 @@ $app->get("/acc/apppengajuan/printPengajuan", function ($request, $response) {
     $template = str_replace("{end}", "{%endfor%}", $template);
     $template = str_replace("{start_acc}", "{%for key, val in acc%}", $template);
     $template = str_replace("<td></td>", "", $template);
+
+    $host = getConfig();
+    if ($host == 'config/landa.php') {
+        $template = str_replace('class="header"', 'style="text-align:center;background-color:#abffab"', $template);
+    } else if ($host == 'config/rain.php') {
+        $template = str_replace('class="header"', 'style="text-align:center;background-color:yellow"', $template);
+    } else if ($host == 'config/wb.php') {
+        $template = str_replace('class="header"', 'style="text-align:center;background-color:#20a8d8"', $template);
+    }
+
     $view = twigViewPath();
     $content = $view->fetchFromString($template, [
         "data" => $data,

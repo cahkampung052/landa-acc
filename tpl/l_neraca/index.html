@@ -29,8 +29,8 @@
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
-                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
+                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                             </ui-select>
                                         </div>
                                     </div>
@@ -73,15 +73,15 @@
             </div>
             <div class="card-body">
                 <div class="row header-laporan-wrapper">
-                    <div class="col-md-12">
+                    <div class="col-md-12 relative-div">
                         <center>
-                            <h2 class="header-laporan">LAPORAN POSISI KEUANGAN</h2>
-                            Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
-                            <br/>
-                            Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
-                            <br/>
+                            <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                            <h2 class="header-laporan">{{data.lokasi}}</h2>
+                            <h3 class="header-laporan">Laporan Posisi Keuangan</h3>
+                            <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
+                            <!--<br/>-->
                         </center>
-                        <hr/>
+                        <!--<hr/>-->
                     </div>
                 </div>
                 <div class="table-responsive">

@@ -11,6 +11,76 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     $scope.urlfoto = "api/file/pengeluaran/";
     $scope.listLokasi = [];
     $scope.is_pengajuan = false;
+
+    /*
+     * SETTING FIELD
+     */
+    $scope.checklist = false;
+    $scope.field = [];
+    $scope.startFrom = [];
+    $scope.limit = 0;
+    $scope.row = 4;
+    $scope.classrow = 12 / $scope.row;
+    $scope.setPosition = function ($event, key, vals) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        console.log($event.keyCode)
+        var ps = $scope.limit;
+        if ($event.keyCode == 37) {
+            ps = -($scope.limit);
+        } else if ($event.keyCode == 38) {
+            ps = -1;
+        } else if ($event.keyCode == 40) {
+            ps = 1;
+        }
+        console.log(ps)
+
+        if ($event.keyCode == 37 || $event.keyCode == 39 || $event.keyCode == 38 || $event.keyCode == 40) {
+            $event.preventDefault();
+            var sw = $scope.field[key + ps].value;
+            var chk = $scope.field[key + ps].checkbox;
+            var al = $scope.field[key + ps].alias;
+            $scope.field[key + ps].value = vals.value;
+            $scope.field[key + ps].checkbox = vals.checkbox;
+            $scope.field[key + ps].alias = vals.alias;
+            $scope.field[key].value = sw;
+            $scope.field[key].checkbox = chk;
+            $scope.field[key].alias = al;
+            var f = key + ps;
+            setTimeout(function () {
+                $('.input-' + f).focus()
+            }, 1)
+        } else {
+            console.log(vals)
+            console.log($event.keyCode)
+            $scope.field[key].alias = vals.alias;
+        }
+
+//        console.log($scope.field)
+
+    }
+
+    $scope.fillCheckBox = function (a) {
+        console.log(a)
+        angular.forEach($scope.field, function (val, key) {
+            val.checkbox = a;
+        })
+    }
+
+    $scope.savePosition = function () {
+        Data.post(control_link + '/savePosition', $scope.field).then(function (result) {
+            if (result.status_code == 200) {
+//                $scope.is_setting = false;
+                $scope.callServer(tableStateRef)
+            } else {
+                $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
+            }
+        });
+    }
+    /*
+     * END SETTING FIELD
+     */
+
     /*
      * Ambil akun kas
      */
@@ -130,6 +200,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         }
         Data.get(control_link + '/getDetail', data).then(function (data) {
             $scope.listDetail = data.data.list;
+            $scope.sumTotal();
         });
     }
     /*
@@ -198,6 +269,29 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         });
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
+            $scope.field = [];
+            if (response.data.field != undefined && response.data.field.length > 0) {
+                $scope.field = response.data.field;
+            } else {
+                var index = 0;
+                angular.forEach(response.data.list[0], function (val, key) {
+                    $scope.field.push({
+                        checkbox: true,
+                        value: key,
+                        alias: key,
+                        no: index
+                    });
+                    index += 1;
+                });
+            }
+            $scope.limit = Math.ceil($scope.field.length / $scope.row);
+            $scope.startFrom = [];
+            angular.forEach($scope.field, function (val, key) {
+                if (val.no % $scope.limit == 0) {
+                    $scope.startFrom.push({start: val.no, limit: $scope.limit})
+                }
+            })
+            console.log($scope.field)
             $scope.base_url = response.data.base_url;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });

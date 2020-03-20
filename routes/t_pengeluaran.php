@@ -133,6 +133,7 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
             " . $tableuser . ".nama as namaUser, 
             acc_m_akun.kode as kodeAkun, 
             acc_m_akun.nama as namaAkun, 
+            acc_m_akun.parent_id,
             acc_m_kontak.nama as namaSup,
             acc_m_kontak.type as typeSup,
             acc_t_pengajuan.no_proposal
@@ -167,6 +168,22 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
     if (isset($params['offset']) && !empty($params['offset'])) {
         $db->offset($params['offset']);
     }
+
+    if (isset($params["sort"]) && !empty($params["sort"])) {
+        if ($params['sort'] == 'no_transaksi' || $params['sort'] == 'tanggal' || $params['sort'] == 'created_at' || $params['sort'] == 'tanggal_formated') {
+            if ($params['sort'] == 'tanggal_formated') {
+                $params['sort'] = 'tanggal';
+            }
+
+            if ($params['order'] == 'false') {
+                $order = "DESC";
+            } else {
+                $order = "ASC";
+            }
+            $db->orderBy($params["sort"] . " " . $order);
+        }
+    }
+
     $models = $db->findAll();
     $totalItem = $db->count();
     foreach ($models as $key => $val) {
@@ -175,17 +192,24 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
         $models[$key]['tanggal2'] = date("Y-m-d", strtotime($val->tanggal));
         $models[$key]['tanggal_formated'] = date("d-m-Y", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i", $val->created_at);
-        $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
+        $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun, "parent_id" => $val->parent_id];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
         if ($val->m_kontak_id != 0) {
             $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaSup, "type" => ucfirst($val->typeSup)];
         }
         $models[$key]['status'] = ucfirst($val->status);
+        $models[$key]['total'] = intval($val->total) . '';
+        $models[$key]['grandtotal'] = number_format(intval($val->total));
     }
+
+    $a = getMasterSetting();
+    $testing = !empty($a->posisi_pengeluaran) ? json_decode($a->posisi_pengeluaran) : [];
+
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
-        'base_url' => str_replace('api/', '', config('SITE_URL'))
+        'base_url' => str_replace('api/', '', config('SITE_URL')),
+        'field' => $testing
     ]);
 });
 /*
@@ -197,27 +221,30 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
     $validasi = validasi($params['form']);
     if ($validasi === true) {
         //ganti preffix kode berdasarkan nama parent diatasnya
-        if (isset($params['form']['m_akun_id']['parent_id'])) {
-            $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
-            if ($preffix) {
-                if ($preffix->nama == 'CASH ON HAND') {
-                    $string = "KK";
-                } else {
-                    $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
-                    $string = $fitst_char . "K";
-                }
-            }
-
-            /**
-             * Generate kode pengeluaran
-             */
-            $get_bulan = date("m", strtotime($params['form']['tanggal']));
-            $get_tahun = date("Y", strtotime($params['form']['tanggal']));
-            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $string, $get_bulan, $get_tahun);
-            $kode = str_replace("BK", $string, $kode);
-        } else {
-            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
-        }
+//        if (isset($params['form']['m_akun_id']['parent_id'])) {
+//        $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
+//        print_r($preffix);die;
+//        if ($preffix) {
+//            if ($preffix->nama == 'CASH ON HAND') {
+//                $string = "KK";
+//            } else {
+//                $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
+//                $string = $fitst_char . "K";
+//            }
+//        }
+//        print_r($string);die;
+        /**
+         * Generate kode pengeluaran
+         */
+        $get_bulan = date("m", strtotime($params['form']['tanggal']));
+        $get_tahun = date("Y", strtotime($params['form']['tanggal']));
+        $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode'], $params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
+//        $kode = str_replace("PREFFIX", $string, $kode);
+//        print_r($kode);
+//        die;
+//        } else {
+//            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
+//        }
 
         $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
 
@@ -236,19 +263,31 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $pengeluaran['total'] = $params['form']['total'];
         $pengeluaran['t_pengajuan_id'] = (isset($params['form']['t_pengajuan_id']) && !empty($params['form']['t_pengajuan_id']) ? $params['form']['t_pengajuan_id'] : "");
         $pengeluaran['status'] = $params['form']['status'];
-
+        
+        $keterangan = [];
         foreach ($params['detail'] as $key => $value) {
             $keterangan[$key] = $value['keterangan'];
         }
-        $keteranganPengeluaran = join("<br>",$keterangan);
+        $keteranganPengeluaran = join("<br>", $keterangan);
         $pengeluaran['keterangan'] = (isset($keteranganPengeluaran) && !empty($keteranganPengeluaran) ? $keteranganPengeluaran : NULL);
 
         /**
          * update atau input pengeluaran
          */
+//        print_r($params['form']);die;
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
-            $pengeluaran['no_urut'] = $params['form']['no_urut'];
-            $pengeluaran['no_transaksi'] = $params['form']['no_transaksi'];
+
+            $cek_data = $sql->select("tanggal")->from("acc_pengeluaran")->where("id", "=", $params['form']['id'])->find();
+
+            if (date("m", strtotime($cek_data->tanggal)) != date("m", strtotime($pengeluaran['tanggal']))) {
+                $pengeluaran['no_transaksi'] = $kode;
+                $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
+            } else {
+                $pengeluaran['no_urut'] = $params['form']['no_urut'];
+                $pengeluaran['no_transaksi'] = $params['form']['no_transaksi'];
+            }
+
+
             $model = $sql->update("acc_pengeluaran", $pengeluaran, ["id" => $params['form']['id']]);
             /**
              * Hapus pengeluaran detail
@@ -390,6 +429,19 @@ $app->get("/acc/t_pengeluaran/getTemplate", function ($request, $response) {
 $app->post("/acc/t_pengeluaran/saveTemplate", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
+    try {
+        $model = $db->update("acc_m_setting", $data, ["id" => 1]);
+        return successResponse($response, $model);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
+    }
+});
+
+$app->post("/acc/t_pengeluaran/savePosition", function ($request, $response) {
+    $data = $request->getParams();
+    $db = $this->db;
+
+    $data['posisi_pengeluaran'] = json_encode($data);
     try {
         $model = $db->update("acc_m_setting", $data, ["id" => 1]);
         return successResponse($response, $model);

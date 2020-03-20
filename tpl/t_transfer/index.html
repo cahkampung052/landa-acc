@@ -11,10 +11,18 @@
                                 <i class="fa fa-plus"></i>
                                 &nbsp;Buat Transfer Baru
                             </button>
+                            <button class="dropdown-item" ng-click="is_setting = !is_setting">
+                                <i class="fa fa-gear"></i>
+                                &nbsp;Setting Field
+                            </button>
                         </div>
                     </div>
                 </div>
                 <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
+                    <button class="btn btn-transparan btn-sm" ng-click="is_setting = !is_setting" ng-hide="false">
+                        <i class="fa fa-gear"></i>
+                        &nbsp;Setting Field
+                    </button>
                     <button class="btn btn-primary btn-sm" ng-click="create();" ng-if="user.akses.transfer_kas_create">
                         <i class="fa fa-plus"></i>
                         &nbsp;Buat Transfer Baru
@@ -24,7 +32,7 @@
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
                     <div class="row mt-15px">
-                        <div class="col-md-12">
+                        <div class="col-md-12" ng-if="!is_setting">
                             <div class="alert alert-secondary">
                                 <form name="landaform" novalidate="">
                                     <div class="form-group row mb-0px">
@@ -47,26 +55,56 @@
                                 </form>
                             </div>
                         </div>
+                        <div class="col-md-{{classrow}}" ng-if="is_setting" ng-repeat="a in startFrom">
+                            <div class="form-group row">
+                                <div class="col-sm-12" ng-repeat="(key, val) in field | limitTo:a.limit:a.start">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><input type="checkbox" ng-model="val.checkbox"></span>
+                                            <span class="input-group-text">{{val.no + 1}}</span>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm input-{{val.no}}" ng-model="val.alias" ng-keyup="setPosition($event, val.no, val)"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" ng-if="is_setting">
+                            <div class="form-group row">
+                                <div class="col-md-12 text-center">
+                                    <div class="btn-group">
+                                        <span class="input-group-text"><input type="checkbox" ng-model="checklist" ng-click="fillCheckBox(this.checklist)"></span>
+                                        <button type="button" class="btn btn-primary btn-sm" ng-click="savePosition()"><i class="fa fa-save"></i> Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th class="align-left">No Transaksi</th>
+                                <th class="align-left" ng-repeat="(key, val) in field" ng-if="val.checkbox">
+                                    {{val.alias}}
+                                </th>
+<!--                                <th class="align-left">No Transaksi</th>
                                 <th class="align-left">Akun Asal</th>
                                 <th class="align-left">Akun Tujuan</th>
                                 <th class="align-right">Total</th>
                                 <th class="align-left">Tanggal</th>
                                 <th class="align-left">Dibuat Pada</th>
                                 <th class="align-left">Dibuat Oleh</th>
-                                <th class="align-center">Status</th>
+                                <th class="align-center">Status</th>-->
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
-                                <td class="align-left">{{ row.no_transaksi }}</td>
+                                <td class="align-left" ng-repeat="val in field" ng-if="val.checkbox">
+                                    <span ng-if="row[val.value].length == undefined">{{ row[val.value].nama}}</span>
+                                    <span ng-if="row[val.value].length != undefined">{{ row[val.value]}}</span>
+                                </td>
+<!--                                <td class="align-left">{{ row.no_transaksi }}</td>
                                 <td class="align-left">{{ row.namaAsal }}</td>
                                 <td class="align-left">{{ row.namaTujuan }}</td>
                                 <td class="align-right">{{ row.total | number }}</td>
@@ -76,7 +114,7 @@
                                 <td class="align-center">
                                     <span class="bg-success p-1" ng-if="row.status == 'Terposting'">{{ row.status }}</span>
                                     <span class="bg-info p-1" ng-if="row.status == 'Draft'">{{ row.status }}</span>
-                                </td>
+                                </td>-->
                                 <td>
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft' && row.tanggal>= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_update)"  ng-click="update(row)"></button>

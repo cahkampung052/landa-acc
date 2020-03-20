@@ -107,7 +107,7 @@ $app->get('/acc/t_penerimaan/getDetail', function ($request, $response) {
             ")
             ->from("acc_pemasukan_det")
             ->join("join", "acc_m_akun", "acc_m_akun.id = acc_pemasukan_det.m_akun_id")
-            ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pemasukan_det.m_lokasi_id")
+            ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_pemasukan_det.m_lokasi_id")
             ->where("acc_pemasukan_id", "=", $params['id'])
             ->findAll();
     foreach ($models as $key => $val) {
@@ -122,6 +122,9 @@ $app->get('/acc/t_penerimaan/getDetail', function ($request, $response) {
 $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     $params = $request->getParams();
     $tableuser = tableUser();
+
+//    pd($params);
+
     $db = $this->db;
     $db->select("
                 acc_pemasukan.*, 
@@ -130,6 +133,7 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
                 " . $tableuser . ".nama as namaUser, 
                 acc_m_akun.kode as kodeAkun, 
                 acc_m_akun.nama as namaAkun, 
+                acc_m_akun.parent_id,
                 acc_m_kontak.nama as namaCus,
                 acc_m_kontak.type as typeCus
             ")
@@ -165,11 +169,25 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
     if (isset($params['offset']) && !empty($params['offset'])) {
         $db->offset($params['offset']);
     }
+
+    if (isset($params["sort"]) && !empty($params["sort"])) {
+        if ($params['sort'] == 'no_transaksi' || $params['sort'] == 'tanggal' || $params['sort'] == 'created_at' || $params['sort'] == 'tanggal_formated') {
+            if ($params['sort'] == 'tanggal_formated') {
+                $params['sort'] = 'tanggal';
+            }
+
+            if ($params['order'] == 'false') {
+                $order = "DESC";
+            } else {
+                $order = "ASC";
+            }
+            $db->orderBy($params["sort"] . " " . $order);
+        }
+    }
+
     $models = $db->findAll();
     $totalItem = $db->count();
-    /*
-     * ambil master setting
-     */
+
     $setting = getMasterSetting();
     foreach ($models as $key => $val) {
         $models[$key] = (array) $val;
@@ -177,17 +195,28 @@ $app->get('/acc/t_penerimaan/index', function ($request, $response) {
         $models[$key]['tanggal2'] = date("Y-m-d", strtotime($val->tanggal));
         $models[$key]['tanggal_formated'] = date("d-m-Y", strtotime($val->tanggal));
         $models[$key]['created_at'] = date("d-m-Y h:i", $val->created_at);
-        $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun];
+        $models[$key]['m_akun_id'] = ["id" => $val->m_akun_id, "nama" => $val->namaAkun, "kode" => $val->kodeAkun, "parent_id" => $val->parent_id];
         $models[$key]['m_lokasi_id'] = ["id" => $val->m_lokasi_id, "nama" => $val->namaLokasi, "kode" => $val->kodeLokasi];
         $models[$key]['m_kontak_id'] = ["id" => $val->m_kontak_id, "nama" => $val->namaCus, "type" => ucfirst($val->typeCus)];
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['tanggal_setting'] = $setting->tanggal;
-        $models[$key]['grandtotal'] = intval($val->total);
+        $models[$key]['grandtotal'] = number_format(intval($val->total));
+        $models[$key]['total'] = (int) $val->total;
     }
+    $a = getMasterSetting();
+    $testing = !empty($a->posisi_pemasukan) ? json_decode($a->posisi_pemasukan) : [];
+
+//    print_r($testing);die;
+//    function sortaa($a, $b) {
+//        return $b->checkbox - $a->checkbox;
+//    }
+//    usort($testing, "sortaa");
+
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
-        'base_url' => str_replace('api/', '', config('SITE_URL'))
+        'base_url' => str_replace('api/', '', config('SITE_URL')),
+        'field' => $testing
     ]);
 });
 /**
@@ -202,27 +231,16 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
     $sql = $this->db;
     $validasi = validasi($params['form']);
     if ($validasi === true) {
-        if (isset($params['form']['m_akun_id']['parent_id'])) {
-            //ganti preffix kode berdasarkan nama parent diatasnya
-            $preffix = $sql->select("*")->from("acc_m_akun")->where("id", "=", $params['form']['m_akun_id']['parent_id'])->find();
-            if ($preffix) {
-                if ($preffix->nama == 'CASH ON HAND') {
-                    $string = "KM";
-                } else {
-                    $fitst_char = strtoupper(substr($preffix->nama, 0, 1));
-                    $string = $fitst_char . "M";
-                }
-            }
+        /**
+         * Generate kode penerimaan
+         */
+        $get_bulan = date("m", strtotime($params['form']['tanggal']));
+        $get_tahun = date("Y", strtotime($params['form']['tanggal']));
 
-            /**
-             * Generate kode penerimaan
-             */
-            $get_bulan = date("m", strtotime($params['form']['tanggal']));
-            $get_tahun = date("Y", strtotime($params['form']['tanggal']));
-            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], $string, $get_bulan, $get_tahun);
-            $kode = str_replace("BM", $string, $kode);
+        if (isset($params['form']['dana_simpanan_id'])) {
+            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode'], "DS", $get_bulan, $get_tahun);
         } else {
-            $kode = generateNoTransaksi("penerimaan", $params['form']['m_lokasi_id']['kode']);
+            $kode = generateNoTransaksi("penerimaan", @$params['form']['m_lokasi_id']['kode'], @$params['form']['m_akun_id']['parent_id'], $get_bulan, $get_tahun);
         }
 
         $penerimaan['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
@@ -235,15 +253,31 @@ $app->post('/acc/t_penerimaan/save', function ($request, $response) {
         $penerimaan['tanggal'] = date("Y-m-d h:i:s", strtotime($params['form']['tanggal']));
         $penerimaan['total'] = $params['form']['total'];
         $penerimaan['status'] = $params['form']['status'];
+
+        /**
+         * Tantowi Promise
+         */
+        $penerimaan['dana_simpanan_id'] = isset($params['form']['dana_simpanan_id']) ? $params['form']['dana_simpanan_id'] : null;
+        /**
+         * Tantowi Promise
+         */
         foreach ($params['detail'] as $key => $value) {
             $keterangan[$key] = $value['keterangan'];
         }
-        $keteranganPenerimaan = join("<br>",$keterangan);
+        $keteranganPenerimaan = join("<br>", $keterangan);
         $penerimaan['keterangan'] = (isset($keteranganPenerimaan) && !empty($keteranganPenerimaan) ? $keteranganPenerimaan : NULL);
 
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
-            $penerimaan['no_urut'] = $params['form']['no_urut'];
-            $penerimaan['no_transaksi'] = $params['form']['no_transaksi'];
+            $penerimaan['no_urut'] = @$params['form']['no_urut'];
+
+            $cek_ds = $sql->select("tanggal")->from("acc_pemasukan")->where("id", "=", $params['form']['id'])->find();
+
+            if (date("m", strtotime($cek_ds->tanggal)) != date("m", strtotime($penerimaan['tanggal']))) {
+                $penerimaan['no_transaksi'] = $kode;
+                $penerimaan['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
+            } else {
+                $penerimaan['no_transaksi'] = $params['form']['no_transaksi'];
+            }
             $model = $sql->update("acc_pemasukan", $penerimaan, ["id" => $params['form']['id']]);
             /**
              * Hapus pemasukan detail
@@ -361,6 +395,19 @@ $app->get("/acc/t_penerimaan/getTemplate", function ($request, $response) {
 $app->post("/acc/t_penerimaan/saveTemplate", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
+    try {
+        $model = $db->update("acc_m_setting", $data, ["id" => 1]);
+        return successResponse($response, $model);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
+    }
+});
+
+$app->post("/acc/t_penerimaan/savePosition", function ($request, $response) {
+    $data = $request->getParams();
+    $db = $this->db;
+
+    $data['posisi_pemasukan'] = json_encode($data);
     try {
         $model = $db->update("acc_m_setting", $data, ["id" => 1]);
         return successResponse($response, $model);
