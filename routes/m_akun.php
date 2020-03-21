@@ -267,8 +267,8 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
         $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $arr[$key] = (array) $value;
-        $arr[$key]['nama'] = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
-        $arr[$key]['nama_lengkap'] = mb_convert_encoding($spasi . $value->kode . ' - ' . $value->nama, 'UTF-8', 'UTF-8');
+        $arr[$key]['nama'] = $value->nama;
+        $arr[$key]['nama_lengkap'] = $spasi . $value->kode . ' - ' . $value->nama;
         $arr[$key]['parent_id'] = (int) $value->parent_id;
         $arr[$key]['is_induk'] = (int) $value->is_induk;
         $arr[$key]['saldo_normal'] = (int) $value->saldo_normal;
@@ -673,7 +673,7 @@ $app->get('/acc/m_akun/getByType', function ($request, $response) {
         $models = $db->findAll();
         $arr = [];
         foreach ($models as $key => $value) {
-            $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+            $value->nama = $value->nama;
             $saldo = getSaldo($value->id, null, null, date("Y-m-d"));
             if ($saldo <= 0) {
                 $arr[] = (array) $value;
@@ -710,7 +710,7 @@ $app->get('/acc/m_akun/akunHutang', function ($request, $response) {
             ->findAll();
 
     foreach ($models as $key => $value) {
-        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $value->nama = $value->nama;
     }
 
     return successResponse($response, ['list' => $models]);
@@ -727,7 +727,7 @@ $app->get('/acc/m_akun/akunPiutang', function ($request, $response) {
             ->findAll();
 
     foreach ($models as $key => $value) {
-        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $value->nama = $value->nama;
     }
 
     return successResponse($response, ['list' => $models]);
@@ -744,7 +744,7 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
             ->findAll();
 
     foreach ($models as $key => $value) {
-        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $value->nama = $value->nama;
         $spasi = ($value->level == 1) ? '' : str_repeat("--", $value->level - 1);
         $value->nama_lengkap = $spasi . $value->kode . ' - ' . $value->nama;
     }
@@ -762,7 +762,7 @@ $app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
             ->findAll();
 
     foreach ($models as $key => $value) {
-        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $value->nama = $value->nama;
         $spasi = ($value->level == 1) ? '' : str_repeat("--", $value->level - 1);
         $value->nama_lengkap = $spasi . $value->kode . ' - ' . $value->nama;
     }
@@ -786,7 +786,7 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
     $models = $db->findAll();
 
     foreach ($models as $key => $value) {
-        $value->nama = mb_convert_encoding($value->nama, 'UTF-8', 'UTF-8');
+        $value->nama = $value->nama;
     }
     return successResponse($response, ['list' => $models]);
 });
