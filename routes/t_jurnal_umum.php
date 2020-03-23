@@ -29,7 +29,6 @@ $app->post('/acc/t_jurnal_umum/upload/{folder}', function ($request, $response) 
         $gid = (isset($id_dokumen->id)) ? $id_dokumen->id + 1 : 1;
         $newName = $gid . "_" . urlParsing($_FILES['file']['name']);
         $uploadPath = "file/jurnal-umum/" . date('Y') . "/" . str_replace("0", "", date("m"));
-//        echo $uploadPath;die();
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0777, true);
         }
@@ -109,8 +108,8 @@ $app->get('/acc/t_jurnal_umum/getDetail', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("acc_jurnal_det.*, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun, acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi")
             ->from("acc_jurnal_det")
-            ->join("join", "acc_m_akun", "acc_m_akun.id = acc_jurnal_det.m_akun_id")
-            ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal_det.m_lokasi_id")
+            ->join("left join", "acc_m_akun", "acc_m_akun.id = acc_jurnal_det.m_akun_id")
+            ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal_det.m_lokasi_id")
             ->where("acc_jurnal_id", "=", $params['id'])
             ->findAll();
 
@@ -136,8 +135,8 @@ $app->get('/acc/t_jurnal_umum/index', function ($request, $response) {
     $db = $this->db;
     $db->select("acc_jurnal.*, acc_m_lokasi.id as idLokasi, acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi," . $tableuser . ".nama as namaUser")
             ->from("acc_jurnal")
-            ->join("join", $tableuser, $tableuser . ".id = acc_jurnal.created_by")
-            ->join("join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal.m_lokasi_id")
+            ->join("left join", $tableuser, $tableuser . ".id = acc_jurnal.created_by")
+            ->join("left join", "acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal.m_lokasi_id")
             ->orderBy('acc_jurnal.tanggal DESC')
             ->orderBy('acc_jurnal.created_at DESC');
 
@@ -316,7 +315,7 @@ $app->get('/acc/t_jurnal_umum/print', function ($request, $response) {
     $db = $this->db;
     $detail = $db->select("acc_jurnal_det.*, acc_m_akun.id as idAkun, acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun")
             ->from("acc_jurnal_det")
-            ->join("join", "acc_m_akun", "acc_m_akun.id = acc_jurnal_det.m_akun_id")
+            ->join("left join", "acc_m_akun", "acc_m_akun.id = acc_jurnal_det.m_akun_id")
             ->where("acc_jurnal_id", "=", $data['id'])
             ->findAll();
 

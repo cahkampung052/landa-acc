@@ -24,7 +24,6 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.setPosition = function ($event, key, vals) {
         $event.preventDefault();
         $event.stopPropagation();
-        console.log($event.keyCode)
         var ps = $scope.limit;
         if ($event.keyCode == 37) {
             ps = -($scope.limit);
@@ -33,7 +32,6 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         } else if ($event.keyCode == 40) {
             ps = 1;
         }
-        console.log(ps)
 
         if ($event.keyCode == 37 || $event.keyCode == 39 || $event.keyCode == 38 || $event.keyCode == 40) {
             $event.preventDefault();
@@ -51,17 +49,13 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
                 $('.input-' + f).focus()
             }, 1)
         } else {
-            console.log(vals)
-            console.log($event.keyCode)
             $scope.field[key].alias = vals.alias;
         }
 
-//        console.log($scope.field)
 
     }
 
     $scope.fillCheckBox = function (a) {
-        console.log(a)
         angular.forEach($scope.field, function (val, key) {
             val.checkbox = a;
         })
@@ -294,7 +288,6 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
                 }
             })
 
-            console.log($scope.field)
             $scope.base_url = response.data.base_url;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
@@ -488,7 +481,6 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.print = function (row) {
         var data = angular.copy(row);
         Data.get('site/base_url').then(function (response) {
-            //                console.log(response)
             window.open(response.data.base_url + "api/acc/t_penerimaan/print?" + $.param(row), "_blank");
         });
     };
