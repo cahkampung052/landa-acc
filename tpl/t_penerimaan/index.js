@@ -12,6 +12,8 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.is_setting = false;
     $scope.urlfoto = "api/file/penerimaan/";
 
+    $scope.is_setting_field = false;
+
     /*
      * SETTING FIELD
      */

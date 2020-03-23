@@ -15,7 +15,7 @@
                                 <i class="fa fa-gear"></i>
                                 &nbsp;Setting Print
                             </button>
-                            <button class="dropdown-item" ng-click="is_setting = !is_setting">
+                            <button class="dropdown-item" ng-click="is_setting = !is_setting" ng-if="is_setting_field">
                                 <i class="fa fa-gear"></i>
                                 &nbsp;Setting Field
                             </button>
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="pull-right mt-5px d-md-down-none" role="group">
-                    <button class="btn btn-transparan btn-sm" ng-click="is_setting = !is_setting" ng-hide="false">
+                    <button class="btn btn-transparan btn-sm" ng-click="is_setting = !is_setting" ng-if="is_setting_field">
                         <i class="fa fa-gear"></i>
                         &nbsp;Setting Field
                     </button>
@@ -86,7 +86,7 @@
                     </div>
                 </div>
                 <div>
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover" ng-if="is_setting_field">
                         <thead>
                             <tr>
                                 <th class="align-left" ng-repeat="(key, val) in field" ng-if="val.checkbox" st-sort="{{val.value}}">
@@ -101,7 +101,33 @@
                                     <span ng-if="row[val.value].length == undefined">{{ row[val.value].nama}}</span>
                                     <span ng-if="row[val.value].length != undefined">{{ row[val.value]}}</span>
                                 </td>
-<!--                                <td class="align-left">{{ row.no_transaksi}}</td>
+                                <td style="width: 100px;">
+                                    <div class="btn-group pull-right" role="group">
+                                        <button type="button" class="btn btn-success fa fa-print"  ng-click="print(row)"></button>
+                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft' && (row.tanggal >= tanggal_setting)) || (row.status == 'Terposting' && user.akses.pengeluaran_update)" ng-click="update(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="(row.status == 'Draft' && (row.tanggal >= tanggal_setting)) || (row.status == 'Terposting' && user.akses.pengeluaran_delete)" ng-click="delete(row);"></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-striped table-hover" ng-if="!is_setting_field">
+                        <thead>
+                            <tr>
+                                <th class="align-left">No Transaksi</th>
+                                <th class="align-left">Lokasi</th>
+                                <th class="align-left">Tanggal</th>
+                                <th class="align-right">Total</th>
+                                <th class="align-left">Penerima</th>
+                                <th class="align-left">Dibuat Pada</th>
+                                <th class="align-left">Dibuat Oleh</th>
+                                <th class="align-center">Status</th>
+                                <th style="width: 100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody ng-show="!isLoading">
+                            <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
+                                <td class="align-left">{{ row.no_transaksi}}</td>
                                 <td class="align-left">{{ row.namaLokasi}}</td>
                                 <td class="align-left">{{ row.tanggal_formated}}</td>
                                 <td class="align-right">{{ row.total| number }}</td>
@@ -114,7 +140,7 @@
                                 <td class="align-center">
                                     <span class="bg-success p-1" ng-if="row.status == 'Terposting'">{{ row.status}}</span>
                                     <span class="bg-info p-1" ng-if="row.status == 'Draft'">{{ row.status}}</span>
-                                </td>-->
+                                </td>
                                 <td style="width: 100px;">
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-success fa fa-print"  ng-click="print(row)"></button>
