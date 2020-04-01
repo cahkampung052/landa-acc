@@ -12,6 +12,9 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     $scope.listLokasi = [];
     $scope.is_pengajuan = false;
 
+    $scope.is_setting_field = false;
+
+
     /*
      * SETTING FIELD
      */
@@ -200,6 +203,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         }
         Data.get(control_link + '/getDetail', data).then(function (data) {
             $scope.listDetail = data.data.list;
+            $scope.sumTotal();
         });
     }
     /*

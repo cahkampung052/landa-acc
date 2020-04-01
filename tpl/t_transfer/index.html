@@ -2,7 +2,7 @@
     <div ng-controller="transferCtrl">
         <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
             <div class="card-header">
-                <strong class="">{{ master }}</strong>
+                <strong class="">{{ master}}</strong>
                 <div class="btn-group pull-right mt-5px d-lg-none" role="group">
                     <div class="dropdown">
                         <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</button>
@@ -11,7 +11,7 @@
                                 <i class="fa fa-plus"></i>
                                 &nbsp;Buat Transfer Baru
                             </button>
-                            <button class="dropdown-item" ng-click="is_setting = !is_setting">
+                            <button class="dropdown-item" ng-click="is_setting = !is_setting" ng-if="is_setting_field">
                                 <i class="fa fa-gear"></i>
                                 &nbsp;Setting Field
                             </button>
@@ -19,7 +19,7 @@
                     </div>
                 </div>
                 <div class="btn-group pull-right mt-5px d-md-down-none" role="group">
-                    <button class="btn btn-transparan btn-sm" ng-click="is_setting = !is_setting" ng-hide="false">
+                    <button class="btn btn-transparan btn-sm" ng-click="is_setting = !is_setting" ng-if="is_setting_field">
                         <i class="fa fa-gear"></i>
                         &nbsp;Setting Field
                     </button>
@@ -42,13 +42,13 @@
                                         <div class="col-sm-2">
                                             <select class="form-control form-control-sm" st-search="m_lokasi_asal_id">
                                                 <option value="">- Semua Lokasi Asal -</option>
-                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{ val.nama_lengkap }}</option>
+                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{ val.nama_lengkap}}</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-2">
                                             <select class="form-control form-control-sm" st-search="m_lokasi_tujuan_id">
                                                 <option value="">- Semua Lokasi Tujuan -</option>
-                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{ val.nama_lengkap }}</option>
+                                                <option ng-repeat="val in listLokasi" ng-value="val.id">{{ val.nama_lengkap}}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -81,20 +81,12 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover" ng-if="is_setting_field">
                         <thead>
                             <tr>
                                 <th class="align-left" ng-repeat="(key, val) in field" ng-if="val.checkbox">
                                     {{val.alias}}
                                 </th>
-<!--                                <th class="align-left">No Transaksi</th>
-                                <th class="align-left">Akun Asal</th>
-                                <th class="align-left">Akun Tujuan</th>
-                                <th class="align-right">Total</th>
-                                <th class="align-left">Tanggal</th>
-                                <th class="align-left">Dibuat Pada</th>
-                                <th class="align-left">Dibuat Oleh</th>
-                                <th class="align-center">Status</th>-->
                                 <th></th>
                             </tr>
                         </thead>
@@ -104,21 +96,46 @@
                                     <span ng-if="row[val.value].length == undefined">{{ row[val.value].nama}}</span>
                                     <span ng-if="row[val.value].length != undefined">{{ row[val.value]}}</span>
                                 </td>
-<!--                                <td class="align-left">{{ row.no_transaksi }}</td>
-                                <td class="align-left">{{ row.namaAsal }}</td>
-                                <td class="align-left">{{ row.namaTujuan }}</td>
-                                <td class="align-right">{{ row.total | number }}</td>
-                                <td class="align-left">{{ row.tanggal_formated }}</td>
-                                <td class="align-left">{{ row.created_at }}</td>
-                                <td class="align-left">{{ row.namaUser }}</td>
-                                <td class="align-center">
-                                    <span class="bg-success p-1" ng-if="row.status == 'Terposting'">{{ row.status }}</span>
-                                    <span class="bg-info p-1" ng-if="row.status == 'Draft'">{{ row.status }}</span>
-                                </td>-->
                                 <td>
                                     <div class="btn-group pull-right" role="group">
-                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft' && row.tanggal>= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_update)"  ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="(row.status == 'Draft' && row.tanggal>= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_delete)" ng-click="delete(row);"></button>
+                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft' && row.tanggal >= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_update)"  ng-click="update(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="(row.status == 'Draft' && row.tanggal >= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_delete)" ng-click="delete(row);"></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-striped table-hover" ng-if="!is_setting_field">
+                        <thead>
+                            <tr>
+                                <th class="align-left">No Transaksi</th>
+                                <th class="align-left">Akun Asal</th>
+                                <th class="align-left">Akun Tujuan</th>
+                                <th class="align-right">Total</th>
+                                <th class="align-left">Tanggal</th>
+                                <th class="align-left">Dibuat Pada</th>
+                                <th class="align-left">Dibuat Oleh</th>
+                                <th class="align-center">Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody ng-show="!isLoading">
+                            <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
+                                <td class="align-left">{{ row.no_transaksi}}</td>
+                                <td class="align-left">{{ row.namaAsal}}</td>
+                                <td class="align-left">{{ row.namaTujuan}}</td>
+                                <td class="align-right">{{ row.total | number }}</td>
+                                <td class="align-left">{{ row.tanggal_formated}}</td>
+                                <td class="align-left">{{ row.created_at}}</td>
+                                <td class="align-left">{{ row.namaUser}}</td>
+                                <td class="align-center">
+                                    <span class="bg-success p-1" ng-if="row.status == 'Terposting'">{{ row.status}}</span>
+                                    <span class="bg-info p-1" ng-if="row.status == 'Draft'">{{ row.status}}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group pull-right" role="group">
+                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft' && row.tanggal >= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_update)"  ng-click="update(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="(row.status == 'Draft' && row.tanggal >= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_delete)" ng-click="delete(row);"></button>
                                     </div>
                                 </td>
                             </tr>
@@ -130,7 +147,7 @@
         </div>
         <div class="card" ng-if="is_edit">
             <div class="card-header">
-                <strong>{{ formtitle }}</strong>
+                <strong>{{ formtitle}}</strong>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
@@ -141,8 +158,8 @@
                                 <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
                                 <div class="col-sm-9">
                                     <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_asal_id" theme="bootstrap" ng-disabled="is_view">
-                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
+                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -150,8 +167,8 @@
                                 <label class="col-sm-3 col-form-label-sm required">Akun</label>
                                 <div class="col-sm-9">
                                     <ui-select class="ui-select-sm" ng-model="form.m_akun_asal_id" theme="bootstrap" ng-disabled="is_view">
-                                        <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                        <ui-select-choices repeat="val in akun | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
+                                        <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices repeat="val in akun | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -162,8 +179,8 @@
                                 <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
                                 <div class="col-sm-9">
                                     <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_tujuan_id" theme="bootstrap" ng-disabled="is_view">
-                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
+                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -171,8 +188,8 @@
                                 <label class="col-sm-3 col-form-label-sm required">Akun</label>
                                 <div class="col-sm-9">
                                     <ui-select class="ui-select-sm" ng-model="form.m_akun_tujuan_id" theme="bootstrap" ng-disabled="is_view">
-                                        <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
-                                        <ui-select-choices repeat="val in akun | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
+                                        <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices repeat="val in akun | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -201,7 +218,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="12" ng-disabled="is_view" ng-model="form.total"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" ng-disabled="is_view" ng-model="form.total"/>
                                     </div>
                                 </div>
                             </div>

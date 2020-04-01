@@ -23,7 +23,7 @@ $app->get('/acc/l_rekap_hutang/laporan', function ($request, $response) {
     /**
      * Siapkan sub header laporan
      */
-    $data['tanggal'] = date("d-m-Y", strtotime($tanggal_start)) . ' s/d ' . date("d-m-Y", strtotime($tanggal_end));
+    $data['tanggal'] = date("d M Y", strtotime($tanggal_start)) . ' s/d ' . date("d M Y", strtotime($tanggal_end));
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = (isset($params['nama_lokasi']) && !empty($params['nama_lokasi'])) ? $params['nama_lokasi'] : "Semua";
     $data['akun'] = $params['nama_akun'];

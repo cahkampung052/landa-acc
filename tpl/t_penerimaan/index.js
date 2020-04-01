@@ -12,6 +12,8 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.is_setting = false;
     $scope.urlfoto = "api/file/penerimaan/";
 
+    $scope.is_setting_field = false;
+
     /*
      * SETTING FIELD
      */
@@ -24,7 +26,6 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.setPosition = function ($event, key, vals) {
         $event.preventDefault();
         $event.stopPropagation();
-        console.log($event.keyCode)
         var ps = $scope.limit;
         if ($event.keyCode == 37) {
             ps = -($scope.limit);
@@ -33,7 +34,6 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         } else if ($event.keyCode == 40) {
             ps = 1;
         }
-        console.log(ps)
 
         if ($event.keyCode == 37 || $event.keyCode == 39 || $event.keyCode == 38 || $event.keyCode == 40) {
             $event.preventDefault();
@@ -51,17 +51,13 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
                 $('.input-' + f).focus()
             }, 1)
         } else {
-            console.log(vals)
-            console.log($event.keyCode)
             $scope.field[key].alias = vals.alias;
         }
 
-//        console.log($scope.field)
 
     }
 
     $scope.fillCheckBox = function (a) {
-        console.log(a)
         angular.forEach($scope.field, function (val, key) {
             val.checkbox = a;
         })
@@ -184,6 +180,7 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         }
         Data.get(control_link + '/getDetail', data).then(function (data) {
             $scope.listDetail = data.data.list;
+            $scope.sumTotal();
         });
     }
     /**
@@ -286,14 +283,13 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
             }
             $scope.limit = Math.ceil($scope.field.length / $scope.row);
             $scope.startFrom = [];
-            
+
             angular.forEach($scope.field, function (val, key) {
                 if (val.no % $scope.limit == 0) {
                     $scope.startFrom.push({start: val.no, limit: $scope.limit})
                 }
             })
 
-            console.log($scope.field)
             $scope.base_url = response.data.base_url;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
@@ -309,8 +305,8 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
         $scope.is_disable = false;
         $scope.formtitle = master + " | Form Tambah Data";
         $scope.form = {};
-         if ($scope.lokasi_default.lokasi_pemasukan != 0)
-             $scope.form.m_lokasi_id = $scope.lokasi_default.lokasi_pemasukan;
+        if ($scope.lokasi_default.lokasi_pemasukan != 0)
+            $scope.form.m_lokasi_id = $scope.lokasi_default.lokasi_pemasukan;
         $scope.form.ppn = 0;
         $scope.form.is_ppn = false;
         $scope.form.tanggal = new Date($scope.tanggal_setting);
@@ -487,7 +483,6 @@ app.controller('penerimaanCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.print = function (row) {
         var data = angular.copy(row);
         Data.get('site/base_url').then(function (response) {
-            //                console.log(response)
             window.open(response.data.base_url + "api/acc/t_penerimaan/print?" + $.param(row), "_blank");
         });
     };

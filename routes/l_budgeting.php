@@ -1,6 +1,9 @@
 <?php
 
 $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
+    
+    $data['img'] = imgLaporan();
+    
     $params = $request->getParams();
 //    print_r($params);
 //    die();
@@ -154,6 +157,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
     $data['setiapbulan'] = $listSetiapBulan;
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = $params['nama_lokasi'];
+    $data['tanggal'] = $params['tahun'];
 
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
@@ -173,7 +177,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             "css" => modulUrl() . '/assets/css/style.css',
         ]);
         echo $content;
-//        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
     } else {
         return successResponse($response, ['detail' => $listAkun, 'data' => $data]);
     }

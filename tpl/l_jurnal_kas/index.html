@@ -1,0 +1,230 @@
+<div class="animated fadeIn">
+    <div ng-controller="jurnalpenerimaanCtrl">
+        <div class="card">
+            <div class="card-header">
+                <strong>Jurnal Penerimaan/Pengeluaran Kas</strong>
+            </div>
+            <div class="card-body p-0px">
+                <div class="pl-15px pr-15px">
+                    <div class="row mt-15px">
+                        <div class="col-md-12">
+                            <form name="landaform" novalidate="">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <select class="form-control form-control-sm" ng-model="form.tipe">
+                                                <option value="penerimaan">Penerimaan</option>
+                                                <option value="pengeluaran">Pengeluaran</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary btn-sm" ng-click="view(0, 0)">
+                                                <i class="fa fa-search"></i>
+                                                Tampilkan
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" ng-show="tampilkan">
+            <div class="card-header card-header-white">
+                <div class="btn-group pull-right">
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1, 0)">
+                        <i class="fa fa-file"></i>
+                        Excel
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0, 1)">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </button>
+                </div>
+            </div>
+            <div class="card-body" id="print">
+                <div align="left">
+                    <div class="row header-laporan-wrapper">
+                        <div class="col-md-12 relative-div">
+                            <center>
+                                <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                                <h3 class="header-laporan">Jurnal {{data.tipe}} Kas</h3>
+                                <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
+                                <!--<br/>-->
+                            </center>
+                            <!--<hr/>-->
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-laporan-striped table-bordered" style="border-collapse: collapse;">
+                            <thead style="text-align: center">
+                                <tr>
+                                    <th rowspan="2" style="min-width: 80px">
+                                        Tanggal
+                                    </th>
+                                    <th rowspan="2" style="min-width: 120px">
+                                        No. Bukti
+                                    </th>
+                                    <th rowspan="2" style="min-width: 270px">
+                                        Keterangan
+                                    </th>
+                                    <th colspan="3">
+                                        Debit
+                                    </th>
+                                    <th colspan="3">
+                                        Kredit
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        No. Akun
+                                    </th>
+                                    <th>
+                                        Akun
+                                    </th>
+                                    <th>
+                                        Nominal
+                                    </th>
+                                    <th>
+                                        No. Akun
+                                    </th>
+                                    <th>
+                                        Akun
+                                    </th>
+                                    <th>
+                                        Nominal
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat-start="val in detail" ng-hide="true"></tr>
+                                <tr ng-repeat-start="vals in val" ng-hide="true"></tr>
+                                <tr ng-repeat-start="(y, z) in vals.detail" ng-hide="true"></tr>
+                                <tr ng-repeat="(k, v) in z[data.repeat_akun]" ng-if="data.repeat_akun == 'debit'">
+                                    <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.tanggal}}</td>
+                                    <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.kode}}</td>
+                                    <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.keterangan}}</td>
+                                    <td>{{v.akun.kode}}</td>
+                                    <td>{{v.akun.nama}}</td>
+                                    <td align="right">{{v.total| number}}</td>
+                                    <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0">{{z[data.repeat_lawan][k].akun.kode}}</td>
+                                    <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0">{{z[data.repeat_lawan][k].akun.nama}}</td>
+                                    <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0" align="right">{{z[data.repeat_lawan][k].total| number}}</td>
+                                </tr>
+                                <tr ng-repeat="(k, v) in z[data.repeat_akun]" ng-if="data.repeat_akun == 'kredit'">
+                                    <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.tanggal}}</td>
+                                    <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.kode}}</td>
+                                    <td rowspan="{{vals.rowspan}}" ng-if="y == 0 && k == 0">{{vals.keterangan}}</td>
+                                    <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0">{{z[data.repeat_lawan][k].akun.kode}}</td>
+                                    <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0">{{z[data.repeat_lawan][k].akun.nama}}</td>
+                                    <td rowspan="{{z[data.repeat_lawan][k].rowspan}}" ng-if="k == 0" align="right">{{z[data.repeat_lawan][k].total| number}}</td>
+                                    <td>{{v.akun.kode}}</td>
+                                    <td>{{v.akun.nama}}</td>
+                                    <td align="right">{{v.total| number}}</td>
+                                </tr>
+                                <tr ng-repeat-end="" ng-hide="true"></tr>
+                                <tr ng-repeat-end="" ng-hide="true"></tr>
+                                <tr ng-repeat-end="" ng-hide="true"></tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="right"><b>TOTAL</b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="right"><b>{{data.total.debit| number}}</b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td align="right"><b>{{data.total.kredit| number}}</b></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--                    <div class="row header-laporan-wrapper">
+                                            <div class="col-md-12">
+                                                <center>
+                                                    <h3 class="header-laporan">REKAPITULASI</h3>
+                                                </center>
+                                                <hr/>
+                                            </div>
+                                        </div>-->
+                    <div class="table-responsive">
+                        <table class="table table-hover table-laporan-striped table-bordered" style="border-collapse: collapse;">
+                            <thead style="text-align: center">
+                                <tr style="border-top: none; border-left: none; border-bottom: none">
+                                    <th rowspan="3" style="min-width: 470px; border: none; background-color: white">
+
+                                    </th>
+                                    <th colspan="6">REKAPITULASI</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="3">
+                                        Debit
+                                    </th>
+                                    <th colspan="3">
+                                        Kredit
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        No. Akun
+                                    </th>
+                                    <th>
+                                        Akun
+                                    </th>
+                                    <th>
+                                        Nominal
+                                    </th>
+                                    <th>
+                                        No. Akun
+                                    </th>
+                                    <th>
+                                        Akun
+                                    </th>
+                                    <th>
+                                        Nominal
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="(k, v) in data.total_akun[data.repeat_akun]" style="border-top: none; border-left: none; border-bottom: none">
+                                    <td style="border: none"></td>
+                                    <td>{{data.total_akun.debit[k].akun.kode}}</td>
+                                    <td>{{data.total_akun.debit[k].akun.nama}}</td>
+                                    <td align="right">{{data.total_akun.debit[k].total| number}}</td>
+                                    <td>{{data.total_akun.kredit[k].akun.kode}}</td>
+                                    <td>{{data.total_akun.kredit[k].akun.nama}}</td>
+                                    <td align="right">{{data.total_akun.kredit[k].total| number}}</td>
+                                </tr>
+                                <tr style="border-top: none; border-left: none; border-bottom: none">
+                                    <td style="border: none"></td>
+                                    <td align="right" colspan="2"><b>TOTAL</b></td>
+                                    <td align="right"><b>{{data.total.debit| number}}</b></td>
+                                    <td align="right" colspan="2"><b>TOTAL</b></td>
+                                    <td align="right"><b>{{data.total.kredit| number}}</b></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

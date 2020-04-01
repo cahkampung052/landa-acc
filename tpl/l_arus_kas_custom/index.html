@@ -2,11 +2,11 @@
     <div ng-controller="l_aruskascCtrl">
         <div class="card">
             <div class="card-header">
-                <strong>Laporan Arus Kas (Custom)</strong>
-                <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()">
-                    <i class="fa fa-gear"></i>
-                    Setting Akun
-                </button>
+                <strong>Laporan Arus Kas</strong>
+                <!--                <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()">
+                                    <i class="fa fa-gear"></i>
+                                    Setting Akun
+                                </button>-->
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
@@ -58,62 +58,116 @@
             <div class="card-body" id="print">
                 <div align="left">
                     <div class="row header-laporan-wrapper">
-                        <div class="col-md-12">
+                        <div class="col-md-12 relative-div">
                             <center>
-                                <h2 class="header-laporan">LAPORAN ARUS KAS</h2>
-                                Lokasi : {{ data.lokasi}}
-                                <br/>
-                                Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
-                                <br/>
-                                Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
-                                <br/>
+                                <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                                <h3 class="header-laporan">Laporan Arus Kas</h3>
+                                <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
+                                <!--<br/>-->
                             </center>
-                            <hr/>
+                            <!--<hr/>-->
                         </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover table-laporan-striped" style="border-collapse: collapse;">
                             <tbody>
+                                <tr style="background-color: #263444; color: white;">
+                                    <td><b>Saldo Kas Awal</b></td>
+                                    <td align="right"><b>{{data.saldo_awal.total| number}}</b></td>
+                                </tr>
+                                <tr ng-repeat="v in data.saldo_awal.detail" ng-if="v.total != undefined && v.total != 0">
+                                    <td>
+                                        {{v.kode}} - {{v.nama}}
+                                    </td>
+                                    <td align="right">
+                                        <span ng-if="v.total >= 0">{{v.total| number}}</span>
+                                        <span ng-if="v.total < 0">({{(v.total*-1)| number}})</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <div class="table-responsive" style="overflow-x: unset">
+                        <table class="table table-hover table-laporan-striped" style="border-collapse: collapse;">
+                            <tbody>
                                 <tr ng-repeat-start="(key, val) in detail"></tr>
-                                <tr>
-                                    <td colspan="2"><b>{{val.tipe}}</b></td>
+                                <tr style="background-color: #263444; color: white;">
+                                    <td colspan="3"><b>{{val.nama}}</b></td>
                                 </tr>
-                                <tr>
-                                    <td><b>Nama</b></td>
-                                    <td align="right"><b>Total</b></td>
+                                <tr ng-repeat-start="(k, v) in val.detail"></tr>
+                                <tr style="background-color: #26344470">
+                                    <td colspan="3">
+                                        <b>{{k}}</b>
+                                    </td>
                                 </tr>
-                                <tr ng-repeat="v in val.detail">
+                                <tr ng-repeat="y in v.detail">
                                     <td>
-                                        {{v.nama}}
+                                        {{y.akun.kode}} - {{y.akun.nama}}
+                                    </td>
+                                    <td>
+                                        <select class="form-control form-control-sm" ng-model="y.akun.tipe_arus" ng-change="updateAkun(y.akun)">
+                                            <option value="Aktivitas Operasi">Aktivitas Operasi</option>
+                                            <option value="Investasi">Investasi</option>
+                                            <option value="Pendanaan">Pendanaan</option>
+                                        </select>
                                     </td>
                                     <td align="right">
-                                        {{v.total_akhir| number : 2}}
+                                        <span ng-if="y.total >= 0">{{y.total| number}}</span>
+                                        <span ng-if="y.total < 0">{{(y.total*-1)| number}}</span>
                                     </td>
                                 </tr>
-                                <tr><td colspan="2"><br/></td></tr>
+                                <tr style="background-color: #26344440">
+                                    <td colspan="2">
+                                        <b>TOTAL</b>
+                                    </td>
+                                    <td align="right">
+                                        <b ng-if="v.total >= 0">{{v.total| number}}</b>
+                                        <b ng-if="v.total < 0">{{(v.total*-1)| number}}</b>
+                                    </td>
+                                </tr>
                                 <tr ng-repeat-end=""></tr>
-                                <tr>
-                                    <td>
-                                        <b>{{'KENAIKAN (PENURUNAN) BERSIH KAS DAN KAS SETARA'}}</b>
+                                <tr style="background-color: #263444; color: white;">
+                                    <td colspan="2">
+                                        <b ng-if="val.total >= 0">Kenaikan Kas dari {{key}}</b>
+                                        <b ng-if="val.total < 0">Penurunan Kas dari {{key}}</b>
                                     </td>
                                     <td align="right">
-                                        {{data.total| number}}
+                                        <b ng-if="val.total >= 0">{{val.total| number}}</b>
+                                        <b ng-if="val.total < 0">({{(val.total*-1)| number}})</b>
                                     </td>
                                 </tr>
-                                <tr>
+                                <!--<tr><td colspan="2"><br/></td></tr>-->
+                                <tr ng-repeat-end=""></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-laporan-striped" style="border-collapse: collapse;">
+                            <tbody>
+                                <tr style="background-color: #263444; color: white;">
                                     <td>
-                                        <b>{{'KAS DAN SETARA KAS AWAL PERIODE'}}</b>
+                                        <b ng-if="data.saldo_biaya >= 0">{{'KENAIKAN KAS'}}</b>
+                                        <b ng-if="data.saldo_biaya < 0">{{'PENURUNAN KAS'}}</b>
                                     </td>
                                     <td align="right">
-                                        {{data.total_awal| number}}
+                                        <b ng-if="data.saldo_biaya >= 0">{{data.saldo_biaya| number}}</b>
+                                        <b ng-if="data.saldo_biaya < 0">({{(data.saldo_biaya*-1)| number}})</b>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr style="background-color: #263444; color: white;">
+                                    <td><b>Saldo Kas Akhir</b></td>
+                                    <td align="right"><b>{{data.saldo_akhir.total| number}}</b></td>
+                                </tr>
+                                <tr ng-repeat="v in data.saldo_akhir.detail" ng-if="v.total != undefined && v.total != 0">
                                     <td>
-                                        <b>{{'KAS DAN SETARA KAS AKHIR PERIODE'}}</b>
+                                        {{v.kode}} - {{v.nama}}
                                     </td>
                                     <td align="right">
-                                        {{(data.total + data.total_awal)| number}}
+                                        <span ng-if="v.total >= 0">{{v.total| number}}</span>
+                                        <span ng-if="v.total < 0">({{(v.total*-1)| number}})</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -123,4 +177,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>

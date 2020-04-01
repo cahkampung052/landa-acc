@@ -2,7 +2,7 @@
     <div ng-controller="l_labarugiCtrl">
         <div class="card">
             <div class="card-header">
-                <strong>Laporan Aktifitas</strong>
+                <strong>Laporan Laba Rugi</strong>
                 <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()" ng-if="user.akses.pengecualian_labarugi">
                     <i class="fa fa-gear"></i>
                     Setting Pengecualian
@@ -72,17 +72,15 @@
             <div class="card-body" id="print">
                 <div align="left">
                     <div class="row header-laporan-wrapper">
-                        <div class="col-md-12">
+                        <div class="col-md-12 relative-div">
                             <center>
-                                <h2 class="header-laporan">LAPORAN AKTIFITAS</h2>
-                                Lokasi : {{ data.lokasi}}
-                                <br/>
-                                Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
-                                <br/>
-                                Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy' }}
-                                <br/>
+                                <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                                <h3 class="header-laporan">Laporan Laba Rugi</h3>
+                                <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
+                                <!--<br/>-->
                             </center>
-                            <hr/>
+                            <!--<hr/>-->
                         </div>
                     </div>
                     <div class="table-responsive">

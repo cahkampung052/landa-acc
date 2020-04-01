@@ -78,16 +78,15 @@
             <div class="card-body">
                 <div align="left">
                     <div class="row">
-                        <div class="col-md-12">
-                            <br/>
+                        <div class="col-md-12 relative-div">
                             <center>
-                                <h2 class="header-laporan">LAPORAN NERACA SALDO</h2>
-                                Periode : {{ data.tanggal| date:'dd MMMM yyyy' }}
-                                <br/>
-                                Disiapkan Tanggal : {{ data.disiapkan| date:'dd MMMM yyyy, H:i' }}
-                                <br/>
+                                <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                                <h3 class="header-laporan">Laporan Neraca Saldo</h3>
+                                <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
+                                <!--<br/>-->
                             </center>
-                            <hr/>
+                            <!--<hr/>-->
                         </div>
                     </div>
                     <div class="table-responsive">

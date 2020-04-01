@@ -1,19 +1,18 @@
-<link href="{{ css }}" rel="stylesheet" type="text/css"/>
+<link href="{{ css }}?t=123" rel="stylesheet" type="text/css"/>
 <div class="card-body">
     <div class="row header-laporan-wrapper">
-        <div class="col-md-12">
-            <center class="header-text">
-                <h2 class="header-laporan">LAPORAN BUKU BESAR</h2>
-                Lokasi : {{ data.lokasi }}
-                <br/>
-                Periode : {{ data.tanggal }}
-                <br/>
-                Disiapkan Tanggal : {{ data.disiapkan }}
-                <br/>
+        <div class="col-md-12 relative-div">
+            <center>
+                <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                <h2 class="header-laporan">{{data.lokasi}}</h2>
+                <h3 class="header-laporan">Laporan Buku Besar</h3>
+                <p style="margin-top:3px">Periode {{data.tanggal}}</p>
+                <!--<br/>-->
             </center>
-            <hr/>
+            <!--<hr/>-->
         </div>
-    </div><br/>
+    </div>
+    
     {% for key, val in detail %}
     <div style="margin-bottom: 15px;">
         <table style="width: 100%">
@@ -28,7 +27,7 @@
             </tr>
         </table>
         <div class="table-responsive">
-            <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
+            <table class="table table-hover table-laporan-border" style="border-collapse: collapse; width: 100%">
                 <thead>
                     <tr>
                         <th style="width: 100px">
@@ -54,18 +53,30 @@
                 <tbody>
                     <tr>
                         <td colspan="3">Saldo Awal</td>
-                        <td align="right" class="text-right">{{ val.debit_awal| number_format }}</td>
-                        <td align="right" class="text-right">{{ val.kredit_awal| number_format }}</td>
-                        <td align="right" class="text-right">{{ val.saldo_awal| number_format }}</td>
+                        <td align="right" class="text-right"></td>
+                        <td align="right" class="text-right"></td>
+                        <td align="right" class="text-right">
+                            {%if val.saldo_awal < 0%}
+                            <span>Rp{{ '(' ~ ((val.saldo_awal * -1) | number_format(0, ',', '.')) ~ ')' }}</span>
+                            {%else%}
+                            <span>Rp{{ val.saldo_awal | number_format(0, ',', '.') }}</span>
+                            {%endif%}
+                        </td>
                     </tr>
                     {% for k, valdetail in val.detail %}
                     <tr>
                         <td align="center" class="text-center" style="vertical-align: top">{{ valdetail.tanggal|date('d-m-Y') }}</td>
                         <td align="center" style="vertical-align: top">{{ valdetail.kode }}</td>
                         <td style="vertical-align: top">{{ valdetail.keterangan }}</td>
-                        <td align="right" class="text-right" style="vertical-align: top">{{ valdetail.debit | number_format }}</td>
-                        <td align="right" class="text-right" style="vertical-align: top">{{ valdetail.kredit | number_format }}</td>
-                        <td align="right" class="text-right" style="vertical-align: top">{{ valdetail.saldo_sekarang | number_format }}</td>
+                        <td align="right" class="text-right" style="vertical-align: top">Rp{{ valdetail.debit | number_format(0, ',', '.') }}</td>
+                        <td align="right" class="text-right" style="vertical-align: top">Rp{{ valdetail.kredit | number_format(0, ',', '.') }}</td>
+                        <td align="right" class="text-right" style="vertical-align: top">
+                            {%if valdetail.saldo_sekarang < 0%}
+                            <span>Rp{{ '(' ~ ((valdetail.saldo_sekarang * -1) | number_format(0, ',', '.')) ~ ')' }}</span>
+                            {%else%}
+                            <span>Rp{{ valdetail.saldo_sekarang | number_format(0, ',', '.') }}</span>
+                            {%endif%}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -75,13 +86,17 @@
                             <b>Saldo Akhir</b>
                         </td>
                         <td align="right" class="text-right">
-                            <b>{{ val.total_debit | number_format }}</b>
+                            <b>Rp{{ val.total_debit | number_format(0, ',', '.') }}</b>
                         </td>
                         <td align="right" class="text-right">
-                            <b>{{ val.total_kredit | number_format }}</b>
+                            <b>Rp{{ val.total_kredit | number_format(0, ',', '.') }}</b>
                         </td>
                         <td align="right" class="text-right">
-                            <b>{{ val.total_saldo | number_format }}</b>
+                            {%if val.total_saldo < 0%}
+                            <b>Rp{{ '(' ~ ((val.total_saldo * -1) | number_format(0, ',', '.')) ~ ')' }}</b>
+                            {%else%}
+                            <b>Rp{{ val.total_saldo | number_format(0, ',', '.') }}</b>
+                            {%endif%}
                         </td>
                     </tr>
                 </tfoot>

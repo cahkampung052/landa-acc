@@ -7,6 +7,8 @@ app.controller('transferCtrl', function ($scope, Data, $rootScope, $uibModal, Up
     $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
+    
+    $scope.is_setting_field = false;
 
     /*
      * SETTING FIELD

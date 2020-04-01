@@ -30,7 +30,7 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
             export: is_export,
             print: is_print,
             m_lokasi_id: $scope.form.m_lokasi_id.id,
-            m_lokasi_nama: $scope.form.m_lokasi_id.nama,
+            lokasi_nama: $scope.form.m_lokasi_id.nama,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
             is_detail: $scope.form.is_detail
@@ -92,7 +92,7 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
 
 app.controller("settingLabarugiCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope) {
 
-    $scope.listAkun = [];
+    $scope.listAkun = [{}];
 
     Data.get('acc/m_akun/getPengecualian').then(function (response) {
         $scope.listAkun = response.data.pengecualian_labarugi;

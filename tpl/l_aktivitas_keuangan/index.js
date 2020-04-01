@@ -26,7 +26,8 @@ app.controller('l_aktivitaskeuanganCtrl', function($scope, Data, $rootScope, $ui
             tanggal: moment($scope.form.tanggal).format('YYYY-MM-DD'),
             tanggal2: moment($scope.form.tanggal2).format('YYYY-MM-DD'),
             is_detail: $scope.form.is_detail,
-            m_lokasi_id: $scope.form.m_lokasi_id.id
+            m_lokasi_id: $scope.form.m_lokasi_id.id,
+            lokasi_nama : $scope.form.m_lokasi_id.nama,
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan', param).then(function (response) {
