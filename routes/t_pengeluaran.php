@@ -441,9 +441,10 @@ $app->post("/acc/t_pengeluaran/savePosition", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
 
-    $data['posisi_pengeluaran'] = json_encode($data);
+    $a['posisi_pengeluaran'] = json_encode($data);
+    
     try {
-        $model = $db->update("acc_m_setting", $data, ["id" => 1]);
+        $model = $db->update("acc_m_setting", $a, ["id" => 1]);
         return successResponse($response, $model);
     } catch (Exception $e) {
         return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
