@@ -1,32 +1,17 @@
 <?php
-
-function validasi($data, $custom = array()) {
-    $validasi = array(
-//        'no_transaksi' => 'required',
-//        'm_lokasi_id' => 'required',
-//        'm_akun_id' => 'required',
-//        'tanggal' => 'required',
-//        'total' => 'required',
-//        'dibayar_kepada' => 'required'
-    );
-//    GUMP::set_field_name("parent_id", "Akun");
+function validasi($data, $custom = array())
+{
+    $validasi = array();
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
-
 $app->get('/acc/t_tutup_tahun/index', function ($request, $response) {
-    $params = $request->getParams();
-    $tableuser = tableUser();
-    $sort = "id DESC";
-    $offset = isset($params['offset']) ? $params['offset'] : 0;
-    $limit = isset($params['limit']) ? $params['limit'] : 10;
-
-    $db = $this->db;
-
-    /** Select Gudang from database */
+    $params     = $request->getParams();
+    $tableuser  = tableUser();
+    $db         = $this->db;
     $db->select("
-      acc_tutup_buku.*,
-      " . $tableuser . ".nama as namaUser
+        acc_tutup_buku.*,
+        $tableuser.nama as namaUser
       ")
             ->from("acc_tutup_buku")
             ->leftJoin($tableuser, $tableuser . ".id=acc_tutup_buku.created_by")
@@ -44,29 +29,20 @@ $app->get('/acc/t_tutup_tahun/index', function ($request, $response) {
             }
         }
     }
-
     /** Set limit */
-    if (!empty($limit)) {
-        $db->limit($limit);
+    if (isset($params['limit']) && !empty($params['limit'])) {
+        $db->limit($params['limit']);
     }
-
     /** Set offset */
-    if (!empty($offset)) {
-        $db->offset($offset);
+    if (isset($params['offset']) && !empty($params['offset'])) {
+        $db->offset($params['offset']);
     }
-
-    /** Set sorting */
-    if (!empty($params['sort'])) {
-        $db->sort($sort);
-    }
-
-    $models = $db->findAll();
-    $totalItem = $db->count();
-    // print_r($models);exit();
-    $array = [];
+    $models     = $db->findAll();
+    $totalItem  = $db->count();
+    $array      = [];
     foreach ($models as $key => $val) {
-        $akun_ikhtisar = $db->find("select * from acc_m_akun where id ={$val->akun_ikhtisar_id}");
-        $akun_pemindaian = $db->find("select * from acc_m_akun where id ={$val->akun_pemindahan_modal_id}");
+        $akun_ikhtisar = $db->find("select * from acc_m_akun where id = '".$val->akun_ikhtisar_id."'");
+        $akun_pemindaian = $db->find("select * from acc_m_akun where id = '".$val->akun_pemindahan_modal_id."'");
         $tgl = date('Y-m-d', strtotime($val->tahun . '-' . $val->bulan . '-01'));
         $array[$key] = (array) $val;
         $array[$key]['akun_ikhtisar_id'] = $akun_ikhtisar;
@@ -75,12 +51,8 @@ $app->get('/acc/t_tutup_tahun/index', function ($request, $response) {
         $array[$key]['bln_tahun'] = $tgl;
         $array[$key]['created_at'] = date("d-m-Y", $val->created_at);
     }
-
-
     return successResponse($response, ['list' => $array, 'totalItems' => $totalItem]);
 });
-
-
 $app->get('/acc/t_tutup_tahun/tahun', function ($request, $response) {
     $db = $this->db;
     $list = $db->findAll("select * from acc_tutup_buku");
@@ -88,124 +60,170 @@ $app->get('/acc/t_tutup_tahun/tahun', function ($request, $response) {
     foreach ($list as $val) {
         $list_tahun[] = $val->tahun;
     }
-
     $tahun = range(date("Y") - 3, date("Y") + 1);
-
     $listtahun = array_unique(array_merge($list_tahun, $tahun));
-
     return successResponse($response, $tahun);
 });
-
-
-$app->get('/acc/t_tutup_tahun/getDetail', function ($request, $response) {
+$app->get('/acc/t_tutup_tahun/getView', function ($request, $response) {
     $params = $request->getParams();
-//    print_r($params);die();
-
     $db = $this->db;
-
-    /*
-     * deklarasi 2 tipe
-     */
-    $akunPendapatan = $db->select("*")
-            ->from("acc_m_akun")
-            ->where("is_tipe", "=", 1)
-            ->where("parent_id", "=", 0)
-            ->customWhere("tipe = 'PENDAPATAN' OR tipe = 'PENDAPATAN DILUAR USAHA'", "AND")
-            ->findAll();
-    $arr_pendapatan = [];
-    foreach ($akunPendapatan as $key => $val) {
-        $arr_pendapatan[] = $val->id;
-    }
-
-    $akunBeban = $db->select("*")
-            ->from("acc_m_akun")
-            ->where("is_tipe", "=", 1)
-            ->where("parent_id", "=", 0)
-            ->customWhere("tipe = 'BEBAN' OR tipe = 'BEBAN DILUAR USAHA'", "AND")
-            ->findAll();
-    $arr_beban = [];
-    foreach ($akunBeban as $key => $val) {
-        $arr_beban[] = $val->id;
-    }
-
-    $tipe = [
-        [
-            "nama" => "Pendapatan",
-            "nama_akun" => $arr_pendapatan
-        ],
-        [
-            "nama" => "Beban",
-            "nama_akun" => $arr_beban
-        ]
-    ];
-
-//    print_r($tipe);die();
-
-    $models = [];
-    $sumdebit = 0;
-    $sumkredit = 0;
-    foreach ($tipe as $key => $val) {
-
-        $models[$key]['nama'] = $val['nama'];
-        $models[$key]['labarugi'] = 0;
-
-        $index = 0;
-
-        foreach ($val['nama_akun'] as $keys => $vals) {
-            $akun = $db->select("*")->from("acc_m_akun")->where("parent_id", "=", $vals)->findAll();
-            foreach ($akun as $keydetail => $valdetail) {
-                $transdetail = $db->select("SUM(debit) as debit, SUM(kredit) as kredit")
-                        ->from("acc_trans_detail")
-                        ->where("m_akun_id", "=", $valdetail->id)
-                        ->find();
-                $models[$key]['detail'][$index]['nama'] = $valdetail->nama;
-                if ($val['nama'] == "Pendapatan") {
-                    $models[$key]['detail'][$index]['debit'] = ($transdetail->debit - $transdetail->kredit) != 0 ? $transdetail->debit - $transdetail->kredit : 0;
-                    $models[$key]['detail'][$index]['kredit'] = 0;
-                    $models[$key]['labarugi'] += $models[$key]['detail'][$index]['debit'];
-                } else {
-                    $models[$key]['detail'][$index]['debit'] = 0;
-                    $models[$key]['detail'][$index]['kredit'] = ($transdetail->debit - $transdetail->kredit) != 0 ? $transdetail->debit - $transdetail->kredit : 0;
-                    $models[$key]['labarugi'] += $models[$key]['detail'][$index]['kredit'];
+    $labaRugi = $pemindahan_modal = $prive = [];
+    if(isset($params['id']) && !empty($params['id'])){
+        $list = $db->select("
+            acc_tutup_buku_det.*, 
+            acc_m_akun.nama, 
+            acc_m_akun.kode,
+            acc_m_akun.is_tipe,
+            acc_m_akun.tipe as tipe_akun,
+            acc_m_akun.kode,
+            acc_m_akun.saldo_normal
+        ")
+        ->from("acc_tutup_buku_det")
+        ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_tutup_buku_det.m_akun_id")
+        ->where("acc_tutup_buku_det.acc_tutup_buku_id", "=", $params["id"])
+        ->findAll();
+        foreach ($list as $key => $value) {
+            if ($value->tipe == 'laba_rugi' ) {
+                $nominal = ($value->debit > $value->kredit) ? $value->debit : $value->kredit;
+                $value->tipe_akun = str_replace(" ", "_", $value->tipe_akun);
+                if($value->is_tipe == 0){
+                    $labaRugi[$value->tipe_akun]['total'] = (isset($labaRugi[$value->tipe_akun]['total']) ? $labaRugi[$value->tipe_akun]['total'] : 0) + ($nominal);                    
                 }
-
-                $index++;
+                $labaRugi[$value->tipe_akun]['detail'][] = [
+                    "is_tipe" => $value->is_tipe,
+                    "id" => $value->m_akun_id,
+                    "kode" => $value->kode,
+                    "nama" => $value->kode. " - ". $value->nama,
+                    "nominal" => $nominal,
+                ];
+            }else if($value->tipe == 'pemindahan_modal'){
+                $pemindahan_modal[] = [
+                    "id" => $value->m_akun_id,
+                    "kode" => $value->kode,
+                    "nama" => $value->kode. " - ". $value->nama,
+                    "debit" => $value->debit,
+                    "kredit" => $value->kredit,
+                ];
+            }else if($value->tipe == 'prive'){
+                $prive[] = [
+                    "id" => $value->m_akun_id,
+                    "kode" => $value->kode,
+                    "nama" => $value->kode. " - ". $value->nama,
+                    "debit" => $value->debit,
+                    "kredit" => $value->kredit
+                ];
             }
         }
     }
-
-//    print_r($models);
-//    die();
-    $tahun = date("Y", strtotime($params['tahun']));
-    $labarugi = getLabaRugi($tahun . "-01-01", $tahun . "-12-31");
-
-    $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
-    $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
-    $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
-    $totallabarugi = $pendapatan - $biaya - $beban;
-
-    $data['labarugimodal'] = $totallabarugi;
-    $data['labarugimodal2'] = $models[1]['labarugi'] - $models[0]['labarugi'];
-
-//    print_r($data);
-//    die();
-
     return successResponse($response, [
-        'detail' => $models,
-        'data' => $data,
-        'total_kredit' => $sumkredit,
+        'detail' => $labaRugi,
+        'jurnalPemindahan' => $pemindahan_modal,
+        'jurnalPrive' => $prive
     ]);
 });
-
-
-
-$app->post('/acc/t_tutup_tahun/save', function ($request, $response) {
-
+$app->get('/acc/t_tutup_tahun/getDetail', function ($request, $response) {
     $params = $request->getParams();
-    $data = $params;
-
     $db = $this->db;
-    $validasi = validasi($data);
+    /**
+     * Laba Rugi
+     */
+    $tahun = date("Y", strtotime($params["tahun"]));
+    $tanggal_start = $tahun."-01-01";
+    $tanggal_end = $tahun."-12-31";
+    $labarugi = getLabaRugi($tanggal_start, $tanggal_end, null);
+    $arr = $labarugi['data'];
+    /**
+     * Total pendapatan
+     */
+    $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
+    $pendapatanLuarUsaha = isset($labarugi['total']['PENDAPATAN DILUAR USAHA']) ? $labarugi['total']['PENDAPATAN DILUAR USAHA'] : 0;
+    /**
+     * Total beban
+     */
+    $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
+    $bebanLuarUsaha = isset($labarugi['total']['BEBAN DILUAR USAHA']) ? $labarugi['total']['BEBAN DILUAR USAHA'] : 0;
+    /**
+     * Param lainnya
+     */
+    $data['total'] = $pendapatan + $pendapatanLuarUsaha - $beban - $bebanLuarUsaha;
+    $data['lr_usaha'] = $pendapatan - $beban;
+    $data['is_detail'] = true;
+    foreach ($arr as $key => $value) {
+        foreach ($value['detail'] as $keys => $values) {
+            if ($values['nominal'] == 0) {
+                unset($arr[$key]['detail'][$keys]);
+            }
+        }
+    }
+    /**
+     * Jurnal pemindahan modal
+     */
+    if ($data['total'] >= 0) {
+        $jurnalPemindahan[] = [
+            'nama' => isset($params['akun_ikhtisar_nama']) ? $params['akun_ikhtisar_nama'] : '',
+            'id' => isset($params['akun_ikhtisar_id']) ? $params['akun_ikhtisar_id'] : '',
+            'debit' => $data['total'],
+            'kredit' => '',
+        ];
+        $jurnalPemindahan[] = [
+            'nama' => isset($params['akun_pemindahan_modal_nama']) ? $params['akun_pemindahan_modal_nama'] : '',
+            'id' => isset($params['akun_pemindahan_modal_id']) ? $params['akun_pemindahan_modal_id'] : '',
+            'debit' => '',
+            'kredit' => $data['total'],
+        ];
+    } else {
+        $jurnalPemindahan[] = [
+            'nama' => isset($params['akun_pemindahan_modal_nama']) ? $params['akun_pemindahan_modal_nama'] : '',
+            'id' => isset($params['akun_pemindahan_modal_id']) ? $params['akun_pemindahan_modal_id'] : '',
+            'debit' => $data['total'],
+            'kredit' => '',
+        ];
+        $jurnalPemindahan[] = [
+            'nama' => isset($params['akun_ikhtisar_nama']) ? $params['akun_ikhtisar_nama'] : '',
+            'id' => isset($params['akun_ikhtisar_id']) ? $params['akun_ikhtisar_id'] : '',
+            'debit' => '',
+            'kredit' => $data['total'],
+        ];
+    }
+    /**
+     * Ambil prive
+     */
+    $priveId        = getPemetaanAkun('Prive');
+    $akunPrive      = isset($priveId[0]) ? $priveId[0] : 0;
+    $saldoPrive     = getSaldo($akunPrive, null, $tanggal_start, $tanggal_end);
+    $jurnalPrive    = [];
+    if ($saldoPrive > 0) {
+        $nama = $db->select("nama")->from("acc_m_akun")->where("id", "=", $akunPrive)->find();
+        $jurnalPrive[] = [
+            'nama' => isset($params['akun_pemindahan_modal_nama']) ? $params['akun_pemindahan_modal_nama'] : '',
+            'id' => isset($params['akun_pemindahan_modal_id']) ? $params['akun_pemindahan_modal_id'] : '',
+            'debit' => $saldoPrive,
+            'kredit' => '',
+        ];
+        $jurnalPrive[] = [
+            'nama' => isset($nama->nama) ? $nama->nama : '',
+            'id' => $akunPrive,
+            'debit' => '',
+            'kredit' => $saldoPrive,
+        ];
+    }
+    return successResponse($response, [
+        'detail' => $arr,
+        'data' => $data,
+        'jurnalPemindahan' => $jurnalPemindahan,
+        'jurnalPrive' => $jurnalPrive
+    ]);
+});
+$app->post('/acc/t_tutup_tahun/save', function ($request, $response) {
+    $params     = $request->getParams();
+    $data       = $params["form"];
+    $db         = $this->db;
+    $validasi   = validasi($data);
+    $total      = 0;
+    /**
+     * Ambil lokasi pertama
+     */
+    $lokasi = $db->select("*")->from("acc_m_lokasi")->orderBy("parent_id ASC, level ASC")->find();
     if ($validasi === true) {
         $cekData = $db->select("*")->from("acc_tutup_buku")
                 ->where("jenis", "=", "tahun")
@@ -215,57 +233,121 @@ $app->post('/acc/t_tutup_tahun/save', function ($request, $response) {
             return unprocessResponse($response, 'Data Sudah Ada');
             die();
         }
-
         /*
          * insert acc_tutup_buku
          */
         $data['jenis'] = "tahun";
-        $data['akun_ikhtisar_id'] = $data['akun_ikhtisar_id']['id'];
-        $data['akun_pemindahan_modal_id'] = $data['akun_pemindahan_modal_id']['id'];
-
-//        print_r($data['form']);die();
+        $data['tahun'] = date("Y", strtotime($params["form"]['tahun']));
+        $data['akun_ikhtisar_id'] = $params["form"]['akun_ikhtisar_id']['id'];
+        $data['akun_pemindahan_modal_id'] = $params["form"]['akun_pemindahan_modal_id']['id'];
         $model = $db->insert("acc_tutup_buku", $data);
-
         if ($model) {
-            /*
-             * update m_setting tanggalnya
-             */
-            $tanggal = $data['tahun'] + 1 . "-01-01";
-            $db->update("acc_m_setting", ["tanggal" => $tanggal], 1);
-
-            /*
-             * akun ikhtisar
-             */
-            $det['acc_tutup_buku_id'] = $model->id;
-            $det['m_akun_id'] = $data['akun_ikhtisar_id'];
-            $det['kredit'] = $data['kredit'];
-
-            $insertdetail = $db->insert("acc_tutup_buku_det", $det);
-
-            $transdet[0]['m_akun_id'] = $data['akun_ikhtisar_id'];
-            $transdet[0]['tanggal'] = date("Y-m-d");
-            $transdet[0]['kredit'] = $data['kredit'];
-            $transdet[0]['reff_type'] = "acc_tutup_buku_det";
-            $transdet[0]['reff_id'] = $insertdetail->id;
-
-
-            /*
-             * akun pemindahan modal
-             */
-            $det2['acc_tutup_buku_id'] = $model->id;
-            $det2['m_akun_id'] = $data['akun_pemindahan_modal_id'];
-            $det2['debit'] = $data['debit'];
-
-            $insertdetail = $db->insert("acc_tutup_buku_det", $det2);
-
-            $transdet[1]['m_akun_id'] = $data['akun_pemindahan_modal_id'];
-            $transdet[1]['tanggal'] = date("Y-m-d");
-            $transdet[1]['debit'] = $data['debit'];
-            $transdet[1]['reff_type'] = "acc_tutup_buku_det";
-            $transdet[1]['reff_id'] = $insertdetail->id;
-
-            insertTransDetail($transdet);
-
+            $arr = [];
+            if(isset($params['detail']['PENDAPATAN']['detail']) && !empty($params['detail']['PENDAPATAN']['detail'])){
+                foreach ($params['detail']['PENDAPATAN']['detail'] as $key => $value) {
+                    $arr[] = [
+                        "acc_tutup_buku_id" => $model->id,
+                        "m_akun_id" => $value['id'],
+                        "debit" => $value['nominal'],
+                        "kredit" => 0,
+                        "tipe" => "laba_rugi"
+                    ];
+                    if($value['is_tipe'] == 0){
+                        $total += $value['nominal'];                        
+                    }
+                }
+            }
+            if(isset($params['detail']['PENDAPATAN_DILUAR_USAHA']['detail']) && !empty($params['detail']['PENDAPATAN_DILUAR_USAHA']['detail'])){
+                foreach ($params['detail']['PENDAPATAN_DILUAR_USAHA']['detail'] as $key => $value) {
+                    $arr[] = [
+                        "acc_tutup_buku_id" => $model->id,
+                        "m_akun_id" => $value['id'],
+                        "debit" => $value['nominal'],
+                        "kredit" => 0,
+                        "tipe" => "laba_rugi"
+                    ];
+                    if($value['is_tipe'] == 0){
+                        $total += $value['nominal'];                        
+                    }
+                }
+            }
+            if(isset($params['detail']['BEBAN']['detail']) && !empty($params['detail']['BEBAN']['detail'])){
+                foreach ($params['detail']['BEBAN']['detail'] as $key => $value) {
+                    $arr[] = [
+                        "acc_tutup_buku_id" => $model->id,
+                        "m_akun_id" => $value['id'],
+                        "debit" => 0,
+                        "kredit" => $value['nominal'],
+                        "tipe" => "laba_rugi"
+                    ];
+                    if($value['is_tipe'] == 0){
+                        $total -= $value['nominal'];                        
+                    }
+                }
+            }
+            if(isset($params['detail']['BEBAN_DILUAR_USAHA']['detail']) && !empty($params['detail']['BEBAN_DILUAR_USAHA']['detail'])){
+                foreach ($params['detail']['BEBAN_DILUAR_USAHA']['detail'] as $key => $value) {
+                    $arr[] = [
+                        "acc_tutup_buku_id" => $model->id,
+                        "m_akun_id" => $value['id'],
+                        "debit" => 0,
+                        "kredit" => $value['nominal'],
+                        "tipe" => "laba_rugi"
+                    ];
+                    if($value['is_tipe'] == 0){
+                        $total -= $value['nominal'];                        
+                    }
+                }
+            }
+            if(isset($params['jurnalPemindahan']) && !empty($params['jurnalPemindahan'])){
+                foreach ($params['jurnalPemindahan'] as $key => $value) {
+                    $arr[] = [
+                        "acc_tutup_buku_id" => $model->id,
+                        "m_akun_id" => $value['id'],
+                        "debit" => $value['debit'],
+                        "kredit" => $value['kredit'],
+                        "tipe" => "pemindahan_modal"
+                    ];       
+                }   
+            }
+            if(isset($params['jurnalPrive']) && !empty($params['jurnalPrive'])){
+                foreach ($params['jurnalPrive'] as $key => $value) {
+                    $arr[] = [
+                        "acc_tutup_buku_id" => $model->id,
+                        "m_akun_id" => $value['id'],
+                        "debit" => $value['debit'],
+                        "kredit" => $value['kredit'],
+                        "tipe" => "prive"
+                    ];    
+                }
+            }
+            if(!empty($arr)){
+                multiInsert("acc_tutup_buku_det", $arr);                
+                /**
+                 * Simpan jurnal
+                 */
+                $tmp = [];
+                foreach ($arr as $key => $value) {
+                    $tmp[$key]['m_akun_id'] = $value['m_akun_id'];
+                    $tmp[$key]['debit'] = $value['debit'];
+                    $tmp[$key]['kredit'] = $value['kredit'];
+                    $tmp[$key]['keterangan'] = "Tutup buku tahun " . $params['tahun'];
+                    $tmp[$key]['kode'] = "TB-".$params['tahun'];
+                    $tmp[$key]['reff_id'] = $model->id;
+                    $tmp[$key]['reff_type'] = "acc_tutup_buku";
+                    $tmp[$key]['tanggal'] = ($params['tahun'])."-12-31";
+                    $tmp[$key]['m_lokasi_jurnal_id'] = $lokasi->id;
+                    $tmp[$key]['m_lokasi_id'] = $lokasi->id;
+                    $tmp[$key]['created_at'] = strtotime($tmp[$key]['tanggal']." 23:55:00");
+                }
+                if(!empty($tmp)){
+                    multiInsert("acc_trans_detail", $tmp);
+                }
+                /**
+                 * Update laba rugi 
+                 */
+                $db->update("acc_tutup_buku", ["hasil_lr" => $total], ["id" => $model->id]);
+            }
             return successResponse($response, $model);
         } else {
             return unprocessResponse($response, 'Data Gagal Di Simpan');
@@ -274,13 +356,12 @@ $app->post('/acc/t_tutup_tahun/save', function ($request, $response) {
         return unprocessResponse($response, $validasi);
     }
 });
-
-$app->post('/acc/t_tutup_tahun/trash', function ($request, $response) {
-
+$app->post('/acc/t_tutup_tahun/delete', function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
-
-    $model = $db->update("t_tutup_buku", $data, array('id' => $data['id']));
+    $model = $db->delete("acc_tutup_buku", ['id' => $data['id']]);
+    $modelDetail = $db->delete("acc_tutup_buku_det", ['acc_tutup_buku_id' => $data['id']]);
+    $modelTransDetail = $db->delete("acc_trans_detail", ['reff_id' => $data['id'], 'reff_type' => 'acc_tutup_buku']);
     if ($model) {
         return successResponse($response, $model);
     } else {

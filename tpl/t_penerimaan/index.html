@@ -199,17 +199,11 @@
                                 <div class="col-md-6">
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label-sm">Diterima Dari</label>
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-9">
                                             <ui-select ng-disabled="is_view" ng-model="form.m_kontak_id"  theme="bootstrap" style="padding-right: 0px;">
                                                 <ui-select-match placeholder="Pilih Kontak">{{ $select.selected.nama}}</ui-select-match>
                                                 <ui-select-choices refresh="cariKontak($select.search)" repeat="val in listSupplier">{{ val.nama}}</ui-select-choices>
                                             </ui-select>
-                                        </div>
-                                        <div class="col-sm-1" style="padding-left: 0px;">
-                                            <button class="btn btn-primary btn-sm" ng-click="createDiterimaDari(form, null, 0);" style="border-radius: 0px;">
-                                                <i class="fa fa-plus">
-                                                </i>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>

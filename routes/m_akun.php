@@ -755,9 +755,8 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
 $app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("*")->from("acc_m_akun")
-            ->customWhere("nama LIKE '%PENDAPATAN%' OR tipe = 'PENDAPATAN'", "AND")
-            ->customWhere("tipe = 'BEBAN'", "OR")
-            ->where("is_tipe", "=", 0)
+            ->customWhere("tipe = 'PENDAPATAN' or tipe = 'PENDAPATAN DILUAR USAHA'", "AND")
+            ->customWhere("tipe = 'BEBAN' or tipe = 'BEBAN DILUAR USAHA'", "OR")
             ->where("is_deleted", "=", 0)
             ->findAll();
 

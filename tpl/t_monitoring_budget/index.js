@@ -14,8 +14,8 @@ app.controller('MonitoringBudgettingCtrl', function($scope, Data, $rootScope, $u
         nama: 'Operasional'
     }
     $scope.form.tahun = new Date();
-    Data.get('site/base_url').then(function(response) {
-        $scope.url = response.data;
+    Data.get('acc/settingacc/url').then(function(response) {
+        $scope.url = response.data.module_url;
     });
     Data.get("/acc/apppengajuan/getKategori").then(function(response) {
         $scope.listKategori = response.data;
@@ -28,7 +28,7 @@ app.controller('MonitoringBudgettingCtrl', function($scope, Data, $rootScope, $u
         form.tahun = $scope.form.tahun;
         form.m_kategori_pengajuan_id = $scope.form.m_kategori_pengajuan_id.id;
         var modalInstance = $uibModal.open({
-            templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/t_monitoring_budget/modalDetail.html",
+            templateUrl: $scope.url + "/tpl/t_monitoring_budget/modalDetail.html",
             controller: "modalDetailCtrl",
             size: "lg",
             backdrop: "static",

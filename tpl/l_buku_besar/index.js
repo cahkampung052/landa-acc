@@ -1,4 +1,4 @@
-app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $stateParams) {
+app.controller('l_bukubesarCtrl', function($scope, Data, $rootScope, $stateParams) {
     var control_link = "acc/l_buku_besar";
     $scope.form = {};
     $scope.form.tanggal = {
@@ -8,7 +8,7 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
     /**
      * Ambil list semua akun
      */
-    Data.get('acc/m_akun/listakun').then(function (data) {
+    Data.get('acc/m_akun/listakun').then(function(data) {
         $scope.listAkun = data.data;
         if ($scope.listAkun.length > 0 && typeof $stateParams.akun == undefined) {
             $scope.form.m_akun_id = $scope.listAkun[0];
@@ -17,7 +17,7 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
     /**
      * Ambil semua lokasi
      */
-    Data.get('acc/m_lokasi/getLokasi').then(function (response) {
+    Data.get('acc/m_lokasi/getLokasi').then(function(response) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
@@ -35,19 +35,15 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
                 $scope.form.tanggal = tanggal;
                 $scope.view(0, 0);
             }
-
-
         }
     });
-
-    $scope.resetFilter = function (filter) {
+    $scope.resetFilter = function(filter) {
         $scope.form[filter] = undefined;
     }
-
     /**
      * Ambil laporan dari server
      */
-    $scope.view = function (is_export, is_print) {
+    $scope.view = function(is_export, is_print) {
         $scope.mulai = moment($scope.form.tanggal.startDate).format('DD-MM-YYYY');
         $scope.selesai = moment($scope.form.tanggal.endDate).format('DD-MM-YYYY');
         var param = {
@@ -60,7 +56,7 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
         };
         if (is_export == 0 && is_print == 0) {
-            Data.get(control_link + '/laporan', param).then(function (response) {
+            Data.get(control_link + '/laporan', param).then(function(response) {
                 if (response.status_code == 200) {
                     $scope.data = response.data.data;
                     $scope.detail = response.data.detail;
@@ -71,12 +67,9 @@ app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $statePara
                 }
             });
         } else {
-            Data.get('site/base_url').then(function (response) {
-//                console.log(response)
+            Data.get('site/base_url').then(function(response) {
                 window.open(response.data.base_url + "api/acc/l_buku_besar/laporan?" + $.param(param), "_blank");
             });
         }
     };
-
-
 });

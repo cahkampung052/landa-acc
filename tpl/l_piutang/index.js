@@ -1,15 +1,14 @@
 app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
-    var tableStateRef;
     var control_link = "acc/l_piutang";
-    var master = 'Laporan Piutang';
-    $scope.master = master;
-    $scope.formTitle = '';
-    $scope.base_url = '';
     $scope.form = {};
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+    $scope.form.m_kontak_id = {
+        id: "",
+        nama: "Semua Customer"
+    }
     /**
      * Ambil list semua akun
      */
@@ -66,7 +65,6 @@ app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
             });
         } else {
             Data.get('site/base_url').then(function(response) {
-                //                console.log(response)
                 window.open(response.data.base_url + "api/acc/l_piutang/laporan?" + $.param(param), "_blank");
             });
         }

@@ -4,7 +4,7 @@ function validasi($data, $custom = array()) {
     $validasi = array(
         'nama' => 'required',
         'harga' => 'required',
-        'lokasi' => 'required',
+        // 'lokasi' => 'required',
         'is_penyusutan' => 'required',
     );
     GUMP::set_field_name("akun_asset", "Akun Asset");
@@ -173,7 +173,7 @@ $app->get('/acc/m_asset/tampilPenyusutan', function ($request, $response) {
     $sql->select("*")->from("acc_asset")
             ->where("status", "=", 'Aktif')
             ->where("is_penyusutan", "=", 1)
-            ->where("lokasi_id", "=", $params['lokasi_id'])
+            // ->where("lokasi_id", "=", $params['lokasi_id'])
             ->where("tgl_mulai_penyusutan", "<", date("Y-m-t", strtotime($params['bulan'])))
             // ->where("periode_awal_penyusutan", "<", date("Y-m-t",strtotime($params['bulan'])))
             ->where("periode_akhir_penyusutan", ">", date("Y-m-t", strtotime($params['bulan'])))

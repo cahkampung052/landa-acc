@@ -1,14 +1,8 @@
 <?php
-
 $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
-    
     $data['img'] = imgLaporan();
-    
     $params = $request->getParams();
-//    print_r($params);
-//    die();
     $db = $this->db;
-
     /**
      * Ambil data akun
      */
@@ -19,7 +13,6 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             ->andWhere("acc_m_akun.is_deleted", "=", 0)
             ->orderBy("acc_m_akun.kode ASC")
             ->find();
-
     /*
      * lokasi
      */
@@ -38,21 +31,21 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             $lokasiId = $params['m_lokasi_id'];
         }
     }
-
+    /**
+     * Jika akun tidak ditemukan, laporan = kosong
+     */
+    if(!isset($getakun->id)){
+        return successResponse($response, []);
+    }
     /**
      * Ambil id akun turunan klasifikasi di parameter
      */
     $childId = getChildId("acc_m_akun", $getakun->id);
-//    print_r($childId);
-//    die();
     if (!empty($childId)) {
         $childId = implode(",", $childId);
     } else {
         $childId = $getakun->id;
     }
-
-
-
     /*
      * ambil semua akun tipe = 0
      */
@@ -65,15 +58,12 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             ->where("acc_m_akun.is_tipe", "=", 0)
             ->findAll();
     $list = [];
-//    print_r($listAkun);die();
     foreach ($listAkun as $key => $value) {
         $listAkun[$key] = (array) $value;
-
         /*
          * perulangan sebanyak 12 (bulan)
          */
         for ($i = 1; $i <= 12; $i++) {
-
             /*
              * ambil budget
              */
@@ -85,8 +75,6 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
                 $db->customWhere("acc_budgeting.m_lokasi_id = '".$lokasiId."'", "AND");
             }
             $getBudget = $db->find();
-//            print_r($getBudget);
-
             /*
              * set nomer bulan
              */
@@ -94,7 +82,6 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             if ($i < 10) {
                 $bulan = 0 . "" . $i;
             }
-
             /*
              * ambil transdetail
              */
@@ -104,9 +91,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             }
             $db->where("m_akun_id", "=", $value->id)
                     ->where("tanggal", "LIKE", "" . $params['tahun'] . "-" . $bulan . "");
-
             $getTransDetail = $db->find();
-
             /*
              * isi nominal target dari budget
              */
@@ -115,22 +100,17 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
             } else {
                 $listAkun[$key]['detail'][$i]['target'] = $getBudget->budget;
             }
-
             /*
              * isi nominal realisasi dari transdetail
              */
-            if (!$getTransDetail || $getTransDetail->nominal == NULL) {
+            if (!$getTransDetail || $getTransDetail->nominal == null) {
                 $listAkun[$key]['detail'][$i]['realisasi'] = 0;
             } else {
                 $listAkun[$key]['detail'][$i]['realisasi'] = $getTransDetail->nominal;
             }
-
             $listAkun[$key]['detail'][$i]['bulan'] = date('F', mktime(0, 0, 0, $i, 10));
         }
     }
-
-//    die;
-
     /*
      * perulangan bulan untuk header
      */
@@ -138,7 +118,6 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
     for ($i = 1; $i <= 12; $i++) {
         $listBulan[$i]['bulan'] = date('F', mktime(0, 0, 0, $i, 10));
     }
-
     /*
      * perulangan setiap bulan 2 nominal
      */
@@ -149,7 +128,6 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
         $listSetiapBulan[$a + 1]['nama'] = 'Realisasi';
         $a += 2;
     }
-
     /*
      * return
      */
@@ -158,7 +136,6 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = $params['nama_lokasi'];
     $data['tanggal'] = $params['tahun'];
-
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/budgeting.html', [
@@ -169,7 +146,7 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
         header("Content-type: application/vnd.ms-excel");
         header("Content-Disposition: attachment;Filename=laporan-budgeting.xls");
         echo $content;
-    } else if (isset($params['print']) && $params['print'] == 1) {
+    } elseif (isset($params['print']) && $params['print'] == 1) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/budgeting.html', [
             "data" => $data,
@@ -182,7 +159,3 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
         return successResponse($response, ['detail' => $listAkun, 'data' => $data]);
     }
 });
-
-
-
-

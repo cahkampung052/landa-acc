@@ -3,10 +3,10 @@
         <div class="card">
             <div class="card-header">
                 <strong>Laporan Laba Rugi</strong>
-                <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()" ng-if="user.akses.pengecualian_labarugi">
+                <!-- <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()" ng-if="user.akses.pengecualian_labarugi">
                     <i class="fa fa-gear"></i>
                     Setting Pengecualian
-                </button>
+                </button> -->
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
@@ -33,13 +33,20 @@
                                         </div>
                                     </div>
                                     <div class="form-group row col-md-3">
-                                        <label class="col-sm-3 col-form-label-sm">Detail</label>
+                                        <div class="col-md-12">
+                                            <label class="i-checks col-form-label-sm">
+                                                <input ng-disabled="is_view" ng-model="SembunyikanSub" ng-true-value="1" ng-false-value="0" type="checkbox"/>
+                                                <i></i>
+                                                Sembunyikan Sub Akun
+                                            </label>
+                                        </div>
+                                        <!-- <label class="col-sm-3 col-form-label-sm">Detail</label>
                                         <div class="col-sm-6">
                                             <div class="btn-group">
-                                                <label class="btn btn-success btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.is_detail" ng-disabled="is_view" uib-btn-radio="1"><i class="fa fa-check" ng-if="form.is_detail == 1"></i>Ya</label>
-                                                <label class="btn btn-success btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.is_detail" ng-disabled="is_view" uib-btn-radio="0"><i class="fa fa-check" ng-if="form.is_detail == 0"></i>Tidak</label>
+                                                <label class="btn btn-success btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="SembunyikanSub" ng-disabled="is_view" uib-btn-radio="1"><i class="fa fa-check" ng-if="SembunyikanSub == 1"></i>Ya</label>
+                                                <label class="btn btn-success btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="SembunyikanSub" ng-disabled="is_view" uib-btn-radio="0"><i class="fa fa-check" ng-if="SembunyikanSub == 0"></i>Tidak</label>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group">
@@ -58,12 +65,12 @@
         </div>
         <div class="card" ng-show="tampilkan">
             <div class="card-header card-header-white">
-                <div class="btn-group pull-right">
-                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1, 0)">
+                <div class="pull-right">
+                    <button class="btn btn-outline-success btn-sm" ng-click="view(1, 0)">
                         <i class="fa fa-file"></i>
                         Excel
                     </button>
-                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0, 1)">
+                    <button class="btn btn-outline-primary btn-sm" ng-click="view(0, 1)">
                         <i class="fa fa-print"></i>
                         Print
                     </button>
@@ -74,13 +81,11 @@
                     <div class="row header-laporan-wrapper">
                         <div class="col-md-12 relative-div">
                             <center>
-                                <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                                <img src="{{data.img}}" class="absolute-div-center" style="height: 90px">
                                 <h2 class="header-laporan">{{data.lokasi}}</h2>
                                 <h3 class="header-laporan">Laporan Laba Rugi</h3>
-                                <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
-                                <!--<br/>-->
+                                <p class="mt-15px">Periode {{ data.tanggal}}</p>
                             </center>
-                            <!--<hr/>-->
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -96,7 +101,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="vals in detail.PENDAPATAN.detail" ng-if="form.is_detail == 0 && vals.is_tipe == 1">
+                                <tr ng-repeat="vals in detail.PENDAPATAN.detail" ng-if="SembunyikanSub == 1 && vals.is_tipe == 1">
                                     <td align="left" style="vertical-align: top">
                                         <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
@@ -104,7 +109,7 @@
                                         <span>{{ vals.nominal | number }}</span>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in detail.PENDAPATAN.detail" ng-if="form.is_detail == 1">
+                                <tr ng-repeat="vals in detail.PENDAPATAN.detail" ng-if="SembunyikanSub == 0">
                                     <td align="left" style="vertical-align: top">
                                         <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
@@ -120,7 +125,7 @@
                                         <b>{{ detail.PENDAPATAN.total | number }}</b>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in detail.PENDAPATAN_DILUAR_USAHA.detail" ng-if="form.is_detail == 0 && vals.is_tipe == 1">
+                                <tr ng-repeat="vals in detail.PENDAPATAN_DILUAR_USAHA.detail" ng-if="SembunyikanSub == 1 && vals.is_tipe == 1">
                                     <td align="left" style="vertical-align: top">
                                         <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
@@ -128,7 +133,7 @@
                                         <span>{{ vals.nominal | number }}</span>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in detail.PENDAPATAN_DILUAR_USAHA.detail" ng-if="form.is_detail == 1" ng-dblclick="viewBukuBesar(vals)">
+                                <tr ng-repeat="vals in detail.PENDAPATAN_DILUAR_USAHA.detail" ng-if="SembunyikanSub == 0" ng-dblclick="viewBukuBesar(vals)">
                                     <td align="left" style="vertical-align: top">
                                         <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
@@ -144,7 +149,7 @@
                                         <b>{{ detail.PENDAPATAN_DILUAR_USAHA.total | number }}</b>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in detail.BEBAN.detail" ng-if="form.is_detail == 0 && vals.is_tipe == 1">
+                                <tr ng-repeat="vals in detail.BEBAN.detail" ng-if="SembunyikanSub == 0 && vals.is_tipe == 1">
                                     <td align="left" style="vertical-align: top">
                                         <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
@@ -152,7 +157,7 @@
                                         <span>{{ vals.nominal | number }}</span>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in detail.BEBAN.detail" ng-if="form.is_detail == 1" ng-dblclick="viewBukuBesar(vals)">
+                                <tr ng-repeat="vals in detail.BEBAN.detail" ng-if="SembunyikanSub == 0" ng-dblclick="viewBukuBesar(vals)">
                                     <td align="left" style="vertical-align: top">
                                         <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
@@ -169,7 +174,7 @@
                                     </td>
                                 </tr>
 
-                                <tr ng-repeat="vals in detail.BEBAN_DILUAR_USAHA.detail" ng-if="form.is_detail == 0 && vals.is_tipe == 1">
+                                <tr ng-repeat="vals in detail.BEBAN_DILUAR_USAHA.detail" ng-if="SembunyikanSub == 1 && vals.is_tipe == 1">
                                     <td align="left" style="vertical-align: top">
                                         <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
@@ -177,7 +182,7 @@
                                         <span>{{ vals.nominal | number }}</span>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in detail.BEBAN_DILUAR_USAHA.detail" ng-if="form.is_detail == 1" ng-dblclick="viewBukuBesar(vals)">
+                                <tr ng-repeat="vals in detail.BEBAN_DILUAR_USAHA.detail" ng-if="SembunyikanSub == 0" ng-dblclick="viewBukuBesar(vals)">
                                     <td align="left" style="vertical-align: top">
                                         <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>

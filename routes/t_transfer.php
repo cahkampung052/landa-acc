@@ -95,6 +95,7 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
         $models[$key]['m_lokasi_tujuan_id'] = ["id" => $val->m_lokasi_tujuan_id, "nama" => $val->namaLokTujuan, "kode" => $val->kodeLokTujuan];
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['total'] = number_format(intval($val->total));
+        $models[$key]['total_format'] = number_format(intval($val->total));
     }
 
     $a = getMasterSetting();

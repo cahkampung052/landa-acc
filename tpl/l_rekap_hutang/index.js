@@ -1,10 +1,5 @@
 app.controller('l_rekaphutangCtrl', function ($scope, Data, $rootScope) {
-    var tableStateRef;
     var control_link = "acc/l_rekap_hutang";
-    var master = 'Laporan Rekap Hutang';
-    $scope.master = master;
-    $scope.formTitle = '';
-    $scope.base_url = '';
     $scope.form = {};
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
@@ -68,7 +63,6 @@ app.controller('l_rekaphutangCtrl', function ($scope, Data, $rootScope) {
             });
         } else {
             Data.get('site/base_url').then(function (response) {
-//                console.log(response)
                 window.open(response.data.base_url + "api/acc/l_rekap_hutang/laporan?" + $.param(param), "_blank");
             });
         }

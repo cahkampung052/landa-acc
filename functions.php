@@ -393,7 +393,9 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      * Filter tanggal
      */
     if ($tanggal_end != null) {
-        $sql->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
+        $sql->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
+            ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end)
+            ->customWhere("FROM_UNIXTIME(created_at, '%H:%i:%s') < '23:50:00'", 'AND');
     } else {
         $sql->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_start);
     }
@@ -404,7 +406,6 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
         $sql->customWhere("m_akun_id NOT INT (" . implode(",", $arrPengecualian) . ")", "And");
     }
     $trans = $sql->findAll();
-//    pd($trans);
     $arrTrans = [];
     $total = 0;
     foreach ($trans as $key => $value) {
@@ -416,7 +417,6 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             $total -= ($value->debit - $value->kredit) * $value->saldo_normal;
         }
     }
-//    pd($arrTrans);
     /*
      * ambil akun (jika saldo 0 ikut ditampilkan)
      */
@@ -433,7 +433,6 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
      * tanya adi ya, buat apa
      */
     $testing = 0;
-//    pd($arrModel);
     foreach ($arrModel as $key => $value) {
         $total = (isset($arrTrans[$value->id]) ? intval($arrTrans[$value->id]) : 0);
         $tipe = str_replace(" ", "_", $value->tipe);
@@ -961,6 +960,7 @@ function jurnalKas($params)
     $data['repeat_lawan'] = $var_kas;
     return ['data' => $data, 'detail' => $arr];
 }
-function imgLaporan() {
+function imgLaporan()
+{
     return config('MODUL_ACC')['LOGO'];
 }

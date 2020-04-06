@@ -1,8 +1,8 @@
 <div class="animated fadeIn">
     <div ng-controller="l_hutangCtrl">
-        <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
+        <div class="card">
             <div class="card-header">
-                <strong>{{ master}}</strong>
+                <strong>Laporan Hutang</strong>
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
@@ -11,8 +11,8 @@
                             <div class="form-group row">
                                 <div class="col-sm-12">
                                     <div class="input-group">
-                                    <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
-                                    <div class="input-group-prepend">
+                                        <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                        <div class="input-group-prepend">
                                             <span class="input-group-text">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
@@ -25,8 +25,8 @@
                             <div class="form-group row">
                                 <div class="col-sm-12">
                                     <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
-                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
+                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -35,12 +35,8 @@
                             <div class="form-group row">
                                 <div class="col-sm-12">
                                     <ui-select ng-disabled="is_view" ng-model="form.m_kontak_id" theme="bootstrap">
-                                        <ui-select-match placeholder="Pilih Supplier">
-                                            {{$select.selected.kode}} - {{$select.selected.nama}}
-                                        </ui-select-match>
-                                        <ui-select-choices refresh="getSupplier($select.search)" repeat="val in listSupplier">
-                                            {{val.kode}} - {{val.nama}}
-                                        </ui-select-choices>
+                                        <ui-select-match placeholder="Pilih Supplier">{{ $select.selected.nama }}</ui-select-match>
+                                        <ui-select-choices refresh="getSupplier($select.search)" repeat="val in listSupplier">{{ val.kode }} - {{ val.nama }}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -49,8 +45,8 @@
                             <div class="form-group row">
                                 <div class="col-sm-12">
                                     <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_id" theme="bootstrap" ng-disabled="is_view">
-                                        <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
+                                        <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listAkun | filter : $select.search">{{ val.kode + " - " + val.nama }}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -71,12 +67,12 @@
         </div>
         <div class="card" ng-show="tampilkan">
             <div class="card-header card-header-white">
-                <div class="btn-group pull-right">
-                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1, 0)">
+                <div class="pull-right">
+                    <button class="btn btn-outline-success btn-sm" ng-click="view(1, 0)">
                         <i class="fa fa-file"></i>
                         Excel
                     </button>
-                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0, 1)">
+                    <button class="btn btn-outline-primary btn-sm" ng-click="view(0, 1)">
                         <i class="fa fa-print"></i>
                         Print
                     </button>
@@ -86,12 +82,10 @@
                 <div class="row header-laporan-wrapper">
                     <div class="col-md-12">
                         <center>
-                                <h2 class="header-laporan">{{data.lokasi}}</h2>
-                                <h3 class="header-laporan">Laporan Hutang</h3>
-                                <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
-                                <br/>
-                            </center>
-                        <hr/>
+                            <h2 class="header-laporan">{{ data.lokasi }}</h2>
+                            <h3 class="header-laporan">Laporan Hutang</h3>
+                            <p class="mt-15px">Periode {{ data.tanggal }}</p>
+                        </center>
                     </div>
                 </div>
                 <table class="table table-responside table-striped table-hover table-print table-laporan" style="border-collapse: collapse;">
@@ -126,8 +120,8 @@
                         </tr>
                         <tr ng-repeat="val in detail">
                             <td align="center" class="text-center" style="vertical-align: top">{{ val.tanggal|date }}</td>
-                            <td align="center" style="vertical-align: top">{{ val.kode}}</td>
-                            <td style="vertical-align: top">{{ val.keterangan}}</td>
+                            <td align="center" style="vertical-align: top">{{ val.kode }}</td>
+                            <td style="vertical-align: top">{{ val.keterangan }}</td>
                             <td align="right" class="text-right" style="vertical-align: top">{{ val.debit | number }}</td>
                             <td align="right" class="text-right" style="vertical-align: top">{{ val.kredit | number }}</td>
                             <td align="right" class="text-right" style="vertical-align: top">{{ val.saldo_sekarang | number }}</td>

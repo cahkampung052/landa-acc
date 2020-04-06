@@ -53,10 +53,7 @@
                         <thead>
                             <tr>
                                 <th style="text-align: left;">No Transaksi</th>
-                                <th style="text-align: left;">Unit Kerja</th>
                                 <th style="text-align: left;">Customer</th>
-                                <th style="text-align: left;">Akun</th>
-                                <th style="text-align: left;">Akun Piutang</th>
                                 <th style="text-align: left;">No Invoice</th>
                                 <th style="text-align: left;">Total</th>
                                 <th style="text-align: left;">Tanggal Invoice</th>
@@ -68,10 +65,7 @@
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
                                 <td>{{ row.kode}}</td>
-                                <td>{{ row.lokasi.nama}}</td>
                                 <td>{{ row.customer.nama}}</td>
-                                <td>{{ row.akun_debit.nama}}</td>
-                                <td>{{ row.akun_customer.nama}}</td>
                                 <td>{{ row.no_invoice}}</td>
                                 <td class="text-right">{{ row.total|number:undefined:0 }}</td>
                                 <td>{{ row.tanggal_formated}}</td>
@@ -82,8 +76,8 @@
                                 </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
-                                        <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft')"  ng-click="update(row)"></button>
-                                        <button type="button" class="btn btn-danger fa fa-trash" ng-if="(row.status == 'Draft')" ng-click="delete(row);"></button>
+                                        <button type="button" class="btn btn-info fa fa-pencil"  ng-click="update(row)"></button>
+                                        <button type="button" class="btn btn-danger fa fa-trash" ng-click="delete(row);"></button>
                                     </div>
                                 </td>
                             </tr>

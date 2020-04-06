@@ -1,8 +1,8 @@
 <div class="animated fadeIn">
     <div ng-controller="l_rekaphutangCtrl">
-        <div class="card" st-pipe="callServer" st-table="displayed" ng-if="!is_edit">
+        <div class="card">
             <div class="card-header">
-                <strong>{{ master }}</strong>
+                <strong>Rekap Hutang</strong>
             </div>
             <div class="card-body p-0px">
                 <div class="pl-15px pr-15px">
@@ -57,12 +57,12 @@
         </div>
         <div class="card" ng-show="tampilkan">
             <div class="card-header card-header-white">
-                <div class="btn-group pull-right">
-                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1, 0)">
+                <div class="pull-right">
+                    <button class="btn btn-outline-success btn-sm" ng-click="view(1, 0)">
                         <i class="fa fa-file"></i>
                         Excel
                     </button>
-                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0, 1)">
+                    <button class="btn btn-outline-primary btn-sm" ng-click="view(0, 1)">
                         <i class="fa fa-print"></i>
                         Print
                     </button>
@@ -72,12 +72,10 @@
                 <div class="row header-laporan-wrapper">
                     <div class="col-md-12">
                         <center>
-                                <h2 class="header-laporan">{{data.lokasi}}</h2>
-                                <h3 class="header-laporan">Laporan Rekap Hutang</h3>
-                                <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
-                                <br/>
-                            </center>
-                        <hr/>
+                            <h2 class="header-laporan">{{ data.lokasi }}</h2>
+                            <h3 class="header-laporan">Laporan Rekap Hutang</h3>
+                            <p class="mt-15px">Periode {{ data.tanggal }}</p>
+                        </center>
                     </div>
                 </div>
                 <table class="table table-responside table-striped table-hover table-print table-laporan" style="border-collapse: collapse;">
@@ -111,7 +109,7 @@
                             <td align="right" class="text-right" style="vertical-align: top">{{ val.debit | number }}</td>
                             <td align="right" class="text-right" style="vertical-align: top">{{ val.kredit | number }}</td>
                             <td align="right" class="text-right" style="vertical-align: top">
-                                <span ng-if="val.saldoAkhir >= 0">
+                                <span ng-if="val.saldoAkhir> = 0">
                                     {{ val.saldoAkhir | number }}
                                 </span>
                                 <span ng-if="val.saldoAkhir < 0">({{ val.saldoAkhir*-1 | number }})</span>

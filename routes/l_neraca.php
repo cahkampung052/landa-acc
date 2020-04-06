@@ -77,7 +77,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
         if ($val->id == $akunLabaRugi) {
-            $saldoAwal += $totalLabaRugi;
+            $saldoAwal = $totalLabaRugi;
         }
         $val->nama_lengkap = $val->kode . ' - ' . $val->nama;
         $val->saldo = $saldoAwal;
@@ -145,7 +145,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
         if ($val->id == $akunLabaRugi) {
-            $saldoAwal += $totalLabaRugi;
+            $saldoAwal = $totalLabaRugi;
         }
         $val->nama_lengkap = $val->kode . ' - ' . $val->nama;
         $val->saldo = $saldoAwal;
@@ -216,7 +216,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $getsaldoawal = $db->find();
         $saldoAwal = (intval($getsaldoawal->debit) - intval($getsaldoawal->kredit)) * $val->saldo_normal;
         if ($val->id == $akunLabaRugi) {
-            $saldoAwal += $totalLabaRugi;
+            $saldoAwal = $totalLabaRugi;
         }
         $val->nama_lengkap = $val->kode . ' - ' . $val->nama;
         $val->saldo = $saldoAwal;
