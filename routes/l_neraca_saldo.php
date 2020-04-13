@@ -29,9 +29,6 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
             $lokasiId = $params['m_lokasi_id'];
         }
     }
-
-//    print_r($lokasiId);die;
-
     $tanggal_akhir = new DateTime($params['endDate']);
     $tanggal_akhir->setTimezone(new DateTimeZone('Asia/Jakarta'));
     $tanggal_start = $tanggal_awal->format("Y-m-d");
@@ -58,7 +55,6 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
     if (isset($params['m_lokasi_id']) && !empty($params["m_lokasi_id"])) {
         $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
-
     $list = $sql->findAll();
     $arrSaldoAwal = [];
     foreach ($list as $key => $value) {
