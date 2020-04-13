@@ -81,13 +81,11 @@ $app->get('/acc/l_hutang/laporan', function ($request, $response) {
         $data["kreditAkhir"] = 0;
         $saldoSekarang = $data["saldoAwal"];
         foreach ($listTransDetail as $key => $val) {
-            $val->debit = intval($val->debit);
-            $val->kredit = intval($val->kredit);
+            $saldoSekarang += $val->debit - $val->kredit;
+            $data["debitAkhir"] += $val->debit;
+            $data["kreditAkhir"] += $val->kredit;
             $arr[$key] = (array) $val;
-            $arr[$key]['saldo_sekarang'] = $saldoSekarang + intval($val->debit) - intval($val->kredit);
-            $data["debitAkhir"] += intval($val->debit);
-            $data["kreditAkhir"] += intval($val->kredit);
-            $saldoSekarang += $arr[$key]['saldo_sekarang'];
+            $arr[$key]['saldo_sekarang'] = $saldoSekarang;
         }
         $data["saldoAkhir"] = $data["debitAkhir"] - $data["kreditAkhir"];
         if (isset($params['export']) && $params['export'] == 1) {

@@ -149,7 +149,7 @@
                                         <b>{{ detail.PENDAPATAN_DILUAR_USAHA.total | number }}</b>
                                     </td>
                                 </tr>
-                                <tr ng-repeat="vals in detail.BEBAN.detail" ng-if="SembunyikanSub == 0 && vals.is_tipe == 1">
+                                <tr ng-repeat="vals in detail.BEBAN.detail" ng-if="SembunyikanSub == 1 && vals.is_tipe == 1">
                                     <td align="left" style="vertical-align: top">
                                         <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
                                     </td>
