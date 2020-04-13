@@ -27,7 +27,6 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
     $scope.setPosition = function ($event, key, vals) {
         $event.preventDefault();
         $event.stopPropagation();
-        console.log($event.keyCode)
         var ps = $scope.limit;
         if ($event.keyCode == 37) {
             ps = -($scope.limit);
@@ -36,7 +35,6 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         } else if ($event.keyCode == 40) {
             ps = 1;
         }
-        console.log(ps)
 
         if ($event.keyCode == 37 || $event.keyCode == 39 || $event.keyCode == 38 || $event.keyCode == 40) {
             $event.preventDefault();
@@ -54,17 +52,13 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
                 $('.input-' + f).focus()
             }, 1)
         } else {
-            console.log(vals)
-            console.log($event.keyCode)
             $scope.field[key].alias = vals.alias;
         }
 
-//        console.log($scope.field)
 
     }
 
     $scope.fillCheckBox = function (a) {
-        console.log(a)
         angular.forEach($scope.field, function (val, key) {
             val.checkbox = a;
         })
@@ -187,10 +181,8 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         });
     };
     $scope.listgambar = function (id) {
-        console.log(id)
         Data.get('acc/t_pengeluaran/listgambar/' + id).then(function (data) {
             $scope.gambar = data.data.model;
-            console.log("$scope.gambar")
         });
     };
     /* sampe di sini*/
@@ -252,7 +244,7 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
         tableStateRef = tableState;
         $scope.isLoading = true;
         var offset = tableState.pagination.start || 0;
-        var limit = tableState.pagination.number || 1000;
+        var limit = tableState.pagination.number || 20;
         /** set offset and limit */
         var param = {
             offset: offset,
@@ -294,7 +286,6 @@ app.controller('pengeluaranCtrl', function ($scope, Data, $rootScope, $uibModal,
                     $scope.startFrom.push({start: val.no, limit: $scope.limit})
                 }
             })
-            console.log($scope.field)
             $scope.base_url = response.data.base_url;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
