@@ -299,8 +299,8 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null)
             ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
             ->customWhere("acc_m_akun.tipe IN ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
             ->groupBy("acc_m_akun.tipe")
-            ->andWhere("is_tipe", "=", 0)
-            ->andWhere("is_deleted", "=", 0)
+            // ->andWhere("is_tipe", "=", 0)
+            // ->andWhere("is_deleted", "=", 0)
             ->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND")
             ->findAll();
     /**
