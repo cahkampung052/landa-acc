@@ -231,7 +231,7 @@ app.controller('pengeluaranCtrl', function($scope, Data, $rootScope, $uibModal, 
         tableStateRef = tableState;
         $scope.isLoading = true;
         var offset = tableState.pagination.start || 0;
-        var limit = tableState.pagination.number || 1000;
+        var limit = tableState.pagination.number || 20;
         /** set offset and limit */
         var param = {
             offset: offset,

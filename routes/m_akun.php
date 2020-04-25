@@ -207,7 +207,18 @@ $app->post('/acc/m_akun/importSaldoAwal', function ($request, $response) {
 $app->get('/acc/m_akun/index', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
-
+    /*
+     * Ambil semua lokasi
+     */
+    $lokasiId = [];
+    $lokasi = $db->select("id")
+        ->from("acc_m_lokasi")
+        ->where("is_deleted", "=", 0)
+        ->findAll();
+    foreach ($lokasi as $key => $value) {
+        $lokasiId[] = $value->id;
+    }
+    $lokasiId = implode(",", $lokasiId);
     /**
      * Ambil transaksi di akun
      */
@@ -222,6 +233,7 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         ")
             ->from("acc_m_akun")
             ->leftJoin("acc_trans_detail", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+            ->customWhere("m_lokasi_id in (" . $lokasiId . ")")
             ->groupBy("acc_m_akun.id")
             ->orderBy("acc_m_akun.is_tipe ASC, parent_id DESC, acc_m_akun.level DESC");
     $trans = $db->findAll();
@@ -261,7 +273,6 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     $listAkun = buildTreeAkun($models, 0);
     $arrModel = flatten($listAkun);
 
-//    pd($arrModel);
     $arr = [];
     foreach ($arrModel as $key => $value) {
         $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;

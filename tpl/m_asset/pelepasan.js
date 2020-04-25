@@ -8,10 +8,6 @@ app.controller('PelepasanCtrl', function ($scope, Data, $rootScope, $uibModal, U
     $scope.is_edit = false;
     $scope.is_view = false;
     $scope.options_min = {};
-//    Data.get(control_link + '/cabang').then(function(data) {
-//        $scope.cabang = data.data.data;
-//    });
-
     $scope.master = master;
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
@@ -19,7 +15,10 @@ app.controller('PelepasanCtrl', function ($scope, Data, $rootScope, $uibModal, U
         var offset = tableState.pagination.start || 0;
         var limit = tableState.pagination.number || 1000;
         /** set offset and limit */
-        var param = {};
+        var param = {
+            offset: offset,
+            limit: limit
+        };
         /** set sort and order */
         if (tableState.sort.predicate) {
             param['sort'] = tableState.sort.predicate;
@@ -42,8 +41,6 @@ app.controller('PelepasanCtrl', function ($scope, Data, $rootScope, $uibModal, U
     
     Data.get('acc/m_lokasi/index', {filter:{is_deleted:0}}).then(function (response) {
         $scope.listLokasi = response.data.list;
-        // $scope.listLokasi.push({"id":-1,"nama":"Lainya" });
-
     });
 
     Data.get('acc/m_umur_ekonomis/index', {filter:{is_deleted:0}}).then(function (response) {

@@ -2,7 +2,6 @@
 $app->get('/acc/l_piutang/laporan', function ($request, $response) {
     $params = $request->getParams();
     $sql = $this->db;
-    
 //    print_r($params);die();
     /**
      * tanggal awal
@@ -25,7 +24,6 @@ $app->get('/acc/l_piutang/laporan', function ($request, $response) {
     $data['tanggal'] = date("d M Y", strtotime($tanggal_start)) . ' s/d ' . date("d M Y", strtotime($tanggal_end));
     $data['disiapkan'] = date("d-m-Y, H:i");
     $data['lokasi'] = (isset($params['nama_lokasi']) && !empty($params['nama_lokasi'])) ? $params['nama_lokasi'] : "Semua";
-    
     /*
      * Siapkan parameter lokasi
      */
@@ -45,13 +43,10 @@ $app->get('/acc/l_piutang/laporan', function ($request, $response) {
             $lokasiId = $params['m_lokasi_id'];
         }
     }
-    
-    
     /**
      * Proses laporan
      */
     if (isset($params['m_akun_id']) && isset($params['m_lokasi_id'])) {
-        
         /*
          * ambil saldo awal hutang
          */
@@ -63,10 +58,8 @@ $app->get('/acc/l_piutang/laporan', function ($request, $response) {
         $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id'])
             ->andWhere('acc_trans_detail.m_kontak_id', '=', $params['m_kontak_id'])
             ->andWhere('date(acc_trans_detail.tanggal)', '<', $tanggal_start);
-
         $getsaldohutang = $sql->find();
         $data["saldoAwal"] = $getsaldohutang->debit - $getsaldohutang->kredit;
-        
         /*
          * ambil data transdetail hutang
          */
@@ -80,29 +73,18 @@ $app->get('/acc/l_piutang/laporan', function ($request, $response) {
             ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
             ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
         $listTransDetail = $sql->findAll();
-//        print_r($listTransDetail);die();
-
         $arr = [];
-        
         $data["debitAkhir"] = 0;
         $data["kreditAkhir"] = 0;
         $saldoSekarang = $data["saldoAwal"];
         foreach($listTransDetail as $key => $val){
-            $val->debit = intval($val->debit);
-            $val->kredit = intval($val->kredit);
+            $saldoSekarang += + $val->debit - $val->kredit;
+            $data["debitAkhir"] += $val->debit;
+            $data["kreditAkhir"] += $val->kredit;
             $arr[$key] = (array) $val;
-            $arr[$key]['saldo_sekarang'] = $saldoSekarang + intval($val->debit) - intval($val->kredit);
-            
-            $data["debitAkhir"] += intval($val->debit);
-            $data["kreditAkhir"] += intval($val->kredit);
-            
-            $saldoSekarang += $arr[$key]['saldo_sekarang'];
-            
+            $arr[$key]['saldo_sekarang'] = $saldoSekarang;
         }
-        
         $data["saldoAkhir"] = $data["debitAkhir"] - $data["kreditAkhir"];
-//        print_r($data);die();
-        
         if (isset($params['export']) && $params['export'] == 1) {
             $view = twigViewPath();
             $content = $view->fetch('laporan/piutang.html', [
