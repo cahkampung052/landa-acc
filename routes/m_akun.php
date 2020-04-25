@@ -555,9 +555,6 @@ $app->get("/acc/m_akun/getBudgetPerLokasi", function ($request, $response) {
 $app->get('/acc/m_akun/getBudget', function ($request, $response) {
     $params = $request->getParams();
 
-//    print_r($params);
-//    die;
-
     $start_month = $params['start'] . "-01";
     $end_month = date("Y-m-d", strtotime('+1 month', strtotime($params['end'] . "-01")));
     $current_month = $start_month;
@@ -591,7 +588,7 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
             ->customWhere("bulan IN (" . implode(", ", $all_month) . ")", "AND")
             ->andWhere("m_akun_id", "=", $params['m_akun_id'])
             ->andWhere("m_lokasi_id", "=", $params['m_lokasi_id'])
-            ->andWhere("m_kategori_pengajuan_id", "=", $params['m_kategori_pengajuan_id'])
+            // ->andWhere("m_kategori_pengajuan_id", "=", $params['m_kategori_pengajuan_id'])
             ->findAll();
 
 //    echo json_encode($getBudget);die;
@@ -618,22 +615,26 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
  */
 $app->post('/acc/m_akun/saveBudget', function ($request, $response) {
     $params = $request->getParams();
-
-//    print_r($params);die;
-
     $db = $this->db;
     try {
         foreach ($params['detail'] as $key => $value) {
             $data = [
                 'm_akun_id' => $params['form']['m_akun_id']['id'],
                 'm_lokasi_id' => $params['form']['m_lokasi_id']['id'],
-                'm_kategori_pengajuan_id' => $params['form']['m_kategori_pengajuan_id']['id'],
+                // 'm_kategori_pengajuan_id' => $params['form']['m_kategori_pengajuan_id']['id'],
                 'bulan' => date('m', strtotime($value['date'])),
                 'tahun' => date('Y', strtotime($value['date'])),
                 'budget' => $value['detail']['budget']
             ];
-            if (isset($value['detail']['id'])) {
-                $db->update('acc_budgeting', $data, ['id' => $value['detail']['id']]);
+            $cek = $db->select("id")
+                        ->from("acc_budgeting")
+                        ->where("m_akun_id", "=", $params['form']['m_akun_id']['id'])
+                        ->andWhere("m_akun_id", "=", $params['form']['m_lokasi_id']['id'])
+                        ->andWhere("bulan", "=", date('m', strtotime($value['date'])))
+                        ->andWhere("tahun", "=", date('Y', strtotime($value['date'])))
+                        ->find();
+            if (isset($cek->id) && !empty($cek->id)) {
+                $db->update('acc_budgeting', $data, ['id' => $cek->id]);
             } else {
                 $db->insert('acc_budgeting', $data);
             }
