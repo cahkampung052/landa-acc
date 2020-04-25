@@ -81,13 +81,15 @@ $app->get('/acc/l_hutang/laporan', function ($request, $response) {
         $data["kreditAkhir"] = 0;
         $saldoSekarang = $data["saldoAwal"];
         foreach ($listTransDetail as $key => $val) {
-            $saldoSekarang += $val->debit - $val->kredit;
-            $data["debitAkhir"] += $val->debit;
-            $data["kreditAkhir"] += $val->kredit;
+            $saldoSekarang += (round($val->debit, 2) - round($val->kredit, 2));
+            $val->debit = round($val->debit, 2);
+            $val->kredit = round($val->kredit, 2);
             $arr[$key] = (array) $val;
             $arr[$key]['saldo_sekarang'] = $saldoSekarang;
+            $data["debitAkhir"] += round($val->debit, 2);
+            $data["kreditAkhir"] += round($val->kredit, 2);
         }
-        $data["saldoAkhir"] = $data["debitAkhir"] - $data["kreditAkhir"];
+        $data["saldoAkhir"] = $data["saldoAwal"] + $data["debitAkhir"] - $data["kreditAkhir"];
         if (isset($params['export']) && $params['export'] == 1) {
             $view = twigViewPath();
             $content = $view->fetch('laporan/hutang.html', [

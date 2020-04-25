@@ -1,20 +1,15 @@
-app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('supplierCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/m_supplier";
-    var master = 'Master Supplier';
     $scope.formTitle = '';
     $scope.displayed = [];
-    $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
-
-    $scope.generateKode = function () {
-        Data.get(control_link + '/kode').then(function (response) {
+    $scope.generateKode = function() {
+        Data.get(control_link + '/kode').then(function(response) {
             $scope.form.kode = response;
         });
     }
-
-    $scope.master = master;
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -34,50 +29,45 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         if (tableState.search.predicateObject) {
             param['filter'] = tableState.search.predicateObject;
         }
-        Data.get(control_link + '/index', param).then(function (response) {
+        Data.get(control_link + '/index', param).then(function(response) {
             $scope.displayed = response.data.list;
-            $scope.base_url = response.data.base_url;
-            tableState.pagination.numberOfPages = Math.ceil(
-                    response.data.totalItems / limit
-                    );
+            tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
         $scope.isLoading = false;
     };
-
     /** create */
-    $scope.create = function () {
+    $scope.create = function() {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = true;
         $scope.is_disable = false;
-        $scope.formtitle = master + " | Form Tambah Data";
+        $scope.formtitle = "Data Supplier | Form Tambah Data";
         $scope.form = {};
         $scope.generateKode();
     };
     /** update */
-    $scope.update = function (form) {
+    $scope.update = function(form) {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_update = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Edit Data : " + form.nama;
+        $scope.formtitle = "Data Supplier | Edit Data : " + form.nama;
         $scope.form = form;
         if (!$scope.form.kode) {
             $scope.generateKode();
         }
     };
     /** view */
-    $scope.view = function (form) {
+    $scope.view = function(form) {
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Lihat Data : " + form.nama;
+        $scope.formtitle = "Data Supplier | Lihat Data : " + form.nama;
         $scope.form = form;
     };
     /** save action */
-    $scope.save = function (form) {
-//        var url = (form.id > 0) ? '/update' : '/create';
-        Data.post(control_link + '/save', form).then(function (result) {
+    $scope.save = function(form) {
+        Data.post(control_link + '/save', form).then(function(result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.cancel();
@@ -87,14 +77,14 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         });
     };
     /** cancel action */
-    $scope.cancel = function () {
+    $scope.cancel = function() {
         if (!$scope.is_view) {
             $scope.callServer(tableStateRef);
         }
         $scope.is_edit = false;
         $scope.is_view = false;
     };
-    $scope.trash = function (row) {
+    $scope.trash = function(row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -107,15 +97,14 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/trash', row).then(function (result) {
+                Data.post(control_link + '/trash', row).then(function(result) {
                     $rootScope.alert("Berhasil", "Data berhasil dihapus", "success");
                     $scope.cancel();
-
                 });
             }
         });
     };
-    $scope.restore = function (row) {
+    $scope.restore = function(row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -133,7 +122,7 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
             }
         });
     };
-    $scope.delete = function (row) {
+    $scope.delete = function(row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -146,13 +135,11 @@ app.controller('supplierCtrl', function ($scope, Data, $rootScope, $uibModal, Up
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/delete', row).then(function (result) {
+                Data.post(control_link + '/delete', row).then(function(result) {
                     $rootScope.alert("Berhasil", "Data berhasil dihapus permanen", "success");
                     $scope.cancel();
-
                 });
             }
         });
-
     };
 });

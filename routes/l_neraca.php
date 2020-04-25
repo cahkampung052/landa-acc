@@ -1,12 +1,7 @@
 <?php
-
 $app->get('/acc/l_neraca/laporan', function ($request, $response) {
-
-    $data['img'] = imgLaporan();
-    
-//    pd($data);
-
     $params = $request->getParams();
+    $data['img'] = imgLaporan();
     $filter = $params;
     $db = $this->db;
     /*

@@ -1,128 +1,84 @@
 <link href="{{ css }}?t=521" rel="stylesheet" type="text/css"/>
-<div class="card-body" id="print" >
-
+<div class="card-body" id="print">
     <div align="left">
         <div class="row">
             <div class="col-md-12 relative-div">
                 <center>
-                    <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
-                    <h2 class="header-laporan">{{data.lokasi}}</h2>
+                    <img src="{{ data.img }}" class="absolute-div-center" style="height: 90px"/>
+                    <h2 class="header-laporan">{{ data.lokasi }}</h2>
                     <h3 class="header-laporan">Laporan Jurnal Umum</h3>
-                    <p style="margin-top:3px">Periode {{data.tanggal}}</p>
-                    <!--<br/>-->
+                    <p style="margin-top:3px">Periode {{ data.tanggal }}</p>
                 </center>
-                <!--<hr/>-->
             </div>
-
         </div>
-        <!--<br/>-->
         <div>
-
             <div class="table-responsive">
                 <table class="table table-laporan-border" style="border-collapse: collapse;">
                     <thead>
-                        <tr> 
+                        <tr>
                             <th width="80">
-                                <b>
-                                    TANGGAL
-                                </b>
+                                <b>TANGGAL</b>
                             </th>
                             <th width="80">
-                                <b>
-                                    REFF
-                                </b>
+                                <b>REFF</b>
                             </th>
                             <th>
-                                <b>
-                                    LOKASI
-                                </b>
+                                <b>LOKASI</b>
                             </th>
                             <th>
-                                <b>
-                                    NO. AKUN
-                                </b>
+                                <b>NO. AKUN</b>
                             </th>
                             <th>
-                                <b>
-                                    AKUN
-                                </b>
+                                <b>AKUN</b>
                             </th>
                             <th>
-                                <b>
-                                    KETERANGAN
-                                </b>
+                                <b>KETERANGAN</b>
                             </th>
                             <th width="100">
-                                <b>
-                                    DEBIT
-                                </b>
+                                <b>DEBIT</b>
                             </th>
                             <th width="100">
-                                <b>
-                                    KREDIT
-                                </b>
+                                <b>KREDIT</b>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         {%for key, val in detail%}
                         <tr style="page-break-after: auto">
-                            <td align="center" class="text-center" style="vertical-align: top">
-                                {{val.tanggal}}
-                            </td>
-                            <td align="left" style="vertical-align: top">
-                                {{val.kode}}
-                            </td>
-                            <td align="left" style="vertical-align: top">
-                                {{val.namaLokasi}}
-                            </td>
+                            <td align="center" class="text-center" style="vertical-align: top">{{ val.tanggal }}</td>
+                            <td align="left" style="vertical-align: top">{{ val.kode }}</td>
+                            <td align="left" style="vertical-align: top">{{ val.namaLokasi }}</td>
                             <td style="vertical-align: top">
                                 {%if val.debit == 0%}
-                                <span>{{val.kodeAkun}}</span>
+                                <span>{{ val.kodeAkun }}</span>
                                 {%else%}
-                                <span>{{val.kodeAkun}}</span>
+                                <span>{{ val.kodeAkun }}</span>
                                 {%endif%}
                             </td>
                             <td style="vertical-align: top">
                                 {%if val.debit == 0%}
-                                <span>{{val.namaAkun}}</span>
+                                <span>{{ val.namaAkun }}</span>
                                 {%else%}
-                                <span>{{val.namaAkun}}</span>
+                                <span>{{ val.namaAkun }}</span>
                                 {%endif%}
                             </td>
-                            <td>
-                                {{val.keterangan}}
-                            </td>
-                            <td align="right" class="text-right" style="vertical-align: top">
-                                Rp{{val.debit | number_format(0, ',', '.')}}
-                            </td>
-                            <td align="right" class="text-right" style="vertical-align: top">
-                                Rp{{val.kredit | number_format(0, ',', '.')}}
-                            </td>
+                            <td>{{ val.keterangan }}</td>
+                            <td align="right" class="text-right" style="vertical-align: top">Rp{{ val.debit | number_format(0, ',', '.') }}</td>
+                            <td align="right" class="text-right" style="vertical-align: top">Rp{{ val.kredit | number_format(0, ',', '.') }}</td>
                         </tr>
                         {%endfor%}
                     </tbody>
-                    <!--<tfoot>-->
                     <tr class="non-body">
                         <td align="right" class="text-center" colspan="6">
-                            <b>
-                                Total
-                            </b>
+                            <b>Total</b>
                         </td>
                         <td align="right" class="text-right">
-                            <b>
-                                Rp{{data.total_debit | number_format(0, ',', '.')}}
-                            </b>
+                            <b>Rp{{ data.total_debit | number_format(0, ',', '.') }}</b>
                         </td>
                         <td align="right" class="text-right">
-                            <b>
-                                Rp{{data.total_kredit | number_format(0, ',', '.')}}
-                            </b>
+                            <b>Rp{{ data.total_kredit | number_format(0, ',', '.') }}</b>
                         </td>
-
                     </tr>
-                    <!--</tfoot>-->
-
                 </table>
             </div>
         </div>

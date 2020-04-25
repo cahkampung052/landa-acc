@@ -1,65 +1,44 @@
-app.controller('hutangpersupplierCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('hutangpersupplierCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/t_saldo_awal_hutang_persupplier";
-    var master = 'Transaksi Saldo Awal Hutang Per Supplier';
     $scope.formTitle = '';
     $scope.displayed = [];
-    $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
     $scope.form = {};
     $scope.unitKeuangan = [];
-
-    Data.get("acc/m_lokasi/getLokasi").then(function (result) {
+    Data.get("acc/m_lokasi/getLokasi").then(function(result) {
         $scope.listLokasi = result.data;
     });
-
-    Data.get('acc/m_akun/akunDetail').then(function (data) {
-        $scope.listAkun = data.data.list;
-    });
-
-    Data.get('acc/m_akun/akunHutang').then(function (data) {
+    // Data.get('acc/m_akun/akunDetail').then(function(data) {
+    //     $scope.listAkun = data.data.list;
+    // });
+    Data.get('acc/m_akun/akunHutang').then(function(data) {
         $scope.listAkunHutang = data.data.list;
     });
-
-    Data.get('acc/m_akun/getTanggalSetting').then(function (response) {
-
+    Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
         $scope.tanggal_setting = response.data.tanggal;
-        console.log($scope.tanggal_setting)
-
-        $scope.options = {
-//            minDate: new Date(response.data.tanggal),
-        };
     });
-
-    $scope.resetFilter = function (filter) {
+    $scope.resetFilter = function(filter) {
         $scope.form[filter] = undefined;
         $scope.filterIndex();
     }
-
-    $scope.getSupplier = function (val) {
-        var param = {val: val};
-        Data.get("acc/m_supplier/getSupplier", param).then(function (response) {
+    $scope.getSupplier = function(val) {
+        var param = {
+            val: val
+        };
+        Data.get("acc/m_supplier/getSupplier", param).then(function(response) {
             $scope.listSupplier = response.data.list;
         });
     };
-
-    $scope.setTempo = function (tempo, tgl) {
-//        var tgl_pi = new Date(tgl);
-//        $scope.form.jatuh_tempo = new Date(tgl_pi.setDate(tgl_pi.getDate() + parseInt(tempo)));
-    }
-
-    $scope.setDataSupplier = function (data) {
+    $scope.setDataSupplier = function(data) {
         $scope.form.tlp = data.tlp;
         $scope.form.email = data.email;
         $scope.form.alamat = data.alamat;
     };
-
-    $scope.filterIndex = function () {
+    $scope.filterIndex = function() {
         $scope.callServer(tableStateRef);
     }
-
-    $scope.master = master;
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -80,77 +59,71 @@ app.controller('hutangpersupplierCtrl', function ($scope, Data, $rootScope, $uib
         if (tableState.search.predicateObject) {
             param['filter'] = tableState.search.predicateObject;
         }
-
-        Data.get('acc/m_lokasi/getLokasi', param).then(function (response) {
+        Data.get('acc/m_lokasi/getLokasi', param).then(function(response) {
             $scope.listLokasi = response.data.list;
         });
-
-        Data.get(control_link + '/index', param).then(function (response) {
+        Data.get(control_link + '/index', param).then(function(response) {
             $scope.displayed = response.data.list;
-            $scope.base_url = response.data.base_url;
-            tableState.pagination.numberOfPages = Math.ceil(
-                    response.data.totalItems / limit
-                    );
+            tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
         $scope.isLoading = false;
     };
-
-    $scope.kode = function (lokasi) {
-        Data.get(control_link + '/kode/' + lokasi.kode).then(function (response) {
+    $scope.kode = function(lokasi) {
+        Data.get(control_link + '/kode/' + lokasi.kode).then(function(response) {
             $scope.form.no_transaksi = response.data.kode;
             $scope.form.no_urut = response.data.urutan;
         });
     };
-
     /** create */
-    $scope.create = function () {
+    $scope.create = function() {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = true;
         $scope.is_disable = false;
-        $scope.formtitle = master + " | Form Tambah Data";
+        $scope.formtitle = "Saldo Awal Hutang | Form Tambah Data";
         $scope.form = {};
-        if ($scope.listAkun.length > 0) {
-            $scope.form.akun = $scope.listAkun[0];
+        if ($scope.listAkunHutang.length > 0) {
+            $scope.form.akun_hutang = $scope.listAkunHutang[0];
         }
-
         $scope.form.tanggal = new Date($scope.tanggal_setting);
         $scope.form.jatuh_tempo = new Date($scope.tanggal_setting);
+        $scope.form.keterangan = "Saldo Awal";
         if (new Date() >= new Date($scope.tanggal_setting)) {
             $scope.form.tanggal = new Date();
             $scope.form.jatuh_tempo = new Date();
         }
+        if($scope.listLokasi.length > 0){
+            $scope.form.lokasi = $scope.listLokasi[0];
+        }
         $scope.listDetail = [{}];
     };
     /** update */
-    $scope.update = function (form) {
+    $scope.update = function(form) {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_update = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Edit Data : " + form.kode;
+        $scope.formtitle = "Saldo Awal Hutang | Edit Data : " + form.kode;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.form.jatuh_tempo = new Date(form.jatuh_tempo);
         $scope.setDataSupplier(form.supplier);
-
     };
     /** view */
-    $scope.view = function (form) {
+    $scope.view = function(form) {
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Lihat Data : " + form.kode;
+        $scope.formtitle = "Saldo Awal Hutang | Lihat Data : " + form.kode;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.form.jatuh_tempo = new Date(form.jatuh_tempo);
         $scope.setDataSupplier(form.supplier);
     };
     /** save action */
-    $scope.save = function (form, type_save) {
+    $scope.save = function(form, type_save) {
         form["status"] = type_save;
-
-        Data.post(control_link + '/save', form).then(function (result) {
+        Data.post(control_link + '/save', form).then(function(result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.cancel();
@@ -158,17 +131,16 @@ app.controller('hutangpersupplierCtrl', function ($scope, Data, $rootScope, $uib
                 $rootScope.alert("Terjadi Kesalahan", setErrorMessage(result.errors), "error");
             }
         });
-
     };
     /** cancel action */
-    $scope.cancel = function () {
+    $scope.cancel = function() {
         if (!$scope.is_view) {
             $scope.callServer(tableStateRef);
         }
         $scope.is_edit = false;
         $scope.is_view = false;
     };
-    $scope.trash = function (row) {
+    $scope.trash = function(row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -181,15 +153,14 @@ app.controller('hutangpersupplierCtrl', function ($scope, Data, $rootScope, $uib
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/trash', row).then(function (result) {
+                Data.post(control_link + '/trash', row).then(function(result) {
                     $rootScope.alert("Berhasil", "Data berhasil dihapus", "success");
                     $scope.cancel();
-
                 });
             }
         });
     };
-    $scope.restore = function (row) {
+    $scope.restore = function(row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -202,15 +173,14 @@ app.controller('hutangpersupplierCtrl', function ($scope, Data, $rootScope, $uib
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 0;
-                Data.post(control_link + '/trash', row).then(function (result) {
+                Data.post(control_link + '/trash', row).then(function(result) {
                     $rootScope.alert("Berhasil", "Data berhasil direstore", "success");
                     $scope.cancel();
-
                 });
             }
         });
     };
-    $scope.delete = function (row) {
+    $scope.delete = function(row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -223,13 +193,11 @@ app.controller('hutangpersupplierCtrl', function ($scope, Data, $rootScope, $uib
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/delete', row).then(function (result) {
+                Data.post(control_link + '/delete', row).then(function(result) {
                     $rootScope.alert("Berhasil", "Data berhasil dihapus permanen", "success");
                     $scope.cancel();
-
                 });
             }
         });
-
     };
 });

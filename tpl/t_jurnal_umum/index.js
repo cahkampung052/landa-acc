@@ -1,11 +1,9 @@
 app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Upload, FileUploader) {
     var tableStateRef;
     var control_link = "acc/t_jurnal_umum";
-    var master = 'Transaksi Jurnal Umum';
     $scope.formTitle = '';
     $scope.displayed = [];
     $scope.gambar = [];
-    $scope.base_url = '';
     $scope.is_edit = false;
     $scope.is_view = false;
     $scope.urlfoto = "api/file/jurnal-umum/";
@@ -13,9 +11,6 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
      * ambil akun untuk detail
      */
     Data.get('acc/m_akun/akunDetail').then(function(data) {
-        $scope.akunKas = data.data.list;
-    });
-    Data.get('acc/m_akun/akunAll').then(function(data) {
         $scope.akunAll = data.data.list;
     });
     /*
@@ -24,6 +19,9 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
     Data.get('acc/m_lokasi/getLokasi').then(function(response) {
         $scope.listLokasi = response.data.list;
     });
+    /**
+     * Ambil setting tanggal
+     */
     Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
         $scope.tanggal_setting = response.data.tanggal;
         $scope.options = {
@@ -31,8 +29,7 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         };
     });
     /*
-     * 
-     * @type FileUploader
+     *  FileUploader
      */
     var uploader = $scope.uploader = new FileUploader({
         url: Data.base + 'acc/t_jurnal_umum/upload/bukti',
@@ -69,7 +66,6 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
     //            var d = new Date();
     //            $scope.gambar.unshift({img: response.img, id: response.id});
     //            $scope.urlgambar = "api/file/jurnal-umum/"+d.getFullYear()+"/"+(d.getMonth()+1)+"/";
-    //            console.log($scope.urlgambar)
     //        }
     //    };
     uploader.onBeforeUploadItem = function(item) {
@@ -94,7 +90,6 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
     $scope.listgambar = function(id) {
         Data.get('acc/t_jurnal_umum/listgambar/' + id).then(function(data) {
             $scope.gambar = data.data.model;
-            console.log(data)
         });
     };
     /* sampe di sini*/
@@ -116,9 +111,9 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         var comArr = $(".tabletr").last().index() + 1
         var newDet = {
             m_akun_id: {
-                id: $scope.akunKas[0].id,
-                kode: $scope.akunKas[0].kode,
-                nama: $scope.akunKas[0].nama
+                id: $scope.akunAll[0].id,
+                kode: $scope.akunAll[0].kode,
+                nama: $scope.akunAll[0].nama
             },
             m_lokasi_id: val[0].m_lokasi_id,
             keterangan: '',
@@ -128,6 +123,18 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         };
         val.splice(comArr, 0, newDet);
         $scope.sumTotal();
+    };
+    /**
+     * Cari kontak
+     */
+    $scope.cariKontak = function(cari) {
+        if (cari.toString().length > 2) {
+            Data.get('acc/m_kontak/getKontak', {
+                nama: cari
+            }).then(function(response) {
+                $scope.listKontak = response.data.list;
+            });
+        }
     };
     /*
      * hapus detail
@@ -154,7 +161,6 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         $scope.form.total_debit = totaldebit;
         $scope.form.total_kredit = totalkredit;
     };
-    $scope.master = master;
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -173,7 +179,6 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         }
         Data.get(control_link + '/index', param).then(function(response) {
             $scope.displayed = response.data.list;
-            $scope.base_url = response.data.base_url;
             tableState.pagination.numberOfPages = Math.ceil(response.data.totalItems / limit);
         });
         $scope.isLoading = false;
@@ -184,7 +189,7 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         $scope.is_view = false;
         $scope.is_create = true;
         $scope.is_disable = false;
-        $scope.formtitle = master + " | Form Tambah Data";
+        $scope.formtitle = "Jurnal Umum | Form Tambah Data";
         $scope.form = {};
         if ($scope.listLokasi.length > 0) $scope.form.m_lokasi_id = $scope.listLokasi[0];
         $scope.form.tanggal = new Date($scope.tanggal_setting);
@@ -193,9 +198,9 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         }
         $scope.listDetail = [{
             m_akun_id: {
-                id: $scope.akunKas[0].id,
-                kode: $scope.akunKas[0].kode,
-                nama: $scope.akunKas[0].nama
+                id: $scope.akunAll[0].id,
+                kode: $scope.akunAll[0].kode,
+                nama: $scope.akunAll[0].nama
             },
             m_lokasi_id: {
                 id: $scope.listLokasi[0].id,
@@ -212,7 +217,7 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         $scope.is_view = false;
         $scope.is_update = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
+        $scope.formtitle = "Jurnal Umum | Edit Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal2);
         $scope.tanggal_foto = new Date(form.tanggal);
@@ -225,7 +230,7 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Lihat Data : " + form.no_transaksi;
+        $scope.formtitle = "Jurnal Umum | Lihat Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal2);
         $scope.tanggal_foto = new Date(form.tanggal);
@@ -262,8 +267,8 @@ app.controller('jurnalCtrl', function($scope, Data, $rootScope, $uibModal, Uploa
     $scope.lokasi = function(select) {
         angular.forEach($scope.listDetail, function(val, key) {
             val.m_lokasi_id = {
-                id : select.id,
-                nama : select.nama
+                id: select.id,
+                nama: select.nama
             }
         });
     };

@@ -1,5 +1,4 @@
 <?php
-
 function validasi($data, $custom = array()) {
     $validasi = array(
         'm_lokasi_id' => 'required',
@@ -13,7 +12,6 @@ function validasi($data, $custom = array()) {
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
-
 /*
  * Upload Gambar
  */
@@ -155,6 +153,8 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
                 $db->where("acc_pengeluaran.is_deleted", '=', $val);
             } else if ($key == 'no_transaksi') {
                 $db->customWhere("(acc_pengeluaran.no_transaksi LIKE '%$val%' OR acc_t_pengajuan.no_proposal LIKE '%$val%')", "AND");
+            } else if($key == 'm_lokasi_id'){
+                $db->customWhere("(acc_pengeluaran.m_lokasi_id = '".$val."')", "AND");
             } else {
                 $db->where($key, 'LIKE', $val);
             }
@@ -168,13 +168,11 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
     if (isset($params['offset']) && !empty($params['offset'])) {
         $db->offset($params['offset']);
     }
-
     if (isset($params["sort"]) && !empty($params["sort"])) {
         if ($params['sort'] == 'no_transaksi' || $params['sort'] == 'tanggal' || $params['sort'] == 'created_at' || $params['sort'] == 'tanggal_formated') {
             if ($params['sort'] == 'tanggal_formated') {
                 $params['sort'] = 'tanggal';
             }
-
             if ($params['order'] == 'false') {
                 $order = "DESC";
             } else {
@@ -183,7 +181,6 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
             $db->orderBy($params["sort"] . " " . $order);
         }
     }
-
     $models = $db->findAll();
     $totalItem = $db->count();
     foreach ($models as $key => $val) {
@@ -201,10 +198,8 @@ $app->get('/acc/t_pengeluaran/index', function ($request, $response) {
         $models[$key]['total'] = intval($val->total) . '';
         $models[$key]['grandtotal'] = number_format(intval($val->total));
     }
-
     $a = getMasterSetting();
     $testing = !empty($a->posisi_pengeluaran) ? json_decode($a->posisi_pengeluaran) : [];
-
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
@@ -245,9 +240,7 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
 //        } else {
 //            $kode = generateNoTransaksi("pengeluaran", $params['form']['m_lokasi_id']['kode']);
 //        }
-
         $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
-
         /**
          * Simpan pengeluaran
          */
@@ -263,22 +256,18 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
         $pengeluaran['total'] = $params['form']['total'];
         $pengeluaran['t_pengajuan_id'] = (isset($params['form']['t_pengajuan_id']) && !empty($params['form']['t_pengajuan_id']) ? $params['form']['t_pengajuan_id'] : "");
         $pengeluaran['status'] = $params['form']['status'];
-        
         $keterangan = [];
         foreach ($params['detail'] as $key => $value) {
             $keterangan[$key] = $value['keterangan'];
         }
         $keteranganPengeluaran = join("<br>", $keterangan);
         $pengeluaran['keterangan'] = (isset($keteranganPengeluaran) && !empty($keteranganPengeluaran) ? $keteranganPengeluaran : NULL);
-
         /**
          * update atau input pengeluaran
          */
 //        print_r($params['form']);die;
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
-
             $cek_data = $sql->select("tanggal")->from("acc_pengeluaran")->where("id", "=", $params['form']['id'])->find();
-
             if (date("m", strtotime($cek_data->tanggal)) != date("m", strtotime($pengeluaran['tanggal']))) {
                 $pengeluaran['no_transaksi'] = $kode;
                 $pengeluaran['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
@@ -286,8 +275,6 @@ $app->post('/acc/t_pengeluaran/save', function ($request, $response) {
                 $pengeluaran['no_urut'] = $params['form']['no_urut'];
                 $pengeluaran['no_transaksi'] = $params['form']['no_transaksi'];
             }
-
-
             $model = $sql->update("acc_pengeluaran", $pengeluaran, ["id" => $params['form']['id']]);
             /**
              * Hapus pengeluaran detail
@@ -436,13 +423,10 @@ $app->post("/acc/t_pengeluaran/saveTemplate", function ($request, $response) {
         return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
     }
 });
-
 $app->post("/acc/t_pengeluaran/savePosition", function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
-
     $a['posisi_pengeluaran'] = json_encode($data);
-    
     try {
         $model = $db->update("acc_m_setting", $a, ["id" => 1]);
         return successResponse($response, $model);

@@ -80,10 +80,10 @@ app.controller('penerimaanCtrl', function($scope, Data, $rootScope, $uibModal, U
     });
     $scope.cariKontak = function(cari) {
         if (cari.toString().length > 2) {
-            Data.get('acc/m_customer/getKontak', {
+            Data.get('acc/m_kontak/getKontak', {
                 nama: cari
             }).then(function(response) {
-                $scope.listSupplier = response.data.list;
+                $scope.listKontak = response.data.list;
             });
         }
     };
