@@ -166,14 +166,14 @@
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label-sm required">No Transaksi</label>
                                         <div class="col-sm-9">
-                                            <input type="text" ng-disabled="true" class="form-control form-control-sm" ng-model="form.no_transaksi" ng-disabled="is_view" required/>
+                                            <input type="text" ng-disabled="true" class="form-control form-control-sm" ng-model="form.no_transaksi" ng-disabled="is_view" placeholder="Generate Otomatis" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label-sm required">Tanggal</label>
-                                        <div class="col-sm-9">
+                                        <div class="col-sm-4">
                                             <div class="input-group">
                                                 <input type="text" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" ng-disabled="is_view" datepicker-options="options"/>
                                                 <div class="input-group-prepend">
@@ -202,7 +202,7 @@
                                         <div class="col-sm-9">
                                             <ui-select ng-disabled="is_view" ng-model="form.m_kontak_id"  theme="bootstrap" style="padding-right: 0px;">
                                                 <ui-select-match placeholder="Pilih Kontak">{{ $select.selected.nama}}</ui-select-match>
-                                                <ui-select-choices refresh="cariKontak($select.search)" repeat="val in listSupplier">{{ val.nama}}</ui-select-choices>
+                                                <ui-select-choices refresh="cariKontak($select.search)" repeat="val in listKontak">{{ val.nama}}</ui-select-choices>
                                             </ui-select>
                                         </div>
                                     </div>
@@ -218,14 +218,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="col-md-6">
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label-sm">Keterangan</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" class="form-control form-control-sm" ng-model="form.keterangan" ng-disabled="is_view" required/>
-                                        </div>
-                                    </div>
-                                </div> -->
                                 <div class="col-md-12">
                                     <hr/>
                                     <h6 style="margin-bottom: 15px">

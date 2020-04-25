@@ -1,7 +1,6 @@
 app.controller('piutangpercustomerCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/t_saldo_awal_piutang_percustomer";
-    var master = 'Transaksi Saldo Awal Piutang Per Customer';
     $scope.formTitle = '';
     $scope.displayed = [];
     $scope.base_url = '';
@@ -9,19 +8,19 @@ app.controller('piutangpercustomerCtrl', function($scope, Data, $rootScope, $uib
     $scope.is_view = false;
     $scope.form = {};
     $scope.unitKeuangan = [];
+    $scope.listLokasi = [];
     Data.get("acc/m_lokasi/getLokasi").then(function(result) {
         $scope.listLokasi = result.data;
     });
-    Data.get('acc/m_akun/akunDetail').then(function(data) {
-        $scope.listAkun = data.data.list;
-    });
+    // Data.get('acc/m_akun/akunDetail').then(function(data) {
+    //     $scope.listAkun = data.data.list;
+    // });
+    $scope.listAkunPiutang
     Data.get('acc/m_akun/akunPiutang').then(function(data) {
         $scope.listAkunPiutang = data.data.list;
     });
     Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
         $scope.tanggal_setting = response.data.tanggal;
-        $scope.options = {
-        };
     });
     $scope.resetFilter = function(filter) {
         $scope.form[filter] = undefined;
@@ -42,8 +41,7 @@ app.controller('piutangpercustomerCtrl', function($scope, Data, $rootScope, $uib
     };
     $scope.filterIndex = function() {
         $scope.callServer(tableStateRef);
-    }
-    $scope.master = master;
+    };
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -86,10 +84,10 @@ app.controller('piutangpercustomerCtrl', function($scope, Data, $rootScope, $uib
         $scope.is_view = false;
         $scope.is_create = true;
         $scope.is_disable = false;
-        $scope.formtitle = master + " | Form Tambah Data";
+        $scope.formtitle = "Saldo Awal Piutang | Form Tambah Data";
         $scope.form = {};
-        if ($scope.listAkun.length > 0) {
-            $scope.form.akun = $scope.listAkun[0];
+        if ($scope.listAkunPiutang.length > 0) {
+            $scope.form.akun_piutang = $scope.listAkunPiutang[0];
         }
         $scope.form.tanggal = new Date($scope.tanggal_setting);
         $scope.form.jatuh_tempo = new Date($scope.tanggal_setting);
@@ -97,7 +95,9 @@ app.controller('piutangpercustomerCtrl', function($scope, Data, $rootScope, $uib
             $scope.form.tanggal = new Date();
             $scope.form.jatuh_tempo = new Date();
         }
-        $scope.listDetail = [{}];
+        if($scope.listLokasi.length > 0){
+            $scope.form.lokasi = $scope.listLokasi[0];
+        }
     };
     /** update */
     $scope.update = function(form) {
@@ -105,7 +105,7 @@ app.controller('piutangpercustomerCtrl', function($scope, Data, $rootScope, $uib
         $scope.is_view = false;
         $scope.is_update = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Edit Data : " + form.kode;
+        $scope.formtitle = "Saldo Awal Piutang | Edit Data : " + form.kode;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.form.jatuh_tempo = new Date(form.jatuh_tempo);
@@ -116,7 +116,7 @@ app.controller('piutangpercustomerCtrl', function($scope, Data, $rootScope, $uib
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Lihat Data : " + form.kode;
+        $scope.formtitle = "Saldo Awal Piutang | Lihat Data : " + form.kode;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
         $scope.form.jatuh_tempo = new Date(form.jatuh_tempo);

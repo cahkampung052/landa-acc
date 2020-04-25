@@ -1,19 +1,15 @@
 app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/m_customer";
-    var master = 'Master Penerima';
     $scope.formTitle = '';
     $scope.displayed = [];
     $scope.is_edit = false;
     $scope.is_view = false;
-    $scope.master = master;
-    
-    $scope.generateKode = function () {
+    $scope.generateKode = function() {
         Data.get(control_link + '/kode').then(function(response) {
             $scope.form.kode = response;
         });
     }
-    
     $scope.callServer = function callServer(tableState) {
         tableStateRef = tableState;
         $scope.isLoading = true;
@@ -21,8 +17,8 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         var limit = tableState.pagination.number || 10;
         /** set offset and limit */
         var param = {
-            offset : offset,
-            limit : limit
+            offset: offset,
+            limit: limit
         };
         /** set sort and order */
         if (tableState.sort.predicate) {
@@ -45,7 +41,7 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         $scope.is_view = false;
         $scope.is_create = true;
         $scope.is_disable = false;
-        $scope.formtitle = master + " | Form Tambah Data";
+        $scope.formtitle = "Data Customer | Form Tambah Data";
         $scope.form = {};
         $scope.generateKode();
     };
@@ -55,9 +51,9 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         $scope.is_view = false;
         $scope.is_update = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Edit Data : " + form.nama;
+        $scope.formtitle = "Data Customer | Edit Data : " + form.nama;
         $scope.form = form;
-        if(!$scope.form.kode){
+        if (!$scope.form.kode) {
             $scope.generateKode();
         }
     };
@@ -66,26 +62,17 @@ app.controller('customerCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_disable = true;
-        $scope.formtitle = master + " | Lihat Data : " + form.nama;
+        $scope.formtitle = "Data Customer | Lihat Data : " + form.nama;
         $scope.form = form;
     };
     /** save action */
     $scope.save = function(form) {
-        console.log("asd")
         Data.post(control_link + '/save', form).then(function(result) {
-            console.log(result)
             if (result.status_code == 200) {
-                Swal.fire({
-                    title: "Tersimpan",
-                    text: "Data Berhasil Di Simpan.",
-                    type: "success"
-                }).then(function() {
-                    $scope.callServer(tableStateRef);
-                    $scope.is_edit = false;
-                });
+                $rootScope.alert("Sukses", "Data telah disimpan", "success");
+                $scope.cancel();
             } else {
-                console.log(result.errors)
-                $rootScope.alert("Terjadi kesalahan", result.errors, "error");
+                $rootScope.alert("Terjadi kesalahan", setErrorMessage(result.errors), "error");
             }
         });
     };

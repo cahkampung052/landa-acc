@@ -1,6 +1,6 @@
 <?php
-
-function validasi($data, $custom = array()) {
+function validasi($data, $custom = array())
+{
     $validasi = array(
         'nama' => 'required',
         'kode' => 'required'
@@ -8,45 +8,19 @@ function validasi($data, $custom = array()) {
     $cek = validate($data, $validasi, $custom);
     return $cek;
 }
-
+/**
+ * Kode customer
+ */
 $app->get('/acc/m_customer/kode', function ($request, $response) {
     $params = $request->getParams();
     return isset($params['project']) && !empty($params['project']) && $params['project'] == "afu" ? generateNoTransaksi("afu_customer", 0) : generateNoTransaksi("customer", 0);
 });
-$app->get('/acc/m_customer/getKontak', function ($request, $response) {
-    $db = $this->db;
-    $params = $request->getParams();
-    $db->select("*")
-            ->from("acc_m_kontak")
-            ->orderBy("acc_m_kontak.nama")
-            ->where("is_deleted", "=", 0);
-    if (isset($params['nama']) && !empty($params['nama'])) {
-        $db->customWhere("nama LIKE '%" . $params['nama'] . "%'", "AND");
-    }
-    $models = $db->findAll();
-    foreach ($models as $key => $val) {
-        $val->type = ucfirst($val->type);
-    }
-    return successResponse($response, [
-        'list' => $models,
-    ]);
-});
-$app->get('/acc/m_customer/getKaryawan', function ($request, $response) {
-    $db = $this->db;
-    $params = $request->getParams();
-    $models = $db->select("*")
-            ->from("karyawan")
-            ->where("is_deleted", "=", 0)
-            ->andWhere("status", "=", "Aktif")
-            ->findAll();
-
-    return successResponse($response, [
-        'list' => $models,
-    ]);
-});
+/**
+ * Ambil customer
+ */
 $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
-    $db = $this->db;
     $params = $request->getParams();
+    $db = $this->db;
     $db->select("*")
             ->from("acc_m_kontak")
             ->orderBy("acc_m_kontak.nama")
@@ -60,29 +34,28 @@ $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
         $db->customWhere("acc_m_lokasi_id = '" . $params['lokasi'] . "'", "AND");
     }
     $models = $db->limit(20)->findAll();
-
     //cek kolom, untuk di afu
     $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_akun_id")->find();
-
     if (!empty($cek_column)) {
         foreach ($models as $key => $value) {
             $value->acc_m_akun_id = !empty($value->acc_m_akun_id) ? $db->find("SELECT id, kode, nama FROM acc_m_akun WHERE id = " . $value->acc_m_akun_id) : [];
         }
     }
     //end
-
     return successResponse($response, [
         'list' => $models,
     ]);
-});
+})->setName("getCustomer");
+/**
+ * Ambil list customer index
+ */
 $app->get('/acc/m_customer/index', function ($request, $response) {
     $params = $request->getParams();
-    $offset = isset($params['offset']) ? $params['offset'] : 0;
-    $limit = isset($params['limit']) ? $params['limit'] : 10;
     $db = $this->db;
     $db->select("*")
             ->from("acc_m_kontak")
-            ->orderBy('acc_m_kontak.nama');
+            ->orderBy('acc_m_kontak.nama')
+            ->where("type", "=", "customer");
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
         foreach ($filter as $key => $val) {
@@ -107,11 +80,9 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
     }
     $models = $db->findAll();
     $totalItem = $db->count();
-
     //cek kolom, untuk di afu
     $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_lokasi_id")->find();
     $cek_column2 = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_akun_id")->find();
-
     if (!empty($cek_column) && !empty($cek_column2)) {
         foreach ($models as $key => $value) {
             $value->acc_m_lokasi_id = !empty($value->acc_m_lokasi_id) ? $db->find("SELECT id, kode, nama FROM acc_m_lokasi WHERE id = " . $value->acc_m_lokasi_id) : [];
@@ -119,13 +90,14 @@ $app->get('/acc/m_customer/index', function ($request, $response) {
         }
     }
     //end
-
-    
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
     ]);
 });
+/**
+ * Simpan customer
+ */
 $app->post('/acc/m_customer/save', function ($request, $response) {
     $params = $request->getParams();
     $sql = $this->db;
@@ -134,8 +106,7 @@ $app->post('/acc/m_customer/save', function ($request, $response) {
      */
     $kode = isset($params['project']) && !empty($params['project']) && $params['project'] == "afu" ? generateNoTransaksi("afu_customer", 0) : generateNoTransaksi("customer", 0);
     $kode = isset($params['acc_m_akun_id']) && !empty($params['acc_m_akun_id']) ? $params['acc_m_akun_id']['kode'] : $kode;
-    $params['acc_m_akun_id'] = isset($params['acc_m_akun_id']) && !empty($params['acc_m_akun_id']) ? $params['acc_m_akun_id']['id'] : NULL;
-
+    $params['acc_m_akun_id'] = isset($params['acc_m_akun_id']) && !empty($params['acc_m_akun_id']) ? $params['acc_m_akun_id']['id'] : null;
     $params["nama"] = isset($params["nama"]) ? $params["nama"] : "";
     $params["acc_m_lokasi_id"] = isset($params["acc_m_lokasi_id"]) && !empty($params['acc_m_lokasi_id']) ? $params["acc_m_lokasi_id"]['id'] : null;
     $validasi = validasi($params);
@@ -160,7 +131,10 @@ $app->post('/acc/m_customer/save', function ($request, $response) {
     } else {
         return unprocessResponse($response, $validasi);
     }
-});
+})->setName("saveCustomer");
+/**
+ * Hapus customer
+ */
 $app->post('/acc/m_customer/trash', function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;
@@ -171,6 +145,9 @@ $app->post('/acc/m_customer/trash', function ($request, $response) {
         return unprocessResponse($response, ['Gagal menghapus data']);
     }
 });
+/**
+ * Delete customer
+ */
 $app->post('/acc/m_customer/delete', function ($request, $response) {
     $data = $request->getParams();
     $db = $this->db;

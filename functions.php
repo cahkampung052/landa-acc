@@ -59,25 +59,6 @@ function buildTree($elements, $parentId = 0)
     return $branch;
 }
 /**
- * Buat nested akun
- */
-function buildTreeAkun($listAkun, $parentId = 0)
-{
-    $branch = array();
-//    pd($listAkun);
-    foreach ($listAkun as $key => $element) {
-        $kode = str_replace(".", "", $element->kode);
-        if ($element->parent_id == $parentId) {
-            $children = buildTreeAkun($listAkun, $element->id);
-            if ($children) {
-                $element->children = $children;
-            }
-            $branch[$kode] = $element;
-        }
-    }
-    return $branch;
-}
-/**
  * ubah id child jadi numerical array
  */
 function buildFlatTreeId($tree, $ids = [])
@@ -94,6 +75,36 @@ function buildFlatTreeId($tree, $ids = [])
         }
     }
     return $ids;
+}
+/**
+ * Ambil semua id child
+ */
+function getChildId($tabelName, $parentId)
+{
+    $db = new Cahkampung\Landadb(config('DB')['db']);
+    $db->select("*")->from($tabelName)->where("is_deleted", "=", 0);
+    $data = $db->findAll();
+    $tree = buildTree($data, $parentId);
+    $child = buildFlatTreeId($tree);
+    return $child;
+}
+/**
+ * Buat nested akun
+ */
+function buildTreeAkun($listAkun, $parentId = 0)
+{
+    $branch = array();
+    foreach ($listAkun as $key => $element) {
+        $kode = str_replace(".", "", $element->kode);
+        if ($element->parent_id == $parentId) {
+            $children = buildTreeAkun($listAkun, $element->id);
+            if ($children) {
+                $element->children = $children;
+            }
+            $branch[$kode] = $element;
+        }
+    }
+    return $branch;
 }
 /**
  * ubah child jadi flat array
@@ -121,25 +132,14 @@ function getChildFlat($array, $parentId)
     return $child;
 }
 /**
- * Ambil semua id child
- */
-function getChildId($tabelName, $parentId)
-{
-    $db = new Cahkampung\Landadb(config('DB')['db']);
-    $db->select("*")->from($tabelName)->where("is_deleted", "=", 0);
-    $data = $db->findAll();
-    $tree = buildTree($data, $parentId);
-    $child = buildFlatTreeId($tree);
-    return $child;
-}
-/**
  * Ambil saldo awal
  */
 function getSaldo($akunId, $lokasiId, $tanggalStart, $tanggalEnd)
 {
     $db = new Cahkampung\Landadb(config('DB')['db']);
-    $db->select("sum(debit) as debit, sum(kredit) as kredit")
+    $db->select("sum(debit) as debit, sum(kredit) as kredit, saldo_normal")
             ->from("acc_trans_detail")
+            ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
             ->where("m_akun_id", "=", $akunId);
     if (!empty($lokasiId)) {
         if (is_array($lokasiId) && !empty($lokasiId)) {
@@ -159,7 +159,8 @@ function getSaldo($akunId, $lokasiId, $tanggalStart, $tanggalEnd)
     $model = $db->find();
     $debit = isset($model->debit) ? $model->debit : 0;
     $kredit = isset($model->kredit) ? $model->kredit : 0;
-    return $debit - $kredit;
+    $saldoNormal = isset($model->saldo_normal) ? $model->saldo_normal : 1;
+    return $debit - $kredit * $saldoNormal;
 }
 /**
  * Saldo Neraca berdasarkan tipe
@@ -279,7 +280,6 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null)
         $lokasiId = getChildId("acc_m_lokasi", $lokasi);
         if (!empty($lokasiId)) {
             array_push($lokasiId, $lokasi);
-            $lokasiId = implode(",", $lokasiId);
         } else {
             $lokasiId = $lokasi;
         }
@@ -289,10 +289,10 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null)
         foreach ($lokasi as $key => $value) {
             $arrLok[] = $value->id;
         }
-        $lokasiId = implode(",", $arrLok);
+        $lokasiId = $arrLok;
     }
     /**
-     * Ambil transaksi
+     * Ambil transaksi pendapatan dan beban
      */
     $sql->select("sum(acc_trans_detail.debit) as debit, sum(acc_trans_detail.kredit) as kredit, acc_m_akun.saldo_normal, acc_m_akun.tipe")
             ->from("acc_trans_detail")
@@ -301,7 +301,7 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null)
             ->groupBy("acc_m_akun.tipe")
             ->andWhere("is_tipe", "=", 0)
             ->andWhere("is_deleted", "=", 0)
-            ->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND")
+            ->customWhere("acc_trans_detail.m_lokasi_id IN(".implode(",", $lokasiId).")", "AND")
             ->findAll();
     /**
      * Set parameter tanggal
@@ -329,8 +329,13 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null)
      * Ambil akun laba rugi
      */
     $pemetaan = getPemetaanAkun('Laba Rugi Berjalan');
+    /**
+     * Ambil saldo laba rugi
+     */
+    $getSaldo = getSaldo($pemetaan[0], $lokasiId, $tglStart, $tglEnd);
+    $total += $getSaldo;
     return [
-        "m_akun_id" => $pemetaan,
+        "m_akun_id" => $pemetaan[0],
         "total" => $total,
     ];
 }
@@ -673,12 +678,12 @@ function generateNoTransaksi($type, $unker, $preffix = null, $bulan = null, $tah
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "HD/" . $tahun . "/" . $no_urut;
     } elseif ($type == 'customer') {
-        $cek = $db->find("select kode from acc_m_kontak where jenis = 'lain' order by kode desc");
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "CUST" . date("y") . "" . $no_urut;
     } elseif ($type == 'customerAll') {
-        $cek = $db->find("select kode from acc_m_kontak where jenis = 'customer' AND DATE_FORMAT( FROM_UNIXTIME( created_at ), '%Y' ) = '" . date('Y') . "' order by kode desc");
+        $cek = $db->find("select kode from acc_m_kontak where type = 'customer' AND DATE_FORMAT( FROM_UNIXTIME( created_at ), '%Y' ) = '" . date('Y') . "' order by kode desc");
         $urut = (empty($cek)) ? 1 : ((int) substr($cek->kode, -5)) + 1;
         $no_urut = substr('00000' . $urut, -5);
         $no_transaksi = "CUST" . date("y") . "" . $no_urut;
