@@ -15,7 +15,9 @@ app.controller('l_hutangCtrl', function($scope, Data, $rootScope, $stateParams) 
      */
     $scope.listAkun = [{'id' : 0, 'nama': 'SEMUA HUTANG'}];
     Data.get('acc/m_akun/akunHutang').then(function(data) {
-        $scope.listAkun.push(data.data.list);
+        angular.forEach(data.data.list, function(value, key) {
+            $scope.listAkun.push(value);
+        });
         if ($scope.listAkun.length > 0) {
             $scope.form.m_akun_id = $scope.listAkun[0];
         }
