@@ -150,6 +150,9 @@ $app->get("/acc/apppengajuan/index", function ($request, $response) {
                 $db->where($key, "like", $val);
             }
         }
+    }else{
+        $db->customWhere("acc_t_pengajuan.status like '%Pending%' or acc_t_pengajuan.status is null", "AND");
+        // $db->where("acc_t_pengajuan.status", "=", "Rejected");
     }
     /**
      * Set limit dan offset

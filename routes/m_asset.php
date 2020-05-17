@@ -4,7 +4,6 @@ function validasi($data, $custom = array()) {
     $validasi = array(
         'nama' => 'required',
         'harga' => 'required',
-        // 'lokasi' => 'required',
         'is_penyusutan' => 'required',
     );
     GUMP::set_field_name("akun_asset", "Akun Asset");
@@ -35,7 +34,7 @@ function validasi_pelepasan($data, $custom = array()) {
 $app->get('/acc/m_asset/getLokasi', function ($request, $response) {
    $db = $this->db;
    
-   $db->select("*")->from("acc_m_lokasi_asset");
+   $db->select("*")->from("acc_m_lokasi");
    
    $lokasi = $db->findAll();
    return successResponse($response, $lokasi);
@@ -63,9 +62,9 @@ $app->get('/acc/m_asset/list_penyusutan', function ($request, $response) {
     $tableuser = tableUser();
 
     $db = $this->db;
-    $db->select("acc_riw_penyusutan.*,acc_m_lokasi_asset.nama as nm_lokasi," . $tableuser . ".nama as nm_user,SUM(penyusutan_perbulan) as total_penyusutan")
+    $db->select("acc_riw_penyusutan.*,acc_m_lokasi.nama as nm_lokasi," . $tableuser . ".nama as nm_user,SUM(penyusutan_perbulan) as total_penyusutan")
             ->from("acc_riw_penyusutan")
-            ->leftJoin("acc_m_lokasi_asset", "acc_m_lokasi_asset.id = acc_riw_penyusutan.lokasi_id")
+            ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_riw_penyusutan.lokasi_id")
             ->leftJoin($tableuser, $tableuser . ".id = acc_riw_penyusutan.created_by")
             ->leftJoin("acc_riw_penyusutan_dt", "acc_riw_penyusutan.id = acc_riw_penyusutan_dt.riw_id")
             ->orderBy('acc_riw_penyusutan.id DESC');
@@ -105,8 +104,6 @@ $app->get('/acc/m_asset/list_penyusutan', function ($request, $response) {
             $value->is_hidden = false;
         }
     }
-//     print_r($models);exit();
-//      print_r($arr);exit();
     return successResponse($response, [
         'list' => $models,
         'totalItems' => $totalItem,
@@ -151,7 +148,7 @@ $app->post('/acc/m_asset/hapus_penyusutan', function ($request, $response) {
     $delete = $sql->delete('acc_riw_penyusutan_dt', array('riw_id' => $cek_riw->id));
     $delete = $sql->delete('acc_jurnal', array('id' => $cek_riw->jurnal_id));
     $delete = $sql->delete('acc_jurnal_det', array('acc_jurnal_id' => $cek_riw->jurnal_id));
-    $delete = $sql->delete('acc_trans_detail', array('reff_type' => "acc_jurnal_penyusutan", 'reff_id' => $cek_riw->jurnal_id));
+    $delete = $sql->delete('acc_trans_detail', array('reff_type' => "acc_jurnal", 'reff_id' => $cek_riw->jurnal_id));
 
     if ($delete) {
         return successResponse($response, ['data berhasil dihapus']);
@@ -206,7 +203,7 @@ $app->post('/acc/m_asset/prosesPenyusutan', function ($request, $response) {
         $delete = $sql->delete('acc_riw_penyusutan_dt', array('riw_id' => $cek_riw->id));
         $delete = $sql->delete('acc_jurnal', array('id' => $cek_riw->jurnal_id));
         $delete = $sql->delete('acc_jurnal_det', array('acc_jurnal_id' => $cek_riw->jurnal_id));
-        $delete = $sql->delete('acc_trans_detail', array('reff_type' => "acc_jurnal_penyusutan", 'reff_id' => $cek_riw->jurnal_id));
+        $delete = $sql->delete('acc_trans_detail', array('reff_type' => "acc_jurnal", 'reff_id' => $cek_riw->jurnal_id));
     }
 
     //insert riwayat penyusutan
@@ -231,7 +228,8 @@ $app->post('/acc/m_asset/prosesPenyusutan', function ($request, $response) {
         "total_kredit" => $params["form"]["total"],
         "total_debit" => $params["form"]["total"],
         "reff_id" => $insert_riw->id,
-        "reff_type" => 'acc_riw_penyusutan'
+        "reff_type" => 'acc_riw_penyusutan',
+        "status" => 'terposting'
     );
     $insert_jurnal = $sql->insert("acc_jurnal", $d_jurnal);
 
@@ -250,7 +248,7 @@ $app->post('/acc/m_asset/prosesPenyusutan', function ($request, $response) {
         $dt_jurnal_deb = array(
             "acc_jurnal_id" => $insert_jurnal->id,
             "m_akun_id" => $value["akun_beban_id"],
-            "m_lokasi_id" => $value["lokasi_id"],
+            "m_lokasi_id" => $params["form"]["lokasi"]["id"],
             "debit" => $value["penyusutan_perbulan"],
             "kredit" => 0,
             "keterangan" => $keterangan_det
@@ -261,7 +259,7 @@ $app->post('/acc/m_asset/prosesPenyusutan', function ($request, $response) {
         $dt_jurnal_kredit = array(
             "acc_jurnal_id" => $insert_jurnal->id,
             "m_akun_id" => $value["akun_akumulasi_id"],
-            "m_lokasi_id" => $value["lokasi_id"],
+            "m_lokasi_id" => $params["form"]["lokasi"]["id"],
             "debit" => 0,
             "kredit" => $value["penyusutan_perbulan"],
             "keterangan" => $keterangan_det
@@ -271,23 +269,25 @@ $app->post('/acc/m_asset/prosesPenyusutan', function ($request, $response) {
         //insert transdt umum debit
         $transdet_deb = array(
             "reff_id" => $insert_jurnal->id,
-            "reff_type" => "acc_jurnal_penyusutan",
+            "reff_type" => "acc_jurnal",
             "m_akun_id" => $value["akun_beban_id"],
-            "m_lokasi_id" => $value["lokasi_id"],
+            "m_lokasi_id" => $params["form"]["lokasi"]["id"],
+            "m_lokasi_jurnal_id" => $params["form"]["lokasi"]["id"],
             "debit" => $value["penyusutan_perbulan"],
             "kredit" => 0,
             "keterangan" => $keterangan_det,
             "tanggal" => date("Y-m-d", strtotime($params["bulan"])),
-            "kode" => $no_transaksi
+            "kode" => $no_transaksi,
         );
         $insert_trans1 = $sql->insert("acc_trans_detail", $transdet_deb);
 
         //insert transdt umum kredit
         $transdet_kredit = array(
             "reff_id" => $insert_jurnal->id,
-            "reff_type" => "acc_jurnal_penyusutan",
+            "reff_type" => "acc_jurnal",
             "m_akun_id" => $value["akun_akumulasi_id"],
-            "m_lokasi_id" => $value["lokasi_id"],
+            "m_lokasi_id" => $params["form"]["lokasi"]["id"],
+            "m_lokasi_jurnal_id" => $params["form"]["lokasi"]["id"],
             "debit" => 0,
             "kredit" => $value["penyusutan_perbulan"],
             "keterangan" => $keterangan_det,
@@ -317,7 +317,7 @@ $app->get('/acc/m_asset/apiPenyusutan', function ($request, $response) {
         $get_lokasi_id = 1;
         $arr_lokasi_id = [];
         if (isset($get_lokasi_id)) {
-            $lokasiId = getChildId("acc_m_lokasi_asset", $get_lokasi_id);
+            $lokasiId = getChildId("acc_m_lokasi", $get_lokasi_id);
             /*
              * jika lokasi punya child
              */
@@ -347,14 +347,14 @@ $app->get('/acc/m_asset/apiPenyusutan', function ($request, $response) {
                 $delete = $sql->delete('acc_riw_penyusutan_dt', array('riw_id' => $value->id));
                 $delete = $sql->delete('acc_jurnal', array('id' => $value->jurnal_id));
                 $delete = $sql->delete('acc_jurnal_det', array('acc_jurnal_id' => $value->jurnal_id));
-                $delete = $sql->delete('acc_trans_detail', array('reff_type' => "acc_jurnal_penyusutan", 'reff_id' => $value->jurnal_id));
+                $delete = $sql->delete('acc_trans_detail', array('reff_type' => "acc_jurnal", 'reff_id' => $value->jurnal_id));
             }
         }
 
         //select penyusutan
-        $sql->select("acc_asset.*,acc_m_lokasi_asset.nama as nama_lokasi,acc_m_lokasi_asset.kode as kode_lokasi")
+        $sql->select("acc_asset.*,acc_m_lokasi.nama as nama_lokasi,acc_m_lokasi.kode as kode_lokasi")
                 ->from("acc_asset")
-                ->leftJoin("acc_m_lokasi_asset", "acc_m_lokasi_asset.id = acc_asset.lokasi_id")
+                ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_asset.lokasi_id")
                 ->where("status", "=", 'Aktif')
                 ->where("is_penyusutan", "=", 1)
                 // ->where("lokasi_id", "=", $params['lokasi_id'])
@@ -400,7 +400,8 @@ $app->get('/acc/m_asset/apiPenyusutan', function ($request, $response) {
                     "total_kredit" => $total_penyusutan[$value],
                     "total_debit" => $total_penyusutan[$value],
                     "reff_id" => $insert_riw->id,
-                    "reff_type" => 'acc_riw_penyusutan'
+                    "reff_type" => 'acc_riw_penyusutan',
+                    "status" => 'terposting'
                 );
                 $insert_jurnal = $sql->insert("acc_jurnal", $d_jurnal);
                 $getJurnal[$value]['jurnal_id'] = $insert_jurnal->id;
@@ -448,9 +449,10 @@ $app->get('/acc/m_asset/apiPenyusutan', function ($request, $response) {
                 //insert transdt umum debit
                 $transdet_deb = array(
                     "reff_id" => $getJurnal[$value->lokasi_id]['jurnal_id'],
-                    "reff_type" => "acc_jurnal_penyusutan",
+                    "reff_type" => "acc_jurnal",
                     "m_akun_id" => $value->akun_beban_id,
                     "m_lokasi_id" => $value->lokasi_id,
+                    "m_lokasi_jurnal_id" => $value->lokasi_id,
                     "debit" => $value->penyusutan_perbulan,
                     "kredit" => 0,
                     "keterangan" => $keterangan_det,
@@ -462,9 +464,10 @@ $app->get('/acc/m_asset/apiPenyusutan', function ($request, $response) {
                 //insert transdt umum kredit
                 $transdet_kredit = array(
                     "reff_id" => $getJurnal[$value->lokasi_id]['jurnal_id'],
-                    "reff_type" => "acc_jurnal_penyusutan",
+                    "reff_type" => "acc_jurnal",
                     "m_akun_id" => $value->akun_akumulasi_id,
                     "m_lokasi_id" => $value->lokasi_id,
+                    "m_lokasi_jurnal_id" => $value->lokasi_id,
                     "debit" => 0,
                     "kredit" => $value->penyusutan_perbulan,
                     "keterangan" => $keterangan_det,
@@ -587,9 +590,9 @@ $app->get('/acc/m_asset/index', function ($request, $response) {
     $limit = isset($params['limit']) ? $params['limit'] : 20;
 
     $db = $this->db;
-    $db->select("acc_asset.*,acc_m_lokasi_asset.nama as nm_lokasi,acc_m_lokasi_asset.kode as kode_lokasi, acc_umur_ekonomis.nama as nama_umur, acc_umur_ekonomis.tahun as tahun_umur, acc_umur_ekonomis.persentase as persentase_umur, akun_asset.nama as nm_akun_asset, akun_akumulasi.nama as nm_akun_akumulasi, akun_beban.nama as nm_akun_beban, akun_laba_rugi.nama as nm_akun_laba_rugi,akun_kas_pelepasan.nama as nm_akun_kas_pelepasan, acc_riw_penyusutan_dt.id as id_penyusutan")
+    $db->select("acc_asset.*,acc_m_lokasi.nama as nm_lokasi,acc_m_lokasi.kode as kode_lokasi, acc_umur_ekonomis.nama as nama_umur, acc_umur_ekonomis.tahun as tahun_umur, acc_umur_ekonomis.persentase as persentase_umur, akun_asset.nama as nm_akun_asset, akun_akumulasi.nama as nm_akun_akumulasi, akun_beban.nama as nm_akun_beban, akun_laba_rugi.nama as nm_akun_laba_rugi,akun_kas_pelepasan.nama as nm_akun_kas_pelepasan, acc_riw_penyusutan_dt.id as id_penyusutan")
             ->from("acc_asset")
-            ->leftJoin("acc_m_lokasi_asset", "acc_m_lokasi_asset.id = acc_asset.lokasi_id")
+            ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_asset.lokasi_id")
             ->leftJoin("acc_umur_ekonomis", "acc_umur_ekonomis.id = acc_asset.umur_ekonomis")
             ->leftJoin("acc_m_akun akun_asset", "akun_asset.id = acc_asset.akun_asset_id")
             ->leftJoin("acc_m_akun akun_akumulasi", "akun_akumulasi.id = acc_asset.akun_akumulasi_id")

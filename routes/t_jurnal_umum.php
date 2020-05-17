@@ -201,6 +201,8 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
         $jurnal['total_debit']  = $params['form']['total_debit'];
         $jurnal['total_kredit'] = $params['form']['total_kredit'];
         $jurnal['status']       = $params['form']['status'];
+        $jurnal['reff_type']    = isset($params['form']['reff_type']) ? $params['form']['reff_type'] : '';
+        $jurnal['reff_id']      = isset($params['form']['reff_id']) ? $params['form']['reff_id'] : '';
         foreach ($params['detail'] as $key => $value) {
             $keterangan[$key] = isset($value['keterangan']) && !empty($value['keterangan']) ? $value['keterangan'] : null;
         }
@@ -209,11 +211,11 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
         if (isset($params['form']['id']) && !empty($params['form']['id'])) {
             $cek_data = $sql->select("tanggal")->from("acc_jurnal")->where("id", "=", $params['form']['id'])->find();
             if (date("m", strtotime($cek_data->tanggal)) != date("m", strtotime($jurnal['tanggal']))) {
-                $jurnal['no_transaksi'] = $kode;
+                $jurnal['no_transaksi'] = (isset($params['form']['kode']) && !empty($params['form']['kode'])) ? $params['form']['kode'] : $kode;
                 $jurnal['no_urut'] = (empty($kode)) ? 1 : ((int) substr($kode, -5));
             } else {
                 $jurnal['no_urut'] = $params['form']['no_urut'];
-                $jurnal['no_transaksi'] = $params['form']['no_transaksi'];
+                $jurnal['no_transaksi'] = (isset($params['form']['kode']) && !empty($params['form']['kode'])) ? $params['form']['kode'] : $params['form']['no_transaksi'];
             }
             $model = $sql->update("acc_jurnal", $jurnal, ["id" => $params['form']['id']]);
             /**
@@ -225,7 +227,7 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
              */
             $sql->delete("acc_trans_detail", ["reff_type" => "acc_jurnal", "reff_id" => $model->id]);
         } else {
-            $jurnal['no_transaksi'] = $kode;
+            $jurnal['no_transaksi'] = (isset($params['form']['kode']) && !empty($params['form']['kode'])) ? $params['form']['kode'] : $kode;
             $model = $sql->insert("acc_jurnal", $jurnal);
         }
         /**
@@ -273,7 +275,11 @@ $app->post('/acc/t_jurnal_umum/save', function ($request, $response) {
 $app->post('/acc/t_jurnal_umum/delete', function ($request, $response) {
     $data   = $request->getParams();
     $db     = $this->db;
-    $model  = $db->delete("acc_jurnal", ['id' => $data['id']]);
+    if(isset($data["reff_type"]) && !empty($data["reff_type"])){
+        $jurnal = $db->find("select id from acc_jurnal where reff_type='".$data["reff_type"]."' and reff_id='".$data["reff_id"]."' ");
+        $data["id"] = isset($jurnal->id) ? $jurnal->id : 0;
+    }
+    $model  = $db->delete("acc_jurnal", ['id' => $data['id']]);    
     $model  = $db->delete("acc_jurnal_det", ['acc_jurnal_id' => $data['id']]);
     $model  = $db->delete("acc_trans_detail", ['reff_type' => 'acc_jurnal', 'reff_id' => $data['id']]);
     if ($model) {
@@ -281,7 +287,7 @@ $app->post('/acc/t_jurnal_umum/delete', function ($request, $response) {
     } else {
         return unprocessResponse($response, ['Gagal menghapus data']);
     }
-});
+})->setName("deleteJurnalUmum");
 $app->get('/acc/t_jurnal_umum/print', function ($request, $response) {
     $data   = $request->getParams();
     $db     = $this->db;

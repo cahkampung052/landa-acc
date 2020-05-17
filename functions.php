@@ -140,7 +140,8 @@ function getSaldo($akunId, $lokasiId, $tanggalStart, $tanggalEnd)
     $db->select("sum(debit) as debit, sum(kredit) as kredit, saldo_normal")
             ->from("acc_trans_detail")
             ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-            ->where("m_akun_id", "=", $akunId);
+            ->where("m_akun_id", "=", $akunId)
+            ->customWhere("reff_type != 'acc_tutup_buku'", "AND");
     if (!empty($lokasiId)) {
         if (is_array($lokasiId) && !empty($lokasiId)) {
             $db->customWhere("acc_trans_detail.m_lokasi_id in (" . implode(",", $lokasiId) . ")", "and");
@@ -300,7 +301,7 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null)
             ->customWhere("acc_m_akun.tipe IN ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
             ->groupBy("acc_m_akun.tipe")
             ->andWhere("is_tipe", "=", 0)
-            ->andWhere("is_deleted", "=", 0)
+            // ->andWhere("is_deleted", "=", 0)
             ->customWhere("acc_trans_detail.m_lokasi_id IN(".implode(",", $lokasiId).")", "AND")
             ->findAll();
     /**

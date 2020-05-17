@@ -24,7 +24,7 @@ $app->get('/acc/m_lokasi/getAll', function ($request, $response) {
     return successResponse($response, [
         'list' => $arr
     ]);
-});
+})->setName("getLokasi");
 $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
     $db = $this->db;
     $db->select("*")
