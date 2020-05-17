@@ -1,10 +1,28 @@
-app.controller('l_rekaphutangCtrl', function ($scope, Data, $rootScope) {
+app.controller('l_rekaphutangCtrl', function ($scope, Data, $rootScope, $state) {
     var control_link = "acc/l_rekap_hutang";
     $scope.form = {};
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+    /**
+     * Lihat detail hutang
+     */
+    $scope.viewHutang = function(row) {
+        var data = {
+            export: 0,
+            print: 0,
+            m_lokasi_id: $scope.form.m_lokasi_id,
+            m_kontak_id: {id: row.m_kontak_id, nama: row.nama},
+            m_akun_id: $scope.form.m_akun_id,
+            startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
+            endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
+        };
+        var param = btoa(angular.toJson(data))
+        $state.go("laporan.hutang", {
+            param: param
+        })
+    }
     /**
      * Ambil list semua akun
      */

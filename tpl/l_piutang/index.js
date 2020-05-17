@@ -1,4 +1,4 @@
-app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
+app.controller('l_piutangCtrl', function($scope, Data, $rootScope, $stateParams) {
     var control_link = "acc/l_piutang";
     $scope.form = {};
     $scope.form.tanggal = {
@@ -6,14 +6,17 @@ app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
         startDate: moment()
     };
     $scope.form.m_kontak_id = {
-        id: "",
+        id: 0,
         nama: "Semua Customer"
     }
     /**
      * Ambil list semua akun
      */
+    $scope.listAkun = [{'id' : 0, 'nama': 'SEMUA PIUTANG'}];
     Data.get('acc/m_akun/akunPiutang').then(function(data) {
-        $scope.listAkun = data.data.list;
+        angular.forEach(data.data.list, function(value, key) {
+            $scope.listAkun.push(value);
+        });
         if ($scope.listAkun.length > 0) {
             $scope.form.m_akun_id = $scope.listAkun[0];
         }
@@ -25,17 +28,30 @@ app.controller('l_piutangCtrl', function($scope, Data, $rootScope) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
+            if (typeof $stateParams.param != undefined) {
+                var param = angular.fromJson(atob($stateParams.param));
+                $scope.form.m_akun_id = param.m_akun_id;
+                $scope.form.m_lokasi_id = param.m_lokasi_id;
+                $scope.form.m_kontak_id = param.m_kontak_id;
+                $scope.form.tanggal = {
+                    endDate: new Date(param.endDate),
+                    startDate: new Date(param.startDate)
+                };
+                $scope.view(0, 0);
+            }
         }
     });
     /*
-     * ambil supplier
+     * ambil Customer
      */
-    Data.get('acc/m_customer/getCustomer').then(function(response) {
+    $scope.getCustomer = function(val) {
+        Data.get('acc/m_customer/getCustomer', {nama: val}).then(function(response) {
         $scope.listCustomer = response.data.list;
-        if ($scope.listCustomer.length > 0) {
-            $scope.form.m_kontak_id = $scope.listCustomer[0];
-        }
-    });
+            if ($scope.listCustomer.length > 0  && $scope.form.m_kontak_id.id == 0) {
+                $scope.form.m_kontak_id = $scope.listCustomer[0];
+            }
+        });
+    }
     /**
      * Ambil laporan dari server
      */

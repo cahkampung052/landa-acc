@@ -105,6 +105,7 @@ $app->get('/acc/l_rekap_hutang/laporan', function ($request, $response) {
         $data['totalSaldoAkhir'] = 0;
         $arr = [];
         foreach ($arrkontak as $key => $val) {
+            $arr[$val]['m_kontak_id'] = $val;
             if (isset($arrawal[$val])) {
                 $arr[$val]['saldoAwal'] = $arrawal[$val]['debit'] - $arrawal[$val]['kredit'];
                 $arr[$val]['kode'] = $arrawal[$val]['kode'];

@@ -6,6 +6,18 @@ app.controller('l_jurnalumumCtrl', function ($scope, Data, $rootScope, $uibModal
         startDate: moment()
     };
     /**
+     * Ambil list transaksi
+     */
+    $scope.listTransaksi = [{'id' : 0, 'nama': 'SEMUA TRANSAKSI'}];
+    Data.get('acc/l_jurnal_umum/getTransaksi').then(function (response) {
+        angular.forEach(response.data, function(value, key) {
+            $scope.listTransaksi.push(value);
+        });
+        if ($scope.listTransaksi.length > 0) {
+            $scope.form.m_transaksi_id = $scope.listTransaksi[0];
+        }
+    });
+    /**
      * Ambil list lokasi
      */
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
@@ -23,6 +35,7 @@ app.controller('l_jurnalumumCtrl', function ($scope, Data, $rootScope, $uibModal
         var param = {
             export: is_export,
             print: is_print,
+            m_transaksi_id: $scope.form.m_transaksi_id.id,
             m_lokasi_id: $scope.form.m_lokasi_id.id,
             nama_lokasi: $scope.form.m_lokasi_id.nama,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
@@ -40,7 +53,6 @@ app.controller('l_jurnalumumCtrl', function ($scope, Data, $rootScope, $uibModal
             });
         } else {
             Data.get('site/base_url').then(function (response) {
-//                console.log(response)
                 window.open(response.data.base_url + "api/acc/l_jurnal_umum/laporan?" + $.param(param), "_blank");
             });
         }

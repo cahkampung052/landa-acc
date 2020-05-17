@@ -36,7 +36,7 @@
                                 <div class="col-sm-12">
                                     <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_kontak_id" theme="bootstrap" ng-disabled="is_view">
                                         <ui-select-match placeholder="Pilih Customer">{{$select.selected.nama}}</ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listCustomer | filter : $select.search">{{val.nama}}</ui-select-choices>
+                                        <ui-select-choices position="down" refresh="getCustomer($select.search)" repeat="val in listCustomer">{{val.nama}}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                 <table class="table table-responside table-striped table-hover table-print table-laporan" style="border-collapse: collapse;">
                     <thead>
                         <tr>
-                            <th width="80">
+                            <th width="100">
                                 <b>TANGGAL</b>
                             </th>
                             <th width="80">
