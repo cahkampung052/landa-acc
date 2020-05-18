@@ -107,15 +107,15 @@ $app->get('/acc/l_rekap_hutang/laporan', function ($request, $response) {
         foreach ($arrkontak as $key => $val) {
             $arr[$val]['m_kontak_id'] = $val;
             if (isset($arrawal[$val])) {
-                $arr[$val]['saldoAwal'] = $arrawal[$val]['debit'] - $arrawal[$val]['kredit'];
+                $arr[$val]['saldoAwal'] = round($arrawal[$val]['debit'] - $arrawal[$val]['kredit'], 2);
                 $arr[$val]['kode'] = $arrawal[$val]['kode'];
                 $arr[$val]['nama'] = $arrawal[$val]['nama'];
             } else {
                 $arr[$val]['saldoAwal'] = 0;
             }
             if (isset($arrperiode[$val])) {
-                $arr[$val]['debit'] = $arrperiode[$val]['debit'];
-                $arr[$val]['kredit'] = $arrperiode[$val]['kredit'];
+                $arr[$val]['debit'] = round($arrperiode[$val]['debit'], 2);
+                $arr[$val]['kredit'] = round($arrperiode[$val]['kredit'], 2);
                 $arr[$val]['kode'] = $arrperiode[$val]['kode'];
                 $arr[$val]['nama'] = $arrperiode[$val]['nama'];
             } else {
