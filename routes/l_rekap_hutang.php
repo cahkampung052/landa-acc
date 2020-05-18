@@ -62,8 +62,8 @@ $app->get('/acc/l_rekap_hutang/laporan', function ($request, $response) {
         $arrawal = [];
         foreach ($getsaldoawal as $key => $val) {
             if (isset($arrawal[$val->m_kontak_id])) {
-                $arrawal[$val->m_kontak_id]['debit'] += $val->debit;
-                $arrawal[$val->m_kontak_id]['kredit'] += $val->kredit;
+                $arrawal[$val->m_kontak_id]['debit'] += round($val->debit, 2);
+                $arrawal[$val->m_kontak_id]['kredit'] += round($val->kredit, 2);
             } else {
                 $arrawal[$val->m_kontak_id] = (array) $val;
                 if (!in_array($val->m_kontak_id, $arrkontak)) {
@@ -87,8 +87,8 @@ $app->get('/acc/l_rekap_hutang/laporan', function ($request, $response) {
         $arrperiode = [];
         foreach ($getsaldohutang as $key => $val) {
             if (isset($arrperiode[$val->m_kontak_id])) {
-                $arrperiode[$val->m_kontak_id]['debit'] += $val->debit;
-                $arrperiode[$val->m_kontak_id]['kredit'] += $val->kredit;
+                $arrperiode[$val->m_kontak_id]['debit'] += round($val->debit, 2);
+                $arrperiode[$val->m_kontak_id]['kredit'] += round($val->kredit, 2);
             } else {
                 $arrperiode[$val->m_kontak_id] = (array) $val;
                 if (!in_array($val->m_kontak_id, $arrkontak)) {
@@ -122,11 +122,11 @@ $app->get('/acc/l_rekap_hutang/laporan', function ($request, $response) {
                 $arr[$val]['debit'] = 0;
                 $arr[$val]['kredit'] = 0;
             }
-            $arr[$val]['saldoAkhir'] = $arr[$val]['saldoAwal'] + $arr[$val]['debit'] - $arr[$val]['kredit'];
-            $data['totalSaldoAwal'] += $arr[$val]["saldoAwal"];
-            $data['totalDebit'] += $arr[$val]["debit"];
-            $data['totalKredit'] += $arr[$val]["kredit"];
-            $data['totalSaldoAkhir'] += $arr[$val]["saldoAkhir"];
+            $arr[$val]['saldoAkhir'] = round($arr[$val]['saldoAwal'] + $arr[$val]['debit'] - $arr[$val]['kredit'], 2);
+            $data['totalSaldoAwal'] += round($arr[$val]["saldoAwal"], 2);
+            $data['totalDebit'] += round($arr[$val]["debit"],2);
+            $data['totalKredit'] += round($arr[$val]["kredit"],2);
+            $data['totalSaldoAkhir'] += round($arr[$val]["saldoAkhir"],2);
         }
         if (isset($params['export']) && $params['export'] == 1) {
             $view = twigViewPath();
