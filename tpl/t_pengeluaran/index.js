@@ -80,7 +80,7 @@ app.controller('pengeluaranCtrl', function($scope, Data, $rootScope, $uibModal, 
     /*
      * Ambil akun untuk detail
      */
-    Data.get('acc/m_akun/akunAll').then(function(data) {
+    Data.get('acc/m_akun/akunDetail').then(function(data) {
         $scope.akunDetail = data.data.list;
     });
     /*

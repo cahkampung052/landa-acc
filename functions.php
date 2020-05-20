@@ -161,7 +161,7 @@ function getSaldo($akunId, $lokasiId, $tanggalStart, $tanggalEnd)
     $debit = isset($model->debit) ? $model->debit : 0;
     $kredit = isset($model->kredit) ? $model->kredit : 0;
     $saldoNormal = isset($model->saldo_normal) ? $model->saldo_normal : 1;
-    return $debit - $kredit * $saldoNormal;
+    return ($debit - $kredit) * $saldoNormal;
 }
 /**
  * Saldo Neraca berdasarkan tipe
@@ -334,7 +334,10 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null)
      * Ambil saldo laba rugi
      */
     $getSaldo = getSaldo($pemetaan[0], $lokasiId, $tglStart, $tglEnd);
+    // echo $total;
+    // exit;
     $total += $getSaldo;
+    
     return [
         "m_akun_id" => $pemetaan[0],
         "total" => $total,

@@ -33,7 +33,8 @@ $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
     if (isset($params['lokasi']) && !empty($params['lokasi'])) {
         $db->customWhere("acc_m_lokasi_id = '" . $params['lokasi'] . "'", "AND");
     }
-    $models = $db->limit(20)->findAll();
+    $models = $db->findAll();
+    // $models = $db->limit(20)->findAll();
     //cek kolom, untuk di afu
     $cek_column = $db->select("*")->from("INFORMATION_SCHEMA.COLUMNS")->where("TABLE_NAME", "=", "acc_m_kontak")->where("COLUMN_NAME", "=", "acc_m_akun_id")->find();
     if (!empty($cek_column)) {
