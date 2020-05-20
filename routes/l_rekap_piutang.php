@@ -46,18 +46,11 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
         /*
          * ambil supplier
          */
-//        $supplier = $sql->select("*")
-//                ->from("acc_m_kontak")
-//                ->where("is_deleted", "=", 0)
-//                ->where("type", "=", "customer")
-//                ->findAll();
         $data['totalSaldoAwal'] = 0;
         $data['totalDebit'] = 0;
         $data['totalKredit'] = 0;
         $data['totalSaldoAkhir'] = 0;
         $arr = [];
-//        foreach($supplier as $key => $val){
-//            $arr[$key] = (array) $val;
         /*
          * ambil saldo awal piutang ke customer
          */
@@ -68,8 +61,7 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
             $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)");
         }
         $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id'])
-//                ->andWhere('acc_trans_detail.m_kontak_id', '=', $val->id)
-                ->andWhere('date(acc_trans_detail.tanggal)', '<', $tanggal_start);
+            ->andWhere('date(acc_trans_detail.tanggal)', '<', $tanggal_start);
         $getsaldoawal = $sql->findAll();
         $arrkontak = [];
         $arrawal = [];
@@ -94,9 +86,8 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
             $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)");
         }
         $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id'])
-//                ->andWhere('acc_trans_detail.m_kontak_id', '=', $val->id)
-                ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
-                ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
+            ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
+            ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
         $getsaldopiutang = $sql->findAll();
         $arrperiode = [];
         foreach ($getsaldopiutang as $key => $val) {
@@ -119,6 +110,7 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
         $data['totalSaldoAkhir'] = 0;
         $arr = [];
         foreach ($arrkontak as $key => $val) {
+            $arr[$val]['m_kontak_id'] = $val;
             if (isset($arrawal[$val])) {
                 $arr[$val]['saldoAwal'] = $arrawal[$val]['debit'] - $arrawal[$val]['kredit'];
                 $arr[$val]['kode'] = $arrawal[$val]['kode'];
@@ -141,7 +133,6 @@ $app->get('/acc/l_rekap_piutang/laporan', function ($request, $response) {
             $data['totalKredit'] += $arr[$val]["kredit"];
             $data['totalSaldoAkhir'] += $arr[$val]["saldoAkhir"];
         }
-//        }
         if (isset($params['export']) && $params['export'] == 1) {
             $view = twigViewPath();
             $content = $view->fetch('laporan/rekapPiutang.html', [

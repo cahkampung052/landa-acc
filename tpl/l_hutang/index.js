@@ -1,9 +1,9 @@
-app.controller('l_hutangCtrl', function($scope, Data, $rootScope) {
+app.controller('l_hutangCtrl', function($scope, Data, $rootScope, $stateParams) {
     var control_link = "acc/l_hutang";
     $scope.formTitle = '';
     $scope.form = {};
     $scope.form.m_kontak_id = {
-        id: "",
+        id: 0,
         nama: "Semua Supplier"
     }
     $scope.form.tanggal = {
@@ -13,8 +13,11 @@ app.controller('l_hutangCtrl', function($scope, Data, $rootScope) {
     /**
      * Ambil list semua akun
      */
+    $scope.listAkun = [{'id' : 0, 'nama': 'SEMUA HUTANG'}];
     Data.get('acc/m_akun/akunHutang').then(function(data) {
-        $scope.listAkun = data.data.list;
+        angular.forEach(data.data.list, function(value, key) {
+            $scope.listAkun.push(value);
+        });
         if ($scope.listAkun.length > 0) {
             $scope.form.m_akun_id = $scope.listAkun[0];
         }
@@ -26,6 +29,17 @@ app.controller('l_hutangCtrl', function($scope, Data, $rootScope) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
+            if (typeof $stateParams.param != undefined) {
+                var param = angular.fromJson(atob($stateParams.param));
+                $scope.form.m_akun_id = param.m_akun_id;
+                $scope.form.m_lokasi_id = param.m_lokasi_id;
+                $scope.form.m_kontak_id = param.m_kontak_id;
+                $scope.form.tanggal = {
+                    endDate: new Date(param.endDate),
+                    startDate: new Date(param.endDate)
+                };
+                $scope.view(0, 0);
+            }
         }
     });
     /*
@@ -36,7 +50,7 @@ app.controller('l_hutangCtrl', function($scope, Data, $rootScope) {
             nama: val
         }).then(function(response) {
             $scope.listSupplier = response.data.list;
-            if ($scope.listSupplier.length > 0 && $scope.form.m_kontak_id == undefined) {
+            if ($scope.listSupplier.length > 0 && $scope.form.m_kontak_id.id == 0) {
                 $scope.form.m_kontak_id = $scope.listSupplier[0];
             }
         });

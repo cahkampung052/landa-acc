@@ -50,12 +50,17 @@ $app->get('/acc/l_hutang/laporan', function ($request, $response) {
          * ambil saldo awal hutang
          */
         $sql->select('sum(acc_trans_detail.debit) as debit, sum(acc_trans_detail.kredit) as kredit')
-            ->from('acc_trans_detail');
-        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-            $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)");
-        }
-        $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id'])
+            ->from('acc_trans_detail')
+            ->leftJoin('acc_m_akun', 'acc_m_akun.id = acc_trans_detail.m_akun_id')
             ->andWhere('date(acc_trans_detail.tanggal)', '<', $tanggal_start);
+        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+            $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)", 'AND');
+        }
+        if(isset($params['m_akun_id']) && !empty($params['m_akun_id']) && $params['m_akun_id'] > 0){
+            $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id']);
+        }else{
+            $sql->customWhere('acc_m_akun.nama like "%HUTANG%"', 'AND');
+        }
         if(isset($params['m_kontak_id']) && !empty($params['m_kontak_id'])){
             $sql->andWhere('acc_trans_detail.m_kontak_id', '=', $params['m_kontak_id']);
         }
@@ -65,13 +70,18 @@ $app->get('/acc/l_hutang/laporan', function ($request, $response) {
          * ambil data transdetail hutang
          */
         $sql->select('acc_trans_detail.*')
-            ->from('acc_trans_detail');
-        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
-            $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)");
-        }
-        $sql->where('acc_trans_detail.m_akun_id', '=', $params['m_akun_id'])
+            ->from('acc_trans_detail')
+            ->leftJoin('acc_m_akun', 'acc_m_akun.id = acc_trans_detail.m_akun_id')
             ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
             ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end);
+        if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
+            $sql->customWhere("acc_trans_detail.m_lokasi_id IN ($lokasiId)", 'AND');
+        }
+        if(isset($params['m_akun_id']) && !empty($params['m_akun_id']) && $params['m_akun_id'] > 0){
+            $sql->andWhere('acc_trans_detail.m_akun_id', '=', $params['m_akun_id']);
+        }else{
+            $sql->customWhere('acc_m_akun.nama like "%PIUTANG%"', 'AND');
+        }
         if(isset($params['m_kontak_id']) && !empty($params['m_kontak_id'])){
             $sql->andWhere('acc_trans_detail.m_kontak_id', '=', $params['m_kontak_id']);
         }

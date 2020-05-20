@@ -1,5 +1,22 @@
 <?php
-
+$app->get('/acc/l_jurnal_umum/getTransaksi', function ($request, $response) {
+    $params = $request->getParams();
+    $db = $this->db;
+    $model = $db->findAll("select distinct(reff_type) as reff_type from acc_trans_detail");
+    $arr = [];
+    foreach ($model as $key => $value) {
+        $nama = str_replace("t_", "", $value->reff_type);
+        $nama = str_replace("_id", "", $nama);
+        $nama = str_replace("acc_", "", $nama);
+        $nama = str_replace("inv_", "", $nama);
+        $nama = str_replace("_", " ", $nama);
+        $arr[] = [
+            'id' => $value->reff_type,
+            'nama' => $nama
+        ];
+    }
+    return successResponse($response, $arr);
+});
 $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
 
     $subDomain = str_replace('api/', '', site_url());
@@ -44,6 +61,9 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
         ")->from("acc_trans_detail");
     if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
         $sql->customWhere("acc_trans_detail.m_lokasi_jurnal_id IN ($lokasiId)");
+    }
+    if(isset($params['m_transaksi_id']) && !empty($params['m_transaksi_id']) && $params['m_transaksi_id'] !== 0){
+        $sql->customWhere('acc_trans_detail.reff_type = "'.$params['m_transaksi_id'].'"', 'AND');
     }
     $sql->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
             ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_trans_detail.m_lokasi_jurnal_id")

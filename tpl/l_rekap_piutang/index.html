@@ -104,7 +104,7 @@
                     <tbody>
                         <tr ng-repeat="val in detail">
                             <td align="center" class="text-center" style="vertical-align: top">{{ val.kode }}</td>
-                            <td align="left" style="vertical-align: top">{{ val.nama }}</td>
+                            <td align="left" style="vertical-align: top">{{ val.nama }} <span ng-click="viewPiutang(val)"><i class="fa fa-external-link"></i></span></td>
                             <td align="right" class="text-right" style="vertical-align: top">
                                 <span ng-if="val.saldoAwal >= 0">
                                     {{ val.saldoAwal | number }}
