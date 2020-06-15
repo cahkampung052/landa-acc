@@ -840,7 +840,7 @@ function jurnalKas($params)
     }
     $jurnal_kas = $sql->findAll();
     $arr_kas = [];
-    $custom_where = ['type' => [], 'id' => []];
+    $custom_where = ['type' => [0 => 0], 'id' => [0 => 0]];
     foreach ($jurnal_kas as $key => $value) {
         $arr_kas[$value->reff_type][$value->reff_id][] = (array) $value;
         if (!in_array("'" . $value->reff_type . "'", $custom_where['type'])) {

@@ -30,6 +30,9 @@ $app->get('/acc/m_customer/getCustomer', function ($request, $response) {
     if (isset($params['nama']) && !empty($params['nama'])) {
         $db->customWhere("nama LIKE '%" . $params['nama'] . "%' OR kode LIKE '%" . $params['nama'] . "%'", "AND");
     }
+    if (isset($params['id']) && !empty($params['id'])) {
+        $db->customWhere("id LIKE '%" . $params['id'] . "%'", "AND");
+    }
     if (isset($params['lokasi']) && !empty($params['lokasi'])) {
         $db->customWhere("acc_m_lokasi_id = '" . $params['lokasi'] . "'", "AND");
     }
