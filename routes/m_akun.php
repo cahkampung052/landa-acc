@@ -67,6 +67,12 @@ $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
             ->leftJoin("acc_trans_detail", "acc_trans_detail.m_lokasi_id = '" . $params["m_lokasi_id"] . "' and m_akun_id = acc_m_akun.id and reff_type = 'Saldo Awal'")
             ->orderBy('acc_m_akun.kode')
             ->groupBy("acc_m_akun.id");
+    
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+    
     $models = $db->findAll();
     $arr = [];
     foreach ($models as $key => $value) {
@@ -240,6 +246,9 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     //16-10-2020
     if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
         $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_trans_detail.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
     }
 
     $trans = $db->findAll();
@@ -456,7 +465,7 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
             $parentId = [];
             $parent = $db->select("kode")->from("acc_m_akun")->where("is_tipe", "=", 1)->findAll();
             foreach ($parent as $key => $val) {
-                $parentId[] = $val->kode;
+                $parentId[] = $val->kode . "";
             }
             $sheet = $objPHPExcel->getSheet(0);
             $highestRow = $sheet->getHighestRow();
@@ -464,11 +473,11 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
             for ($row = 11; $row <= $highestRow; $row++) {
                 $kode_induk = $objPHPExcel->getSheet(0)->getCell('D' . $row)->getValue();
                 if (isset($kode_induk) && !in_array($kode_induk, $parentId)) {
-                    $parentId[] = $kode_induk;
+                    $parentId[] = $kode_induk . "";
                 }
             }
 
-//            pd($parentId);
+//            print_die($parentId);
             for ($row = 11; $row <= $highestRow; $row++) {
                 $kode = $objPHPExcel->getSheet(0)->getCell('B' . $row)->getValue();
                 if (isset($kode)) {
@@ -520,6 +529,8 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                         $data['is_tipe'] = 0;
                     }
                     $data['is_deleted'] = 0;
+
+                    $data['m_lokasi_id'] = !empty($_SESSION['user']['lokasi_id']) ? $_SESSION['user']['lokasi_id'] : null;
                     $tes[] = $data;
                     $cekkode = $db->select("*")->from("acc_m_akun")->where("kode", "=", $kode)->find();
                     if ($cekkode) {
