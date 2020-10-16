@@ -212,9 +212,9 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
      */
     $lokasiId = [];
     $lokasi = $db->select("id")
-        ->from("acc_m_lokasi")
-        ->where("is_deleted", "=", 0)
-        ->findAll();
+            ->from("acc_m_lokasi")
+            ->where("is_deleted", "=", 0)
+            ->findAll();
     foreach ($lokasi as $key => $value) {
         $lokasiId[] = $value->id;
     }
@@ -233,10 +233,18 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         ")
             ->from("acc_m_akun")
             ->leftJoin("acc_trans_detail", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-            ->customWhere("m_lokasi_id in (" . $lokasiId . ")")
+            ->customWhere("acc_trans_detail.m_lokasi_id in (" . $lokasiId . ")")
             ->groupBy("acc_m_akun.id")
             ->orderBy("acc_m_akun.is_tipe ASC, parent_id DESC, acc_m_akun.level DESC");
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
     $trans = $db->findAll();
+
+//    print_die($trans);
     $arrTrans = [];
     foreach ($trans as $key => $value) {
         $value->kredit = (!empty($value->kredit)) ? (int) $value->kredit : 0;
@@ -268,7 +276,14 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
             }
         }
     }
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
     $models = $db->findAll();
+
     $totalItem = $db->count();
     $listAkun = buildTreeAkun($models, 0);
     $arrModel = flatten($listAkun);
@@ -295,7 +310,15 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
  */
 $app->get('/acc/m_akun/listakun', function ($request, $response) {
     $sql = $this->db;
-    $data = $sql->findAll('select * from acc_m_akun where is_deleted = 0 order by kode');
+    $sql->select("*")->from("acc_m_akun")->where("is_deleted", "=", 0)->orderBy("kode");
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $sql->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    $data = $sql->findAll();
+
     foreach ($data as $key => $val) {
         $data[$key] = (array) $val;
         $spasi = ($val->level == 1) ? '' : str_repeat("--", $val->level - 1);
@@ -627,12 +650,12 @@ $app->post('/acc/m_akun/saveBudget', function ($request, $response) {
                 'budget' => $value['detail']['budget']
             ];
             $cek = $db->select("id")
-                        ->from("acc_budgeting")
-                        ->where("m_akun_id", "=", $params['form']['m_akun_id']['id'])
-                        ->andWhere("m_akun_id", "=", $params['form']['m_lokasi_id']['id'])
-                        ->andWhere("bulan", "=", date('m', strtotime($value['date'])))
-                        ->andWhere("tahun", "=", date('Y', strtotime($value['date'])))
-                        ->find();
+                    ->from("acc_budgeting")
+                    ->where("m_akun_id", "=", $params['form']['m_akun_id']['id'])
+                    ->andWhere("m_akun_id", "=", $params['form']['m_lokasi_id']['id'])
+                    ->andWhere("bulan", "=", date('m', strtotime($value['date'])))
+                    ->andWhere("tahun", "=", date('Y', strtotime($value['date'])))
+                    ->find();
             if (isset($cek->id) && !empty($cek->id)) {
                 $db->update('acc_budgeting', $data, ['id' => $cek->id]);
             } else {
@@ -649,9 +672,16 @@ $app->post('/acc/m_akun/saveBudget', function ($request, $response) {
  */
 $app->get('/acc/m_akun/akunAll', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")->from("acc_m_akun")
-            ->where("is_deleted", "=", 0)
-            ->findAll();
+    $db->select("*")->from("acc_m_akun")
+            ->where("is_deleted", "=", 0);
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    $models = $db->findAll();
+
     return successResponse($response, ['list' => $models]);
 });
 /**
@@ -667,6 +697,12 @@ $app->get('/acc/m_akun/akunKas', function ($request, $response) {
     if (isset($params['nama']) && !empty($params['nama'])) {
         $db->customWhere("acc_m_akun.nama LIKE '%" . $params['nama'] . "%'", "AND");
     }
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
     $models = $db->findAll();
     return successResponse($response, ['list' => $models]);
 });
@@ -682,6 +718,12 @@ $app->get('/acc/m_akun/getByType', function ($request, $response) {
                 ->from("acc_m_akun")
                 ->where("is_deleted", "=", 0)
                 ->andWhere("tipe", "=", $tipe);
+
+        //16-10-2020
+        if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+            $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+        }
+
         $models = $db->findAll();
         $arr = [];
         foreach ($models as $key => $value) {
@@ -701,12 +743,18 @@ $app->get('/acc/m_akun/getByType', function ($request, $response) {
  */
 $app->get('/acc/m_akun/akunPendapatan', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")->from("acc_m_akun")
+    $db->select("*")->from("acc_m_akun")
             ->customWhere("nama LIKE '%PENDAPATAN%'")
             ->andWhere("tipe", "=", "PENDAPATAN")
             ->where("is_tipe", "=", 0)
-            ->where("is_deleted", "=", 0)
-            ->findAll();
+            ->where("is_deleted", "=", 0);
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    $models = $db->findAll();
     return successResponse($response, ['list' => $models]);
 });
 /*
@@ -714,12 +762,18 @@ $app->get('/acc/m_akun/akunPendapatan', function ($request, $response) {
  */
 $app->get('/acc/m_akun/akunHutang', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")
+    $db->select("*")
             ->from("acc_m_akun")
             ->where("is_tipe", "=", 0)
             ->andWhere("is_deleted", "=", 0)
-            ->andWhere("tipe", "=", "KEWAJIBAN")
-            ->findAll();
+            ->andWhere("tipe", "=", "KEWAJIBAN");
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    $models = $db->findAll();
 
     foreach ($models as $key => $value) {
         $value->nama = $value->nama;
@@ -732,11 +786,17 @@ $app->get('/acc/m_akun/akunHutang', function ($request, $response) {
  */
 $app->get('/acc/m_akun/akunPiutang', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")->from("acc_m_akun")
+    $db->select("*")->from("acc_m_akun")
             ->customWhere("nama LIKE '%PIUTANG%'")
             ->where("is_tipe", "=", 0)
-            ->where("is_deleted", "=", 0)
-            ->findAll();
+            ->where("is_deleted", "=", 0);
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    $models = $db->findAll();
 
     foreach ($models as $key => $value) {
         $value->nama = $value->nama;
@@ -749,11 +809,17 @@ $app->get('/acc/m_akun/akunPiutang', function ($request, $response) {
  */
 $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")->from("acc_m_akun")
+    $db->select("*")->from("acc_m_akun")
             ->where("tipe", "=", "BEBAN")
             ->where("is_tipe", "=", 0)
-            ->where("is_deleted", "=", 0)
-            ->findAll();
+            ->where("is_deleted", "=", 0);
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    $models = $db->findAll();
 
     foreach ($models as $key => $value) {
         $value->nama = $value->nama;
@@ -766,11 +832,17 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
 
 $app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
     $db = $this->db;
-    $models = $db->select("*")->from("acc_m_akun")
+    $db->select("*")->from("acc_m_akun")
             ->customWhere("tipe = 'PENDAPATAN' or tipe = 'PENDAPATAN DILUAR USAHA'", "AND")
             ->customWhere("tipe = 'BEBAN' or tipe = 'BEBAN DILUAR USAHA'", "OR")
-            ->where("is_deleted", "=", 0)
-            ->findAll();
+            ->where("is_deleted", "=", 0);
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    $models = $db->findAll();
 
     foreach ($models as $key => $value) {
         $value->nama = $value->nama;
@@ -794,6 +866,12 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
     if (isset($params['nama'])) {
         $db->andWhere("nama", "like", $params['nama']);
     }
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
     $models = $db->findAll();
 
     foreach ($models as $key => $value) {

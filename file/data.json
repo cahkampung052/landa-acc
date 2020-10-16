@@ -1,0 +1,13 @@
+{
+    "laporan_arus_kas" : "Laporan Arus Kas",
+    "laporan_budgeting" : "Laporan Budgeting",
+    "laporan_buku_besar" : "Laporan Buku Besar",
+    "laporan_hutang" : "Laporan Hutang",
+    "laporan_jurnal_umum" : "Laporan Jurnal Umum",
+    "laporan_laba_rugi" : "Laporan Laba Rugi",
+    "laporan_neraca" : "Laporan Posisi Keuangan", 
+    "laporan_neraca_saldo" : "Laporan Neraca Saldo",
+    "laporan_piutang" : "Laporan Piutang",
+    "laporan_rekap_piutang" : "Laporan Rekap Piutang", 
+    "laporan_rekap_hutang" : "Laporan Rekap Hutang"
+}
