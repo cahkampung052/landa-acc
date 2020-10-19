@@ -74,7 +74,7 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     $params = $request->getParams();
     $db = $this->db;
 
-//    pd($params);
+//    print_die($params);
     //tanggal awal
     $tanggal_awal = new DateTime($params['startDate']);
     $tanggal_awal->setTimezone(new DateTimeZone('Asia/Jakarta'));
@@ -123,26 +123,36 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 //    $akun_merge = array_merge($penerimaan['data']['total_akun']['kredit'], $pengeluaran['data']['total_akun']['debit']);
     $akun_merge_fix = [];
 
+    $data['total_penerimaan'] = 0;
     if (!empty($penerimaan['data']['total_akun'])) {
         foreach ($penerimaan['data']['total_akun']['kredit'] as $key => $value) {
-            if (isset($akun_merge_fix[$value['akun']['kode']])) {
-                $akun_merge_fix[$value['akun']['kode']]['total'] += $value['total'];
-            } else {
-                $akun_merge_fix[$value['akun']['kode']] = $value;
-            }
+//        if (isset($akun_merge_fix[$value['akun']['kode']])) {
+//            $akun_merge_fix[$value['akun']['kode']]['total'] += $value['total'];
+//        } else {
+//            $akun_merge_fix[$value['akun']['kode']] = $value;
+//        }
+
+            $akun_merge_fix['PENERIMAAN'][$value['akun']['kode']] = $value;
+            $data['total_penerimaan'] += $value['total'];
         }
     }
 
+
 //    pd($akun_merge_fix);
 
+    $data['total_pengeluaran'] = 0;
     if (!empty($pengeluaran['data']['total_akun'])) {
         foreach ($pengeluaran['data']['total_akun']['debit'] as $key => $value) {
-            if (isset($akun_merge_fix[$value['akun']['kode']])) {
-                $akun_merge_fix[$value['akun']['kode']]['total'] -= $value['total'];
-            } else {
-                $akun_merge_fix[$value['akun']['kode']] = $value;
-                $akun_merge_fix[$value['akun']['kode']]['total'] = ($value['total'] * -1);
-            }
+//        if (isset($akun_merge_fix[$value['akun']['kode']])) {
+//            $akun_merge_fix[$value['akun']['kode']]['total'] -= $value['total'];
+//        } else {
+//            $akun_merge_fix[$value['akun']['kode']] = $value;
+//            $akun_merge_fix[$value['akun']['kode']]['total'] = ($value['total'] * -1);
+//        }
+
+            $akun_merge_fix['PENGELUARAN'][$value['akun']['kode']] = $value;
+            $akun_merge_fix['PENGELUARAN'][$value['akun']['kode']]['total'] = ($value['total'] * -1);
+            $data['total_pengeluaran'] += $value['total'];
         }
     }
 
@@ -152,36 +162,39 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 
     $arr = [];
     $data['saldo_biaya'] = 0;
-    foreach ($akun_merge_fix as $key => $value) {
-        $value['akun']['tipe_arus'] = !empty($value['akun']['tipe_arus']) ? $value['akun']['tipe_arus'] : 'Tidak Terklasifikasi';
-        $tipe = $value['total'] < 0 ? 'PENGELUARAN' : 'PENERIMAAN';
+    foreach ($akun_merge_fix as $k => $v) {
+        foreach ($v as $key => $value) {
+            $value['akun']['tipe_arus'] = !empty($value['akun']['tipe_arus']) ? $value['akun']['tipe_arus'] : 'Tidak Terklasifikasi';
+//            $tipe = $value['total'] < 0 ? 'PENGELUARAN' : 'PENERIMAAN';
+            $tipe = $k;
 //        $value['total'] = $value['akun']['saldo_normal'] == 1 ? ($value['total'] * -1) : $value['total'];
 
-        if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']])) {
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'] += $value['total'];
-        } else {
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'] = $value['total'];
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['akun'] = $value['akun'];
-        }
+            if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']])) {
+                $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'] += $value['total'];
+            } else {
+                $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'] = $value['total'];
+                $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['akun'] = $value['akun'];
+            }
 
-        if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'])) {
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'] += $value['total'];
-        } else {
-            $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'] = $value['total'];
-        }
+            if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'])) {
+                $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'] += $value['total'];
+            } else {
+                $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'] = $value['total'];
+            }
 
-        if (isset($arr[$value['akun']['tipe_arus']]['total'])) {
-            $arr[$value['akun']['tipe_arus']]['total'] += $value['total'];
-        } else {
-            $arr[$value['akun']['tipe_arus']]['total'] = $value['total'];
-        }
+            if (isset($arr[$value['akun']['tipe_arus']]['total'])) {
+                $arr[$value['akun']['tipe_arus']]['total'] += $value['total'];
+            } else {
+                $arr[$value['akun']['tipe_arus']]['total'] = $value['total'];
+            }
 
-        if ($value['akun']['tipe_arus'] != 'Tidak Terklasifikasi') {
-            $data['saldo_biaya'] += $value['total'];
+            if ($value['akun']['tipe_arus'] != 'Tidak Terklasifikasi') {
+                $data['saldo_biaya'] += $value['total'];
+            }
         }
     }
 
-//    pd($arr);
+//    print_die($arr);
 
     $akun_merge_kas = [];
     $index = 0;
@@ -195,6 +208,7 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
         }
     }
 
+
     if (!empty($pengeluaran['data']['total_akun'])) {
         foreach ($pengeluaran['data']['total_akun']['kredit'] as $key => $value) {
             $akun_merge_kas[$index]['m_akun_id'] = $value['akun']['id'];
@@ -204,6 +218,7 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
             $index++;
         }
     }
+
 
 //    pd($akun_merge_kas);
 
@@ -354,8 +369,8 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
             "css" => modulUrl() . '/assets/css/style.css',
         ]);
         echo $content;
-        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 500);</script>';
+        echo '<script type="text/javascript">window.print();setTimeout(function () { window.close(); }, 5000);</script>';
     } else {
         return successResponse($response, ["data" => $data, "detail" => $arr]);
     }
-});
+})->setName('lArusKas');

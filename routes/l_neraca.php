@@ -29,6 +29,7 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     $akunLabaRugi = isset($labarugi[0]) ? $labarugi[0] : 0;
     $saldoLabaRugi = getLabaRugiNominal(null, $tanggal, null);
     $totalLabaRugi = $saldoLabaRugi["total"];
+    
     /*
      * ambil akun pengecualian
      */
@@ -340,4 +341,4 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
             "disiapkan" => date("d-m-Y, H:i")
         ]);
     }
-});
+})->setName('lNeraca');
