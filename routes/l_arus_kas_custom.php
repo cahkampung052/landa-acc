@@ -123,23 +123,29 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 //    $akun_merge = array_merge($penerimaan['data']['total_akun']['kredit'], $pengeluaran['data']['total_akun']['debit']);
     $akun_merge_fix = [];
 
-    foreach ($penerimaan['data']['total_akun']['kredit'] as $key => $value) {
-        if (isset($akun_merge_fix[$value['akun']['kode']])) {
-            $akun_merge_fix[$value['akun']['kode']]['total'] += $value['total'];
-        } else {
-            $akun_merge_fix[$value['akun']['kode']] = $value;
+    if (!empty($penerimaan['data']['total_akun'])) {
+        foreach ($penerimaan['data']['total_akun']['kredit'] as $key => $value) {
+            if (isset($akun_merge_fix[$value['akun']['kode']])) {
+                $akun_merge_fix[$value['akun']['kode']]['total'] += $value['total'];
+            } else {
+                $akun_merge_fix[$value['akun']['kode']] = $value;
+            }
         }
     }
+
 //    pd($akun_merge_fix);
 
-    foreach ($pengeluaran['data']['total_akun']['debit'] as $key => $value) {
-        if (isset($akun_merge_fix[$value['akun']['kode']])) {
-            $akun_merge_fix[$value['akun']['kode']]['total'] -= $value['total'];
-        } else {
-            $akun_merge_fix[$value['akun']['kode']] = $value;
-            $akun_merge_fix[$value['akun']['kode']]['total'] = ($value['total'] * -1);
+    if (!empty($pengeluaran['data']['total_akun'])) {
+        foreach ($pengeluaran['data']['total_akun']['debit'] as $key => $value) {
+            if (isset($akun_merge_fix[$value['akun']['kode']])) {
+                $akun_merge_fix[$value['akun']['kode']]['total'] -= $value['total'];
+            } else {
+                $akun_merge_fix[$value['akun']['kode']] = $value;
+                $akun_merge_fix[$value['akun']['kode']]['total'] = ($value['total'] * -1);
+            }
         }
     }
+
 
 //    pd($akun_merge_fix);
 //    pd($akun_merge);
@@ -179,19 +185,24 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 
     $akun_merge_kas = [];
     $index = 0;
-    foreach ($penerimaan['data']['total_akun']['debit'] as $key => $value) {
-        $akun_merge_kas[$index]['m_akun_id'] = $value['akun']['id'];
-        $akun_merge_kas[$index]['kodeAkun'] = $value['akun']['kode'];
-        $akun_merge_kas[$index]['debit'] = $value['total'];
-        $akun_merge_kas[$index]['kredit'] = 0;
-        $index++;
+    if (!empty($penerimaan['data']['total_akun'])) {
+        foreach ($penerimaan['data']['total_akun']['debit'] as $key => $value) {
+            $akun_merge_kas[$index]['m_akun_id'] = $value['akun']['id'];
+            $akun_merge_kas[$index]['kodeAkun'] = $value['akun']['kode'];
+            $akun_merge_kas[$index]['debit'] = $value['total'];
+            $akun_merge_kas[$index]['kredit'] = 0;
+            $index++;
+        }
     }
-    foreach ($pengeluaran['data']['total_akun']['kredit'] as $key => $value) {
-        $akun_merge_kas[$index]['m_akun_id'] = $value['akun']['id'];
-        $akun_merge_kas[$index]['kodeAkun'] = $value['akun']['kode'];
-        $akun_merge_kas[$index]['debit'] = 0;
-        $akun_merge_kas[$index]['kredit'] = $value['total'];
-        $index++;
+
+    if (!empty($pengeluaran['data']['total_akun'])) {
+        foreach ($pengeluaran['data']['total_akun']['kredit'] as $key => $value) {
+            $akun_merge_kas[$index]['m_akun_id'] = $value['akun']['id'];
+            $akun_merge_kas[$index]['kodeAkun'] = $value['akun']['kode'];
+            $akun_merge_kas[$index]['debit'] = 0;
+            $akun_merge_kas[$index]['kredit'] = $value['total'];
+            $index++;
+        }
     }
 
 //    pd($akun_merge_kas);
