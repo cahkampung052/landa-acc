@@ -99,7 +99,7 @@
                                     </span>
                                     <span ng-if="row.is_deleted == 1">(dihapus pada {{ row.tgl_nonaktif| date: "dd MMM yyyy" }})</span>
                                 </td>
-                                <td class="align-left">{{ row.tipe }}</td>
+                                <td class="align-left">{{ row.tipe}}</td>
                                 <td style="text-align: right;">
                                     <span ng-if="row.is_tipe == 1 && row.saldo >= 0">
                                         <b>{{ row.saldo|number }}</b>
@@ -112,7 +112,7 @@
                                     </span>
                                     <span ng-if="row.is_tipe == 0 && row.saldo < 0">{{ row.saldo|number }}</span>
                                 </td>
-                                <td style="text-align: left;">{{ row.tipe_arus }}</td>
+                                <td style="text-align: left;">{{ row.tipe_arus}}</td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
                                         <button type="button" class="btn btn-success fa fa-list" ng-if="row.is_deleted == 0" ng-click="viewBukuBesar(row)"></button>
@@ -129,7 +129,7 @@
         </div>
         <div class="card" ng-if="is_edit">
             <div class="card-header">
-                <strong>{{ formtitle }}</strong>
+                <strong>{{ formtitle}}</strong>
             </div>
             <div class="card-body">
                 <form name="landaform" novalidate="">
@@ -159,7 +159,7 @@
                                 <div class="col-md-9">
                                     <select class="form-control form-control-sm" ng-change="getakun(form.parent_id)" ng-if="form.is_induk == 0" ng-disabled="is_view" ng-model="form.parent_id">
                                         <option value="">- Pilih Akun Induk -</option>
-                                        <option ng-repeat="value in dataakun" ng-selected="value.id == form.parent_id" ng-value="{{ value.id }}" ng-hide="!is_create && value.level > form.level">{{ value.kode }} - {{ value.nama }}</option>
+                                        <option ng-repeat="value in dataakun" ng-selected="value.id == form.parent_id" ng-value="{{ value.id}}" ng-hide="!is_create && value.level > form.level">{{ value.kode}} - {{ value.nama}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -168,7 +168,7 @@
                                 <div class="col-md-9">
                                     <div class="input-group input-group-sm" ng-if="form.is_induk == 0">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">{{ form.kode_induk }}</span>
+                                            <span class="input-group-text">{{ form.kode_induk}}</span>
                                         </div>
                                         <input type="text" class="form-control form-control-sm angka align-left" ng-model="form.kode" ng-disabled="is_view"/>
                                     </div>
@@ -201,6 +201,15 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
+                                <div class="col-sm-9">
+                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" on-select="lokasi($select.selected)" theme="bootstrap" ng-disabled="is_view">
+                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -211,7 +220,7 @@
                         <i class="fa fa-arrow-left"></i>
                         &nbsp;Kembali
                     </button>
-                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek     <= 3 || loading || form.status_kode == 0" ng-click="save(form)">
+                    <button type="submit" class="btn btn-primary btn-sm" ng-hide="is_view" button-spinner="loading" ng-disabled="cek <= 3 || loading || form.status_kode == 0" ng-click="save(form)">
                         <i class="fa fa-save"></i>
                         &nbsp;Simpan
                     </button>

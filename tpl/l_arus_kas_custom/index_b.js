@@ -1,4 +1,4 @@
-app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal, $state) {
+app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal) {
     var control_link = "acc/l_arus_kas_custom";
     $scope.form = {};
     $scope.form.tanggal = {
@@ -80,17 +80,6 @@ app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal, 
             } else {
             }
         });
-    }
-
-    $scope.viewBukuBesar = function (row) {
-        console.log(row)
-        var akun = {
-            id: row.id,
-            kode: row.kode,
-            nama: row.nama
-        }
-        var akun = btoa(angular.toJson(akun))
-        $state.go("laporan.buku_besar", {akun: akun})
     }
 });
 

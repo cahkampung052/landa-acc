@@ -14,6 +14,11 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
             $scope.dataakun = response.data.list;
         });
     };
+
+    Data.get('acc/m_lokasi/getLokasi').then(function (response) {
+        $scope.listLokasi = response.data.list;
+    });
+
     /**
      * Tampilkan akun di index
      */

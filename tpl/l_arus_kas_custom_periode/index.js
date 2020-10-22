@@ -1,4 +1,4 @@
-app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal, $state) {
+app.controller('l_aruskascpCtrl', function ($scope, Data, $rootScope, $uibModal, $state) {
     var control_link = "acc/l_arus_kas_custom";
     $scope.form = {};
     $scope.form.tanggal = {
@@ -33,7 +33,7 @@ app.controller('l_aruskascCtrl', function ($scope, Data, $rootScope, $uibModal, 
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
         };
         if (is_export == 0 && is_print == 0) {
-            Data.get(control_link + '/laporan', param).then(function (response) {
+            Data.get(control_link + '/laporan_periode', param).then(function (response) {
                 console.log(response)
                 if (response.status_code == 200) {
                     $scope.data = response.data.data;

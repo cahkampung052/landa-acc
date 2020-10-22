@@ -1,0 +1,41 @@
+<div class="modal-header">
+    <h5 class="modal-title">Pengecualian Laporan Laba Rugi</h5>
+    <button type="button" class="close" ng-click="close()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                <th width="10%">
+                    <button type="button" class="btn btn-success fa fa-plus btn-sm" ng-click="addDetail(listAkun)" ng-disabled="is_view"></button>
+                </th>
+                <th>Akun </th>
+                </thead>
+                <tbody>
+                    <tr class="tabletr" ng-repeat="v in listAkun">
+                        <td>
+                            <button type="button" class="btn btn-danger fa fa-minus btn-sm" ng-click="removeDetail(listAkun, $index)" ng-disabled="is_view"></button>
+                        </td>
+                        <td>
+                            <ui-select class="ui-select-sm ui-select-container" ng-model="v.m_akun_id" theme="bootstrap" ng-disabled="is_view">
+                                <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                <ui-select-choices repeat="val in akunDetail | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
+                            </ui-select>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-click="save()" ng-hide="is_view">
+        <i class="fa fa-save"></i>
+        Simpan
+    </button>
+</div>

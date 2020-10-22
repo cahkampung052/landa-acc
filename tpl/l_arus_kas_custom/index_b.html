@@ -79,7 +79,6 @@
                                 <tr ng-repeat="v in data.saldo_awal.detail" ng-if="v.total != undefined && v.total != 0">
                                     <td>
                                         {{v.kode}} - {{v.nama}}
-                                        &nbsp;<span class="" ng-click="viewBukuBesar(v)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td align="right">
                                         <span ng-if="v.total >= 0">{{v.total| number}}</span>
@@ -106,7 +105,6 @@
                                 <tr ng-repeat="y in v.detail">
                                     <td>
                                         {{y.akun.kode}} - {{y.akun.nama}}
-                                        &nbsp;<span class="" ng-click="viewBukuBesar(y.akun)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td>
                                         <select class="form-control form-control-sm" ng-model="y.akun.tipe_arus" ng-change="updateAkun(y.akun)">
@@ -166,7 +164,6 @@
                                 <tr ng-repeat="v in data.saldo_akhir.detail" ng-if="v.total != undefined && v.total != 0">
                                     <td>
                                         {{v.kode}} - {{v.nama}}
-                                        &nbsp;<span class="" ng-click="viewBukuBesar(v)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td align="right">
                                         <span ng-if="v.total >= 0">{{v.total| number}}</span>
