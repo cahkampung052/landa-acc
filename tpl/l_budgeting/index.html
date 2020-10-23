@@ -10,9 +10,14 @@
                         <div class="col-md-12">
                             <form name="landaform" novalidate="">
                                 <div class="row">
-                                    <div class="col-md-1">
-                                        <div class="form-group">
-                                            <input class="form-control form-control-sm" datepicker-mode="'year'" datepicker-options="{minMode: 'year'}" is-open="opened.tgl" ng-click="toggle($event, 'tgl')" ng-model="form.tahun" placeholder="Tahun" type="text" uib-datepicker-popup="yyyy"/>
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -70,29 +75,34 @@
                         </center>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6" ng-repeat="row in detail">
-                        <table class="table table-striped table-hover table-laporan" width="100%">
-                            <tbody>
-                                <tr style="background-color: #fff">
-                                    <td colspan="3">
-                                        <b>Nama Akun : </b> {{row.kode}} - {{row.nama}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left; vertical-align: middle">Bulan</th>
-                                    <th style="text-align: center" width="200">Target</th>
-                                    <th style="text-align: center" width="200">Realisasi</th>
-                                </tr>
-                                <tr ng-repeat="det in row.detail">
-                                    <td style="text-align: left;">{{ det.bulan}}</td>
-                                    <td class="text-right">{{ det.target | currency }}</td>
-                                    <td class="text-right">{{ det.realisasi | currency }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <table class="table table-striped table-hover table-laporan" width="100%">
+                    <thead>
+                        <tr>
+                            <th rowspan="3" class="align-center">Akun</th>
+                            <th colspan="{{3 * data.jumlah_bulan}}" class="align-center">Periode</th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" ng-repeat="val in data.bulan" class="align-center">{{val.nama}}</th>
+                        </tr>
+                        <tr>
+                            <th ng-repeat-start="val in data.bulan" style="display: none"></th>
+                            <th class="align-right">Target</th>
+                            <th class="align-right">Realisasi</th>
+                            <th class="align-right">Selisih</th>
+                            <th ng-repeat-end="" style="display: none"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="val in detail">
+                            <td>{{val.kode}} - {{val.nama}}</td>
+                            <td ng-repeat-start="v in val.detail" style="display: none"></td>
+                            <td class="align-right">{{v.budget | number}}</td>
+                            <td class="align-right">{{v.realisasi | number}}</td>
+                            <td class="align-right">{{(v.budget - v.realisasi) | number}}</td>
+                            <td ng-repeat-end="" style="display: none"></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
