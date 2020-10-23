@@ -293,6 +293,8 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     }
 
     $models = $db->findAll();
+    
+    print_die($models);
 
     $totalItem = $db->count();
     $listAkun = buildTreeAkun($models, 0);
