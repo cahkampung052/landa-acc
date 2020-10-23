@@ -45,22 +45,19 @@
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th style="text-align: left;" rowspan="2">Akun</th>
-                                <th style="text-align: left;" width="200" colspan="{{data.total_month}}">Budget</th>
-                            </tr>
-                            <tr>
-                                <th style="text-align: left;" width="200" ng-repeat="val in data.name_month">{{val.name}}</th>
+                                <th style="text-align: left;">Bulan</th>
+                                <th style="text-align: left;" width="200">Budget</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="row in displayed">
-                                <td style="text-align: left;">{{ row.kode}} - {{row.nama}}</td>
-                                <td style="text-align: left;" ng-repeat="val in data.name_month">
+                                <td style="text-align: left;">{{ row.name}}</td>
+                                <td style="text-align: left;">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.detail[val.number].budget" ng-change="sumTotal()"/>
+                                        <input type="text" ui-number-mask="0" class="form-control form-control-sm angka align-right" ng-model="row.detail.budget" ng-change="sumTotal()"/>
                                     </div>
                                 </td>
                             </tr>

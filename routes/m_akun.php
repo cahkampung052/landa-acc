@@ -588,7 +588,7 @@ $app->get("/acc/m_akun/getBudgetPerLokasi", function ($request, $response) {
 /**
  * Ambil budget
  */
-$app->get('/acc/m_akun/getBudget', function ($request, $response) {
+$app->get('/acc/m_akun/getBudgetBackup', function ($request, $response) {
     $params = $request->getParams();
 
     $start_month = $params['start'] . "-01";
@@ -614,19 +614,25 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
         $current_month = date("Y-m-d", strtotime('+1 month', strtotime($current_month)));
     } while ($current_month != $end_month);
 
+//    print_die($all_month);
+//    print_die($all_year);
 //    echo json_encode($all_year);
 //    die;
 
     $db = $this->db;
-    $getBudget = $db->select("*")
+    $db->select("*")
             ->from("acc_budgeting")
             ->customWhere("tahun IN (" . implode(", ", $all_year) . ")", "AND")
             ->customWhere("bulan IN (" . implode(", ", $all_month) . ")", "AND")
-            ->andWhere("m_akun_id", "=", $params['m_akun_id'])
-            ->andWhere("m_lokasi_id", "=", $params['m_lokasi_id'])
-            // ->andWhere("m_kategori_pengajuan_id", "=", $params['m_kategori_pengajuan_id'])
-            ->findAll();
+            ->andWhere("m_lokasi_id", "=", $params['m_lokasi_id']);
 
+    if (!empty($params['m_akun_id'])) {
+        $db->andWhere("m_akun_id", "=", $params['m_akun_id']);
+    }
+
+    $getBudget = $db->findAll();
+
+//    print_die($getBudget);
 //    echo json_encode($getBudget);die;
     $list = $name_month;
     foreach ($getBudget as $key => $value) {
@@ -636,6 +642,7 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
         $list[$value->bulan . "-" . $value->tahun]['detail'] = (array) $value;
     }
 
+//    print_die($list);
 //    echo json_encode($list);die;
 //    $listBudget = [];
 //    for ($i = 1; $i <= 12; $i++) {
@@ -646,33 +653,163 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
 //    }
     return successResponse($response, $list);
 });
+
+$app->get('/acc/m_akun/getBudget', function ($request, $response) {
+    $params = $request->getParams();
+    $db = $this->db;
+
+    $start_month = $params['start'] . "-01";
+    $end_month = date("Y-m-d", strtotime('+1 month', strtotime($params['end'] . "-01")));
+    $current_month = $start_month;
+
+    $name_month = [];
+    $all_year = [];
+    $all_month = [];
+    $total_month = 0;
+
+    do {
+        if (!in_array(date("Y", strtotime($current_month)), $all_year)) {
+            $all_year[] = (int) date("Y", strtotime($current_month));
+        }
+
+        if (!in_array(date("m", strtotime($current_month)), $all_month)) {
+            $all_month[] = (int) date("m", strtotime($current_month));
+        }
+
+        $name_month[date("m-Y", strtotime($current_month))]["name"] = date("F Y", strtotime($current_month));
+        $name_month[date("m-Y", strtotime($current_month))]["number"] = date("m-Y", strtotime($current_month));
+        $name_month[date("m-Y", strtotime($current_month))]["date"] = $current_month;
+        $current_month = date("Y-m-d", strtotime('+1 month', strtotime($current_month)));
+        $total_month += 1;
+    } while ($current_month != $end_month);
+
+//    print_die($all_month);
+//    print_die($all_year);
+//    print_die($name_month);
+//    echo json_encode($all_year);
+//    die;
+
+
+    /*
+     * getakun
+     */
+
+    if (!empty($params['m_akun_id'])) {
+        $childId = getChildId("acc_m_akun", $params['m_akun_id']);
+        if (!empty($childId)) {
+            $childId = implode(",", $childId);
+        } else {
+            $childId = $params['m_akun_id'];
+        }
+    }
+
+
+    $db->select("*")->from("acc_m_akun")->where("is_tipe", "=", 0);
+    if (!empty($params['m_akun_id'])) {
+        $db->customWhere("id IN($childId)", "AND");
+    }
+
+    $getAkun = $db->findAll();
+
+//    print_die($getAkun);
+
+    $db->select("acc_budgeting.*, "
+                    . "acc_m_akun.kode as kode_akun, acc_m_akun.nama as nama_akun")
+            ->from("acc_budgeting")
+            ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_budgeting.m_akun_id")
+            ->customWhere("tahun IN (" . implode(", ", $all_year) . ")", "AND")
+            ->customWhere("bulan IN (" . implode(", ", $all_month) . ")", "AND")
+            ->andWhere("acc_budgeting.m_lokasi_id", "=", $params['m_lokasi_id']);
+
+    if (!empty($params['m_akun_id'])) {
+        $db->customWhere("m_akun_id IN($childId)", "AND");
+    }
+
+    $getBudget = $db->findAll();
+
+//    print_die($getBudget);
+
+    $arr_budget = [];
+    foreach ($getBudget as $key => $value) {
+        if ($value->bulan < 10) {
+            $value->bulan = 0 . "" . $value->bulan;
+        }
+        $arr_budget[$value->m_akun_id]['detail'][$value->bulan . "-" . $value->tahun] = (array) $value;
+    }
+
+//    print_die($arr_budget);
+
+    $list = $name_month;
+    $arr = [];
+    foreach ($getAkun as $key => $value) {
+        if (empty($arr[$value->id])) {
+            $arr[$value->id]['kode'] = $value->kode;
+            $arr[$value->id]['nama'] = $value->nama;
+        }
+
+        foreach ($name_month as $k => $v) {
+            if (isset($arr_budget[$value->id]['detail'][$v['number']])) {
+                $arr[$value->id]['detail'][$v['number']] = (array) $arr_budget[$value->id]['detail'][$v['number']];
+                $arr[$value->id]['detail'][$v['number']]['date'] = $v['date'];
+            } else {
+                $arr[$value->id]['detail'][$v['number']] = (array) $value;
+                $arr[$value->id]['detail'][$v['number']]['budget'] = 0;
+                $arr[$value->id]['detail'][$v['number']]['date'] = $v['date'];
+                $arr[$value->id]['detail'][$v['number']]['m_akun_id'] = $value->id;
+            }
+        }
+//        $list[$value->bulan . "-" . $value->tahun]['detail'] = (array) $value;
+    }
+
+//    print_die($arr);
+//    echo json_encode($list);die;
+//    $listBudget = [];
+//    for ($i = 1; $i <= 12; $i++) {
+//        $j = $i;
+//        $listBudget[$i]['id'] = isset($list[$j]) ? $list[$j]['id'] : null;
+//        $listBudget[$i]['budget'] = isset($list[$j]) ? $list[$j]['budget'] : 0;
+//        $listBudget[$i]['nama_bulan'] = date('F', mktime(0, 0, 0, $i, 10)); // March
+//    }
+
+    $data['total_month'] = $total_month;
+    $data['name_month'] = $name_month;
+    return successResponse($response, ['data' => $data, 'detail' => $arr]);
+});
+
 /**
  * Simpan budget
  */
 $app->post('/acc/m_akun/saveBudget', function ($request, $response) {
     $params = $request->getParams();
+
+//    print_die($params);
+
     $db = $this->db;
     try {
         foreach ($params['detail'] as $key => $value) {
-            $data = [
-                'm_akun_id' => $params['form']['m_akun_id']['id'],
-                'm_lokasi_id' => $params['form']['m_lokasi_id']['id'],
-                // 'm_kategori_pengajuan_id' => $params['form']['m_kategori_pengajuan_id']['id'],
-                'bulan' => date('m', strtotime($value['date'])),
-                'tahun' => date('Y', strtotime($value['date'])),
-                'budget' => $value['detail']['budget']
-            ];
-            $cek = $db->select("id")
-                    ->from("acc_budgeting")
-                    ->where("m_akun_id", "=", $params['form']['m_akun_id']['id'])
-                    ->andWhere("m_akun_id", "=", $params['form']['m_lokasi_id']['id'])
-                    ->andWhere("bulan", "=", date('m', strtotime($value['date'])))
-                    ->andWhere("tahun", "=", date('Y', strtotime($value['date'])))
-                    ->find();
-            if (isset($cek->id) && !empty($cek->id)) {
-                $db->update('acc_budgeting', $data, ['id' => $cek->id]);
-            } else {
-                $db->insert('acc_budgeting', $data);
+            foreach ($value['detail'] as $k => $v) {
+                if ($v['budget'] > 0) {
+                    $data = [
+                        'm_akun_id' => $v['m_akun_id'],
+                        'm_lokasi_id' => $params['form']['m_lokasi_id']['id'],
+                        // 'm_kategori_pengajuan_id' => $params['form']['m_kategori_pengajuan_id']['id'],
+                        'bulan' => date('m', strtotime($v['date'])),
+                        'tahun' => date('Y', strtotime($v['date'])),
+                        'budget' => $v['budget']
+                    ];
+                    $cek = $db->select("id")
+                            ->from("acc_budgeting")
+                            ->where("m_akun_id", "=", $params['form']['m_akun_id']['id'])
+                            ->andWhere("m_akun_id", "=", $params['form']['m_lokasi_id']['id'])
+                            ->andWhere("bulan", "=", date('m', strtotime($v['date'])))
+                            ->andWhere("tahun", "=", date('Y', strtotime($v['date'])))
+                            ->find();
+                    if (isset($cek->id) && !empty($cek->id)) {
+                        $db->update('acc_budgeting', $data, ['id' => $cek->id]);
+                    } else {
+                        $db->insert('acc_budgeting', $data);
+                    }
+                }
             }
         }
         return successResponse($response, []);
