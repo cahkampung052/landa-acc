@@ -62,7 +62,7 @@
                             <center>
                                 <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
                                 <h2 class="header-laporan">{{data.lokasi}}</h2>
-                                <h3 class="header-laporan">Laporan Arus Kas</h3>
+                                <h3 class="header-laporan">Laporan Arus Kas Periode</h3>
                                 <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
                                 <!--<br/>-->
                             </center>
@@ -103,7 +103,7 @@
                                 </tr>
                                 <tr ng-repeat-start="(k, v) in val.detail"></tr>
                                 <tr style="background-color: #26344470">
-                                    <td colspan="{{(2+ data.jumlah_tanggal)}}">
+                                    <td colspan="{{(2 + data.jumlah_tanggal)}}">
                                         <b>{{k}}</b>
                                     </td>
                                 </tr>
@@ -144,7 +144,7 @@
                                         <b ng-if="t < 0">({{(t * -1)| number}})</b>
                                     </td>
                                 </tr>
-                                <tr><td colspan="{{(2+data.jumlah_tanggal)}}"><br/></td></tr>
+                                <tr><td colspan="{{(2 + data.jumlah_tanggal)}}"><br/></td></tr>
                                 <tr ng-repeat-end=""></tr>
                             </tbody>
                         </table>

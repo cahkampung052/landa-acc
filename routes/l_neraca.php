@@ -512,7 +512,7 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
             if (isset($val['detail'])) {
                 if (count($val['detail']) > 0) {
                     foreach ($val['detail'] as $vals) {
-                        $total += $vals['saldo2'][$b['number']];
+                        $total += !empty($vals['saldo2'][$b['number']]) ? $vals['saldo2'][$b['number']] : 0;
                     }
                 }
             }
@@ -587,7 +587,7 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
             if (isset($val['detail'])) {
                 if (count($val['detail']) > 0) {
                     foreach ($val['detail'] as $vals) {
-                        $total += $vals['saldo2'][$b['number']];
+                        $total += !empty($vals['saldo2'][$b['number']]) ? $vals['saldo2'][$b['number']] : 0;
                     }
                 }
             }
@@ -664,7 +664,7 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
             $total = 0;
             if (isset($val['detail'])) {
                 foreach ($val['detail'] as $vals) {
-                    $total += $vals['saldo2'][$b['number']];
+                    $total += !empty($vals['saldo2'][$b['number']]) ? $vals['saldo2'][$b['number']] : 0;
                 }
             }
             if ($total > 0 || $total < 0) {
@@ -675,7 +675,7 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
         }
 //        $totalKewajibanModal = $totalKewajiban + $totalModal;
         $totalKewajibanModal2[$b['number']] = (isset($totalKewajiban[$b['number']]) ? $totalKewajiban[$b['number']] : 0) + (isset($totalModal[$b['number']]) ? $totalModal[$b['number']] : 0);
-        $totalKewajibanModal2[$b['number']] = 0;
+//        $totalKewajibanModal2[$b['number']] = 0;
         /*
          * end proses harta
          */
@@ -689,9 +689,48 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
 //    print_die($totalKewajibanModal2);
 //    print_die($totalModal);
 
+    foreach ($arrHarta as $key => $value) {
+        foreach ($value['detail'] as $keys => $values) {
+            foreach ($arr_tanggal as $k => $v) {
+                if (empty($arrHarta[$key]['detail'][$keys]['saldo2'][$v['number']])) {
+                    $arrHarta[$key]['detail'][$keys]['saldo2'][$v['number']] = 0;
+                }
+                if (empty($arrHarta[$key]['detail'][$keys]['saldo_rp2'][$v['number']])) {
+                    $arrHarta[$key]['detail'][$keys]['saldo+rp2'][$v['number']] = 0;
+                }
+            }
+        }
+    }
+
+    foreach ($arrModal as $key => $value) {
+        foreach ($value['detail'] as $keys => $values) {
+            foreach ($arr_tanggal as $k => $v) {
+                if (empty($arrModal[$key]['detail'][$keys]['saldo2'][$v['number']])) {
+                    $arrModal[$key]['detail'][$keys]['saldo2'][$v['number']] = 0;
+                }
+                if (empty($arrModal[$key]['detail'][$keys]['saldo_rp2'][$v['number']])) {
+                    $arrModal[$key]['detail'][$keys]['saldo+rp2'][$v['number']] = 0;
+                }
+            }
+        }
+    }
+
+    foreach ($arrKewajiban as $key => $value) {
+        foreach ($value['detail'] as $keys => $values) {
+            foreach ($arr_tanggal as $k => $v) {
+                if (empty($arrKewajiban[$key]['detail'][$keys]['saldo2'][$v['number']])) {
+                    $arrKewajiban[$key]['detail'][$keys]['saldo2'][$v['number']] = 0;
+                }
+                if (empty($arrKewajiban[$key]['detail'][$keys]['saldo_rp2'][$v['number']])) {
+                    $arrKewajiban[$key]['detail'][$keys]['saldo+rp2'][$v['number']] = 0;
+                }
+            }
+        }
+    }
+
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
-        $content = $view->fetch('laporan/neraca.html', [
+        $content = $view->fetch('laporan/neracaPeriode.html', [
             "modelHarta" =>
                 [
                 "list" => $arrHarta,
@@ -726,7 +765,7 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
         echo $content;
     } elseif (isset($params['print']) && $params['print'] == 1) {
         $view = twigViewPath();
-        $content = $view->fetch('laporan/neraca.html', [
+        $content = $view->fetch('laporan/neracaPeriode.html', [
             "modelHarta" =>
                 [
                 "list" => $arrHarta,

@@ -47,7 +47,7 @@ app.controller('l_aruskascpCtrl', function ($scope, Data, $rootScope, $uibModal,
         } else {
             Data.get('site/base_url').then(function (response) {
 //                console.log(response)
-                window.open(response.data.base_url + "api/acc/l_arus_kas_custom/laporan?" + $.param(param), "_blank");
+                window.open(response.data.base_url + "api/acc/l_arus_kas_custom/laporan_periode?" + $.param(param), "_blank");
             });
         }
     };

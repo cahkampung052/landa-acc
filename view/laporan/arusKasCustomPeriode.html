@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="{{ css }}?t=123" rel="stylesheet" type="text/css"/>
+        <title>Arus Kas</title>
+        <style type="text/css">
+
+            .non-body  th, td {
+                border: 1px solid grey;
+            }
+            th, td{
+                padding:5px;
+                /*color:black;*/
+                /*border: 1px solid #2f2f2f;*/
+                border-width: thin;
+                vertical-align: middle;
+                font-size: 12px;
+                font-family : Arial, Helvetica, sans-serif;
+            }
+            .align-left{
+                text-align: left;
+            }
+            .align-center{
+                text-align: center;
+            }
+            .align-right{
+                text-align: right;
+            }
+            .header{
+                color: #263544;
+            }
+            thead tr th{
+                background-color: #263544;
+                color: #FFF;
+            }
+            /* .table-inline {
+              page-break-inside: avoid;
+              page-break-after: avoid;
+              page-break-before: avoid;
+            } */
+
+        </style>
+    </head>
+    <body>
+        <div class="card-body" id="print">
+            <div align="left">
+                <div class="row header-laporan-wrapper">
+                    <div class="col-md-12 relative-div">
+                        <center>
+                            <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+
+                            <h2 class="header-laporan">{{data.lokasi}}</h2>
+                            <h3 class="header-laporan">Laporan Arus Kas</h3>
+                            <p style="margin-top:3px">Periode {{data.tanggal}}</p>
+                            <!--<br/>-->
+                        </center>
+                        <!--<hr/>-->
+                    </div>
+                </div>
+                <div class="table-responsive">
+
+                    <table class="table table-hover table-laporan-striped" style="border-collapse: collapse; width: 100%">
+                        <tbody>
+                            <tr style="background-color: #263444; color: white!important;">
+                                <td rowspan="2"><b>Saldo Kas Awal</b></td>
+                                {%for k, v in data.arr_tanggal%}
+                                <td align="right">{{v.nama}}</td>
+                                {%endfor%}
+                            </tr>
+                            <tr style="background-color: #263444; color: white!important;">
+                                {%for k, v in data.saldo_awal.total%}
+                                <td align="right" style="width:270px">
+                                    {%if v >= 0%}
+                                    <b>Rp{{v| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>(Rp{{(v*-1)| number_format(0, ',', '.')}})</b>
+                                    {%endif%}
+                                </td>
+                                {%endfor%}
+                            </tr>
+                            {%for v in data.saldo_awal.detail%}
+                            {%if v.sum_total != 0%}
+                            <tr>
+                                <td style="padding-left: 30px">
+                                    {{v.kode}} - {{v.nama}}
+                                </td>
+                                {%for t in v.total%}
+                                <td align="right" style="width:270px">
+                                    {%if t and t >= 0%}
+                                    <span>Rp{{not t ? '-' : t| number_format(0, ',', '.')}}</span>
+                                    {%else%}
+                                    <span>(Rp{{not t ? '-' : (t*-1)| number_format(0, ',', '.')}})</span>
+                                    {%endif%}
+                                </td>
+                                {%endfor%}
+                            </tr>
+                            {%endif%}
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                    <!--<br/>-->
+                    <table class="table table-hover table-laporan-striped" style="border-collapse: collapse; width: 100%">
+                        <thead>
+                            <tr style="line-height: 20px; border: none">
+                                <td colspan="2" style="border: none; color: white">ENTER</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for key, val in detail%}
+                            <tr></tr>
+                            <tr style="background-color: #263444; color: white!important;">
+                                <td colspan="{{(1+data.jumlah_tanggal)}}"><b>{{val.nama}} </b> </td>
+                            </tr>
+                            {%for k, v in val.detail%}
+                            <tr style="background-color: #26344470">
+                                <td colspan="{{(1+data.jumlah_tanggal)}}">
+                                    <b>{{k}}</b>
+                                </td>
+                            </tr>
+                            {%for y in v.detail%}
+
+                            <tr>
+                                <td style="padding-left: 30px;">
+                                    {{y.akun.kode}} - {{y.akun.nama}}
+                                </td>
+                                {%for t in y.total%}
+                                <td align="right" style="width:270px">
+                                    {%if t >= 0%}
+                                    <span>Rp{{t| number_format(0, ',', '.')}}</span>
+                                    {%else%}
+                                    <span>Rp{{(t*-1)| number_format(0, ',', '.')}}</span>
+                                    {%endif%}
+                                </td>
+                                {%endfor%}
+                            </tr>
+                            {%endfor%}
+                            <tr style="background-color: #26344440">
+                                <td>
+                                    <b>TOTAL</b>
+                                </td>
+                                {%for t in v.total%}
+                                <td align="right" style="width:270px">
+                                    {%if t >= 0%}
+                                    <b>Rp{{t| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>Rp{{(t*-1)| number_format(0, ',', '.')}}</b>
+                                    {%endif%}
+                                </td>
+                                {%endfor%}
+                            </tr>
+                            <!--<tr><td colspan="2"><br/></td></tr>-->
+                            {%endfor%}
+                            <tr style="background-color: #263444; color: white!important;">
+                                <td>
+                                    <b>Kenaikan / Penurunan Kas dari {{key}}</b>
+                                </td>
+                                {%for t in val.total%}
+                                <td align="right" style="width:270px">
+                                    {%if t >= 0%}
+                                    <b>Rp{{t| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>(Rp{{(t*-1)| number_format(0, ',', '.')}})</b>
+                                    {%endif%}
+                                </td>
+                                {%endfor%}
+                            </tr>
+                            <!--<tr><td colspan="2"><br/></td></tr>-->
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                    <!--<br/>-->
+
+                    <!-- last table -->
+                    <table class="table table-hover table-laporan-striped table-inline" style="border-collapse: collapse; width: 100%">
+                        <thead>
+                            <tr style="line-height: 20px; border: none">
+                                <td colspan="2" style="border: none; color: white">ENTER</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background-color: #263444; color: white!important;">
+                                <td>
+                                    <b>{{'KENAIKAN / PENURUNAN KAS'}}</b>
+                                </td>
+                                {%for t in data.saldo_biaya%}
+                                <td align="right" style="width:270px">
+                                    {%if t >= 0%}
+                                    <b>Rp{{t| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>(Rp{{(t*-1)| number_format(0, ',', '.')}})</b>
+                                    {%endif%}
+                                </td>
+                                {%endfor%}
+                            </tr>
+                            <tr style="background-color: #263444; color: white!important;">
+                                <td><b>Saldo Kas Akhir</b></td>
+                                {%for t in data.saldo_akhir.total%}
+                                <td align="right" style="width:270px">
+                                    {%if t >= 0%}
+                                    <b>Rp{{t| number_format(0, ',', '.')}}</b>
+                                    {%else%}
+                                    <b>(Rp{{(t*-1)| number_format(0, ',', '.')}})</b>
+                                    {%endif%}
+                                </td>
+                                {%endfor%}
+                            </tr>
+                            {%for v in data.saldo_akhir.detail%}
+                            {%if v.sum_total != 0%}
+                            <tr>
+                                <td style="padding-left: 30px">
+                                    {{v.kode}} - {{v.nama}}
+                                </td>
+                                {%for t in v.total%}
+                                <td align="right" style="width:270px">
+                                    {%if t and t >= 0%}
+                                    <span>Rp{{not t ? '-' : t| number_format(0, ',', '.')}}</span>
+                                    {%else%}
+                                    <span>(Rp{{not t ? '-' : (t*-1)| number_format(0, ',', '.')}})</span>
+                                    {%endif%}
+                                </td>
+                                {%endfor%}
+                            </tr>
+                            {%endif%}
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

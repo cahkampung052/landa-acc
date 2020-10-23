@@ -5,7 +5,7 @@ app.controller('l_perubahanmodalCtrl', function ($scope, Data, $rootScope, $stat
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
-    
+
     /**
      * Ambil semua lokasi
      */
@@ -48,7 +48,7 @@ app.controller('l_perubahanmodalCtrl', function ($scope, Data, $rootScope, $stat
         } else {
             Data.get('site/base_url').then(function (response) {
 //                console.log(response)
-                window.open(response.data.base_url + "api/acc/l_buku_besar/laporan?" + $.param(param), "_blank");
+                window.open(response.data.base_url + "api/acc/l_perubhan_modal/laporan?" + $.param(param), "_blank");
             });
         }
     };

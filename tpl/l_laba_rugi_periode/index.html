@@ -95,8 +95,8 @@
                                     <th rowspan="2">
                                         <b>AKUN</b>
                                     </th>
-                                    <th width="100" class="align-center" colspan="{{data.jumlah_bulan}}">
-                                        <b>NOMINAL</b>
+                                    <th width="100" class="align-right" colspan="{{data.jumlah_bulan}}">
+                                        <b>BULAN</b>
                                     </th>
                                 </tr>
                                 <tr>
@@ -206,7 +206,9 @@
                             </tbody>
                             <tbody>
                                 <tr>
-                                    <td></td>
+                                    <td align="right">
+                                        <b style="color:#327037; font-size: 18px">LABA</b> <b style="color:#327037; font-size: 18px">/</b> <b style="color:red; font-size: 18px">RUGI</b>
+                                    </td>
                                     <td align="right" class="text-right" ng-repeat="t in data.total">
                                         <b style="color: green; font-size: 18px" ng-if="t >= 0">
                                             {{ t | number }}

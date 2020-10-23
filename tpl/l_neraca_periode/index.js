@@ -1,4 +1,4 @@
-app.controller('l_neracaCtrl', function ($scope, Data, $rootScope, $uibModal, $state) {
+app.controller('l_neracapCtrl', function ($scope, Data, $rootScope, $uibModal, $state) {
     var control_link = "acc/l_neraca";
     $scope.form = {};
     $scope.url = {};
@@ -45,7 +45,7 @@ app.controller('l_neracaCtrl', function ($scope, Data, $rootScope, $uibModal, $s
             });
         } else {
             Data.get('site/base_url').then(function (response) {
-                window.open(response.data.base_url + "api/acc/l_neraca/laporan?" + $.param(param), "_blank");
+                window.open(response.data.base_url + "api/acc/l_neraca/laporan_periode?" + $.param(param), "_blank");
             });
 
         }

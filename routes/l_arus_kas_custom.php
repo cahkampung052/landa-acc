@@ -540,26 +540,42 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
                 $tipe = $k;
 
                 if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']])) {
-                    $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'][$b['number']] += $value['total'];
+                    if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'][$b['number']])) {
+                        $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'][$b['number']] += $value['total'];
+                    } else {
+                        $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'][$b['number']] = $value['total'];
+                    }
                 } else {
                     $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['total'][$b['number']] = $value['total'];
                     $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['detail'][$value['akun']['kode']]['akun'] = $value['akun'];
                 }
 
                 if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'])) {
-                    $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'][$b['number']] += $value['total'];
+                    if (isset($arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'][$b['number']])) {
+                        $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'][$b['number']] += $value['total'];
+                    } else {
+                        $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'][$b['number']] = $value['total'];
+                    }
                 } else {
                     $arr[$value['akun']['tipe_arus']]['detail'][$tipe]['total'][$b['number']] = $value['total'];
                 }
 
                 if (isset($arr[$value['akun']['tipe_arus']]['total'])) {
-                    $arr[$value['akun']['tipe_arus']]['total'][$b['number']] += $value['total'];
+                    if (isset($arr[$value['akun']['tipe_arus']]['total'][$b['number']])) {
+                        $arr[$value['akun']['tipe_arus']]['total'][$b['number']] += $value['total'];
+                    } else {
+                        $arr[$value['akun']['tipe_arus']]['total'][$b['number']] = $value['total'];
+                    }
                 } else {
                     $arr[$value['akun']['tipe_arus']]['total'][$b['number']] = $value['total'];
                 }
 
                 if ($value['akun']['tipe_arus'] != 'Tidak Terklasifikasi') {
-                    $data['saldo_biaya'][$b['number']] += $value['total'];
+                    if (isset($data['saldo_biaya'][$b['number']])) {
+                        $data['saldo_biaya'][$b['number']] += $value['total'];
+                    } else {
+                        $data['saldo_biaya'][$b['number']] = $value['total'];
+                    }
                 }
             }
         }
@@ -622,9 +638,23 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
 //
             foreach ($saldo_awal as $key => $value) {
                 if (isset($arrAwal['detail'][$value->kodeAkun]['debit'])) {
-                    $arrAwal['detail'][$value->kodeAkun]['debit'][$b['number']] += $value->debit;
-                    $arrAwal['detail'][$value->kodeAkun]['kredit'][$b['number']] += $value->kredit;
-                    $arrAwal['detail'][$value->kodeAkun]['total'][$b['number']] += $value->debit - $value->kredit;
+                    if (isset($arrAwal['detail'][$value->kodeAkun]['debit'][$b['number']])) {
+                        $arrAwal['detail'][$value->kodeAkun]['debit'][$b['number']] += $value->debit;
+                    } else {
+                        $arrAwal['detail'][$value->kodeAkun]['debit'][$b['number']] = $value->debit;
+                    }
+
+                    if (isset($arrAwal['detail'][$value->kodeAkun]['kredit'][$b['number']])) {
+                        $arrAwal['detail'][$value->kodeAkun]['kredit'][$b['number']] += $value->kredit;
+                    } else {
+                        $arrAwal['detail'][$value->kodeAkun]['kredit'][$b['number']] = $value->kredit;
+                    }
+
+                    if (isset($arrAwal['detail'][$value->kodeAkun]['total'][$b['number']])) {
+                        $arrAwal['detail'][$value->kodeAkun]['total'][$b['number']] += $value->debit - $value->kredit;
+                    } else {
+                        $arrAwal['detail'][$value->kodeAkun]['total'][$b['number']] = $value->debit - $value->kredit;
+                    }
                     $arrAwal['detail'][$value->kodeAkun]['sum_total'] += $value->debit - $value->kredit;
                 } else {
                     $arrAwal['detail'][$value->kodeAkun]['debit'][$b['number']] = $value->debit;
@@ -634,7 +664,11 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
                 }
 
                 if (isset($arrAwal['total'])) {
-                    $arrAwal['total'][$b['number']] += $value->debit - $value->kredit;
+                    if (isset($arrAwal['total'][$b['number']])) {
+                        $arrAwal['total'][$b['number']] += $value->debit - $value->kredit;
+                    } else {
+                        $arrAwal['total'][$b['number']] = $value->debit - $value->kredit;
+                    }
                 } else {
                     $arrAwal['total'][$b['number']] = !empty($value->debit) ? $value->debit - $value->kredit : 0;
                 }
@@ -644,9 +678,23 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
 //
             foreach ($akun_merge_kas as $key => $value) {
                 if (isset($arrPeriode['detail'][$value['kodeAkun']]['debit'])) {
-                    $arrPeriode['detail'][$value['kodeAkun']]['debit'][$b['number']] += $value['debit'];
-                    $arrPeriode['detail'][$value['kodeAkun']]['kredit'][$b['number']] += $value['kredit'];
-                    $arrPeriode['detail'][$value['kodeAkun']]['total'][$b['number']] += $value['debit'] - $value['kredit'];
+                    if (isset($arrPeriode['detail'][$value['kodeAkun']]['debit'][$b['number']])) {
+                        $arrPeriode['detail'][$value['kodeAkun']]['debit'][$b['number']] += $value['debit'];
+                    } else {
+                        $arrPeriode['detail'][$value['kodeAkun']]['debit'][$b['number']] = $value['debit'];
+                    }
+
+                    if (isset($arrPeriode['detail'][$value['kodeAkun']]['kredit'][$b['number']])) {
+                        $arrPeriode['detail'][$value['kodeAkun']]['kredit'][$b['number']] += $value['kredit'];
+                    } else {
+                        $arrPeriode['detail'][$value['kodeAkun']]['kredit'][$b['number']] = $value['kredit'];
+                    }
+
+                    if (isset($arrPeriode['detail'][$value['kodeAkun']]['total'][$b['number']])) {
+                        $arrPeriode['detail'][$value['kodeAkun']]['total'][$b['number']] += $value['debit'] - $value['kredit'];
+                    } else {
+                        $arrPeriode['detail'][$value['kodeAkun']]['total'][$b['number']] = $value['debit'] - $value['kredit'];
+                    }
                 } else {
                     $arrPeriode['detail'][$value['kodeAkun']]['debit'][$b['number']] = $value['debit'];
                     $arrPeriode['detail'][$value['kodeAkun']]['kredit'][$b['number']] = $value['kredit'];
@@ -654,7 +702,11 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
                 }
 
                 if (isset($arrPeriode['total'])) {
-                    $arrPeriode['total'][$b['number']] += $value['debit'] - $value['kredit'];
+                    if (isset($arrPeriode['total'][$b['number']])) {
+                        $arrPeriode['total'][$b['number']] += $value['debit'] - $value['kredit'];
+                    } else {
+                        $arrPeriode['total'][$b['number']] = $value['debit'] - $value['kredit'];
+                    }
                 } else {
                     $arrPeriode['total'][$b['number']] = !empty($value['debit']) ? $value['debit'] - $value['kredit'] : 0;
                 }
@@ -662,9 +714,23 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
 
             foreach ($saldo_akhir as $key => $value) {
                 if (isset($arrAkhir['detail'][$value->kodeAkun]['debit'])) {
-                    $arrAkhir['detail'][$value->kodeAkun]['debit'][$b['number']] += $value->debit;
-                    $arrAkhir['detail'][$value->kodeAkun]['kredit'][$b['number']] += $value->kredit;
-                    $arrAkhir['detail'][$value->kodeAkun]['total'][$b['number']] += $value->debit - $value->kredit;
+                    if (isset($arrAkhir['detail'][$value->kodeAkun]['debit'][$b['number']])) {
+                        $arrAkhir['detail'][$value->kodeAkun]['debit'][$b['number']] += $value->debit;
+                    } else {
+                        $arrAkhir['detail'][$value->kodeAkun]['debit'][$b['number']] = $value->debit;
+                    }
+
+                    if (isset($arrAkhir['detail'][$value->kodeAkun]['kredit'][$b['number']])) {
+                        $arrAkhir['detail'][$value->kodeAkun]['kredit'][$b['number']] += $value->kredit;
+                    } else {
+                        $arrAkhir['detail'][$value->kodeAkun]['kredit'][$b['number']] = $value->kredit;
+                    }
+
+                    if (isset($arrAkhir['detail'][$value->kodeAkun]['total'][$b['number']])) {
+                        $arrAkhir['detail'][$value->kodeAkun]['total'][$b['number']] += $value->debit - $value->kredit;
+                    } else {
+                        $arrAkhir['detail'][$value->kodeAkun]['total'][$b['number']] = $value->debit - $value->kredit;
+                    }
                     $arrAkhir['detail'][$value->kodeAkun]['sum_total'] += $value->debit - $value->kredit;
                 } else {
                     $arrAkhir['detail'][$value->kodeAkun]['debit'][$b['number']] = $value->debit;
@@ -674,7 +740,11 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
                 }
 
                 if (isset($arrAkhir['total'])) {
-                    $arrAkhir['total'][$b['number']] += $value->debit - $value->kredit;
+                    if (isset($arrAkhir['total'][$b['number']])) {
+                        $arrAkhir['total'][$b['number']] += $value->debit - $value->kredit;
+                    } else {
+                        $arrAkhir['total'][$b['number']] = $value->debit - $value->kredit;
+                    }
                 } else {
                     $arrAkhir['total'][$b['number']] = !empty($value->debit) ? $value->debit - $value->kredit : 0;
                 }
@@ -722,15 +792,15 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
     foreach ($arr as $key => $value) {
 //        print_die($value);
         foreach ($arr_tanggal as $q => $w) {
-            if (!isset($value['total'][$b['number']])) {
-                $arr[$key]['total'][$b['number']] = 0;
+            if (!isset($value['total'][$w['number']])) {
+                $arr[$key]['total'][$w['number']] = 0;
             }
         }
         foreach ($value['detail'] as $k => $v) {
 //            print_die($v);
             foreach ($arr_tanggal as $x => $y) {
-                if (!isset($v['total'][$b['number']])) {
-                    $arr[$key]['detail'][$k]['total'][$b['number']] = 0;
+                if (!isset($v['total'][$y['number']])) {
+                    $arr[$key]['detail'][$k]['total'][$y['number']] = 0;
                 }
             }
             foreach ($v['detail'] as $kk => $vv) {
@@ -750,7 +820,7 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
 
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
-        $content = $view->fetch('laporan/arusKasCustom.html', [
+        $content = $view->fetch('laporan/arusKasCustomPeriode.html', [
             "data" => $data,
             "detail" => $arr,
             "css" => modulUrl() . '/assets/css/style.css',
@@ -760,7 +830,7 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
         echo $content;
     } elseif (isset($params['print']) && $params['print'] == 1) {
         $view = twigViewPath();
-        $content = $view->fetch('laporan/arusKasCustom.html', [
+        $content = $view->fetch('laporan/arusKasCustomPeriode.html', [
             "data" => $data,
             "detail" => $arr,
             "css" => modulUrl() . '/assets/css/style.css',

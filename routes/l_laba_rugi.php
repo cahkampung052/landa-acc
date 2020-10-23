@@ -228,9 +228,9 @@ $app->get('/acc/l_laba_rugi/laporan_periode', function ($request, $response) {
 
     if (isset($params['export']) && $params['export'] == 1) {
         $view = twigViewPath();
-        $content = $view->fetch('laporan/labaRugi.html', [
+        $content = $view->fetch('laporan/labaRugiPeriode.html', [
             "data" => $data,
-            "detail" => $arr,
+            "detail" => $arr_hasil,
             "totalsemua" => $data['total'],
             "css" => modulUrl() . '/assets/css/style.css',
         ]);
@@ -239,9 +239,9 @@ $app->get('/acc/l_laba_rugi/laporan_periode', function ($request, $response) {
         echo $content;
     } elseif (isset($params['print']) && $params['print'] == 1) {
         $view = twigViewPath();
-        $content = $view->fetch('laporan/labaRugi.html', [
+        $content = $view->fetch('laporan/labaRugiPeriode.html', [
             "data" => $data,
-            "detail" => $arr,
+            "detail" => $arr_hasil,
             "totalsemua" => $data['total'],
             "css" => modulUrl() . '/assets/css/style.css',
         ]);

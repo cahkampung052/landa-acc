@@ -1,0 +1,91 @@
+<link href="{{ css}}?t=123" rel="stylesheet" type="text/css"/>
+<div class="card-body" id="print" ng-show="tampilkan">
+    <div align="left">
+        <div class="row">
+            <div class="col-md-12 relative-div">
+                <center>
+                    <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                    <h2 class="header-laporan">{{data.lokasi}}</h2>
+                    <h3 class="header-laporan">Laporan Laba Rugi Periode</h3>
+                    <p style="margin-top:3px">Periode {{data.tanggal}}</p>
+                    <!--<br/>-->
+                </center>
+            </div>
+        </div>
+        <!--<br/>-->
+        <div>
+            <div class="table-responsive">
+                <table class="table table-laporan-border" style="border-collapse: collapse; width: 100%">
+                    <thead>
+                        <tr style="background-color: #263444">
+                            <th rowspan="2">
+                                <b>AKUN</b>
+                            </th>
+                            <th style="width: 100px" colspan="{{data.jumlah_bulan}}">
+                                <b>BULAN</b>
+                            </th>
+                        </tr>
+                        <tr style="background-color: #263444">
+                            {%for k, v in data.arr_tanggal%}
+                            <th class="align-right">
+                                {{v.nama}}
+                            </th>
+                            {%endfor%}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for key, val in detail%}
+                        <tr style="background-color: #fff">
+                            <td align="left" style="vertical-align: top" colspan="{{1 + data.jumlah_bulan}}">
+                                <b>{{ key|replace({'_': ' '})}}</b>
+                            </td>
+                        </tr>
+                        {%for k, vals in val.detail%}
+                        {%if data.is_detail == 0 and vals.is_tipe == 1%}
+                        <tr style="background-color: #fff">
+                            <td align="left" style="vertical-align: top">{{ vals.nama | raw }}</td>
+                            {%for k, v in vals.nominal_perbulan%}
+                            <td align="right" class="text-right" style="vertical-align: top">Rp{{ v | number_format(0, ',', '.') }}</td>
+                            {%endfor%}
+                        </tr>
+                        {%endif%}
+                        {%if data.is_detail == 1%}
+                        <tr style="background-color: #fff">
+                            <td align="left" style="vertical-align: top">{{ vals.nama | raw }}</td>
+                            {%for k, v in vals.nominal_perbulan%}
+                            <td align="right" class="text-right" style="vertical-align: top">Rp{{ v | number_format(0, ',', '.') }}</td>
+                            {%endfor%}
+                        </tr>
+                        {%endif%}
+                        {% endfor %}
+                        <tr style="background-color: #fff">
+                            <td align="right" class="text-right" style="vertical-align: top">
+                                <b>TOTAL {{ key|replace({'_': ' '}) }}</b>
+                            </td>
+                            {%for k, v in val.total_perbulan%}
+                            <td align="right" class="text-right" style="vertical-align: top">
+                                <b>Rp{{ v | number_format(0, ',', '.') }}</b>
+                            </td>
+                            {%endfor%}
+                        </tr>
+                        {%endfor%}
+                        <tr style="background-color: #fff">
+                            <td align="right">
+                                <b style="color:#327037">LABA</b> / <b style="color:red">RUGI</b>
+                            </td>
+                            {%for k, v in data.total%}
+                            <td align="right" class="text-right">
+                                {%if v >= 0%}
+                                <b style="color: #327037">Rp{{ v | number_format(0, ',', '.') }}</b>
+                                {%else%}
+                                <b style="color:red">(Rp{{ (v * -1) | number_format(0, ',', '.')}})</b>
+                                {%endif%}
+                            </td>
+                            {%endfor%}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

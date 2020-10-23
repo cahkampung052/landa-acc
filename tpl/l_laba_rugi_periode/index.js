@@ -47,7 +47,7 @@ app.controller('l_labarugiperiodeCtrl', function($scope, Data, $rootScope, $uibM
             });
         } else {
             Data.get('site/base_url').then(function(response) {
-                window.open(response.data.base_url + "api/acc/l_laba_rugi/laporan?" + $.param(param), "_blank");
+                window.open(response.data.base_url + "api/acc/l_laba_rugi/laporan_periode?" + $.param(param), "_blank");
             });
         }
     };
