@@ -293,8 +293,8 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     }
 
     $models = $db->findAll();
-    
-    print_die($models);
+
+//    print_die($models);
 
     $totalItem = $db->count();
     $listAkun = buildTreeAkun($models, 0);
@@ -535,8 +535,14 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     $data['is_deleted'] = 0;
 
                     $data['m_lokasi_id'] = !empty($_SESSION['user']['lokasi_id']) ? $_SESSION['user']['lokasi_id'] : null;
-                    $tes[] = $data;
-                    $cekkode = $db->select("*")->from("acc_m_akun")->where("kode", "=", $kode)->find();
+//                    $tes[] = $data;
+                    $db->select("*")->from("acc_m_akun")->where("kode", "=", $kode);
+
+                    if (!empty($data['m_lokasi_id'])) {
+                        $db->where("acc_m_akun.m_lokasi_id", "=", $data['m_lokasi_id']);
+                    }
+
+                    $cekkode = $db->find();
                     if ($cekkode) {
                         $update = $db->update("acc_m_akun", $data, ["kode" => $kode]);
                     } else {
@@ -545,7 +551,7 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                 }
             }
 
-//            pd($tes);
+//            print_die($tes);
             unlink($inputFileName);
             return successResponse($response, 'data berhasil di import');
         } else {
