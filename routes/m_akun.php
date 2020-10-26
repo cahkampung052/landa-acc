@@ -268,9 +268,11 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
     /**
      * List akun
      */
-    $db->select("acc_m_akun.*, induk.nama as nama_induk, induk.kode as kode_induk")
+    $db->select("acc_m_akun.*, induk.nama as nama_induk, induk.kode as kode_induk, "
+                    . "acc_m_lokasi.kode as kode_lokasi, acc_m_lokasi.nama as nama_lokasi")
             ->from("acc_m_akun")
             ->leftJoin("acc_m_akun as induk", "induk.id = acc_m_akun.parent_id")
+            ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_m_akun.m_lokasi_id")
             ->orderBy('acc_m_akun.kode');
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
@@ -314,6 +316,7 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $arr[$key]['kode'] = str_replace($value->kode_induk . "", "", $value->kode);
         $arr[$key]['saldo'] = $saldo;
         $arr[$key]['tipe'] = ($value->tipe == 'No Type') ? '' : $value->tipe;
+        $arr[$key]['m_lokasi_id'] = !empty($value->m_lokasi_id) ? ['id' => $value->m_lokasi_id, 'kode' => $value->kode_lokasi, 'nama' => $value->nama_lokasi] : null;
     }
     return successResponse($response, ['list' => $arr, 'totalItems' => $totalItem]);
 });
