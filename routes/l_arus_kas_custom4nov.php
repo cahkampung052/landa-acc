@@ -118,7 +118,7 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     $penerimaan = jurnalKas($data_penerimaan);
     $pengeluaran = jurnalKas($data_pengeluaran);
 
-//    print_die($penerimaan);
+//    pd($penerimaan);
 //    pd($pengeluaran);
 //    $akun_merge = array_merge($penerimaan['data']['total_akun']['kredit'], $pengeluaran['data']['total_akun']['debit']);
     $akun_merge_fix = [];
@@ -813,55 +813,7 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
         }
     }
 
-//    print_die($data['saldo_awal']);
-
-    foreach ($data['saldo_awal']['detail'] as $key => $value) {
-        if (isset($value['debit'])) {
-            foreach ($arr_tanggal as $a => $b) {
-                if (!isset($value['debit'][$b['number']])) {
-                    $data['saldo_awal']['detail'][$key]['debit'][$b['number']] = 0;
-                }
-            }
-        }
-        if (isset($value['kredit'])) {
-            foreach ($arr_tanggal as $a => $b) {
-                if (!isset($value['kredit'][$b['number']])) {
-                    $data['saldo_awal']['detail'][$key]['kredit'][$b['number']] = 0;
-                }
-            }
-        }
-        if (isset($value['total'])) {
-            foreach ($arr_tanggal as $a => $b) {
-                if (!isset($value['total'][$b['number']])) {
-                    $data['saldo_awal']['detail'][$key]['total'][$b['number']] = 0;
-                }
-            }
-        }
-    }
-
-    foreach ($data['saldo_akhir']['detail'] as $key => $value) {
-        if (isset($value['debit'])) {
-            foreach ($arr_tanggal as $a => $b) {
-                if (!isset($value['debit'][$b['number']])) {
-                    $data['saldo_akhir']['detail'][$key]['debit'][$b['number']] = 0;
-                }
-            }
-        }
-        if (isset($value['kredit'])) {
-            foreach ($arr_tanggal as $a => $b) {
-                if (!isset($value['kredit'][$b['number']])) {
-                    $data['saldo_akhir']['detail'][$key]['kredit'][$b['number']] = 0;
-                }
-            }
-        }
-        if (isset($value['total'])) {
-            foreach ($arr_tanggal as $a => $b) {
-                if (!isset($value['total'][$b['number']])) {
-                    $data['saldo_akhir']['detail'][$key]['total'][$b['number']] = 0;
-                }
-            }
-        }
-    }
+//    print_die($arr);
 
     $data['arr_tanggal'] = $arr_tanggal;
     $data['jumlah_tanggal'] = count($arr_tanggal);

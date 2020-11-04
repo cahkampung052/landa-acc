@@ -1,0 +1,234 @@
+<div class="animated fadeIn">
+    <div ng-controller="l_neracaCtrl">
+        <div class="card">
+            <div class="card-header">
+                <strong>Laporan Posisi Keuangan</strong>
+                <!-- <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()" ng-if="user.akses.pengecualian_neraca">
+                    <i class="fa fa-gear"></i>
+                    Setting Pengecualian
+                </button> -->
+            </div>
+            <div class="card-body p-0px">
+                <div class="pl-15px pr-15px">
+                    <div class="row mt-15px">
+                        <div class="col-md-12">
+                            <form name="landaform" novalidate="">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" ng-disabled="is_view"/>
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row col-md-3">
+                                        <div class="col-md-12">
+                                            <label class="i-checks col-form-label-sm">
+                                                <input ng-disabled="is_view" ng-model="SembunyikanSub" ng-true-value="1" ng-false-value="0" type="checkbox"/>
+                                                <i></i>
+                                                Sembunyikan Sub Akun
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary btn-sm" ng-click="view(0, 0)">
+                                                <i class="fa fa-search"></i>
+                                                Tampilkan
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" ng-show="tampilkan">
+            <div class="card-header card-header-white">
+                <div class="pull-right">
+                    <button class="btn btn-outline-success btn-sm" ng-click="view(1, 0)">
+                        <i class="fa fa-file"></i>
+                        Excel
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm" ng-click="view(0, 1)">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row header-laporan-wrapper">
+                    <div class="col-md-12 relative-div">
+                        <center>
+                            <img src="{{data.img}}" class="absolute-div-center" style="height: 90px">
+                            <h2 class="header-laporan">{{data.lokasi}}</h2>
+                            <h3 class="header-laporan">Laporan Posisi Keuangan</h3>
+                            <p class="mt-15px">Periode {{ data.tanggal}}</p>
+                        </center>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th colspan="2">
+                                    <span class="text-blue-neraca">Harta</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="val in data.modelHarta.list">
+                            <tr ng-if="SembunyikanSub == 1">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.total | number}}</span>
+                                </td>
+                            </tr>
+                            <tr ng-if="SembunyikanSub == 0">
+                                <td colspan="2" style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="row in val.detail" ng-if="SembunyikanSub == 0">
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
+                            </tr>
+                            <tr ng-if="SembunyikanSub == 0">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700; padding-left: 20px!important">Total {{ val.nama}}</span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.total| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span class="text-black-neraca" style="font-weight: 700">Total Harta</span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span class="text-black-neraca"  style="font-weight: bold;">{{ data.modelHarta.total| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th colspan="2">
+                                    <span class="text-blue-neraca" style="font-weight: 700">Kewajiban</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="val in data.modelKewajiban.list">
+                            <tr ng-if="SembunyikanSub == 1">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.total | number}}</span>
+                                </td>
+                            </tr>
+                            <tr ng-if="SembunyikanSub == 0">
+                                <td colspan="2" style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="row in val.detail" ng-if="SembunyikanSub == 0">
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
+                            </tr>
+                            <tr ng-if="SembunyikanSub == 0">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700; padding-left: 20px!important">Total {{ val.nama}}</span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.total| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span class="text-blue-neraca" style="font-weight: 700">Total Kewajiban</span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ data.modelKewajiban.total| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th colspan="2">
+                                    <span class="text-blue-neraca">Modal</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="val in data.modelModal.list">
+                            <tr ng-if="SembunyikanSub == 1">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.total | number}}</span>
+                                </td>
+                            </tr>
+                            <tr ng-if="SembunyikanSub == 0">
+                                <td colspan="2" style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="row in val.detail" ng-if="SembunyikanSub == 0">
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;">{{ row.saldo_rp| number }}</td>
+                            </tr>
+                            <tr ng-if="SembunyikanSub == 0">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700; padding-left: 20px!important">Total {{ val.nama}}</span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.total| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span class="text-blue-neraca" style="font-weight: 700">Total Modal</span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ data.modelModal.total| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span class="text-black-neraca" style="font-weight: 700">Total Kewajiban dan Modal</span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span class="text-black-neraca" style="font-weight: bold;">{{ data.modelKewajibanModal.total| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

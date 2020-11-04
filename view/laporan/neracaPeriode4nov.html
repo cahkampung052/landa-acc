@@ -13,7 +13,7 @@
             <center>
                 <img src="{{img}}" class="absolute-div-center" style="width:200px">
                 <h2 class="header-laporan">{{lokasi}}</h2>
-                <h3 class="header-laporan">Laporan Neraca Periode</h3>
+                <h3 class="header-laporan">Laporan Posisi Keuangan Periode</h3>
                 <p style="margin-top:3px">Periode {{tanggal}}</p>
                 <!--<br/>-->
             </center>
@@ -25,11 +25,11 @@
         <table class="table table-laporan-border table-white" style="border-collapse: collapse;width:100%">
             <tbody>
                 <tr class="non-body">
-                    <th align="left" class="border-right-half">
+                    <th align="left">
                         <span class="text-blue-neraca">Harta</span>
                     </th>
                     {%for key, val in arr_tanggal%}
-                    <th align="right" class="border-right-half">
+                    <th align="right">
                         <span class="text-blue-neraca">{{val.nama}}</span>
                     </th>
                     {%endfor%}
@@ -44,11 +44,7 @@
                     </td>
                     {%for k, v in val.total%}
                     <td style="text-align: right">
-                        {%if v != 0%}
                         <span style="color: #0055ef;">Rp{{ v | number_format(0, ',', '.')}}</span>
-                        {%elseif v == 0%}
-                        <span style="color: #0055ef;">-</span>
-                        {%endif%}
                     </td>
                     {%endfor%}
                 </tr>
@@ -64,14 +60,7 @@
                 <tr>
                     <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode}} - {{row.nama}}</td>
                     {%for k, v in row.saldo_rp2%}
-                    <td ng-if="row.is_tipe == 0" style="text-align: right;">
-                        {%if v != 0%}
-                        Rpss{{ v | number_format(0, ',', '.')}}
-                        {%elseif v == 0%}
-                        -
-                        {%endif%}
-
-                    </td>
+                    <td ng-if="row.is_tipe == 0" style="text-align: right;">Rp{{ v | number_format(0, ',', '.')}}</td>
                     {%endfor%}
                 </tr>
                 {% endfor %}
@@ -81,11 +70,7 @@
                     </td>
                     {%for k, v in val.total%}
                     <td style="text-align: right">
-                        {%if v != 0%}
                         <span style="color: #0055ef;">Rp{{ v | number_format(0, ',', '.')}}</span>
-                        {%elseif v == 0%}
-                        <span style="color: #0055ef;">-</span>
-                        {%endif%}
                     </td>
                     {%endfor%}
                 </tr>
@@ -99,11 +84,7 @@
                     </th>
                     {%for k, v in modelHarta.total%}
                     <th style="text-align: right">
-                        {%if v != 0%}
                         <span class="text-black-neraca"  style="font-weight: bold;">Rp{{ v | number_format(0, ',', '.')}}</span>
-                        {%elseif v == 0%}
-                        <span class="text-black-neraca"  style="font-weight: bold;">-</span>
-                        {%endif%}
                     </th>
                     {%endfor%}
                 </tr>
@@ -129,11 +110,7 @@
                     </td>
                     {%for k, v in val.total%}
                     <td style="text-align: right">
-                        {%if v != 0%}
                         <span style="color: #0055ef;">Rp{{ v | number_format(0, ',', '.')}}</span>
-                        {%elseif v == 0%}
-                        <span style="color: #0055ef;">-</span>
-                        {%endif%}
                     </td>
                     {%endfor%}
                 </tr>
@@ -148,13 +125,7 @@
                 <tr>
                     <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode}} - {{row.nama}}</td>
                     {%for k, v in row.saldo_rp2%}
-                    <td ng-if="row.is_tipe == 0" style="text-align: right;">
-                        {%if v != 0%}
-                        Rp{{ v | number_format(0, ',', '.')}}
-                        {%elseif v == 0%}
-                        -
-                        {%endif%}
-                    </td>
+                    <td ng-if="row.is_tipe == 0" style="text-align: right;">Rp{{ v | number_format(0, ',', '.')}}</td>
                     {%endfor%}
                 </tr>
                 {% endfor %}
@@ -164,11 +135,7 @@
                     </td>
                     {%for k, v in val.total%}
                     <td style="text-align: right">
-                        {%if v != 0%}
                         <span style="color: #0055ef;">Rp{{ v | number_format(0, ',', '.')}}</span>
-                        {%elseif v == 0%}
-                        <span style="color: #0055ef;">-</span>
-                        {%endif%}
                     </td>
                     {%endfor%}
                 </tr>
@@ -182,11 +149,7 @@
                     </th>
                     {%for k, v in modelKewajiban.total%}
                     <th style="text-align: right">
-                        {%if v != 0%}
                         <span class="text-blue-neraca"  style="font-weight: bold;">Rp{{ v | number_format(0, ',', '.')}}</span>
-                        {%elseif v == 0%}
-                        <span class="text-blue-neraca"  style="font-weight: bold;">-</span>
-                        {%endif%}
                     </th>
                     {%endfor%}
                 </tr>
@@ -212,11 +175,7 @@
                     </td>
                     {%for k, v in val.total%}
                     <td style="text-align: right">
-                        {%if v != 0%}
                         <span style="color: #0055ef;">Rp{{ v | number_format(0, ',', '.')}}</span>
-                        {%elseif v == 0%}
-                        <span style="color: #0055ef;">-</span>
-                        {%endif%}
                     </td>
                     {%endfor%}
                 </tr>
@@ -231,12 +190,7 @@
                 <tr>
                     <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode}} - {{row.nama}}</td>
                     {%for k, v in row.saldo_rp2%}
-                    <td ng-if="row.is_tipe == 0" style="text-align: right;">
-                        {%if v != 0%}
-                        Rp{{ v | number_format(0, ',', '.')}}</td>
-                    {%elseif v == 0%}
-                    Rp{{ v | number_format(0, ',', '.')}}</td>
-                    {%endif%}
+                    <td ng-if="row.is_tipe == 0" style="text-align: right;">Rp{{ v | number_format(0, ',', '.')}}</td>
                     {%endfor%}
                 </tr>
                 {% endfor %}
@@ -246,13 +200,9 @@
                     </td>
                     {%for k, v in val.total%}
                     <td style="text-align: right">
-                        {%if v != 0%}
                         <span style="color: #0055ef;">Rp{{ v | number_format(0, ',', '.')}}</span>
-                        {%elseif v == 0%}
-                        <span style="color: #0055ef;">-</span>
-                        {%endif%}
+                        {%endfor%}
                     </td>
-                    {%endfor%}
                 </tr>
                 {%endif%}
             </tbody>
@@ -264,11 +214,7 @@
                     </th>
                     {%for k, v in modelModal.total%}
                     <th style="text-align: right">
-                        {%if v != 0%}
                         <span class="text-blue-neraca"  style="font-weight: bold;">Rp{{ v | number_format(0, ',', '.')}}</span>
-                        {%elseif v == 0%}
-                        <span class="text-blue-neraca"  style="font-weight: bold;">0</span>
-                        {%endif%}
                     </th>
                     {%endfor%}
                 </tr>
@@ -280,11 +226,7 @@
                     </th>
                     {%for k, v in modelKewajibanModal.total%}
                     <th style="text-align: right">
-                        {%if v != 0%}
                         <span class="text-black-neraca" style="font-weight: bold;">Rp{{ v | number_format(0, ',', '.')}}</span>
-                        {%elseif v == 0%}
-                        <span class="text-black-neraca" style="font-weight: bold;">-</span>
-                        {%endif%}
                     </th>
                     {%endfor%}
                 </tr>

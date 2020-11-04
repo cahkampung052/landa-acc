@@ -696,7 +696,7 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
                     $arrHarta[$key]['detail'][$keys]['saldo2'][$v['number']] = 0;
                 }
                 if (empty($arrHarta[$key]['detail'][$keys]['saldo_rp2'][$v['number']])) {
-                    $arrHarta[$key]['detail'][$keys]['saldo+rp2'][$v['number']] = 0;
+                    $arrHarta[$key]['detail'][$keys]['saldo_rp2'][$v['number']] = 0;
                 }
             }
         }
@@ -709,7 +709,7 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
                     $arrModal[$key]['detail'][$keys]['saldo2'][$v['number']] = 0;
                 }
                 if (empty($arrModal[$key]['detail'][$keys]['saldo_rp2'][$v['number']])) {
-                    $arrModal[$key]['detail'][$keys]['saldo+rp2'][$v['number']] = 0;
+                    $arrModal[$key]['detail'][$keys]['saldo_rp2'][$v['number']] = 0;
                 }
             }
         }
@@ -722,7 +722,7 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
                     $arrKewajiban[$key]['detail'][$keys]['saldo2'][$v['number']] = 0;
                 }
                 if (empty($arrKewajiban[$key]['detail'][$keys]['saldo_rp2'][$v['number']])) {
-                    $arrKewajiban[$key]['detail'][$keys]['saldo+rp2'][$v['number']] = 0;
+                    $arrKewajiban[$key]['detail'][$keys]['saldo_rp2'][$v['number']] = 0;
                 }
             }
         }

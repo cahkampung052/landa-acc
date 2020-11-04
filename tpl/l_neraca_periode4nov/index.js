@@ -1,8 +1,12 @@
-app.controller('l_neracaCtrl', function ($scope, Data, $rootScope, $uibModal, $state) {
+app.controller('l_neracapCtrl', function ($scope, Data, $rootScope, $uibModal, $state) {
     var control_link = "acc/l_neraca";
     $scope.form = {};
     $scope.url = {};
-    $scope.form.tanggal = new Date();
+    $scope.form.tanggal = {
+        endDate: moment().add(1, 'M'),
+        startDate: moment()
+    };
+//    $scope.form.tanggal = new Date();
     $scope.form.is_detail = 1;
 
     Data.get('site/base_url').then(function (response) {
@@ -22,13 +26,14 @@ app.controller('l_neracaCtrl', function ($scope, Data, $rootScope, $uibModal, $s
         var param = {
             export: is_export,
             print: is_print,
-            tanggal: moment($scope.form.tanggal).format('YYYY-MM-DD'),
+            startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
+            endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
             is_detail: $scope.form.is_detail,
             m_lokasi_id : $scope.form.m_lokasi_id.id,
-                    lokasi_nama: $scope.form.m_lokasi_id.nama
+            lokasi_nama: $scope.form.m_lokasi_id.nama
         };
         if (is_export == 0 && is_print == 0) {
-            Data.get(control_link + '/laporan', param).then(function (response) {
+            Data.get(control_link + '/laporan_periode', param).then(function (response) {
                 if (response.status_code == 200) {
                     $scope.data = response.data;
                     $scope.detail = response.data.detail;
@@ -40,7 +45,7 @@ app.controller('l_neracaCtrl', function ($scope, Data, $rootScope, $uibModal, $s
             });
         } else {
             Data.get('site/base_url').then(function (response) {
-                window.open(response.data.base_url + "api/acc/l_neraca/laporan?" + $.param(param), "_blank");
+                window.open(response.data.base_url + "api/acc/l_neraca/laporan_periode?" + $.param(param), "_blank");
             });
 
         }

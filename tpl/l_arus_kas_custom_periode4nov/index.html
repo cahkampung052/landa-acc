@@ -86,9 +86,8 @@
                                         &nbsp;<span class="" ng-click="viewBukuBesar(v)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td align="right" ng-repeat="t in v.total">
-                                        <span ng-if="t > 0">{{t| number}}</span>
+                                        <span ng-if="t >= 0">{{t| number}}</span>
                                         <span ng-if="t < 0">({{(t * -1)| number}})</span>
-                                        <span ng-if="t == 0"> - </span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -121,9 +120,8 @@
                                         </select>
                                     </td>
                                     <td align="right" ng-repeat="t in y.total">
-                                        <span ng-if="t > 0">{{t| number}}</span>
+                                        <span ng-if="t >= 0">{{t| number}}</span>
                                         <span ng-if="t < 0">{{(t * -1)| number}}</span>
-                                        <span ng-if="t == 0"> - </span>
                                     </td>
                                 </tr>
                                 <tr style="background-color: #26344440">
@@ -131,20 +129,19 @@
                                         <b>TOTAL</b>
                                     </td>
                                     <td align="right" ng-repeat="t in v.total">
-                                        <b ng-if="t > 0">{{t| number}}</b>
+                                        <b ng-if="t >= 0">{{t| number}}</b>
                                         <b ng-if="t < 0">{{(t * -1)| number}}</b>
-                                        <b ng-if="t == 0"> - </b>
                                     </td>
                                 </tr>
                                 <tr ng-repeat-end=""></tr>
                                 <tr style="background-color: #263444; color: white;">
                                     <td colspan="2">
-                                        <b>Kenaikan / Penurunan Kas dari {{key}}</b>
+                                        <!--                                        <b ng-if="val.total >= 0">Kenaikan Kas dari {{key}}</b>
+                                                                                <b ng-if="val.total < 0">Penurunan Kas dari {{key}}</b>-->
                                     </td>
                                     <td align="right" ng-repeat="t in val.total">
-                                        <b ng-if="t > 0">{{t| number}}</b>
+                                        <b ng-if="t >= 0">{{t| number}}</b>
                                         <b ng-if="t < 0">({{(t * -1)| number}})</b>
-                                        <b ng-if="t == 0"> - </b>
                                     </td>
                                 </tr>
                                 <tr><td colspan="{{(2 + data.jumlah_tanggal)}}"><br/></td></tr>
@@ -158,12 +155,12 @@
                             <tbody>
                                 <tr style="background-color: #263444; color: white;">
                                     <td>
-                                        <b>KENAIKAN / PENURUNAN KAS</b>
+                                        <!--                                        <b ng-if="data.saldo_biaya >= 0">{{'KENAIKAN KAS'}}</b>
+                                                                                <b ng-if="data.saldo_biaya < 0">{{'PENURUNAN KAS'}}</b>-->
                                     </td>
                                     <td align="right" ng-repeat="t in data.saldo_biaya">
-                                        <b ng-if="t > 0">{{t| number}}</b>
+                                        <b ng-if="t >= 0">{{t| number}}</b>
                                         <b ng-if="t < 0">({{(t * -1)| number}})</b>
-                                        <b ng-if="t == 0"> - </b>
                                     </td>
                                 </tr>
                                 <tr style="background-color: #263444; color: white;">
@@ -180,9 +177,8 @@
                                         &nbsp;<span class="" ng-click="viewBukuBesar(v)"><i class="fa fa-external-link"></i></span>
                                     </td>
                                     <td align="right" ng-repeat="t in v.total">
-                                        <span ng-if="t > 0">{{t| number}}</span>
+                                        <span ng-if="t >= 0">{{t| number}}</span>
                                         <span ng-if="t < 0">({{(t * -1)| number}})</span>
-                                        <span ng-if="t == 0"> - </span>
                                     </td>
                                 </tr>
                             </tbody>

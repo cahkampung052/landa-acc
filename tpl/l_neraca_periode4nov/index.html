@@ -2,7 +2,7 @@
     <div ng-controller="l_neracapCtrl">
         <div class="card">
             <div class="card-header">
-                <strong>Laporan Neraca Periode</strong>
+                <strong>Laporan Posisi Keuangan Periode</strong>
                 <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()" ng-if="user.akses.pengecualian_neraca">
                     <i class="fa fa-gear"></i>
                     Setting Pengecualian
@@ -75,7 +75,7 @@
                         <center>
                             <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
                             <h2 class="header-laporan">{{data.lokasi}}</h2>
-                            <h3 class="header-laporan">Laporan Neraca Periode</h3>
+                            <h3 class="header-laporan">Laporan Posisi Keuangan Periode</h3>
                             <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
                             <!--<br/>-->
                         </center>
@@ -86,10 +86,10 @@
                     <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
                         <thead>
                             <tr>
-                                <th class="border-right-half">
+                                <th>
                                     <span class="text-blue-neraca">Harta</span>
                                 </th>
-                                <th class="align-right border-right-half" ng-repeat="n in data.arr_tanggal">
+                                <th class="align-right" ng-repeat="n in data.arr_tanggal">
                                     <span class="text-blue-neraca">{{n.nama}}</span>
                                 </th>
                             </tr>
@@ -100,8 +100,7 @@
                                     <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
                                 </td>
                                 <td style="text-align: right" ng-repeat="t in val.total">
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t != 0">{{ t | number}}</span>
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t == 0">{{ '-'}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ t | number}}</span>
                                 </td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">
@@ -111,18 +110,14 @@
                             </tr>
                             <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
                                 <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
-                                <td ng-if="row.is_tipe == 0" style="text-align: right;" ng-repeat="t in row.saldo2">
-                                    <span ng-if="t != 0">{{ t| number }}</span>
-                                    <span ng-if="t == 0">{{ '-'}}</span>
-                                </td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;" ng-repeat="t in row.saldo2">{{ t| number }}</td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">
                                 <td style="padding-left: 25px!important;">
                                     <span style="color: #0055ef; font-weight: 700; padding-left: 20px!important">Total {{ val.nama}}</span>
                                 </td>
                                 <td style="text-align: right" ng-repeat="t in val.total">
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t != 0">{{ t| number }}</span>
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t == 0">{{ '-'}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ t| number }}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -132,8 +127,7 @@
                                     <span class="text-black-neraca" style="font-weight: 700">Total Harta</span>
                                 </td>
                                 <td style="text-align: right" ng-repeat="t in data.modelHarta.total">
-                                    <span class="text-black-neraca"  style="font-weight: bold;" ng-if="t != 0">{{ t| number }}</span>
-                                    <span class="text-black-neraca"  style="font-weight: bold;" ng-if="t == 0">{{ '-'}}</span>
+                                    <span class="text-black-neraca"  style="font-weight: bold;">{{ t| number }}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -150,8 +144,7 @@
                                     <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
                                 </td>
                                 <td style="text-align: right" ng-repeat="t in val.total">
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t != 0">{{ t | number}}</span>
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t == 0">{{ '-'}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ t | number}}</span>
                                 </td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">
@@ -161,18 +154,14 @@
                             </tr>
                             <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
                                 <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
-                                <td ng-if="row.is_tipe == 0" style="text-align: right;" ng-repeat="t in row.saldo2">
-                                    <span ng-if="t != 0">{{ t| number }}</span>
-                                    <span ng-if="t == 0">{{ '-'}}</span>
-                                </td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;" ng-repeat="t in row.saldo2">{{ t| number }}</td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">
                                 <td style="padding-left: 25px!important;">
                                     <span style="color: #0055ef; font-weight: 700; padding-left: 20px!important">Total {{ val.nama}}</span>
                                 </td>
                                 <td style="text-align: right" ng-repeat="t in val.total">
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t != 0">{{ t| number }}</span>
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t == 0">{{ '-'}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ t| number }}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -182,8 +171,7 @@
                                     <span class="text-blue-neraca" style="font-weight: 700">Total Kewajiban</span>
                                 </td>
                                 <td style="text-align: right" ng-repeat="t in data.modelKewajiban.total">
-                                    <span class="text-blue-neraca"  style="font-weight: bold;" ng-if="t != 0">{{ t| number }}</span>
-                                    <span class="text-blue-neraca"  style="font-weight: bold;" ng-if="t == 0">{{ '-'}}</span>
+                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ t| number }}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -200,8 +188,7 @@
                                     <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
                                 </td>
                                 <td style="text-align: right" ng-repeat="t in val.total">
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t != 0">{{ t | number}}</span>
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t == 0">{{ '-'}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ t | number}}</span>
                                 </td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">
@@ -211,18 +198,14 @@
                             </tr>
                             <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
                                 <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
-                                <td ng-if="row.is_tipe == 0" style="text-align: right;" ng-repeat="t in row.saldo2">
-                                    <span ng-if="t != 0">{{ t| number }}</span>
-                                    <span ng-if="t == 0">{{ '-'}}</span>
-                                </td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;" ng-repeat="t in row.saldo2">{{ t| number }}</td>
                             </tr>
                             <tr ng-if="form.is_detail == 1">
                                 <td style="padding-left: 25px!important;">
                                     <span style="color: #0055ef; font-weight: 700; padding-left: 20px!important">Total {{ val.nama}}</span>
                                 </td>
                                 <td style="text-align: right" ng-repeat="t in val.total">
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t != 0">{{ t| number }}</span>
-                                    <span style="color: #0055ef; font-weight: 700" ng-if="t == 0">{{ '-'}}</span>
+                                    <span style="color: #0055ef; font-weight: 700">{{ t| number }}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -232,8 +215,7 @@
                                     <span class="text-blue-neraca" style="font-weight: 700">Total Modal</span>
                                 </td>
                                 <td style="text-align: right" ng-repeat="t in data.modelModal.total">
-                                    <span class="text-blue-neraca"  style="font-weight: bold;" ng-if="t != 0">{{ t| number }}</span>
-                                    <span class="text-blue-neraca"  style="font-weight: bold;" ng-if="t == 0">{{ '-'}}</span>
+                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ t| number }}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -243,8 +225,7 @@
                                     <span class="text-black-neraca" style="font-weight: 700">Total Kewajiban dan Modal</span>
                                 </td>
                                 <td style="text-align: right" ng-repeat="t in data.modelKewajibanModal.total">
-                                    <span class="text-black-neraca" style="font-weight: bold;" ng-if="t != 0">{{ t| number }}</span>
-                                    <span class="text-black-neraca" style="font-weight: bold;" ng-if="t == 0">{{ '-'}}</span>
+                                    <span class="text-black-neraca" style="font-weight: bold;">{{ t| number }}</span>
                                 </td>
                             </tr>
                         </tbody>

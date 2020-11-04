@@ -243,3 +243,11 @@ tr.padding0 > td {
     background-color: rgb(189, 215, 238) !important;
     color: black;
 }
+
+.border-left-thicc {
+    border-left: 2px solid darkgrey!important;
+}
+
+.border-right-half {
+    border-right: white solid 1px!important;
+}
