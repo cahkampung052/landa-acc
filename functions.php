@@ -965,7 +965,7 @@ function jurnalKas($params) {
         }
     }
     $data['total_akun'] = $total_akun;
-    $data['repeat_akun'] = count($total_akun['debit']) >= count($total_akun['kredit']) ? 'debit' : 'kredit';
+    $data['repeat_akun'] = !empty($total_akun['debit']) && !empty($total_akun['kredit']) ? (count($total_akun['debit']) >= count($total_akun['kredit']) ? 'debit' : 'kredit') : $var_lawan;
     $data['repeat_lawan'] = $data['repeat_akun'] == $var_lawan ? $var_kas : $var_lawan;
     return ['data' => $data, 'detail' => $arr];
 }
