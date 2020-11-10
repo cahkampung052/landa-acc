@@ -43,15 +43,15 @@ app.controller('l_neracasaldoCtrl', function ($scope, Data, $rootScope, $uibModa
     };
 
     $scope.viewBukuBesar = function (row) {
-//        console.log(row)
-//        var akun = {
-//            id: row.id,
-//            kode: row.kode,
-//            nama: row.nama
-//        }
-//        var akun = btoa(angular.toJson(akun))
-//        console.log(akun)
-//        $state.go("laporan.buku_besar", {akun: akun})
-        $state.go("backOffice.keuangan.laporan.jurnal_umum")
+        console.log(row)
+        var akun = {
+            id: row.id,
+            kode: row.kode,
+            nama: row.nama
+        }
+        var akun = btoa(angular.toJson(akun))
+        console.log(akun)
+        $state.go("laporan.buku_besar", {akun: akun})
+//        $state.go("backOffice.keuangan.laporan.jurnal_umum")
     }
 });
