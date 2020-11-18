@@ -20,7 +20,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" style="display: none">
                                         <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
                                                 <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
@@ -96,8 +96,8 @@
                         <tr ng-repeat="val in detail">
                             <td>{{val.kode}} - {{val.nama}}</td>
                             <td ng-repeat-start="v in val.detail" style="display: none"></td>
-                            <td class="align-right">{{v.budget | number}}</td>
-                            <td class="align-right">{{v.realisasi | number}}</td>
+                            <td class="align-right">{{v.budget| number}}</td>
+                            <td class="align-right">{{v.realisasi| number}}</td>
                             <td class="align-right">{{(v.budget - v.realisasi) | number}}</td>
                             <td ng-repeat-end="" style="display: none"></td>
                         </tr>

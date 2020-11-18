@@ -7,9 +7,9 @@ app.controller('l_neracasaldoCtrl', function ($scope, Data, $rootScope, $uibModa
     };
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
-//        if ($scope.listLokasi.length > 0) {
-//            $scope.form.m_lokasi_id = $scope.listLokasi[0];
-//        }
+        if ($scope.listLokasi.length > 0) {
+            $scope.form.m_lokasi_id = $scope.listLokasi[0];
+        }
     });
     /**
      * Ambil data dari server
