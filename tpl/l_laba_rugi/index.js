@@ -3,8 +3,8 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
     $scope.form = {};
     $scope.url = {};
     $scope.form.tanggal = {
-        endDate: moment().add(1, 'M'),
-        startDate: moment()
+        endDate: moment(),
+        startDate: moment().startOf('month').format('YYYY-MM-DD')
     };
     $scope.form.is_detail = 1;
 

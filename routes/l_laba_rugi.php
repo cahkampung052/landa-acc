@@ -41,6 +41,9 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
     $data['lr_usaha'] = $pendapatan - $beban;
     $data['is_detail'] = $params['is_detail'];
 
+    $data['total_pendapatan'] = $pendapatan + $pendapatanLuarUsaha;
+    $data['total_beban'] = $beban + $bebanLuarUsaha;
+
     foreach ($arr as $key => $value) {
         foreach ($value['detail'] as $keys => $values) {
             if ($values['nominal'] == 0) {
