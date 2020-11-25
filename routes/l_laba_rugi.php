@@ -229,6 +229,14 @@ $app->get('/acc/l_laba_rugi/laporan_periode', function ($request, $response) {
     }
 
 //    print_die($arr_hasil);
+    foreach ($arr_hasil as $key => $value) {
+//        foreach ($value['detail'] as $k => $v) {
+//            $arr_hasil[$key]['detail'][$k]['kode_tes'] = sortKode($v['kode']);
+//        }
+        usort($arr_hasil[$key]['detail'], function ($a, $b) {
+            return $a['kode'] > $b['kode'];
+        });
+    }
 
     $data['jumlah_bulan'] = count($arr_tanggal);
     $data['arr_tanggal'] = $arr_tanggal;
