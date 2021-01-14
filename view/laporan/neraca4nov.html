@@ -1,0 +1,187 @@
+<link href="{{ css}}?t=51" rel="stylesheet" type="text/css"/>
+<div class="card-body">
+    <div class="row header-laporan-wrapper">
+        <div class="col-md-12 relative-div">
+            <center>
+                <img src="{{img}}" class="absolute-div-center" style="width:200px">
+                <h2 class="header-laporan">{{lokasi}}</h2>
+                <h3 class="header-laporan">Laporan Posisi Keuangan</h3>
+                <p style="margin-top:3px">Periode {{tanggal}}</p>
+                <!--<br/>-->
+            </center>
+            <!--<hr/>-->
+        </div>
+    </div>
+    <!--<br/>-->
+    <div class="table-responsive">
+        <table class="table table-laporan-border table-white" style="border-collapse: collapse;width:100%">
+            <tbody>
+                <tr class="non-body">
+                    <th colspan="2" align="left">
+                        <span class="text-blue-neraca">Harta</span>
+                    </th>
+                </tr>
+            </tbody>
+            {% for key, val in modelHarta.list %}
+            <tbody>
+                {%if is_detail == 0%}
+                <tr ng-if="form.is_detail == 0">
+                    <td style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;">{{ val.nama}}</span>
+                    </td>
+                    <td style="text-align: right">
+                        <span style="color: #0055ef;">Rp{{ val.total | number_format(0, ',', '.')}}</span>
+                    </td>
+                </tr>
+                {%endif%}
+                {%if is_detail == 1%}
+                <tr>
+                    <td colspan="2" style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;">{{ val.nama}}</span>
+                    </td>
+                </tr>
+
+                {% for keys, row in val.detail %}
+                <tr>
+                    <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode}} - {{row.nama}}</td>
+                    <td ng-if="row.is_tipe == 0" style="text-align: right;">Rp{{ row.saldo_rp | number_format(0, ',', '.')}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;padding-left: 20px!important">Total {{ val.nama}}</span>
+                    </td>
+                    <td style="text-align: right">
+                        <span style="color: #0055ef;">Rp{{ val.total | number_format(0, ',', '.')}}</span>
+                    </td>
+                </tr>
+                {%endif%}
+            </tbody>
+            {% endfor %}
+            <tbody>
+                <tr class="non-body">
+                    <th align="left">
+                        <span class="text-black-neraca">Total Harta</span>
+                    </th>
+                    <th style="text-align: right">
+                        <span class="text-black-neraca"  style="font-weight: bold;">Rp{{ modelHarta.total | number_format(0, ',', '.')}}</span>
+                    </th>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr class="non-body">
+                    <th colspan="2" align="left">
+                        <span class="text-blue-neraca">Kewajiban</span>
+                    </th>
+                </tr>
+            </tbody>
+            {% for key, val in modelKewajiban.list %}
+            <tbody >
+                {%if is_detail == 0%}
+                <tr ng-if="form.is_detail == 0">
+                    <td style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;">{{ val.nama}}</span>
+                    </td>
+                    <td style="text-align: right">
+                        <span style="color: #0055ef;">Rp{{ val.total | number_format(0, ',', '.')}}</span>
+                    </td>
+                </tr>
+                {%endif%}
+                {%if is_detail == 1%}
+                <tr>
+                    <td colspan="2" style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;">{{ val.nama}}</span>
+                    </td>
+                </tr>
+                {% for keys, row in val.detail %}
+                <tr>
+                    <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode}} - {{row.nama}}</td>
+                    <td ng-if="row.is_tipe == 0" style="text-align: right;">Rp{{ row.saldo_rp | number_format(0, ',', '.')}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;padding-left: 20px!important">Total {{ val.nama}}</span>
+                    </td>
+                    <td style="text-align: right">
+                        <span style="color: #0055ef;">Rp{{ val.total | number_format(0, ',', '.')}}</span>
+                    </td>
+                </tr>
+                {%endif%}
+            </tbody>
+            {% endfor %}
+            <tbody>
+                <tr class="non-body">
+                    <th align="left">
+                        <span class="text-blue-neraca">Total Kewajiban</span>
+                    </th>
+                    <th style="text-align: right">
+                        <span class="text-blue-neraca"  style="font-weight: bold;">Rp{{ modelKewajiban.total | number_format(0, ',', '.')}}</span>
+                    </th>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr class="non-body">
+                    <th colspan="2" align="left">
+                        <span class="text-blue-neraca">Modal</span>
+                    </th>
+                </tr>
+            </tbody>
+            {% for key, val in modelModal.list %}
+            <tbody>
+                {%if is_detail == 0%}
+                <tr ng-if="form.is_detail == 0">
+                    <td style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;">{{ val.nama}}</span>
+                    </td>
+                    <td style="text-align: right">
+                        <span style="color: #0055ef;">Rp{{ val.total | number_format(0, ',', '.')}}</span>
+                    </td>
+                </tr>
+                {%endif%}
+                {%if is_detail == 1%}
+                <tr>
+                    <td colspan="2" style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;">{{ val.nama}}</span>
+                    </td>
+                </tr>
+                {% for keys, row in val.detail %}
+                <tr>
+                    <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode}} - {{row.nama}}</td>
+                    <td ng-if="row.is_tipe == 0" style="text-align: right;">Rp{{ row.saldo_rp | number_format(0, ',', '.')}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td style="padding-left: 25px!important;">
+                        <span style="color: #0055ef;padding-left: 20px!important">Total {{ val.nama}}</span>
+                    </td>
+                    <td style="text-align: right">
+                        <span style="color: #0055ef;">Rp{{ val.total | number_format(0, ',', '.')}}</span>
+                    </td>
+                </tr>
+                {%endif%}
+            </tbody>
+            {% endfor %}
+            <tbody>
+                <tr class="non-body">
+                    <th align="left">
+                        <span class="text-blue-neraca">Total Modal</span>
+                    </th>
+                    <th style="text-align: right">
+                        <span class="text-blue-neraca"  style="font-weight: bold;">Rp{{ modelModal.total | number_format(0, ',', '.')}}</span>
+                    </th>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr class="non-body">
+                    <th align="left">
+                        <span class="text-black-neraca">Total Kewajiban dan Modal</span>
+                    </th>
+                    <th style="text-align: right">
+                        <span class="text-black-neraca" style="font-weight: bold;">Rp{{ modelKewajibanModal.total | number_format(0, ',', '.')}}</span>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

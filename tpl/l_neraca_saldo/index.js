@@ -1,14 +1,11 @@
-app.controller('l_neracasaldoCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('l_neracasaldoCtrl', function ($scope, Data, $rootScope, $uibModal, Upload, $state) {
     var control_link = "acc/l_neraca_saldo";
     $scope.form = {};
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
-    /**
-     * Ambil list lokasi
-     */
-    Data.get('acc/m_lokasi/getLokasi').then(function(response) {
+    Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
@@ -17,7 +14,7 @@ app.controller('l_neracasaldoCtrl', function($scope, Data, $rootScope, $uibModal
     /**
      * Ambil data dari server
      */
-    $scope.view = function(is_export, is_print) {
+    $scope.view = function (is_export, is_print) {
         $scope.mulai = moment($scope.form.tanggal.startDate).format('DD-MM-YYYY');
         $scope.selesai = moment($scope.form.tanggal.endDate).format('DD-MM-YYYY');
         var param = {
@@ -29,7 +26,7 @@ app.controller('l_neracasaldoCtrl', function($scope, Data, $rootScope, $uibModal
             nama_lokasi: $scope.form.m_lokasi_id != undefined ? $scope.form.m_lokasi_id.nama : null,
         };
         if (is_export == 0 && is_print == 0) {
-            Data.get(control_link + '/laporan', param).then(function(response) {
+            Data.get(control_link + '/laporan', param).then(function (response) {
                 if (response.status_code == 200) {
                     $scope.data = response.data.data;
                     $scope.detail = response.data.detail;
@@ -39,9 +36,22 @@ app.controller('l_neracasaldoCtrl', function($scope, Data, $rootScope, $uibModal
                 }
             });
         } else {
-            Data.get('site/base_url').then(function(response) {
+            Data.get('site/base_url').then(function (response) {
                 window.open(response.data.base_url + "api/acc/l_neraca_saldo/laporan?" + $.param(param), "_blank");
             });
         }
     };
+
+    $scope.viewBukuBesar = function (row) {
+        console.log(row)
+        var akun = {
+            id: row.id,
+            kode: row.kode,
+            nama: row.nama
+        }
+        var akun = btoa(angular.toJson(akun))
+        console.log(akun)
+        $state.go("laporan.buku_besar", {akun: akun})
+//        $state.go("backOffice.keuangan.laporan.jurnal_umum")
+    }
 });

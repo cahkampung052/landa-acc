@@ -1,0 +1,219 @@
+<div class="animated fadeIn">
+    <div ng-controller="l_neracasaldoCtrl">
+        <div class="card">
+            <div class="card-header">
+                <strong class="d-md-down-none">Laporan Neraca Saldo</strong>
+            </div>
+            <div class="card-body p-0px">
+                <div class="pl-15px pr-15px">
+                    <div class="row mt-15px">
+                        <div class="col-md-3">
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="input-group">
+                                        <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                    <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama }}</ui-select-match>
+                                    <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap }}</ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <label class="i-checks col-form-label-sm">
+                                        <input ng-disabled="is_view" ng-model="SembunyikanSub" ng-true-value="1" ng-false-value="0" type="checkbox"/>
+                                        <i></i>
+                                        Sembunyikan Sub Akun
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary btn-sm" ng-click="view(0, 0)">
+                                        <i class="fa fa-search"></i>
+                                        Tampilkan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" ng-show="tampilkan">
+            <div class="card-header card-header-white">
+                <div class="pull-right">
+                    <button class="btn btn-outline-success btn-sm" ng-click="view(1, 0)">
+                        <i class="fa fa-file"></i>
+                        Excel
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm" ng-click="view(0, 1)">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div align="left">
+                    <div class="row header-laporan-wrapper">
+                        <div class="col-md-12 relative-div">
+                            <center>
+                                <img src="{{ data.img }}" class="absolute-div-center" style="height: 90px"/>
+                                <h2 class="header-laporan">{{ data.lokasi }}</h2>
+                                <h3 class="header-laporan">Laporan Neraca Saldo</h3>
+                                <p class="mt-15px">Periode {{ data.tanggal }}</p>
+                            </center>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="align-center">
+                                        <b>AKUN</b>
+                                    </th>
+                                    <th colspan="2" class="align-center">
+                                        <b>SALDO AWAL</b>
+                                    </th>
+                                    <th colspan="2" class="align-center">
+                                        <b>MUTASI</b>
+                                    </th>
+                                    <th colspan="2" class="align-center">
+                                        <b>SALDO AKHIR</b>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th width="100" class="align-center">
+                                        <b>DEBIT</b>
+                                    </th>
+                                    <th width="100" class="align-center">
+                                        <b>KREDIT</b>
+                                    </th>
+                                    <th width="100" class="align-center">
+                                        <b>DEBIT</b>
+                                    </th>
+                                    <th width="100" class="align-center">
+                                        <b>KREDIT</b>
+                                    </th>
+                                    <th width="100" class="align-center">
+                                        <b>DEBIT</b>
+                                    </th>
+                                    <th width="100" class="align-center">
+                                        <b>KREDIT</b>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="val in detail" ng-hide="SembunyikanSub == 1 && val.is_tipe == 0">
+                                    <td>
+                                        <b ng-if="val.is_tipe == 1">
+                                            <div ng-bind-html="val.nama"></div>
+                                        </b>
+                                        <div ng-bind-html="val.nama" ng-if="val.is_tipe == 0"></div>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <span ng-if="val.is_tipe == 1">
+                                            <b>{{ val.debit_awal| number }}</b>
+                                        </span>
+                                        <span ng-if="val.is_tipe == 0">{{ val.debit_awal| number }}</span>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <span ng-if="val.is_tipe == 1">
+                                            <b>{{ val.kredit_awal| number }}</b>
+                                        </span>
+                                        <span ng-if="val.is_tipe == 0">{{ val.kredit_awal| number }}</span>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <span ng-if="val.is_tipe == 1">
+                                            <b>{{ val.debit| number }}</b>
+                                        </span>
+                                        <span ng-if="val.is_tipe == 0">{{ val.debit| number }}</span>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <span ng-if="val.is_tipe == 1">
+                                            <b>{{ val.kredit| number }}</b>
+                                        </span>
+                                        <span ng-if="val.is_tipe == 0">{{ val.kredit| number }}</span>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <span ng-if="val.debit_akhir >= 0 && val.is_tipe == 1">
+                                            <b>{{ val.debit_akhir| number }}</b>
+                                        </span>
+                                        <span ng-if="val.debit_akhir < 0 && val.is_tipe == 1">
+                                            <b>{{ val.debit_akhir * - 1| number }}</b>
+                                        </span>
+                                        <span ng-if="val.debit_akhir >= 0 && val.is_tipe == 0">
+                                            {{ val.debit_akhir| number }}
+                                        </span>
+                                        <span ng-if="val.debit_akhir < 0 && val.is_tipe == 0">{{ val.debit_akhir * - 1| number }}</span>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <span ng-if="val.kredit_akhir >= 0 && val.is_tipe == 1">
+                                            <b>{{ val.kredit_akhir| number }}</b>
+                                        </span>
+                                        <span ng-if="val.kredit_akhir < 0 && val.is_tipe == 1">
+                                            <b>{{ val.kredit_akhir * - 1| number }}</b>
+                                        </span>
+                                        <span ng-if="val.kredit_akhir >= 0 && val.is_tipe == 0">
+                                            {{ val.kredit_akhir| number }}
+                                        </span>
+                                        <span ng-if="val.kredit_akhir < 0 && val.is_tipe == 0">{{ val.kredit_akhir * - 1| number }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td align="right" class="text-center">
+                                        <b>Saldo Akhir</b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <b>{{ data.debit_awal| number }}</b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <b>{{ data.kredit_awal| number }}</b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <b>{{ data.debit_mutasi| number }}</b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <b>{{ data.kredit_mutasi| number }}</b>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <span ng-if="data.debit_akhir >= 0">
+                                            <b>{{ data.debit_akhir| number }}</b>
+                                        </span>
+                                        <span ng-if="data.debit_akhir < 0">
+                                            <b>{{ data.debit_akhir * - 1| number }}</b>
+                                        </span>
+                                    </td>
+                                    <td align="right" class="text-right">
+                                        <span ng-if="data.kredit_akhir >= 0">
+                                            <b>{{ data.kredit_akhir| number }}</b>
+                                        </span>
+                                        <span ng-if="data.kredit_akhir < 0">
+                                            <b>{{ data.kredit_akhir * - 1| number }}</b>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

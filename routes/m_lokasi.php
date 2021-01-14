@@ -36,6 +36,11 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
         // echo $lokasi;
         $db->customWhere("id IN ($lokasi)", "AND");
     }
+
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_lokasi.id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
     $models = $db->findAll();
     // $arr = getChildFlat($models, 0);
 //    $arr = [];
@@ -43,7 +48,7 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
         $spasi = '';
         // $spasi                    = ($val->level == 0) ? '' : str_repeat("---", $val->level);
         $val->nama_lengkap = $spasi . $val->kode . ' - ' . $val->nama;
-        
+
 //        $arr[$val->id] = $val;
     }
     return successResponse($response, [
@@ -143,9 +148,9 @@ $app->post('/acc/m_lokasi/delete', function ($request, $response) {
 });
 
 $app->get('/acc/m_lokasi/default_lokasi', function ($request, $response) {
-    
+
     $db = $this->db;
-    
+
     $pemasukan = !empty(config('LOKASI_PEMASUKAN')) ? $db->find("SELECT * FROM acc_m_lokasi WHERE id = " . config('LOKASI_PEMASUKAN')) : 0;
     $pengeluaran = !empty(config('LOKASI_PENGELUARAN')) ? $db->find("SELECT * FROM acc_m_lokasi WHERE id = " . config('LOKASI_PENGELUARAN')) : 0;
 

@@ -1,0 +1,237 @@
+<div class="animated fadeIn">
+    <div ng-controller="l_neracapCtrl">
+        <div class="card">
+            <div class="card-header">
+                <strong>Laporan Posisi Keuangan Periode</strong>
+                <button class="btn btn-default btn-sm pull-right" ng-click="modalSetting()" ng-if="user.akses.pengecualian_neraca">
+                    <i class="fa fa-gear"></i>
+                    Setting Pengecualian
+                </button>
+            </div>
+            <div class="card-body p-0px">
+                <div class="pl-15px pr-15px">
+                    <div class="row mt-15px">
+                        <div class="col-md-12">
+                            <form name="landaform" novalidate="">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="input-group">
+                                            <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row col-md-3">
+                                        <label class="col-sm-3 col-form-label-sm">Detail</label>
+                                        <div class="col-sm-6">
+                                            <div class="btn-group">
+                                                <label class="btn btn-success btn-sm ng-untouched ng-valid ng-not-empty active ng-dirty ng-valid-parse" ng-model="form.is_detail" ng-disabled="is_view" uib-btn-radio="1"><i class="fa fa-check" ng-if="form.is_detail == 1"></i>Ya</label>
+                                                <label class="btn btn-success btn-sm ng-untouched ng-valid ng-not-empty ng-dirty" ng-model="form.is_detail" ng-disabled="is_view" uib-btn-radio="0"><i class="fa fa-check" ng-if="form.is_detail == 0"></i>Tidak</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary btn-sm" ng-click="view(0, 0)">
+                                                <i class="fa fa-search"></i>
+                                                Tampilkan
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" ng-show="tampilkan">
+            <div class="card-header card-header-white">
+                <div class="btn-group pull-right">
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(1, 0)">
+                        <i class="fa fa-file"></i>
+                        Excel
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm pull-right" ng-click="view(0, 1)">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row header-laporan-wrapper">
+                    <div class="col-md-12 relative-div">
+                        <center>
+                            <img src="{{data.img}}" class="absolute-div-center" style="width:200px">
+                            <h2 class="header-laporan">{{data.lokasi}}</h2>
+                            <h3 class="header-laporan">Laporan Posisi Keuangan Periode</h3>
+                            <p style="margin-top:3px">Periode {{ data.tanggal}}</p>
+                            <!--<br/>-->
+                        </center>
+                        <!--<hr/>-->
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-laporan-border" style="border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span class="text-blue-neraca">Harta</span>
+                                </th>
+                                <th class="align-right" ng-repeat="n in data.arr_tanggal">
+                                    <span class="text-blue-neraca">{{n.nama}}</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="val in data.modelHarta.list">
+                            <tr ng-if="form.is_detail == 0">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                                <td style="text-align: right" ng-repeat="t in val.total">
+                                    <span style="color: #0055ef; font-weight: 700">{{ t | number}}</span>
+                                </td>
+                            </tr>
+                            <tr ng-if="form.is_detail == 1">
+                                <td colspan="{{(1 + data.jumlah_tanggal)}}" style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;" ng-repeat="t in row.saldo2">{{ t| number }}</td>
+                            </tr>
+                            <tr ng-if="form.is_detail == 1">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700; padding-left: 20px!important">Total {{ val.nama}}</span>
+                                </td>
+                                <td style="text-align: right" ng-repeat="t in val.total">
+                                    <span style="color: #0055ef; font-weight: 700">{{ t| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span class="text-black-neraca" style="font-weight: 700">Total Harta</span>
+                                </td>
+                                <td style="text-align: right" ng-repeat="t in data.modelHarta.total">
+                                    <span class="text-black-neraca"  style="font-weight: bold;">{{ t| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th colspan="{{(1 + data.jumlah_tanggal)}}">
+                                    <span class="text-blue-neraca" style="font-weight: 700">Kewajiban</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="val in data.modelKewajiban.list">
+                            <tr ng-if="form.is_detail == 0">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                                <td style="text-align: right" ng-repeat="t in val.total">
+                                    <span style="color: #0055ef; font-weight: 700">{{ t | number}}</span>
+                                </td>
+                            </tr>
+                            <tr ng-if="form.is_detail == 1">
+                                <td colspan="{{(1 + data.jumlah_tanggal)}}" style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;" ng-repeat="t in row.saldo2">{{ t| number }}</td>
+                            </tr>
+                            <tr ng-if="form.is_detail == 1">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700; padding-left: 20px!important">Total {{ val.nama}}</span>
+                                </td>
+                                <td style="text-align: right" ng-repeat="t in val.total">
+                                    <span style="color: #0055ef; font-weight: 700">{{ t| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span class="text-blue-neraca" style="font-weight: 700">Total Kewajiban</span>
+                                </td>
+                                <td style="text-align: right" ng-repeat="t in data.modelKewajiban.total">
+                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ t| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th colspan="{{(1 + data.jumlah_tanggal)}}">
+                                    <span class="text-blue-neraca">Modal</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="val in data.modelModal.list">
+                            <tr ng-if="form.is_detail == 0">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                                <td style="text-align: right" ng-repeat="t in val.total">
+                                    <span style="color: #0055ef; font-weight: 700">{{ t | number}}</span>
+                                </td>
+                            </tr>
+                            <tr ng-if="form.is_detail == 1">
+                                <td colspan="{{(1 + data.jumlah_tanggal)}}" style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700">{{ val.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(val)"><i class="fa fa-external-link"></i></span></span>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="row in val.detail" ng-if="form.is_detail == 1">
+                                <td ng-if="row.is_tipe == 0" style="text-align: left;padding-left: 45px!important;">{{ row.kode + " - " + row.nama}}&nbsp;<span class="" ng-click="viewBukuBesar(row)"><i class="fa fa-external-link"></i></span></td>
+                                <td ng-if="row.is_tipe == 0" style="text-align: right;" ng-repeat="t in row.saldo2">{{ t| number }}</td>
+                            </tr>
+                            <tr ng-if="form.is_detail == 1">
+                                <td style="padding-left: 25px!important;">
+                                    <span style="color: #0055ef; font-weight: 700; padding-left: 20px!important">Total {{ val.nama}}</span>
+                                </td>
+                                <td style="text-align: right" ng-repeat="t in val.total">
+                                    <span style="color: #0055ef; font-weight: 700">{{ t| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span class="text-blue-neraca" style="font-weight: 700">Total Modal</span>
+                                </td>
+                                <td style="text-align: right" ng-repeat="t in data.modelModal.total">
+                                    <span class="text-blue-neraca"  style="font-weight: bold;">{{ t| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <span class="text-black-neraca" style="font-weight: 700">Total Kewajiban dan Modal</span>
+                                </td>
+                                <td style="text-align: right" ng-repeat="t in data.modelKewajibanModal.total">
+                                    <span class="text-black-neraca" style="font-weight: bold;">{{ t| number }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

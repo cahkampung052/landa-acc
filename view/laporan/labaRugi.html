@@ -55,6 +55,26 @@
                                 <b>Rp{{ val.total | number_format(0, ',', '.') }}</b>
                             </td>
                         </tr>
+
+                        {%if key == 'BEBAN'%}
+                        <tr style="background-color: #fff">
+                            <td align="right">
+                                {%if total_operasional >= 0%}
+                                <b style="color:#327037">LABA OPERASIONAL</b>
+                                {%else%}
+                                <b style="color:red">RUGI OPERASIONAL</b>
+                                {%endif%}
+                            </td>
+                            <td align="right" class="text-right">
+                                {%if total_operasional >= 0%}
+                                <b style="color: #327037">Rp{{ total_operasional | number_format(0, ',', '.') }}</b>
+                                {%else%}
+                                <b style="color:red">Rp{{ (total_operasional * -1) | number_format(0, ',', '.')}}</b>
+                                {%endif%}
+                            </td>
+                        </tr>
+                        {%endif%}
+
                         {%endfor%}
                         <tr style="background-color: #fff">
                             <td align="right">
