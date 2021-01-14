@@ -575,6 +575,160 @@ $app->get('/acc/m_akun/export', function ($request, $response) {
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
     $objWriter->save('php://output');
 });
+/**
+ * Export Excel
+ */
+$app->get('/acc/m_akun/exportIndex', function ($request, $response) {
+    $db = $this->db;
+    // print_die($_SESSION);
+    $path = 'acc/landaacc/file/index_masterakun.xls';
+    $objReader = PHPExcel_IOFactory::createReader('Excel5');
+    $objPHPExcel = $objReader->load($path);
+
+    $perusahaan_proyek = ($_SESSION['user']['perusahaan']['nama'] . " - " . $_SESSION['user']['proyek']['nama']);
+    $sheet = $objPHPExcel->getSheet(0);
+    $sheet->getCell("A2")->setValue($perusahaan_proyek);
+
+    /*
+     * Ambil semua lokasi
+     */
+    $lokasiId = [];
+    $lokasi = $db->select("id")
+            ->from("acc_m_lokasi")
+            ->where("is_deleted", "=", 0)
+            ->findAll();
+    foreach ($lokasi as $key => $value) {
+        $lokasiId[] = $value->id;
+    }
+    $lokasiId = implode(",", $lokasiId);
+    /**
+     * Ambil transaksi di akun
+     */
+    $db->select("
+            SUM(acc_trans_detail.debit) as debit,
+            SUM(acc_trans_detail.kredit) as kredit,
+            acc_m_akun.id,
+            acc_m_akun.saldo_normal,
+            acc_m_akun.parent_id,
+            acc_m_akun.nama,
+            acc_m_akun.kode
+        ")
+            ->from("acc_m_akun")
+            ->leftJoin("acc_trans_detail", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+            ->customWhere("acc_trans_detail.m_lokasi_id in (" . $lokasiId . ")")
+            ->groupBy("acc_m_akun.id")
+            ->orderBy("acc_m_akun.is_tipe ASC, parent_id DESC, acc_m_akun.level DESC");
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_trans_detail.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    $trans = $db->findAll();
+
+    $arrTrans = [];
+    foreach ($trans as $key => $value) {
+        $value->kredit = (!empty($value->kredit)) ? (int) $value->kredit : 0;
+        $value->debit = (!empty($value->debit)) ? (int) $value->debit : 0;
+
+        $arrTrans[$value->id] = ((isset($arrTrans[$value->id])) ? $arrTrans[$value->id] : 0) + (intval($value->debit) - intval($value->kredit)) * $value->saldo_normal;
+        $arrTrans[$value->parent_id] = ((isset($arrTrans[$value->parent_id])) ? $arrTrans[$value->parent_id] : 0) + $arrTrans[$value->id];
+    }
+
+    /**
+     * List akun
+     */
+    $db->select("acc_m_akun.*, induk.nama as nama_induk, induk.kode as kode_induk")
+            ->from("acc_m_akun")
+            ->leftJoin("acc_m_akun as induk", "induk.id = acc_m_akun.parent_id")
+            ->orderBy('acc_m_akun.kode');
+    if (isset($params['filter'])) {
+        $filter = (array) json_decode($params['filter']);
+        foreach ($filter as $key => $val) {
+            if ($key == 'is_deleted') {
+                $db->where("acc_m_akun.is_deleted", '=', $val);
+            } elseif ($key == 'kode') {
+                $db->where("acc_m_akun.kode", 'LIKE', $val);
+            } elseif ($key == 'nama') {
+                $db->where("acc_m_akun.nama", 'LIKE', $val);
+            } else {
+                $db->where($key, 'LIKE', $val);
+            }
+        }
+    }
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    $models = $db->findAll();
+
+    $listAkun = buildTreeAkun($models, 0);
+    $arrModel = flatten($listAkun);
+
+    $arr = [];
+    foreach ($arrModel as $key => $value) {
+        $saldo = isset($arrTrans[$value->id]) ? $arrTrans[$value->id] : 0;
+        $spasi = ($value->level == 1) ? '' : str_repeat("    ", $value->level - 1);
+        $arr[$key] = (array) $value;
+        $arr[$key]['nama'] = $value->nama;
+        $arr[$key]['nama_lengkap'] = $spasi . $value->kode . ' - ' . $value->nama;
+        $arr[$key]['parent_id'] = (int) $value->parent_id;
+        $arr[$key]['is_induk'] = (int) $value->is_induk;
+        $arr[$key]['saldo_normal'] = (int) $value->saldo_normal;
+        $arr[$key]['is_kas'] = (int) $value->is_kas;
+        $arr[$key]['kode'] = str_replace($value->kode_induk . "", "", $value->kode);
+        $arr[$key]['saldo'] = $saldo;
+        $arr[$key]['tipe'] = ($value->tipe == 'No Type') ? '' : $value->tipe;
+    }
+    // print_die($arr);
+    $index = 5;
+    foreach ($arr as $key => $value) {
+      $sheet->getCell("A" . $index)->setValue($value['nama_lengkap']);
+      $sheet->getCell("B" . $index)->setValue($value['tipe']);
+
+      if ($value['is_tipe'] == 1 && $value['saldo'] >= 0) {
+        $sheet->getCell("C" . $index)->setValue($value['saldo']);
+      } elseif ($value['is_tipe'] == 0 && $value['saldo'] >= 0) {
+        $sheet->getCell("C" . $index)->setValue($value['saldo']);
+      }
+
+      if ($value['is_tipe'] == 1 && $value['saldo'] < 0) {
+        $sheet->getCell("D" . $index)->setValue($value['saldo']);
+      } elseif ($value['is_tipe'] == 0 && $value['saldo'] < 0) {
+        $sheet->getCell("D" . $index)->setValue($value['saldo']);
+      }
+
+      $sheet->getStyle('C' . $index)->getNumberFormat()->setFormatCode('#,##0');
+      $sheet->getStyle('D' . $index)->getNumberFormat()->setFormatCode('#,##0');
+
+      $sheet->getCell("E" . $index)->setValue($value['tipe_arus']);
+
+      $index++;
+    }
+
+    $sheet->getStyle('A4:E' . ($index - 1))->applyFromArray(
+            array(
+                'borders' => array(
+                    'allborders' => array(
+                        'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    )
+                )
+            )
+    );
+
+    $sheet->getColumnDimension('A')->setAutoSize(true);
+
+    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+
+    header("Content-type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment;Filename=Index Master Akun.xls");
+    $objWriter->save('php://output');
+});
 /*
  * ambil budget per lokasi (approve proposal)
  */

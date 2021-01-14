@@ -77,7 +77,13 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
     $scope.export = function () {
         window.location = 'api/acc/m_akun/export';
     };
-    /** 
+    /**
+     * export Excel
+     */
+     $scope.exportIndex = function () {
+         window.location = 'api/acc/m_akun/exportIndex';
+     };
+    /**
      * create
      */
     $scope.create = function () {
@@ -91,7 +97,7 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
         $scope.form.is_tipe = 1;
         $scope.form.is_induk = 1;
     };
-    /** 
+    /**
      * update
      */
     $scope.update = function (form) {
@@ -102,7 +108,7 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
         $scope.form = form;
         $scope.getAkun(form.tipe);
     };
-    /** 
+    /**
      * view
      */
     $scope.view = function (form) {
@@ -126,7 +132,7 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
         window.open(url, '_blank');
     }
 
-    /** 
+    /**
      * save action
      */
     $scope.save = function (form) {
@@ -139,7 +145,7 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
             }
         });
     };
-    /** 
+    /**
      * cancel action
      */
     $scope.cancel = function () {
