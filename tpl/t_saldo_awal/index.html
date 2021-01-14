@@ -41,9 +41,9 @@
                                     <div class="col-sm-3">
                                         <input type="text" class="form-control form-control-sm" ng-click="toggle($event, 'tanggal')"  is-open="opened.tanggal" uib-datepicker-popup="dd-MM-yyyy" ng-model="form.tanggal" ng-disabled="is_view" required/>
                                     </div>
-                                    <label class="col-sm-1 col-form-label-sm required">Lokasi</label>
-                                    <div class="col-sm-3">
-                                        <ui-select class="ui-select-sm ui-select-container" ng-change="view(form)" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view" ng-change="getHutang(form)">
+                                    <label class="col-sm-1 col-form-label-sm required" ng-hide="true">Lokasi</label>
+                                    <div class="col-sm-3" ng-hide="true">
+                                        <ui-select class="ui-select-sm ui-select-container" ng-change="view(form)" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
                                             <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
                                             <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                         </ui-select>

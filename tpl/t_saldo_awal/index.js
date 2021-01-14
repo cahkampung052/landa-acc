@@ -23,6 +23,10 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
 
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
+        if ($scope.listLokasi.length > 0) {
+            $scope.form.m_lokasi_id = $scope.listLokasi[0];
+            $scope.view($scope.form)
+        }
     });
 
     Data.get("acc/t_tutup_bulan/index", {filter: {jenis: "bulan"}}).then(function (response) {
