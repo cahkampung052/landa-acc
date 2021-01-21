@@ -47,7 +47,7 @@ app.controller('budgetingCtrl', function ($scope, Data, $rootScope, $uibModal) {
         $scope.totalbudget = totalbudget;
     };
     $scope.view = function (form) {
-        if (form.m_lokasi_id !== undefined && form.tanggal !== undefined && form.m_akun_id !== undefined) {
+        if (form.m_lokasi_id !== undefined && form.start !== undefined && form.end !== undefined) {
             var param = {
                 m_lokasi_id: form.m_lokasi_id.id,
                 start: moment(form.start).format('YYYY-MM'),
