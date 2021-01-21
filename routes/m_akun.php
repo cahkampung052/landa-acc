@@ -688,27 +688,27 @@ $app->get('/acc/m_akun/exportIndex', function ($request, $response) {
     // print_die($arr);
     $index = 5;
     foreach ($arr as $key => $value) {
-      $sheet->getCell("A" . $index)->setValue($value['nama_lengkap']);
-      $sheet->getCell("B" . $index)->setValue($value['tipe']);
+        $sheet->getCell("A" . $index)->setValue($value['nama_lengkap']);
+        $sheet->getCell("B" . $index)->setValue($value['tipe']);
 
-      if ($value['is_tipe'] == 1 && $value['saldo'] >= 0) {
-        $sheet->getCell("C" . $index)->setValue($value['saldo']);
-      } elseif ($value['is_tipe'] == 0 && $value['saldo'] >= 0) {
-        $sheet->getCell("C" . $index)->setValue($value['saldo']);
-      }
+        if ($value['is_tipe'] == 1 && $value['saldo'] >= 0) {
+            $sheet->getCell("C" . $index)->setValue($value['saldo']);
+        } elseif ($value['is_tipe'] == 0 && $value['saldo'] >= 0) {
+            $sheet->getCell("C" . $index)->setValue($value['saldo']);
+        }
 
-      if ($value['is_tipe'] == 1 && $value['saldo'] < 0) {
-        $sheet->getCell("D" . $index)->setValue($value['saldo']);
-      } elseif ($value['is_tipe'] == 0 && $value['saldo'] < 0) {
-        $sheet->getCell("D" . $index)->setValue($value['saldo']);
-      }
+        if ($value['is_tipe'] == 1 && $value['saldo'] < 0) {
+            $sheet->getCell("D" . $index)->setValue($value['saldo']);
+        } elseif ($value['is_tipe'] == 0 && $value['saldo'] < 0) {
+            $sheet->getCell("D" . $index)->setValue($value['saldo']);
+        }
 
-      $sheet->getStyle('C' . $index)->getNumberFormat()->setFormatCode('#,##0');
-      $sheet->getStyle('D' . $index)->getNumberFormat()->setFormatCode('#,##0');
+        $sheet->getStyle('C' . $index)->getNumberFormat()->setFormatCode('#,##0');
+        $sheet->getStyle('D' . $index)->getNumberFormat()->setFormatCode('#,##0');
 
-      $sheet->getCell("E" . $index)->setValue($value['tipe_arus']);
+        $sheet->getCell("E" . $index)->setValue($value['tipe_arus']);
 
-      $index++;
+        $index++;
     }
 
     $sheet->getStyle('A4:E' . ($index - 1))->applyFromArray(
@@ -1149,7 +1149,7 @@ $app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
     $db = $this->db;
     $db->select("*")->from("acc_m_akun")
             ->customWhere("tipe = 'PENDAPATAN' or tipe = 'PENDAPATAN DILUAR USAHA'", "AND")
-            ->customWhere("tipe = 'BEBAN' or tipe = 'BEBAN DILUAR USAHA'", "OR")
+            ->customWhere("tipe = 'BEBAN' or tipe = 'BEBAN DILUAR USAHA' or tipe = 'BIAYA'", "OR")
             ->where("is_deleted", "=", 0);
 
     //16-10-2020
