@@ -316,25 +316,25 @@
                                             <input type="text" class="form-control form-control-sm" maxlength="255" ng-model="v.keterangan" ng-disabled="is_view" placeholder="Uraian"/>
                                         </td>
                                         <td class="align-left">
-                                            <input type="text" class="form-control form-control-sm" maxlength="11" ng-model="v.jenis_satuan" ng-disabled="is_view"/>
+                                            <input type="text" class="form-control form-control-sm" maxlength="20" ng-model="v.jenis_satuan" ng-disabled="is_view"/>
                                         </td>
                                         <td class="align-left">
                                             <div class="input-group input-group-sm">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">Rp</span>
                                                 </div>
-                                                <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="11" ng-model="v.harga_satuan" ng-change="sumTotal()" ng-disabled="is_view || v.detail.length > 0"/>
+                                                <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="20" ng-model="v.harga_satuan" ng-change="sumTotal()" ng-disabled="is_view || v.detail.length > 0"/>
                                             </div>
                                         </td>
                                         <td class="align-left">
-                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="11" ng-model="v.jumlah" ng-change="sumTotal()" ng-disabled="is_view || v.detail.length > 0"/>
+                                            <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="20" ng-model="v.jumlah" ng-change="sumTotal()" ng-disabled="is_view || v.detail.length > 0"/>
                                         </td>
                                         <td class="align-left">
                                             <div class="input-group input-group-sm">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">Rp</span>
                                                 </div>
-                                                <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="11" ng-model="v.sub_total" ng-disabled="true"/>
+                                                <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="20" ng-model="v.sub_total" ng-disabled="true"/>
                                             </div>
                                         </td>
                                         <td ng-if="user.akses.pengajuan_detail">
@@ -349,7 +349,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">Rp</span>
                                                 </div>
-                                                <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="11" ng-model="form.jumlah_perkiraan" ng-disabled="true"/>
+                                                <input type="text" ui-number-mask="0" class="form-control form-control-sm angka rp" maxlength="20" ng-model="form.jumlah_perkiraan" ng-disabled="true"/>
                                             </div>
                                         </td>
                                         <td ng-if="user.akses.pengajuan_detail"></td>
@@ -392,7 +392,7 @@
                                     <input type="text" class="form-control form-control-sm" maxlength="255" ng-model="v.sebagai" ng-disabled="true"/>
                                 </td>
                                 <td class="align-left">
-                                    <input type="text" class="form-control form-control-sm angka rp" maxlength="11" ng-model="v.level" ng-disabled="true"/>
+                                    <input type="text" class="form-control form-control-sm angka rp" maxlength="20" ng-model="v.level" ng-disabled="true"/>
                                 </td>
                                 <td class="align-center">
                                     <span class="bg-success p-1" ng-if="v.status == 'Approved'">Disetujui</span>
