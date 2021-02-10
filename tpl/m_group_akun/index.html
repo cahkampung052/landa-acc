@@ -1,0 +1,113 @@
+<div class="animated fadeIn">
+    <div ng-controller="mgroupakunCtrl">
+        <div class="card" ng-show="!is_edit" st-pipe="callServer" st-table="displayed">
+            <div class="card-header">
+                <strong class="d-md-down-none">
+                    Master Grup Akun
+                </strong>
+                <div class="btn-group pull-right mt-5px" role="group">
+                    <button class="btn btn-secondary btn-sm" ng-click="isCollapsed = !isCollapsed" ng-init="isCollapsed = true">
+                        <i class="fa fa-search">
+                        </i>
+                        Pencarian
+                    </button>
+                    <button class="btn btn-primary btn-sm" ng-click="create();">
+                        <i class="fa fa-plus">
+                        </i>
+                        Buat Baru
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0px">
+                <div class="pencarian" ng-show="!isCollapsed">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row ">
+                                <label class="col-sm-4 col-form-label-sm mb-0">
+                                    Nama
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control form-control-sm"
+                                           placeholder="Cari Berdasarkan Nama"
+                                           st-search="acc_m_akun_group.nama"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                            <tr>
+                                <th class="align-left" st-sort="acc_m_akun_group.nama">
+                                    Nama
+                                </th>
+                                <th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody ng-show="!isLoading">
+                            <tr ng-dblclick="view(row)" ng-repeat="row in displayed">
+                                <td class="align-left">
+                                    {{ row.nama}}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm pull-right" role="group">
+                                        <button class="btn btn-info fa fa-edit" ng-click="update(row)" ng-if="row.is_deleted == 0" type="button">
+                                        </button>
+                                        <button class="btn btn-danger fa fa-trash" ng-click="trash(row)" ng-if="row.is_deleted == 0" type="button">
+                                        </button>
+                                        <button class="btn btn-warning fa fa-recycle" ng-click="restore(row);" ng-if="row.is_deleted == 1" type="button">
+                                        </button>
+                                        <button class="btn btn-danger fa fa-trash" ng-click="delete(row)" ng-if="row.is_deleted == 1" type="button">
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div st-items-by-page="20" st-pagination="" st-template="tpl/common/pagination.custom.html">
+                </div>
+            </div>
+        </div>
+        <div class="card" ng-show="is_edit">
+            <div class="card-header">
+                <strong>
+                    {{formtittle}}
+                </strong>
+            </div>
+            <div class="card-body">
+                <form name="landaform" novalidate="">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label-sm required">
+                                    Nama
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.nama" type="text"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="btn-group pull-right">
+                    <button class="btn btn-secondary btn-sm" ng-click="cancel()" type="submit">
+                        <i class="fa fa-arrow-left">
+                        </i>
+                        Kembali
+                    </button>
+                    <button button-spinner="loading" class="btn btn-primary btn-sm" ng-click="save(form)" ng-disabled="loading" ng-if="!is_view" type="submit">
+                        <i class="fa fa-save">
+                        </i>
+                        Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
