@@ -6,6 +6,7 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
     $scope.is_edit = false;
     $scope.is_view = false;
     $scope.is_create = false;
+    $scope.filter = {};
     /**
      * Ambil klasifikasi
      */
@@ -19,6 +20,12 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
         $scope.listLokasi = response.data.list;
     });
 
+    Data.get('acc/m_group_akun/getGroupAkun').then(function (response) {
+        $scope.listGroupAkun = response.data.list;
+        $scope.filter.group = response.data.list[0];
+        $scope.callServer(tableStateRef)
+    })
+
     /**
      * Tampilkan akun di index
      */
@@ -30,6 +37,11 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
         if (tableState.search.predicateObject) {
             param['filter'] = tableState.search.predicateObject;
         }
+        if (param['filter'] == undefined) {
+            param['filter'] = {};
+        }
+        param['filter']['acc_m_akun.m_akun_group_id'] = $scope.filter.group != undefined ? $scope.filter.group.id : null;
+        console.log(param)
         Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
         });
@@ -80,9 +92,9 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
     /**
      * export Excel
      */
-     $scope.exportIndex = function () {
-         window.location = 'api/acc/m_akun/exportIndex';
-     };
+    $scope.exportIndex = function () {
+        window.location = 'api/acc/m_akun/exportIndex';
+    };
     /**
      * create
      */

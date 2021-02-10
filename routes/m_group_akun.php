@@ -14,6 +14,15 @@ function validasi($data, $custom = array()) {
     return $cek;
 }
 
+$app->get('/acc/m_group_akun/getGroupAkun', function ($request, $response) {
+    $db = $this->db;
+    $models = $db->select("*")
+            ->from("acc_m_akun_group")
+            ->findAll();
+
+    return successResponse($response, ['list' => $models]);
+});
+
 /**
  * Ambil semua m_group_agen
  */

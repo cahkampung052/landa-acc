@@ -269,10 +269,12 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
      * List akun
      */
     $db->select("acc_m_akun.*, induk.nama as nama_induk, induk.kode as kode_induk, "
-                    . "acc_m_lokasi.kode as kode_lokasi, acc_m_lokasi.nama as nama_lokasi")
+                    . "acc_m_lokasi.kode as kode_lokasi, acc_m_lokasi.nama as nama_lokasi, "
+                    . "acc_m_akun_group.nama as nama_group")
             ->from("acc_m_akun")
             ->leftJoin("acc_m_akun as induk", "induk.id = acc_m_akun.parent_id")
             ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_m_akun.m_lokasi_id")
+            ->leftJoin("acc_m_akun_group", "acc_m_akun_group.id = acc_m_akun.m_akun_group_id")
             ->orderBy('acc_m_akun.kode');
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
@@ -308,6 +310,7 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
         $arr[$key] = (array) $value;
         $arr[$key]['nama'] = $value->nama;
+        $arr[$key]['nama_group'] = $value->nama_group;
         $arr[$key]['nama_lengkap'] = $spasi . $value->kode . ' - ' . $value->nama;
         $arr[$key]['parent_id'] = (int) $value->parent_id;
         $arr[$key]['is_induk'] = (int) $value->is_induk;
@@ -1018,6 +1021,10 @@ $app->get('/acc/m_akun/akunKas', function ($request, $response) {
         $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
     }
 
+    if (!empty(config('DEFAULT_GRUP_AKUN'))) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", config('DEFAULT_GRUP_AKUN'));
+    }
+
     $models = $db->findAll();
     return successResponse($response, ['list' => $models]);
 });
@@ -1185,6 +1192,10 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
     //16-10-2020
     if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
         $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    if (!empty(config('DEFAULT_GRUP_AKUN'))) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", config('DEFAULT_GRUP_AKUN'));
     }
 
     $models = $db->findAll();
