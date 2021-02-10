@@ -10,6 +10,7 @@ function validasi($data, $custom = array()) {
         'nama' => 'required',
         'is_kas' => 'required',
         'm_lokasi_id' => 'required',
+        'm_akun_group' => 'required',
     );
     GUMP::set_field_name("parent_id", "Akun Induk");
     GUMP::set_field_name("is_kas", "Kas");
@@ -357,6 +358,7 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
     $data['is_induk'] = isset($data['is_induk']) ? $data['is_induk'] : 0;
     $data['kode'] = isset($data['kode']) ? $data['kode'] : '';
     $data['m_lokasi_id'] = isset($data['m_lokasi_id']) && !empty($data['m_lokasi_id']) ? $data['m_lokasi_id']['id'] : null;
+    $data['m_akun_group_id'] = isset($data['m_akun_group']) && !empty($data['m_akun_group']) ? $data['m_akun_group']['id'] : null;
     if ($data['is_induk'] == 0) {
         $validasi = validasi($data, ["parent_id" => "required"]);
     } else {
@@ -493,6 +495,7 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                 if (isset($kode)) {
                     $data = [];
                     $data['kode'] = $kode;
+                    $data['m_akun_group_id'] = $objPHPExcel->getSheet(0)->getCell('H' . $row)->getValue();
                     $data['nama'] = $objPHPExcel->getSheet(0)->getCell('C' . $row)->getValue();
                     $data['level'] = 1;
                     $data['is_induk'] = 1;
@@ -573,6 +576,20 @@ $app->get('/acc/m_akun/export', function ($request, $response) {
     $path = 'acc/landaacc/file/format_masterakun.xls';
     $objReader = PHPExcel_IOFactory::createReader('Excel5');
     $objPHPExcel = $objReader->load($path);
+
+    $sheet = $objPHPExcel->getSheet(0);
+
+    $getGroupAkun = $db->select("*")
+            ->from("acc_m_akun_group")
+            ->where("is_deleted", "=", 0)
+            ->findAll();
+
+    $index = 11;
+    foreach ($getGroupAkun as $key => $value) {
+        $sheet->getCell('P' . $index)->setValue($value->id . " = " . $value->nama);
+        $index++;
+    }
+
     header("Content-type: application/vnd.ms-excel");
     header("Content-Disposition: attachment;Filename=format_akun.xls");
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
