@@ -321,6 +321,7 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
         $arr[$key]['saldo'] = $saldo;
         $arr[$key]['tipe'] = ($value->tipe == 'No Type') ? '' : $value->tipe;
         $arr[$key]['m_lokasi_id'] = !empty($value->m_lokasi_id) ? ['id' => $value->m_lokasi_id, 'kode' => $value->kode_lokasi, 'nama' => $value->nama_lokasi] : null;
+        $arr[$key]['m_akun_group'] = !empty($value->m_akun_group_id) ? ['id' => $value->m_akun_group_id, 'nama' => $value->nama_group] : null;
     }
     return successResponse($response, ['list' => $arr, 'totalItems' => $totalItem]);
 });
