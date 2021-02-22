@@ -282,7 +282,7 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null) {
         if (!empty($lokasiId)) {
             array_push($lokasiId, $lokasi);
         } else {
-            $lokasiId = $lokasi;
+            $lokasiId[] = $lokasi;
         }
     } else {
         $lokasi = $sql->findAll("select id from acc_m_lokasi where is_deleted = 0");

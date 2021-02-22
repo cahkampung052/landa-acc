@@ -28,7 +28,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
      */
     $labarugi = getPemetaanAkun("Laba Rugi Berjalan");
     $akunLabaRugi = isset($labarugi[0]) ? $labarugi[0] : 0;
-    $saldoLabaRugi = getLabaRugiNominal(null, $tanggal, null);
+    /*
+     * ditambahkan filter lokasi id karena dashoard nya ke los
+     */
+//    $saldoLabaRugi = getLabaRugiNominal(null, $tanggal, null);
+    $saldoLabaRugi = getLabaRugiNominal(null, $tanggal, $filter['m_lokasi_id']);
     $totalLabaRugi = $saldoLabaRugi["total"];
     /*
      * ambil akun pengecualian
@@ -256,23 +260,23 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neraca.html', [
             "modelHarta" =>
-            [
+                [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-            [
+                [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-            [
+                [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-            [
+                [
                 "total" => $totalKewajibanModal,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
@@ -289,23 +293,23 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neraca.html', [
             "modelHarta" =>
-            [
+                [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-            [
+                [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-            [
+                [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-            [
+                [
                 "total" => $totalKewajibanModal,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
@@ -320,23 +324,23 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     } else {
         return successResponse($response, [
             "modelHarta" =>
-            [
+                [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-            [
+                [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-            [
+                [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-            [
+                [
                 "total" => $totalKewajibanModal,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
@@ -736,23 +740,23 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neracaPeriode.html', [
             "modelHarta" =>
-            [
+                [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-            [
+                [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-            [
+                [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi2,
             ],
             "modelKewajibanModal" =>
-            [
+                [
                 "total" => $totalKewajibanModal2,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
@@ -771,23 +775,23 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neracaPeriode.html', [
             "modelHarta" =>
-            [
+                [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-            [
+                [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-            [
+                [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-            [
+                [
                 "total" => $totalKewajibanModal2,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
@@ -804,23 +808,23 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
     } else {
         return successResponse($response, [
             "modelHarta" =>
-            [
+                [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-            [
+                [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-            [
+                [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-            [
+                [
                 "total" => $totalKewajibanModal2,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
