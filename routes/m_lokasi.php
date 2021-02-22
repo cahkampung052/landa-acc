@@ -37,8 +37,16 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
         $db->customWhere("id IN ($lokasi)", "AND");
     }
 
-    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
-        $db->where("acc_m_lokasi.id", "=", $_SESSION['user']['lokasi_id']);
+    if (isset($_SESSION['user']['is_super_admin'])) {
+        if ($_SESSION['user']['is_super_admin'] == 0) {
+            if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+                $db->where("acc_m_lokasi.id", "=", $_SESSION['user']['lokasi_id']);
+            }
+        }
+    } else {
+        if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+            $db->where("acc_m_lokasi.id", "=", $_SESSION['user']['lokasi_id']);
+        }
     }
 
     $models = $db->findAll();
