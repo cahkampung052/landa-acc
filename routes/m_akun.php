@@ -447,7 +447,15 @@ $app->post('/acc/m_akun/trash', function ($request, $response) {
         $update['tipe_arus'] = $data['tipe_arus'];
     }
 
-    $model = $db->update("acc_m_akun", $update, array('id' => $data['id']));
+    $akunId[] = $data['id'];
+    $getChildId = getChildId('acc_m_akun', $data['id']);
+
+    $akunId = array_merge($akunId, $getChildId);
+
+    $akunId = implode(", ", $akunId);
+
+//    $model = $db->update("acc_m_akun", $update, array('id' => $data['id']));
+    $model = $db->update("acc_m_akun", $update, 'id IN(' . $akunId . ')');
     if ($model) {
         return successResponse($response, $model);
     } else {
