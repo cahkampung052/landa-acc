@@ -644,6 +644,7 @@ $app->get('/acc/m_akun/exportIndex', function ($request, $response) {
         ")
             ->from("acc_m_akun")
             ->leftJoin("acc_trans_detail", "acc_m_akun.id = acc_trans_detail.m_akun_id")
+            ->where("acc_m_akun.is_deleted", "=", 0)
             ->customWhere("acc_trans_detail.m_lokasi_id in (" . $lokasiId . ")")
             ->groupBy("acc_m_akun.id")
             ->orderBy("acc_m_akun.is_tipe ASC, parent_id DESC, acc_m_akun.level DESC");
