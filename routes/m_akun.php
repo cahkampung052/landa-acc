@@ -508,12 +508,19 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     $data['nama'] = $objPHPExcel->getSheet(0)->getCell('C' . $row)->getValue();
                     $data['level'] = 1;
                     $data['is_induk'] = 1;
+                    $data['m_lokasi_id'] = !empty($_SESSION['user']['lokasi_id']) ? $_SESSION['user']['lokasi_id'] : null;
                     /*
                      * ambil id dari kode induk
                      */
                     $kode_induk = $objPHPExcel->getSheet(0)->getCell('D' . $row)->getValue();
                     if (isset($kode_induk) && !empty($kode_induk) && strlen($kode_induk) > 0) {
-                        $model = $db->select("*")->from("acc_m_akun")->where("kode", "=", $kode_induk)->find();
+                        $db->select("*")->from("acc_m_akun");
+
+                        $db->where("kode", "=", $kode_induk);
+                        if (!empty($data['m_lokasi_id'])) {
+                            $db->where("m_lokasi_id", "=", $data['m_lokasi_id']);
+                        }
+                        $model = $db->find();
                         if ($model) {
                             $data['parent_id'] = $model->id;
                             $data['level'] = $model->level + 1;
@@ -552,7 +559,6 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                     }
                     $data['is_deleted'] = 0;
 
-                    $data['m_lokasi_id'] = !empty($_SESSION['user']['lokasi_id']) ? $_SESSION['user']['lokasi_id'] : null;
 //                    $tes[] = $data;
                     $db->select("*")->from("acc_m_akun")->where("kode", "=", $kode);
 
@@ -662,19 +668,19 @@ $app->get('/acc/m_akun/exportIndex', function ($request, $response) {
     }
 
     if (isset($params['is_deleted']) && $params['is_deleted'] != "") {
-      $db->where("acc_m_akun.is_deleted", "=", $params['is_deleted']);
+        $db->where("acc_m_akun.is_deleted", "=", $params['is_deleted']);
     }
 
     if (isset($params['m_akun_group_id']) && !empty($params['m_akun_group_id'])) {
-      $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
     }
 
     if (isset($params['nama']) && !empty($params['nama'])) {
-      $db->where("acc_m_akun.nama", "LIKE", $params['nama']);
+        $db->where("acc_m_akun.nama", "LIKE", $params['nama']);
     }
 
     if (isset($params['kode']) && !empty($params['kode'])) {
-      $db->where("acc_m_akun.kode", "LIKE", $params['kode']);
+        $db->where("acc_m_akun.kode", "LIKE", $params['kode']);
     }
 
     $trans = $db->findAll();
@@ -697,19 +703,19 @@ $app->get('/acc/m_akun/exportIndex', function ($request, $response) {
             ->orderBy('acc_m_akun.kode');
     if (isset($params)) {
         if (isset($params['is_deleted']) && $params['is_deleted'] != "") {
-          $db->where("acc_m_akun.is_deleted", "=", $params['is_deleted']);
+            $db->where("acc_m_akun.is_deleted", "=", $params['is_deleted']);
         }
 
         if (isset($params['m_akun_group_id']) && !empty($params['m_akun_group_id'])) {
-          $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+            $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
         }
 
         if (isset($params['nama']) && !empty($params['nama'])) {
-          $db->where("acc_m_akun.nama", "LIKE", $params['nama']);
+            $db->where("acc_m_akun.nama", "LIKE", $params['nama']);
         }
 
         if (isset($params['kode']) && !empty($params['kode'])) {
-          $db->where("acc_m_akun.kode", "LIKE", $params['kode']);
+            $db->where("acc_m_akun.kode", "LIKE", $params['kode']);
         }
     }
 
