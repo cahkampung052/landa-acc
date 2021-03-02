@@ -7,6 +7,7 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
     $scope.is_view = false;
     $scope.is_create = false;
     $scope.filter = {};
+    $scope.filter.is_deleted = '0';
     /**
      * Ambil klasifikasi
      */
@@ -92,8 +93,9 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
     /**
      * export Excel
      */
-    $scope.exportIndex = function () {
-        window.location = 'api/acc/m_akun/exportIndex';
+    $scope.exportIndex = function (form) {
+        window.open('api/acc/m_akun/exportIndex?' + $.param(form), '_blank');
+        // window.location = 'api/acc/m_akun/exportIndex';
     };
     /**
      * create

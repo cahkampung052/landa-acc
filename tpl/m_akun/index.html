@@ -35,7 +35,7 @@
                         <i class="fa fa-plus"></i>
                         &nbsp;Buat Akun Baru
                     </button>
-                    <button class="btn btn-success btn-sm" ng-click="exportIndex();">
+                    <button class="btn btn-success btn-sm" ng-click="exportIndex(filter);">
                         <i class="far fa-file-excel"></i>
                         &nbsp;Export Excel
                     </button>
@@ -57,15 +57,15 @@
                                         </div>
                                         <label for="kode" class="col-md-1 col-form-label-sm mb-0px">Kode</label>
                                         <div class="col-md-2">
-                                            <input type="text" class="form-control form-control-sm" st-search="kode" id="kode" placeholder="Kode"/>
+                                            <input type="text" class="form-control form-control-sm" st-search="kode" id="kode" placeholder="Kode" ng-model="filter.kode"/>
                                         </div>
                                         <label for="nama" class="col-md-1 col-form-label-sm mb-0px">Nama</label>
                                         <div class="col-md-2">
-                                            <input type="text" class="form-control form-control-sm" st-search="nama" id="nama" placeholder="Nama"/>
+                                            <input type="text" class="form-control form-control-sm" st-search="nama" id="nama" placeholder="Nama" ng-model="filter.nama"/>
                                         </div>
                                         <label class="col-md-1 col-form-label-sm mb-0px">Status</label>
                                         <div class="col-md-2">
-                                            <select class="form-control form-control-sm" st-search="is_deleted">
+                                            <select class="form-control form-control-sm" st-search="is_deleted" ng-model="filter.is_deleted">
                                                 <option value="0">Aktif</option>
                                                 <option value="1">Terhapus</option>
                                             </select>

@@ -608,8 +608,11 @@ $app->get('/acc/m_akun/export', function ($request, $response) {
  * Export Excel
  */
 $app->get('/acc/m_akun/exportIndex', function ($request, $response) {
+    $params = $request->getParams();
     $db = $this->db;
-    // print_die($_SESSION);
+
+    $params["m_akun_group_id"] = $params["group"]["id"];
+    // print_die($params);
     $path = 'acc/landaacc/file/index_masterakun.xls';
     $objReader = PHPExcel_IOFactory::createReader('Excel5');
     $objPHPExcel = $objReader->load($path);
@@ -644,7 +647,7 @@ $app->get('/acc/m_akun/exportIndex', function ($request, $response) {
         ")
             ->from("acc_m_akun")
             ->leftJoin("acc_trans_detail", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-            ->where("acc_m_akun.is_deleted", "=", 0)
+            // ->where("acc_m_akun.is_deleted", "=", 0)
             ->customWhere("acc_trans_detail.m_lokasi_id in (" . $lokasiId . ")")
             ->groupBy("acc_m_akun.id")
             ->orderBy("acc_m_akun.is_tipe ASC, parent_id DESC, acc_m_akun.level DESC");
@@ -653,8 +656,25 @@ $app->get('/acc/m_akun/exportIndex', function ($request, $response) {
     if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
         $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
     }
+
     if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
         $db->where("acc_trans_detail.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    if (isset($params['is_deleted']) && $params['is_deleted'] != "") {
+      $db->where("acc_m_akun.is_deleted", "=", $params['is_deleted']);
+    }
+
+    if (isset($params['m_akun_group_id']) && !empty($params['m_akun_group_id'])) {
+      $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
+    if (isset($params['nama']) && !empty($params['nama'])) {
+      $db->where("acc_m_akun.nama", "LIKE", $params['nama']);
+    }
+
+    if (isset($params['kode']) && !empty($params['kode'])) {
+      $db->where("acc_m_akun.kode", "LIKE", $params['kode']);
     }
 
     $trans = $db->findAll();
@@ -675,18 +695,21 @@ $app->get('/acc/m_akun/exportIndex', function ($request, $response) {
             ->from("acc_m_akun")
             ->leftJoin("acc_m_akun as induk", "induk.id = acc_m_akun.parent_id")
             ->orderBy('acc_m_akun.kode');
-    if (isset($params['filter'])) {
-        $filter = (array) json_decode($params['filter']);
-        foreach ($filter as $key => $val) {
-            if ($key == 'is_deleted') {
-                $db->where("acc_m_akun.is_deleted", '=', $val);
-            } elseif ($key == 'kode') {
-                $db->where("acc_m_akun.kode", 'LIKE', $val);
-            } elseif ($key == 'nama') {
-                $db->where("acc_m_akun.nama", 'LIKE', $val);
-            } else {
-                $db->where($key, 'LIKE', $val);
-            }
+    if (isset($params)) {
+        if (isset($params['is_deleted']) && $params['is_deleted'] != "") {
+          $db->where("acc_m_akun.is_deleted", "=", $params['is_deleted']);
+        }
+
+        if (isset($params['m_akun_group_id']) && !empty($params['m_akun_group_id'])) {
+          $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+        }
+
+        if (isset($params['nama']) && !empty($params['nama'])) {
+          $db->where("acc_m_akun.nama", "LIKE", $params['nama']);
+        }
+
+        if (isset($params['kode']) && !empty($params['kode'])) {
+          $db->where("acc_m_akun.kode", "LIKE", $params['kode']);
         }
     }
 
@@ -696,6 +719,7 @@ $app->get('/acc/m_akun/exportIndex', function ($request, $response) {
     }
 
     $models = $db->findAll();
+    // print_die($models);
 
     $listAkun = buildTreeAkun($models, 0);
     $arrModel = flatten($listAkun);
