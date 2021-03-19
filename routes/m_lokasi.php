@@ -29,12 +29,27 @@ $app->get('/acc/m_lokasi/getLokasi', function ($request, $response) {
     $db = $this->db;
     $db->select("*")
             ->from("acc_m_lokasi")
-            ->orderBy('acc_m_lokasi.kode_parent')
+            ->orderBy('acc_m_lokasi.kode')
             ->where("is_deleted", "=", 0);
     if (isset($_SESSION['user']['lokasi']) && !empty($_SESSION['user']['lokasi'])) {
         $lokasi = getSessionLokasi();
         // echo $lokasi;
         $db->customWhere("id IN ($lokasi)", "AND");
+    }
+
+    $lokasi_custom = [];
+    if (isset($_SESSION['user']['perusahaan']['lokasi_id'])) {
+        $lokasi_custom[] = $_SESSION['user']['perusahaan']['lokasi_id'];
+    }
+
+    if (isset($_SESSION['user']['proyek']['lokasi_id'])) {
+        $lokasi_custom[] = $_SESSION['user']['proyek']['lokasi_id'];
+    }
+
+    if (!empty($lokasi_custom)) {
+        $lokasi_custom = implode(", ", $lokasi_custom);
+
+        $db->customWhere("id IN ($lokasi_custom)", "AND");
     }
 
     if (isset($_SESSION['user']['is_super_admin'])) {
