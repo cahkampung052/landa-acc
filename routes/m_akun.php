@@ -520,6 +520,9 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
                         if (!empty($data['m_lokasi_id'])) {
                             $db->where("m_lokasi_id", "=", $data['m_lokasi_id']);
                         }
+                        if (!empty($data['m_akun_group_id'])) {
+                            $db->where("acc_m_akun.m_akun_group_id", "=", $data['m_akun_group_id']);
+                        }
                         $model = $db->find();
                         if ($model) {
                             $data['parent_id'] = $model->id;
@@ -564,6 +567,9 @@ $app->post('/acc/m_akun/import', function ($request, $response) {
 
                     if (!empty($data['m_lokasi_id'])) {
                         $db->where("acc_m_akun.m_lokasi_id", "=", $data['m_lokasi_id']);
+                    }
+                    if (!empty($data['m_akun_group_id'])) {
+                        $db->where("acc_m_akun.m_akun_group_id", "=", $data['m_akun_group_id']);
                     }
 
                     $cekkode = $db->find();
