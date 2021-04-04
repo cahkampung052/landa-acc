@@ -286,6 +286,8 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
                 $db->where("acc_m_akun.kode", 'LIKE', $val);
             } elseif ($key == 'nama') {
                 $db->where("acc_m_akun.nama", 'LIKE', $val);
+            } elseif ($key == 'acc_m_akun.m_akun_group_id') {
+                $db->where($key, '=', $val);
             } else {
                 $db->where($key, 'LIKE', $val);
             }
