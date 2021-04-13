@@ -54,6 +54,8 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
                 akun1.id as idAsal, 
                 akun1.nama as namaAsal, 
                 akun1.kode as kodeAsal,
+                group2.nama as groupTujuan,
+                group1.nama as groupAsal,
                 " . $tableuser . ".nama as namaUser
             ")
             ->from("acc_transfer")
@@ -62,6 +64,8 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
             ->join("join", "acc_m_akun akun2", "acc_transfer.m_akun_tujuan_id = akun2.id")
             ->join("join", "acc_m_lokasi lok1", "acc_transfer.m_lokasi_asal_id = lok1.id")
             ->join("join", "acc_m_lokasi lok2", "acc_transfer.m_lokasi_tujuan_id = lok2.id")
+            ->join("left join", "acc_m_akun_group group1", "acc_transfer.m_akun_group_asal_id = group1.id")
+            ->join("left join", "acc_m_akun_group group2", "acc_transfer.m_akun_group_tujuan_id = group2.id")
             ->orderBy('acc_transfer.tanggal DESC')
             ->orderBy('acc_transfer.created_at DESC');
     if (isset($params['filter'])) {
@@ -93,6 +97,8 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
         $models[$key]['m_akun_tujuan_id'] = ["id" => $val->idTujuan, "nama" => $val->namaTujuan, "kode" => $val->kodeTujuan];
         $models[$key]['m_lokasi_asal_id'] = ["id" => $val->m_lokasi_asal_id, "nama" => $val->namaLokAsal, "kode" => $val->kodeLokAsal];
         $models[$key]['m_lokasi_tujuan_id'] = ["id" => $val->m_lokasi_tujuan_id, "nama" => $val->namaLokTujuan, "kode" => $val->kodeLokTujuan];
+        $models[$key]['m_akun_group_asal_id'] = !empty($val->m_akun_group_asal_id) ? ["id" => $val->m_akun_group_asal_id, "nama" => $val->groupAsal] : null;
+        $models[$key]['m_akun_group_tujuan_id'] = !empty($val->m_akun_group_tujuan_id) ? ["id" => $val->m_akun_group_tujuan_id, "nama" => $val->groupTujuan] : null;
         $models[$key]['status'] = ucfirst($val->status);
         $models[$key]['total'] = $val->total;
         $models[$key]['total_format'] = number_format($val->total);
@@ -130,6 +136,8 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
         $insert['m_lokasi_tujuan_id'] = $data['form']['m_lokasi_tujuan_id']['id'];
         $insert['m_akun_asal_id'] = $data['form']['m_akun_asal_id']['id'];
         $insert['m_akun_tujuan_id'] = $data['form']['m_akun_tujuan_id']['id'];
+        $insert['m_akun_group_asal_id'] = !empty($data['form']['m_akun_group_asal_id']['id']) ? $data['form']['m_akun_group_asal_id']['id'] : null;
+        $insert['m_akun_group_tujuan_id'] = !empty($data['form']['m_akun_group_tujuan_id']['id']) ? $data['form']['m_akun_group_tujuan_id']['id'] : null;
         $insert['tanggal'] = date("Y-m-d h:i:s", strtotime($data['form']['tanggal']));
         $insert['total'] = $data['form']['total'];
         $insert['status'] = $data['form']['status'];

@@ -1,20 +1,29 @@
-app.controller('l_labarugiperiodeCtrl', function($scope, Data, $rootScope, $uibModal, Upload, $state) {
+app.controller('l_labarugiperiodeCtrl', function ($scope, Data, $rootScope, $uibModal, Upload, $state) {
     var control_link = "acc/l_laba_rugi";
     $scope.SembunyikanSub = 0;
     $scope.form = {};
+    $scope.is_group = false;
     $scope.url = {};
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
     $scope.form.is_detail = 1;
-    Data.get('site/base_url').then(function(response) {
+
+    Data.get('acc/m_akun/getAkunGroup').then(function (data) {
+        $scope.is_group = data.data.is_group;
+        if ($scope.is_group == true) {
+            $scope.listAkunGroup = data.data.list;
+        }
+    });
+
+    Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
     });
     /**
      * Ambil list lokasi
      */
-    Data.get('acc/m_lokasi/getLokasi').then(function(response) {
+    Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
@@ -23,7 +32,7 @@ app.controller('l_labarugiperiodeCtrl', function($scope, Data, $rootScope, $uibM
     /**
      * Ambil laporan dari server
      */
-    $scope.view = function(is_export, is_print) {
+    $scope.view = function (is_export, is_print) {
         $scope.mulai = moment($scope.form.tanggal.startDate).format('DD-MM-YYYY');
         $scope.selesai = moment($scope.form.tanggal.endDate).format('DD-MM-YYYY');
         var param = {
@@ -34,9 +43,10 @@ app.controller('l_labarugiperiodeCtrl', function($scope, Data, $rootScope, $uibM
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
             is_detail: $scope.SembunyikanSub == 0 ? 1 : 0,
+            m_akun_group_id: $scope.form.m_akun_group_id != undefined ? $scope.form.m_akun_group_id.id :null,
         };
         if (is_export == 0 && is_print == 0) {
-            Data.get(control_link + '/laporan_periode', param).then(function(response) {
+            Data.get(control_link + '/laporan_periode', param).then(function (response) {
                 if (response.status_code == 200) {
                     $scope.data = response.data.data;
                     $scope.detail = response.data.detail;
@@ -46,12 +56,12 @@ app.controller('l_labarugiperiodeCtrl', function($scope, Data, $rootScope, $uibM
                 }
             });
         } else {
-            Data.get('site/base_url').then(function(response) {
+            Data.get('site/base_url').then(function (response) {
                 window.open(response.data.base_url + "api/acc/l_laba_rugi/laporan_periode?" + $.param(param), "_blank");
             });
         }
     };
-    $scope.viewBukuBesar = function(row) {
+    $scope.viewBukuBesar = function (row) {
         var akun = {
             id: row.id,
             kode: row.kode,
@@ -71,7 +81,7 @@ app.controller('l_labarugiperiodeCtrl', function($scope, Data, $rootScope, $uibM
     /**
      * Modal setting pengecualian
      */
-    $scope.modalSetting = function() {
+    $scope.modalSetting = function () {
         var modalInstance = $uibModal.open({
             templateUrl: $scope.url.base_url + "api/" + $scope.url.acc_dir + "/tpl/l_laba_rugi/modal.html",
             controller: "settingLabarugiCtrl",
@@ -79,23 +89,25 @@ app.controller('l_labarugiperiodeCtrl', function($scope, Data, $rootScope, $uibM
             backdrop: "static",
             keyboard: false,
         });
-        modalInstance.result.then(function(response) {
-            if (response.data == undefined) {} else {}
+        modalInstance.result.then(function (response) {
+            if (response.data == undefined) {
+            } else {
+            }
         });
     }
 });
-app.controller("settingLabarugiCtrl", function($state, $scope, Data, $uibModalInstance, $rootScope) {
+app.controller("settingLabarugiCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope) {
     $scope.listAkun = [{}];
-    Data.get('acc/m_akun/getPengecualian').then(function(response) {
+    Data.get('acc/m_akun/getPengecualian').then(function (response) {
         $scope.listAkun = response.data.pengecualian_labarugi;
     });
-    Data.get('acc/m_akun/akunDetail').then(function(data) {
+    Data.get('acc/m_akun/akunDetail').then(function (data) {
         $scope.akunDetail = data.data.list;
     });
     /**
      * Tambah detail
      */
-    $scope.addDetail = function(val) {
+    $scope.addDetail = function (val) {
         var comArr = $(".tabletr").last().index() + 1
         var newDet = {
             m_akun_id: {
@@ -120,16 +132,16 @@ app.controller("settingLabarugiCtrl", function($state, $scope, Data, $uibModalIn
     /**
      * Hapus detail
      */
-    $scope.removeDetail = function(val, paramindex) {
+    $scope.removeDetail = function (val, paramindex) {
         var comArr = eval(val);
         val.splice(paramindex, 1);
     };
-    $scope.save = function() {
+    $scope.save = function () {
         var params = {
             type: "labarugi",
             data: $scope.listAkun
         }
-        Data.post('acc/m_akun/savePengecualian', params).then(function(result) {
+        Data.post('acc/m_akun/savePengecualian', params).then(function (result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $uibModalInstance.close({
@@ -140,7 +152,7 @@ app.controller("settingLabarugiCtrl", function($state, $scope, Data, $uibModalIn
             }
         });
     };
-    $scope.close = function() {
+    $scope.close = function () {
         $uibModalInstance.close({
             'data': undefined
         });

@@ -30,7 +30,12 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
     /*
      * panggil function saldo laba rugi, karena digunakan juga di laporan neraca
      */
-    $labarugi = getLabaRugi($tanggal_start, $tanggal_end, $params['m_lokasi_id']);
+
+    if (empty($params['m_akun_group_id'])) {
+        $params['m_akun_group_id'] = null;
+    }
+
+    $labarugi = getLabaRugi($tanggal_start, $tanggal_end, $params['m_lokasi_id'], $params['m_akun_group_id']);
     $arr = $labarugi['data'];
     $pendapatan = isset($labarugi['total']['PENDAPATAN']) ? $labarugi['total']['PENDAPATAN'] : 0;
     $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
@@ -157,7 +162,12 @@ $app->get('/acc/l_laba_rugi/laporan_periode', function ($request, $response) {
         /*
          * panggil function saldo laba rugi, karena digunakan juga di laporan neraca
          */
-        $labarugi = getLabaRugi($v['awal'], $v['akhir'], $params['m_lokasi_id']);
+
+        if (empty($params['m_akun_group_id'])) {
+            $params['m_akun_group_id'] = null;
+        }
+
+        $labarugi = getLabaRugi($v['awal'], $v['akhir'], $params['m_lokasi_id'], $params['m_akun_group_id']);
 
 //        print_die($labarugi);
 

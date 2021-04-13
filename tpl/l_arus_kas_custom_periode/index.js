@@ -1,10 +1,18 @@
 app.controller('l_aruskascpCtrl', function ($scope, Data, $rootScope, $uibModal, $state) {
     var control_link = "acc/l_arus_kas_custom";
     $scope.form = {};
+    $scope.is_group = false;
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+
+    Data.get('acc/m_akun/getAkunGroup').then(function (data) {
+        $scope.is_group = data.data.is_group;
+        if ($scope.is_group == true) {
+            $scope.listAkunGroup = data.data.list;
+        }
+    });
 
     Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
@@ -31,6 +39,7 @@ app.controller('l_aruskascpCtrl', function ($scope, Data, $rootScope, $uibModal,
             nama_lokasi: $scope.form.m_lokasi_id.nama,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
+            m_akun_group_id: $scope.form.m_akun_group_id != undefined ? $scope.form.m_akun_group_id.id : null,
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan_periode', param).then(function (response) {

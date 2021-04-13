@@ -55,6 +55,11 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
     if (isset($params['m_lokasi_id']) && !empty($params["m_lokasi_id"])) {
         $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $sql->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
     $list = $sql->findAll();
     $arrSaldoAwal = [];
     foreach ($list as $key => $value) {
@@ -77,6 +82,11 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
     if (isset($params['m_lokasi_id']) && !empty($params["m_lokasi_id"])) {
         $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $sql->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
     $list = $sql->findAll();
     $arrMutasi = [];
     foreach ($list as $key => $value) {
@@ -89,10 +99,16 @@ $app->get('/acc/l_neraca_saldo/laporan', function ($request, $response) {
     /*
      * ambil akun
      */
-    $getakun = $sql->select("*")
+    $sql->select("*")
             ->from("acc_m_akun")
-            ->where("is_deleted", "=", 0)
-            ->findAll();
+            ->where("is_deleted", "=", 0);
+
+    if (!empty($params['m_akun_group_id'])) {
+        $sql->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
+    $getakun = $sql->findAll();
+
     $listAkun = buildTreeAkun($getakun, 0);
     $arrModel = flatten($listAkun);
     $arr = [];

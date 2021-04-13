@@ -1,23 +1,39 @@
-app.controller('l_bukubesarCtrl', function($scope, Data, $rootScope, $stateParams) {
+app.controller('l_bukubesarCtrl', function ($scope, Data, $rootScope, $stateParams) {
     var control_link = "acc/l_buku_besar";
     $scope.form = {};
+    $scope.is_group = false;
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+
+    Data.get('acc/m_akun/getAkunGroup').then(function (data) {
+        $scope.is_group = data.data.is_group;
+        if ($scope.is_group == true) {
+            $scope.listAkunGroup = data.data.list;
+        }
+    })
+
     /**
      * Ambil list semua akun
      */
-    Data.get('acc/m_akun/listakun').then(function(data) {
-        $scope.listAkun = data.data;
-        if ($scope.listAkun.length > 0 && typeof $stateParams.akun == undefined) {
-            $scope.form.m_akun_id = $scope.listAkun[0];
-        }
-    });
+    $scope.getAkun = function () {
+        var params = {};
+        params.m_akun_group_id = $scope.form.m_akun_group_id != undefined ? $scope.form.m_akun_group_id.id : null;
+
+        Data.get('acc/m_akun/listakun', params).then(function (data) {
+            $scope.listAkun = data.data;
+            if ($scope.listAkun.length > 0 && typeof $stateParams.akun == undefined) {
+                $scope.form.m_akun_id = $scope.listAkun[0];
+            }
+        });
+    }
+    $scope.getAkun();
+
     /**
      * Ambil semua lokasi
      */
-    Data.get('acc/m_lokasi/getLokasi').then(function(response) {
+    Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
             $scope.form.m_lokasi_id = $scope.listLokasi[0];
@@ -37,13 +53,13 @@ app.controller('l_bukubesarCtrl', function($scope, Data, $rootScope, $stateParam
             }
         }
     });
-    $scope.resetFilter = function(filter) {
+    $scope.resetFilter = function (filter) {
         $scope.form[filter] = undefined;
     }
     /**
      * Ambil laporan dari server
      */
-    $scope.view = function(is_export, is_print) {
+    $scope.view = function (is_export, is_print) {
         $scope.mulai = moment($scope.form.tanggal.startDate).format('DD-MM-YYYY');
         $scope.selesai = moment($scope.form.tanggal.endDate).format('DD-MM-YYYY');
         var param = {
@@ -52,11 +68,12 @@ app.controller('l_bukubesarCtrl', function($scope, Data, $rootScope, $stateParam
             m_lokasi_id: $scope.form.m_lokasi_id.id,
             nama_lokasi: $scope.form.m_lokasi_id.nama,
             m_akun_id: $scope.form.m_akun_id != undefined ? $scope.form.m_akun_id.id : null,
+            m_akun_group_id: $scope.form.m_akun_group_id != undefined ? $scope.form.m_akun_group_id.id : null,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
         };
         if (is_export == 0 && is_print == 0) {
-            Data.get(control_link + '/laporan', param).then(function(response) {
+            Data.get(control_link + '/laporan', param).then(function (response) {
                 if (response.status_code == 200) {
                     $scope.data = response.data.data;
                     $scope.detail = response.data.detail;
@@ -67,7 +84,7 @@ app.controller('l_bukubesarCtrl', function($scope, Data, $rootScope, $stateParam
                 }
             });
         } else {
-            Data.get('site/base_url').then(function(response) {
+            Data.get('site/base_url').then(function (response) {
                 window.open(response.data.base_url + "api/acc/l_buku_besar/laporan?" + $.param(param), "_blank");
             });
         }

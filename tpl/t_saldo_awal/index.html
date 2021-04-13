@@ -48,6 +48,13 @@
                                             <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                         </ui-select>
                                     </div>
+                                    <label class="col-sm-1 col-form-label-sm required" ng-if="is_group">Group</label>
+                                    <div class="col-sm-3" ng-if="is_group">
+                                        <ui-select class="ui-select-sm ui-select-container" ng-change="getAkunBebanPendapatan()" ng-model="form.m_akun_group_id" theme="bootstrap" ng-disabled="is_view">
+                                            <ui-select-match placeholder="Pilih Group Akun">{{ $select.selected.nama}}</ui-select-match>
+                                            <ui-select-choices position="down" repeat="val in listAkunGroup | filter : $select.search">{{ val.nama}}</ui-select-choices>
+                                        </ui-select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -63,7 +70,7 @@
                             </tr>
                         </thead>
                         <tbody ng-show="!isLoading">
-                            <tr ng-repeat="row in displayed" ng-style="(row.is_tipe == 1 && row.is_deleted == 0 && {'background-color' : '#f2f7fb'}) || (row.is_tipe == 0 && row.is_deleted == 1 && {'background-color' : '#fbf2f2'})">
+                            <tr ng-repeat="row in displayed" ng-style="(row.is_tipe == 1 && row.is_deleted == 0 && {'background-color': '#f2f7fb'}) || (row.is_tipe == 0 && row.is_deleted == 1 && {'background-color': '#fbf2f2'})">
                                 <td style="text-align: left;">
                                     <span ng-if="row.is_tipe == 1">
                                         <b ng-bind-html="row.nama_lengkap"></b>

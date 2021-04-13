@@ -62,6 +62,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
         $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
     }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
     $db->where("tipe", "=", "HARTA");
     $modelHarta = $db->findAll();
     $totalHarta = 0;
@@ -136,6 +141,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
         $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
     }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
     $db->where("tipe", "=", "KEWAJIBAN");
     $modelKewajiban = $db->findAll();
     $totalKewajiban = 0;
@@ -204,6 +214,11 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
         $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
     }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
     $db->where("tipe", "=", "MODAL");
     $modelModal = $db->findAll();
     /*
@@ -260,23 +275,23 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neraca.html', [
             "modelHarta" =>
-                [
+            [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-                [
+            [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-                [
+            [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-                [
+            [
                 "total" => $totalKewajibanModal,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
@@ -293,23 +308,23 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neraca.html', [
             "modelHarta" =>
-                [
+            [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-                [
+            [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-                [
+            [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-                [
+            [
                 "total" => $totalKewajibanModal,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
@@ -324,23 +339,23 @@ $app->get('/acc/l_neraca/laporan', function ($request, $response) {
     } else {
         return successResponse($response, [
             "modelHarta" =>
-                [
+            [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-                [
+            [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-                [
+            [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-                [
+            [
                 "total" => $totalKewajibanModal,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
@@ -473,6 +488,11 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
         if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
             $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
         }
+
+        if (!empty($params['m_akun_group_id'])) {
+            $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+        }
+
         $db->where("tipe", "=", "HARTA");
         $modelHarta = $db->findAll();
 
@@ -551,6 +571,11 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
         if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
             $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
         }
+
+        if (!empty($params['m_akun_group_id'])) {
+            $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+        }
+
         $db->where("tipe", "=", "KEWAJIBAN");
         $modelKewajiban = $db->findAll();
 
@@ -626,6 +651,11 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
         if (is_array($arrPengecualian) && !empty($arrPengecualian)) {
             $db->customWhere("acc_m_akun.id NOT IN(" . implode(",", $arrPengecualian) . ")");
         }
+
+        if (!empty($params['m_akun_group_id'])) {
+            $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+        }
+
         $db->where("tipe", "=", "MODAL");
         $modelModal = $db->findAll();
         /*
@@ -740,23 +770,23 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neracaPeriode.html', [
             "modelHarta" =>
-                [
+            [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-                [
+            [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-                [
+            [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi2,
             ],
             "modelKewajibanModal" =>
-                [
+            [
                 "total" => $totalKewajibanModal2,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
@@ -775,23 +805,23 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
         $view = twigViewPath();
         $content = $view->fetch('laporan/neracaPeriode.html', [
             "modelHarta" =>
-                [
+            [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-                [
+            [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-                [
+            [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-                [
+            [
                 "total" => $totalKewajibanModal2,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),
@@ -808,23 +838,23 @@ $app->get('/acc/l_neraca/laporan_periode', function ($request, $response) {
     } else {
         return successResponse($response, [
             "modelHarta" =>
-                [
+            [
                 "list" => $arrHarta,
                 "total" => $totalHarta,
             ],
             "modelKewajiban" =>
-                [
+            [
                 "list" => $arrKewajiban,
                 "total" => $totalKewajiban,
             ],
             "modelModal" =>
-                [
+            [
                 "list" => $arrModal,
                 "total" => $totalModal,
                 "labarugi" => $totalLabaRugi,
             ],
             "modelKewajibanModal" =>
-                [
+            [
                 "total" => $totalKewajibanModal2,
             ],
             "tanggal" => date("d M Y", strtotime($tanggal)),

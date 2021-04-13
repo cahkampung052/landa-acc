@@ -1,10 +1,19 @@
 app.controller('l_neracasaldoCtrl', function ($scope, Data, $rootScope, $uibModal, Upload, $state) {
     var control_link = "acc/l_neraca_saldo";
     $scope.form = {};
+    $scope.is_group = false;
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
         startDate: moment()
     };
+
+    Data.get('acc/m_akun/getAkunGroup').then(function (data) {
+        $scope.is_group = data.data.is_group;
+        if ($scope.is_group == true) {
+            $scope.listAkunGroup = data.data.list;
+        }
+    })
+
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
         if ($scope.listLokasi.length > 0) {
@@ -24,6 +33,7 @@ app.controller('l_neracasaldoCtrl', function ($scope, Data, $rootScope, $uibModa
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
             m_lokasi_id: $scope.form.m_lokasi_id != undefined ? $scope.form.m_lokasi_id.id : null,
             nama_lokasi: $scope.form.m_lokasi_id != undefined ? $scope.form.m_lokasi_id.nama : null,
+            m_akun_group_id: $scope.form.m_akun_group_id != undefined ? $scope.form.m_akun_group_id.id : null,
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan', param).then(function (response) {

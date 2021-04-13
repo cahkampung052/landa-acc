@@ -228,7 +228,13 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
     $arrAwal = [];
     $arrPeriode = [];
     $arrAkhir = [];
-    $akun_kas = $db->select("*")->from("acc_m_akun")->where("is_kas", "=", 1)->where("is_tipe", "=", 0)->findAll();
+    $db->select("*")->from("acc_m_akun")->where("is_kas", "=", 1)->where("is_tipe", "=", 0);
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
+    $akun_kas = $db->findAll();
     if (!empty($akun_kas)) {
         foreach ($akun_kas as $key => $value) {
             $arrAwal['detail'][$value->kode] = (array) $value;
@@ -250,6 +256,11 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
             $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
         }
+
+        if (!empty($params['m_akun_group_id'])) {
+            $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+        }
+
         $saldo_awal = $db->groupBy("m_akun_id")->findAll();
 
 //    pd($saldo_awal);
@@ -261,6 +272,10 @@ $app->get('/acc/l_arus_kas_custom/laporan', function ($request, $response) {
 
         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
             $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
+        }
+
+        if (!empty($params['m_akun_group_id'])) {
+            $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
         }
 
         $saldo_akhir = $db->groupBy("m_akun_id")->findAll();
@@ -476,7 +491,13 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
     /*
      * saldo awal & akhir
      */
-    $akun_kas = $db->select("*")->from("acc_m_akun")->where("is_kas", "=", 1)->where("is_tipe", "=", 0)->findAll();
+    $db->select("*")->from("acc_m_akun")->where("is_kas", "=", 1)->where("is_tipe", "=", 0);
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
+    $akun_kas = $db->findAll();
 
     if (!empty($akun_kas)) {
         foreach ($akun_kas as $key => $value) {
@@ -619,6 +640,11 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
             if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
                 $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
             }
+
+            if (!empty($params['m_akun_group_id'])) {
+                $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+            }
+
             $saldo_awal = $db->groupBy("m_akun_id")->findAll();
 //
 //        print_die($saldo_awal);
@@ -630,6 +656,10 @@ $app->get('/acc/l_arus_kas_custom/laporan_periode', function ($request, $respons
 
             if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
                 $db->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
+            }
+
+            if (!empty($params['m_akun_group_id'])) {
+                $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
             }
 
             $saldo_akhir = $db->groupBy("m_akun_id")->findAll();

@@ -41,6 +41,26 @@ function setLevelTipeAkun($parent_id) {
     return $parent->level + 1;
 }
 
+$app->get('/acc/m_akun/getAkunGroup', function ($request, $response) {
+    $db = $this->db;
+
+    $getFieldAkun = checkFieldTable('acc_m_akun', 'm_akun_group_id');
+    if (!empty($getFieldAkun)) {
+        $db->select("*")
+                ->from("acc_m_akun_group");
+
+        $db->where("is_deleted", "=", 0);
+
+        $is_group = true;
+        $model = $db->findAll();
+    } else {
+        $is_group = false;
+        $model = [];
+    }
+
+    return successResponse($response, ['list' => $model, 'is_group' => $is_group]);
+});
+
 /*
  * get kode
  */
@@ -73,6 +93,10 @@ $app->get('/acc/m_akun/getSaldoAwal', function ($request, $response) {
     //16-10-2020
     if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
         $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
     }
 
     $models = $db->findAll();
@@ -331,12 +355,17 @@ $app->get('/acc/m_akun/index', function ($request, $response) {
  * Ambil list akun
  */
 $app->get('/acc/m_akun/listakun', function ($request, $response) {
+    $params = $request->getParams();
     $sql = $this->db;
     $sql->select("*")->from("acc_m_akun")->where("is_deleted", "=", 0)->orderBy("kode");
 
     //16-10-2020
     if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
         $sql->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $sql->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
     }
 
     $data = $sql->findAll();
@@ -942,6 +971,10 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
         $db->customWhere("id IN($childId)", "AND");
     }
 
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
     $getAkun = $db->findAll();
 
 //    print_die($getAkun);
@@ -956,6 +989,10 @@ $app->get('/acc/m_akun/getBudget', function ($request, $response) {
 
     if (!empty($params['m_akun_id'])) {
         $db->customWhere("m_akun_id IN($childId)", "AND");
+    }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_budgeting.m_akun_group_id", "=", $params['m_akun_group_id']);
     }
 
     $getBudget = $db->findAll();
@@ -1028,15 +1065,22 @@ $app->post('/acc/m_akun/saveBudget', function ($request, $response) {
                         // 'm_kategori_pengajuan_id' => $params['form']['m_kategori_pengajuan_id']['id'],
                         'bulan' => date('m', strtotime($v['date'])),
                         'tahun' => date('Y', strtotime($v['date'])),
-                        'budget' => $v['budget']
+                        'budget' => $v['budget'],
+                        'm_akun_group_id' => !empty($params['form']['m_akun_group_id']['id']) ? $params['form']['m_akun_group_id']['id'] : null,
                     ];
-                    $cek = $db->select("id")
+                    $db->select("id")
                             ->from("acc_budgeting")
-                            ->where("m_akun_id", "=", $params['form']['m_akun_id']['id'])
-                            ->andWhere("m_akun_id", "=", $params['form']['m_lokasi_id']['id'])
+//                            ->where("m_akun_id", "=", $params['form']['m_akun_id']['id'])
+                            ->where("m_akun_id", "=", $v['m_akun_id'])
+                            ->andWhere("m_lokasi_id", "=", $params['form']['m_lokasi_id']['id'])
                             ->andWhere("bulan", "=", date('m', strtotime($v['date'])))
-                            ->andWhere("tahun", "=", date('Y', strtotime($v['date'])))
-                            ->find();
+                            ->andWhere("tahun", "=", date('Y', strtotime($v['date'])));
+
+                    if (!empty($params['form']['m_akun_group_id']['id'])) {
+                        $db->where("m_akun_group_id", "=", $params['form']['m_akun_group_id']['id']);
+                    }
+
+                    $cek = $db->find();
                     if (isset($cek->id) && !empty($cek->id)) {
                         $db->update('acc_budgeting', $data, ['id' => $cek->id]);
                     } else {
@@ -1086,8 +1130,8 @@ $app->get('/acc/m_akun/akunKas', function ($request, $response) {
         $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
     }
 
-    if (!empty(config('DEFAULT_GRUP_AKUN'))) {
-        $db->where("acc_m_akun.m_akun_group_id", "=", config('DEFAULT_GRUP_AKUN'));
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
     }
 
     $models = $db->findAll();
@@ -1218,15 +1262,19 @@ $app->get('/acc/m_akun/akunBeban', function ($request, $response) {
 });
 
 $app->get('/acc/m_akun/akunBebanPendapatan', function ($request, $response) {
+    $params = $request->getParams();
     $db = $this->db;
     $db->select("*")->from("acc_m_akun")
-            ->customWhere("tipe = 'PENDAPATAN' or tipe = 'PENDAPATAN DILUAR USAHA'", "AND")
-            ->customWhere("tipe = 'BEBAN' or tipe = 'BEBAN DILUAR USAHA' or tipe = 'BIAYA'", "OR")
+            ->customWhere("(tipe = 'PENDAPATAN' or tipe = 'PENDAPATAN DILUAR USAHA' or tipe = 'BEBAN' or tipe = 'BEBAN DILUAR USAHA' or tipe = 'BIAYA')", "AND")
             ->where("is_deleted", "=", 0);
 
     //16-10-2020
     if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
         $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
     }
 
     $models = $db->findAll();
@@ -1259,8 +1307,8 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
         $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
     }
 
-    if (!empty(config('DEFAULT_GRUP_AKUN'))) {
-        $db->where("acc_m_akun.m_akun_group_id", "=", config('DEFAULT_GRUP_AKUN'));
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
     }
 
     $models = $db->findAll();

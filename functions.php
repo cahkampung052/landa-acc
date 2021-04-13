@@ -347,7 +347,7 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null) {
 /**
  * Laba rugi
  */
-function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array = true) {
+function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $group = null, $array = true) {
     $sql = new Cahkampung\Landadb(config('DB')['db']);
     /*
      * ambil child lokasi
@@ -414,6 +414,11 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
     if (!empty($arrPengecualian)) {
         $sql->customWhere("m_akun_id NOT INT (" . implode(",", $arrPengecualian) . ")", "And");
     }
+
+    if (!empty($group)) {
+        $sql->where("acc_m_akun.m_akun_group_id", "=", $group);
+    }
+
     $trans = $sql->findAll();
     $arrTrans = [];
     $total = 0;
@@ -433,6 +438,11 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $array
             ->from("acc_m_akun")
             ->customWhere("tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
             ->orderBy("acc_m_akun.kode");
+
+    if (!empty($group)) {
+        $sql->where("acc_m_akun.m_akun_group_id", "=", $group);
+    }
+
     $model = $sql->findAll();
     $listAkun = buildTreeAkun($model, 0);
     $arrModel = flatten($listAkun);
@@ -838,6 +848,11 @@ function jurnalKas($params) {
     if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
         $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $sql->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
     $jurnal_kas = $sql->findAll();
     $arr_kas = [];
     $custom_where = ['type' => [0 => 0], 'id' => [0 => 0]];
@@ -866,6 +881,11 @@ function jurnalKas($params) {
     if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
         $sql->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND");
     }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $sql->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
     $jurnal_lawan = $sql->findAll();
     $arr_lawan = [];
     foreach ($jurnal_lawan as $key => $value) {
@@ -972,4 +992,13 @@ function jurnalKas($params) {
 
 function imgLaporan() {
     return config('MODUL_ACC')['LOGO'];
+}
+
+function checkFieldTable($table, $field) {
+    $config = config('DB');
+    $db = new Cahkampung\Landadb($config['db']);
+
+    $getField = $db->find("SHOW COLUMNS FROM $table LIKE '$field'");
+
+    return $getField;
 }

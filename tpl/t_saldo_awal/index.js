@@ -12,7 +12,20 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
     $scope.totalkredit = 0;
     $scope.totaldebit = 0;
     $scope.tutup = false;
+    $scope.is_group = false;
 //    $scope.form.m_fakultas_id = 1;
+
+    Data.get('acc/m_akun/getAkunGroup').then(function (data) {
+        $scope.is_group = data.data.is_group;
+        if ($scope.is_group == true) {
+            $scope.listAkunGroup = data.data.list;
+            if ($scope.listAkunGroup != undefined) {
+                $scope.form.m_akun_group_id = $scope.listAkunGroup[0];
+                $scope.view($scope.form);
+            }
+        }
+
+    })
 
     Data.get('acc/m_akun/getTanggalSetting').then(function (data) {
         var tanggal = new Date(data.data.tanggal)
@@ -71,7 +84,8 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
     $scope.view = function (form) {
         var param = {
             m_lokasi_id: form.m_lokasi_id.id,
-            tanggal: form.tanggal
+            tanggal: form.tanggal,
+            m_akun_group_id: form.m_akun_group_id != undefined ? form.m_akun_group_id.id : null,
         };
         Data.get('acc/m_akun/getSaldoAwal', param).then(function (response) {
             $scope.displayed = response.data.detail;

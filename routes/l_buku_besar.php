@@ -56,11 +56,19 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                 ->leftJoin("acc_m_akun as klasifikasi", "klasifikasi.id = acc_m_akun.parent_id")
                 ->andWhere("acc_m_akun.is_deleted", "=", 0)
                 ->orderBy("acc_m_akun.kode ASC");
+        
+        if(!empty($params['m_akun_group_id'])){
+            $sql->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+        }
+        
         if (isset($params['m_akun_id']) && !empty($params['m_akun_id'])) {
             $getakun = $sql->customWhere("acc_m_akun.id = '" . $params['m_akun_id'] . "'", "AND")->findAll();
         } else {
             $getakun = $sql->where("acc_m_akun.is_tipe", "=", 1)->findAll();
         }
+        
+        
+        
         /**
          * Ambil akun laba rugi
          */

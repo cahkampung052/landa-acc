@@ -164,11 +164,20 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label class="col-sm-3 col-form-label-sm required">Akun Group</label>
+                                <div class="col-sm-9">
+                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_group_asal_id" theme="bootstrap" ng-disabled="is_view" on-select="form.m_akun_asal_id = undefined; getAkunKasAsal()">
+                                        <ui-select-match placeholder="Pilih Akun Group">{{ $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listAkunGroup | filter : $select.search">{{ val.nama}}</ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label class="col-sm-3 col-form-label-sm required">Akun</label>
                                 <div class="col-sm-9">
                                     <ui-select class="ui-select-sm" ng-model="form.m_akun_asal_id" theme="bootstrap" ng-disabled="is_view">
                                         <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
-                                        <ui-select-choices repeat="val in akun | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
+                                        <ui-select-choices repeat="val in akunAsal | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>
@@ -185,11 +194,20 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label class="col-sm-3 col-form-label-sm required">Akun Group</label>
+                                <div class="col-sm-9">
+                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_group_tujuan_id" theme="bootstrap" ng-disabled="is_view" on-select="form.m_akun_tujuan_id = undefined; getAkunKasTujuan()">
+                                        <ui-select-match placeholder="Pilih Akun Group">{{ $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listAkunGroup | filter : $select.search">{{ val.nama}}</ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label class="col-sm-3 col-form-label-sm required">Akun</label>
                                 <div class="col-sm-9">
                                     <ui-select class="ui-select-sm" ng-model="form.m_akun_tujuan_id" theme="bootstrap" ng-disabled="is_view">
                                         <ui-select-match placeholder="Pilih Akun">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
-                                        <ui-select-choices repeat="val in akun | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
+                                        <ui-select-choices repeat="val in akunTujuan | filter : $select.search">{{ val.kode + " - " + val.nama}}</ui-select-choices>
                                     </ui-select>
                                 </div>
                             </div>

@@ -87,14 +87,19 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
     /*
      * ambil semua akun tipe = 0
      */
-    $listAkun = $db->select("acc_m_akun.*, induk.nama as nama_induk, induk.kode as kode_induk")
+    $db->select("acc_m_akun.*, induk.nama as nama_induk, induk.kode as kode_induk")
             ->from("acc_m_akun")
             ->leftJoin("acc_m_akun as induk", "induk.id = acc_m_akun.parent_id")
             ->orderBy('acc_m_akun.kode')
             ->customWhere("acc_m_akun.id in (" . $childId . ")")
             ->where("acc_m_akun.is_deleted", "=", 0)
-            ->where("acc_m_akun.is_tipe", "=", 0)
-            ->findAll();
+            ->where("acc_m_akun.is_tipe", "=", 0);
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
+    $listAkun = $db->findAll();
 
 //    print_die($listAkun);
 
@@ -108,6 +113,11 @@ $app->get('/acc/l_budgeting/laporan', function ($request, $response) {
     if (!empty($lokasiId)) {
         $db->customWhere("acc_budgeting.m_lokasi_id = '" . $lokasiId . "'", "AND");
     }
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("acc_budgeting.m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
     $getBudget = $db->findAll();
 
 //    print_die($getBudget);

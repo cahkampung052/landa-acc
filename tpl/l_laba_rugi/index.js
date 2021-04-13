@@ -1,12 +1,20 @@
 app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, Upload, $state) {
     var control_link = "acc/l_laba_rugi";
     $scope.form = {};
+    $scope.is_group = false;
     $scope.url = {};
     $scope.form.tanggal = {
         endDate: moment(),
         startDate: moment().startOf('month').format('YYYY-MM-DD')
     };
     $scope.form.is_detail = 1;
+
+    Data.get('acc/m_akun/getAkunGroup').then(function (data) {
+        $scope.is_group = data.data.is_group;
+        if ($scope.is_group == true) {
+            $scope.listAkunGroup = data.data.list;
+        }
+    });
 
     Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
@@ -33,7 +41,8 @@ app.controller('l_labarugiCtrl', function ($scope, Data, $rootScope, $uibModal, 
             lokasi_nama: $scope.form.m_lokasi_id.nama,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
-            is_detail: $scope.form.is_detail
+            is_detail: $scope.form.is_detail,
+            m_akun_group_id: $scope.form.m_akun_group_id != undefined ? $scope.form.m_akun_group_id.id :null,
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan', param).then(function (response) {

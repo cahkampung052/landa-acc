@@ -1,6 +1,7 @@
 app.controller('l_neracapCtrl', function ($scope, Data, $rootScope, $uibModal, $state) {
     var control_link = "acc/l_neraca";
     $scope.form = {};
+    $scope.is_group = false;
     $scope.url = {};
     $scope.form.tanggal = {
         endDate: moment().add(1, 'M'),
@@ -8,6 +9,12 @@ app.controller('l_neracapCtrl', function ($scope, Data, $rootScope, $uibModal, $
     };
 //    $scope.form.tanggal = new Date();
     $scope.form.is_detail = 1;
+    Data.get('acc/m_akun/getAkunGroup').then(function (data) {
+        $scope.is_group = data.data.is_group;
+        if ($scope.is_group == true) {
+            $scope.listAkunGroup = data.data.list;
+        }
+    })
 
     Data.get('site/base_url').then(function (response) {
         $scope.url = response.data;
@@ -29,8 +36,9 @@ app.controller('l_neracapCtrl', function ($scope, Data, $rootScope, $uibModal, $
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
             is_detail: $scope.form.is_detail,
-            m_lokasi_id : $scope.form.m_lokasi_id.id,
-            lokasi_nama: $scope.form.m_lokasi_id.nama
+            m_lokasi_id: $scope.form.m_lokasi_id.id,
+            lokasi_nama: $scope.form.m_lokasi_id.nama,
+            m_akun_group_id: $scope.form.m_akun_group_id != undefined ? $scope.form.m_akun_group_id.id :null,
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan_periode', param).then(function (response) {
@@ -47,10 +55,8 @@ app.controller('l_neracapCtrl', function ($scope, Data, $rootScope, $uibModal, $
             Data.get('site/base_url').then(function (response) {
                 window.open(response.data.base_url + "api/acc/l_neraca/laporan_periode?" + $.param(param), "_blank");
             });
-
         }
     };
-
     $scope.viewBukuBesar = function (row) {
         console.log(row)
         var akun = {
@@ -81,15 +87,12 @@ app.controller('l_neracapCtrl', function ($scope, Data, $rootScope, $uibModal, $
     }
 
 });
-
 app.controller("settingNeracaCtrl", function ($state, $scope, Data, $uibModalInstance, $rootScope) {
 
     $scope.listAkun = [{}];
-
     Data.get('acc/m_akun/getPengecualian').then(function (response) {
         $scope.listAkun = response.data.pengecualian_neraca;
     });
-
     Data.get('acc/m_akun/akunDetail').then(function (data) {
         $scope.akunDetail = data.data.list;
     });
@@ -127,7 +130,6 @@ app.controller("settingNeracaCtrl", function ($state, $scope, Data, $uibModalIns
         var comArr = eval(val);
         val.splice(paramindex, 1);
     };
-
     $scope.save = function () {
 
         var params = {

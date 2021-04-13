@@ -1,5 +1,6 @@
 app.controller('budgetingCtrl', function ($scope, Data, $rootScope, $uibModal) {
     $scope.form = {};
+    $scope.is_group = false;
     $scope.form.tahun = {
         locale: {
             format: 'DD-MMM-YYYY'
@@ -9,6 +10,19 @@ app.controller('budgetingCtrl', function ($scope, Data, $rootScope, $uibModal) {
     };
     $scope.totalkredit = 0;
     $scope.tutup = false;
+
+    Data.get('acc/m_akun/getAkunGroup').then(function (data) {
+        $scope.is_group = data.data.is_group;
+        if ($scope.is_group == true) {
+            $scope.listAkunGroup = data.data.list;
+            if ($scope.listAkunGroup != undefined && $scope.is_group == true) {
+                $scope.form.m_akun_group_id = $scope.listAkunGroup[0];
+                $scope.getAkunBebanPendapatan()
+            }
+        }
+
+    })
+
     // Data.get('acc/apppengajuan/getKategori').then(function(response) {
     //     $scope.listKategori = response.data;
     // })
@@ -20,13 +34,23 @@ app.controller('budgetingCtrl', function ($scope, Data, $rootScope, $uibModal) {
     /*
      * Ambil akun untuk detail
      */
-    Data.get('acc/m_akun/akunBebanPendapatan').then(function (data) {
-        $scope.listAkun = data.data.list;
-    });
+    $scope.getAkunBebanPendapatan = function () {
+        var params = {};
+        if ($scope.form.m_akun_group_id != undefined) {
+            params.m_akun_group_id = $scope.form.m_akun_group_id.id
+        }
+
+        Data.get('acc/m_akun/akunBebanPendapatan', params).then(function (data) {
+            $scope.listAkun = data.data.list;
+        });
+    }
+    $scope.getAkunBebanPendapatan();
+
     Data.get('acc/m_lokasi/getLokasi').then(function (response) {
         $scope.listLokasi = response.data.list;
         $scope.form.m_lokasi_id = $scope.listLokasi[0];
     });
+
     Data.get("acc/t_tutup_bulan/index", {
         filter: {
             jenis: "bulan"
@@ -50,6 +74,7 @@ app.controller('budgetingCtrl', function ($scope, Data, $rootScope, $uibModal) {
         if (form.m_lokasi_id !== undefined && form.start !== undefined && form.end !== undefined) {
             var param = {
                 m_lokasi_id: form.m_lokasi_id.id,
+                m_akun_group_id: form.m_akun_group_id != undefined ? form.m_akun_group_id.id : null,
                 start: moment(form.start).format('YYYY-MM'),
                 end: moment(form.end).format('YYYY-MM'),
                 m_akun_id: form.m_akun_id != undefined ? form.m_akun_id.id : null,

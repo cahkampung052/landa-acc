@@ -1,4 +1,4 @@
-app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upload) {
+app.controller('transferCtrl', function ($scope, Data, $rootScope, $uibModal, Upload) {
     var tableStateRef;
     var control_link = "acc/t_transfer";
     var master = 'Transaksi Transfer Kas';
@@ -8,6 +8,8 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
     $scope.is_edit = false;
     $scope.is_view = false;
     $scope.is_setting_field = false;
+    $scope.form = {};
+    $scope.is_group = false;
     /*
      * SETTING FIELD
      */
@@ -17,7 +19,7 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
     $scope.limit = 0;
     $scope.row = 4;
     $scope.classrow = 12 / $scope.row;
-    $scope.setPosition = function($event, key, vals) {
+    $scope.setPosition = function ($event, key, vals) {
         $event.preventDefault();
         $event.stopPropagation();
         var ps = $scope.limit;
@@ -40,20 +42,20 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
             $scope.field[key].checkbox = chk;
             $scope.field[key].alias = al;
             var f = key + ps;
-            setTimeout(function() {
+            setTimeout(function () {
                 $('.input-' + f).focus()
             }, 1)
         } else {
             $scope.field[key].alias = vals.alias;
         }
     }
-    $scope.fillCheckBox = function(a) {
-        angular.forEach($scope.field, function(val, key) {
+    $scope.fillCheckBox = function (a) {
+        angular.forEach($scope.field, function (val, key) {
             val.checkbox = a;
         })
     }
-    $scope.savePosition = function() {
-        Data.post(control_link + '/savePosition', $scope.field).then(function(result) {
+    $scope.savePosition = function () {
+        Data.post(control_link + '/savePosition', $scope.field).then(function (result) {
             if (result.status_code == 200) {
                 //                $scope.is_setting = false;
                 $scope.callServer(tableStateRef)
@@ -65,10 +67,32 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
     /*
      * END SETTING FIELD
      */
-    Data.get('acc/m_akun/akunKas').then(function(data) {
-        $scope.akun = data.data.list;
-    });
-    Data.get('acc/m_akun/getTanggalSetting').then(function(response) {
+    Data.get('acc/m_akun/getAkunGroup').then(function (data) {
+        $scope.is_group = data.data.is_group;
+        if ($scope.is_group == true) {
+            $scope.listAkunGroup = data.data.list;
+        }
+
+    })
+
+    $scope.getAkunKasAsal = function (array) {
+        var params = {};
+        params.m_akun_group_id = $scope.form.m_akun_group_asal_id != undefined ? $scope.form.m_akun_group_asal_id.id : null;
+
+        Data.get('acc/m_akun/akunKas', params).then(function (data) {
+            $scope.akunAsal = data.data.list;
+        });
+    }
+    $scope.getAkunKasTujuan = function (array) {
+        var params = {};
+        params.m_akun_group_id = $scope.form.m_akun_group_tujuan_id != undefined ? $scope.form.m_akun_group_tujuan_id.id : null;
+
+        Data.get('acc/m_akun/akunKas', params).then(function (data) {
+            $scope.akunTujuan = data.data.list;
+        });
+    }
+
+    Data.get('acc/m_akun/getTanggalSetting').then(function (response) {
         $scope.tanggal_setting = response.data.tanggal;
         $scope.options = {
             minDate: new Date(response.data.tanggal),
@@ -94,16 +118,16 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         if (tableState.search.predicateObject) {
             param['filter'] = tableState.search.predicateObject;
         }
-        Data.get('acc/m_lokasi/getLokasi', param).then(function(response) {
+        Data.get('acc/m_lokasi/getLokasi', param).then(function (response) {
             $scope.listLokasi = response.data.list;
         });
-        Data.get(control_link + '/index', param).then(function(response) {
+        Data.get(control_link + '/index', param).then(function (response) {
             $scope.displayed = response.data.list;
             if (response.data.field != undefined && response.data.field.length > 0) {
                 $scope.field = response.data.field;
             } else {
                 var index = 0;
-                angular.forEach(response.data.list[0], function(val, key) {
+                angular.forEach(response.data.list[0], function (val, key) {
                     $scope.field.push({
                         checkbox: true,
                         value: key,
@@ -115,7 +139,7 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
             }
             $scope.limit = Math.ceil($scope.field.length / $scope.row);
             $scope.startFrom = [];
-            angular.forEach($scope.field, function(val, key) {
+            angular.forEach($scope.field, function (val, key) {
                 if (val.no % $scope.limit == 0) {
                     $scope.startFrom.push({
                         start: val.no,
@@ -128,14 +152,14 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         });
         $scope.isLoading = false;
     };
-    $scope.kode = function(lokasi) {
-        Data.get(control_link + '/kode/' + lokasi.kode).then(function(response) {
+    $scope.kode = function (lokasi) {
+        Data.get(control_link + '/kode/' + lokasi.kode).then(function (response) {
             $scope.form.no_transaksi = response.data.kode;
             $scope.form.no_urut = response.data.urutan;
         });
     };
     /** create */
-    $scope.create = function() {
+    $scope.create = function () {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_create = true;
@@ -146,14 +170,20 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
             $scope.form.m_lokasi_asal_id = $scope.listLokasi[0];
             $scope.form.m_lokasi_tujuan_id = $scope.listLokasi[0];
         }
+        if ($scope.listAkunGroup.length > 0) {
+            $scope.form.m_akun_group_asal_id = $scope.listAkunGroup[0];
+            $scope.form.m_akun_group_tujuan_id = $scope.listAkunGroup[0];
+        }
         $scope.form.tanggal = new Date($scope.tanggal_setting);
         if (new Date() >= new Date($scope.tanggal_setting)) {
             $scope.form.tanggal = new Date();
         }
+        $scope.getAkunKasAsal()
+        $scope.getAkunKasTujuan()
         $scope.listDetail = [{}];
     };
     /** update */
-    $scope.update = function(form) {
+    $scope.update = function (form) {
         $scope.is_edit = true;
         $scope.is_view = false;
         $scope.is_update = true;
@@ -161,9 +191,11 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         $scope.formtitle = master + " | Edit Data : " + form.no_transaksi;
         $scope.form = form;
         $scope.form.tanggal = new Date(form.tanggal);
+        $scope.getAkunKasAsal()
+        $scope.getAkunKasTujuan()
     };
     /** view */
-    $scope.view = function(form) {
+    $scope.view = function (form) {
         $scope.is_edit = true;
         $scope.is_view = true;
         $scope.is_disable = true;
@@ -172,12 +204,12 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         $scope.form.tanggal = new Date(form.tanggal);
     };
     /** save action */
-    $scope.save = function(form, type_save) {
+    $scope.save = function (form, type_save) {
         form["status"] = type_save;
         var data = {
             form: form,
         }
-        Data.post(control_link + '/save', data).then(function(result) {
+        Data.post(control_link + '/save', data).then(function (result) {
             if (result.status_code == 200) {
                 $rootScope.alert("Berhasil", "Data berhasil disimpan", "success");
                 $scope.cancel();
@@ -187,14 +219,14 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         });
     };
     /** cancel action */
-    $scope.cancel = function() {
+    $scope.cancel = function () {
         if (!$scope.is_view) {
             $scope.callServer(tableStateRef);
         }
         $scope.is_edit = false;
         $scope.is_view = false;
     };
-    $scope.trash = function(row) {
+    $scope.trash = function (row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -207,14 +239,14 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/trash', row).then(function(result) {
+                Data.post(control_link + '/trash', row).then(function (result) {
                     $rootScope.alert("Berhasil", "Data berhasil dihapus", "success");
                     $scope.cancel();
                 });
             }
         });
     };
-    $scope.restore = function(row) {
+    $scope.restore = function (row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -227,14 +259,14 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 0;
-                Data.post(control_link + '/trash', row).then(function(result) {
+                Data.post(control_link + '/trash', row).then(function (result) {
                     $rootScope.alert("Berhasil", "Data berhasil direstore", "success");
                     $scope.cancel();
                 });
             }
         });
     };
-    $scope.delete = function(row) {
+    $scope.delete = function (row) {
         var data = angular.copy(row);
         Swal.fire({
             title: "Peringatan ! ",
@@ -247,7 +279,7 @@ app.controller('transferCtrl', function($scope, Data, $rootScope, $uibModal, Upl
         }).then((result) => {
             if (result.value) {
                 row.is_deleted = 1;
-                Data.post(control_link + '/delete', row).then(function(result) {
+                Data.post(control_link + '/delete', row).then(function (result) {
                     $rootScope.alert("Berhasil", "Data berhasil dihapus permanen", "success");
                     $scope.cancel();
                 });
