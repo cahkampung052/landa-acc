@@ -43,16 +43,16 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
     $tableuser = tableUser();
     $db = $this->db;
     $db->select("
-                acc_transfer.*, 
-                lok1.nama as namaLokAsal, 
-                lok1.kode as kodeLokAsal, 
-                lok2.nama as namaLokTujuan, 
-                lok2.kode as kodeLokTujuan, 
-                akun2.id as idTujuan, 
-                akun2.nama as namaTujuan, 
-                akun2.kode as kodeTujuan, 
-                akun1.id as idAsal, 
-                akun1.nama as namaAsal, 
+                acc_transfer.*,
+                lok1.nama as namaLokAsal,
+                lok1.kode as kodeLokAsal,
+                lok2.nama as namaLokTujuan,
+                lok2.kode as kodeLokTujuan,
+                akun2.id as idTujuan,
+                akun2.nama as namaTujuan,
+                akun2.kode as kodeTujuan,
+                akun1.id as idAsal,
+                akun1.nama as namaAsal,
                 akun1.kode as kodeAsal,
                 group2.nama as groupTujuan,
                 group1.nama as groupAsal,
@@ -231,3 +231,82 @@ $app->post("/acc/t_transfer/savePosition", function ($request, $response) {
     }
 });
 
+$app->get('/acc/t_transfer/getVoucher', function($request, $response) {
+    $data = $request->getParams();
+    $db = $this->db;
+
+    try {
+
+        $db->select("acc_pengeluaran.*, "
+                        . "acc_m_kontak.nama as nama_kontak, "
+                        . "acc_m_akun.kode as kode_akun, acc_m_akun.nama as nama_akun")
+                ->from("acc_pengeluaran")
+                ->leftJoin("acc_m_kontak", "acc_m_kontak.id = acc_pengeluaran.m_kontak_id")
+                ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_pengeluaran.m_akun_id")
+                ->where("acc_pengeluaran.id", "=", $data['id']);
+        $getPenerimaan = $db->find();
+
+//        print_die($getPenerimaan);
+
+        $arr_nama_akun = explode("-", $getPenerimaan->nama_akun);
+        if (!empty($arr_nama_akun[count($arr_nama_akun) - 1])) {
+            $getPenerimaan->no_rekening = $arr_nama_akun[count($arr_nama_akun) - 1];
+        }
+
+        $db->select("acc_pengeluaran_det.*,"
+                        . "acc_m_akun.kode as kode_akun, acc_m_akun.nama as nama_akun")
+                ->from("acc_pengeluaran_det")
+                ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_pengeluaran_det.m_akun_id")
+                ->where("acc_pengeluaran_det.acc_pengeluaran_id", "=", $data['id']);
+
+        $getPenerimaanDet = $db->findAll();
+
+        $arr = [];
+        if ($getPenerimaanDet) {
+
+            foreach ($getPenerimaanDet as $key => $value) {
+                $value->total = $value->debit;
+                $arr[] = [
+                    'kode_akun' => $value->kode_akun,
+                    'nama_akun' => $value->nama_akun,
+                    'debit' => $value->debit,
+                ];
+            }
+
+            $getPenerimaan->detail = $getPenerimaanDet;
+        }
+
+        $arr[] = [
+            'kode_akun' => $getPenerimaan->kode_akun,
+            'nama_akun' => $getPenerimaan->nama_akun,
+            'kredit' => $getPenerimaan->total,
+        ];
+
+        $getPenerimaan->arr = $arr;
+
+        $db->select("acc_trans_detail.*, "
+                        . "acc_m_akun.kode as kode_akun, acc_m_akun.nama as nama_akun")
+                ->from("acc_trans_detail")
+                ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id");
+
+        $db->where("reff_type", "=", "acc_pengeluaran");
+        $db->where("reff_id", "=", $getPenerimaan->id);
+
+        $getJurnal = $db->findAll();
+
+        if ($getJurnal) {
+            $getPenerimaan->jurnal = $getJurnal;
+        }
+        $getPenerimaan->height = 200 - 20 * count($getPenerimaanDet);
+        $getPenerimaan->height_arr = 200 - 20 * count($arr);
+        $getPenerimaan->height_jurnal = 200 - 20 * count($getJurnal);
+
+        if (!empty($_SESSION['user']['perusahaan']['nama'])) {
+            $getPenerimaan->nama_perusahaan = strtoupper($_SESSION['user']['perusahaan']['nama']);
+        }
+
+        return successResponse($response, $getPenerimaan);
+    } catch (Exception $e) {
+        return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
+    }
+});
