@@ -134,6 +134,7 @@
                                 </td>
                                 <td>
                                     <div class="btn-group pull-right" role="group">
+                                        <!-- <button type="button" class="btn btn-primary fa fa-print" ng-click="modalVoucher(row)"></button> -->
                                         <button type="button" class="btn btn-info fa fa-pencil" ng-if="(row.status == 'Draft' && row.tanggal >= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_update)"  ng-click="update(row)"></button>
                                         <button type="button" class="btn btn-danger fa fa-trash" ng-if="(row.status == 'Draft' && row.tanggal >= tanggal_setting) || (row.status == 'Terposting' && user.akses.transfer_kas_delete)" ng-click="delete(row);"></button>
                                     </div>

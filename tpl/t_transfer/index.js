@@ -286,4 +286,54 @@ app.controller('transferCtrl', function ($scope, Data, $rootScope, $uibModal, Up
             }
         });
     };
+
+    $scope.modalVoucher = function (form) {
+        var timecache = new Date().getTime();
+        var perusahaan = $rootScope.user.perusahaan.nama;
+        if (perusahaan == 'PT Graha Bangun Development') {
+          var modalInstance = $uibModal.open({
+            templateUrl: "tpl/akuntansi/t_penerimaan/modal_voucher_graha_bangun.html?" + timecache,
+            controller: "modalVoucherCtrl",
+            size: "lg",
+            backdrop: "static",
+            keyboard: false,
+            resolve: {
+              id: form.id
+            }
+          });
+        } else {
+          var modalInstance = $uibModal.open({
+            // templateUrl: "tpl/penerimaan/t_pembayaran/modal_detail.html?" + timecache,
+            templateUrl: "tpl/akuntansi/t_penerimaan/modal_voucher.html?" + timecache,
+            controller: "modalVoucherCtrl",
+            size: "lg",
+            backdrop: "static",
+            keyboard: false,
+            resolve: {
+              id: form.id
+            }
+          });
+        }
+        modalInstance.result.then(function (response) {
+            if (response.data == undefined) {
+            } else {
+            }
+        });
+    }
+});
+
+app.controller("modalVoucherCtrl", function ($state, $scope, Data, $uibModalInstance, id, $rootScope) {
+    $scope.bahasa = $scope.master_bahasa[$rootScope.user.bahasa];
+    $scope.form = {};
+    Data.get("get_data/getVoucherTransfer", {id: id}).then(function (response) {
+        $scope.form = response.data;
+        $scope.form.is_jurnal = 1;
+        $scope.form.tanggal = new Date($scope.form.tanggal)
+        $scope.listDetail = response.data.detail;
+        // $scope.listJurnal = response.data.jurnal;
+        $scope.listArr = response.data.arr;
+    });
+    $scope.close = function () {
+        $uibModalInstance.close();
+    };
 });
