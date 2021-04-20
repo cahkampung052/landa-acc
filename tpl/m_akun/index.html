@@ -149,7 +149,7 @@
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label-sm required">Tipe Klasifikasi</label>
                                 <div class="col-md-9">
-                                    <select class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.tipe" ng-change="getAkun(form.tipe)">
+                                    <select class="form-control form-control-sm" ng-disabled="is_view" ng-model="form.tipe" ng-change="getAkun()">
                                         <option value="">- Pilih Tipe -</option>
                                         <option value="HARTA">HARTA</option>
                                         <option value="KEWAJIBAN">KEWAJIBAN</option>
@@ -160,6 +160,24 @@
                                         <option value="BEBAN DILUAR USAHA">BEBAN DILUAR USAHA</option>
                                         <option value="BIAYA">BIAYA</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
+                                <div class="col-sm-9">
+                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" on-select="lokasi($select.selected)" theme="bootstrap" ng-disabled="is_view">
+                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label-sm required">Grup</label>
+                                <div class="col-sm-9">
+                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_group" theme="bootstrap" on-select="getAkun()">
+                                        <ui-select-match placeholder="Pilih Grup">{{ $select.selected.nama}}</ui-select-match>
+                                        <ui-select-choices position="down" repeat="val in listGroupAkun | filter : $select.search">{{ val.nama}}</ui-select-choices>
+                                    </ui-select>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -211,24 +229,6 @@
                                         <option value="Investasi">Investasi</option>
                                         <option value="Pendanaan">Pendanaan</option>
                                     </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Lokasi</label>
-                                <div class="col-sm-9">
-                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" on-select="lokasi($select.selected)" theme="bootstrap" ng-disabled="is_view">
-                                        <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
-                                    </ui-select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-3 col-form-label-sm required">Grup</label>
-                                <div class="col-sm-9">
-                                    <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_group" theme="bootstrap">
-                                        <ui-select-match placeholder="Pilih Grup">{{ $select.selected.nama}}</ui-select-match>
-                                        <ui-select-choices position="down" repeat="val in listGroupAkun | filter : $select.search">{{ val.nama}}</ui-select-choices>
-                                    </ui-select>
                                 </div>
                             </div>
                         </div>

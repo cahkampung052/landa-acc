@@ -1155,6 +1155,10 @@ $app->get('/acc/m_akun/getByType', function ($request, $response) {
             $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
         }
 
+        if (!empty($params['m_akun_group_id'])) {
+            $db->where("m_akun_group_id", "=", $params['m_akun_group_id']);
+        }
+
         $models = $db->findAll();
         $arr = [];
         foreach ($models as $key => $value) {

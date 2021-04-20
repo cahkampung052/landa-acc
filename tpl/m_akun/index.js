@@ -11,8 +11,12 @@ app.controller('akunCtrl', function ($scope, Data, $rootScope, $uibModal, Upload
     /**
      * Ambil klasifikasi
      */
-    $scope.getAkun = function (tipe) {
-        Data.get('acc/m_akun/getByType', {tipe: tipe}).then(function (response) {
+    $scope.getAkun = function () {
+        var params = {
+            tipe: $scope.form.tipe,
+            m_akun_group_id: $scope.form.m_akun_group != undefined ? $scope.form.m_akun_group.id : null,
+        }
+        Data.get('acc/m_akun/getByType', params).then(function (response) {
             $scope.dataakun = response.data.list;
         });
     };
