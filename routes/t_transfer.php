@@ -43,16 +43,16 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
     $tableuser = tableUser();
     $db = $this->db;
     $db->select("
-                acc_transfer.*, 
-                lok1.nama as namaLokAsal, 
-                lok1.kode as kodeLokAsal, 
-                lok2.nama as namaLokTujuan, 
-                lok2.kode as kodeLokTujuan, 
-                akun2.id as idTujuan, 
-                akun2.nama as namaTujuan, 
-                akun2.kode as kodeTujuan, 
-                akun1.id as idAsal, 
-                akun1.nama as namaAsal, 
+                acc_transfer.*,
+                lok1.nama as namaLokAsal,
+                lok1.kode as kodeLokAsal,
+                lok2.nama as namaLokTujuan,
+                lok2.kode as kodeLokTujuan,
+                akun2.id as idTujuan,
+                akun2.nama as namaTujuan,
+                akun2.kode as kodeTujuan,
+                akun1.id as idAsal,
+                akun1.nama as namaAsal,
                 akun1.kode as kodeAsal,
                 group2.nama as groupTujuan,
                 group1.nama as groupAsal,
@@ -230,4 +230,3 @@ $app->post("/acc/t_transfer/savePosition", function ($request, $response) {
         return unprocessResponse($response, ["Terjadi kesalahan pada server"]);
     }
 });
-
