@@ -28,13 +28,20 @@
                                             </ui-select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3" style="display: none">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
                                                 <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
                                                 <ui-select-choices position="down" repeat="val in listLokasi | filter : $select.search">{{ val.nama_lengkap}}</ui-select-choices>
                                             </ui-select>
                                         </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control form-control-sm" ng-model="form.status">
+                                            <option value="">Semua</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="posting">Posting</option>
+                                        </select>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
@@ -104,6 +111,9 @@
                                     <th width="100" class="align-center">
                                         <b>KREDIT</b>
                                     </th>
+                                    <th width="100" class="align-center">
+                                        <b>STATUS</b>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,6 +132,10 @@
                                     <td>{{ val.keterangan}}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ val.debit| number }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ val.kredit| number }}</td>
+                                    <td align="center">
+                                        <span class="badge badge-pill badge-warning capitalize" ng-if="val.status == 'pending'">{{val.status}}</span>
+                                        <span class="badge badge-pill badge-success capitalize" ng-if="val.status == 'posting'">{{val.status}}</span>
+                                    </td>
                                 </tr>
                             </tbody>
                             <tfoot>
@@ -135,6 +149,7 @@
                                     <td align="right" class="text-right">
                                         <b>{{ data.total_kredit| number }}</b>
                                     </td>
+                                    <td></td>
                                 </tr>
                             </tfoot>
                         </table>

@@ -8,9 +8,9 @@ app.controller('l_jurnalumumCtrl', function ($scope, Data, $rootScope, $uibModal
     /**
      * Ambil list transaksi
      */
-    $scope.listTransaksi = [{'id' : 0, 'nama': 'SEMUA TRANSAKSI'}];
+    $scope.listTransaksi = [{'id': 0, 'nama': 'SEMUA TRANSAKSI'}];
     Data.get('acc/l_jurnal_umum/getTransaksi').then(function (response) {
-        angular.forEach(response.data, function(value, key) {
+        angular.forEach(response.data, function (value, key) {
             $scope.listTransaksi.push(value);
         });
         if ($scope.listTransaksi.length > 0) {
@@ -40,6 +40,7 @@ app.controller('l_jurnalumumCtrl', function ($scope, Data, $rootScope, $uibModal
             nama_lokasi: $scope.form.m_lokasi_id.nama,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),
+            status: $scope.form.status,
         };
         if (is_export == 0 && is_print == 0) {
             Data.get(control_link + '/laporan', param).then(function (response) {
