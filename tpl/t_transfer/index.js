@@ -332,7 +332,22 @@ app.controller("modalVoucherCtrl", function ($state, $scope, Data, $uibModalInst
         $scope.listDetail = response.data.detail;
         // $scope.listJurnal = response.data.jurnal;
         $scope.listArr = response.data.arr;
+        $scope.keterangan();
     });
+
+    $scope.keterangan = function () {
+      $scope.is_duplicate = 0;
+      var valueArr = $scope.listDetail.map(function(item){ return item.keterangan });
+      var isDuplicate = valueArr.some(function(item, idx) {
+        return valueArr.indexOf(item) != idx
+      });
+      console.log(isDuplicate);
+      if (isDuplicate == true) {
+        $scope.is_duplicate = 1;
+        $scope.form.keterangan = $scope.listDetail[0].keterangan;
+      }
+    }
+
     $scope.close = function () {
         $uibModalInstance.close();
     };
