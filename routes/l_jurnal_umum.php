@@ -98,7 +98,7 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
 
     if (empty($params['status']) || (!empty($params['status']) && $params['status'] == 'pending')) {
         $sql->select("acc_jurnal_det.*, "
-                        . "acc_jurnal.no_transaksi as kode, acc_jurnal.tanggal, acc_jurnal.keterangan,"
+                        . "acc_jurnal.no_transaksi as kode, acc_jurnal.tanggal, "
                         . "acc_m_akun.kode as kodeAkun, acc_m_akun.nama as namaAkun, "
                         . "acc_m_lokasi.kode as kodeLokasi, acc_m_lokasi.nama as namaLokasi")
                 ->from("acc_jurnal_det")
@@ -106,6 +106,7 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
                 ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_jurnal_det.m_akun_id")
                 ->leftJoin("acc_m_lokasi", "acc_m_lokasi.id = acc_jurnal_det.m_lokasi_id");
 
+        $sql->where('acc_jurnal.status', '=', 'draft');
         $sql->where('date(acc_jurnal.tanggal)', '>=', $tanggal_start);
         $sql->where('date(acc_jurnal.tanggal)', '<=', $tanggal_end);
 

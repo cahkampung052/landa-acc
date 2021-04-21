@@ -129,7 +129,7 @@
                                         <span style="margin-left:25px" ng-if="val.debit == 0">{{ val.namaAkun}}</span>
                                         <span ng-if="val.debit != 0">{{ val.namaAkun}}</span>
                                     </td>
-                                    <td>{{ val.keterangan}}</td>
+                                    <td ng-bind-html="val.keterangan"></td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ val.debit| number }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ val.kredit| number }}</td>
                                     <td align="center">
