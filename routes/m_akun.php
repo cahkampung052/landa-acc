@@ -179,7 +179,8 @@ $app->get('/acc/m_akun/exportSaldoAwal', function ($request, $response) {
     $objPHPExcel->getActiveSheet()->setCellValue('H' . 4, $tanggalsetting);
     $rows = 6;
     foreach ($akun as $key => $val) {
-        $spasi = ($val->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $val->level - 1);
+//        $spasi = ($val->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $val->level - 1);
+        $spasi = '';
         $val->nama_lengkap = $spasi . $val->kode . ' - ' . $val->nama;
         $objPHPExcel->getActiveSheet()->setCellValue('G' . $rows, $val->id);
         $objPHPExcel->getActiveSheet()->setCellValue('H' . $rows, $val->nama_lengkap);
