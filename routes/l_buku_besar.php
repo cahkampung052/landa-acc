@@ -110,6 +110,8 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                         $arr[$val->id]['saldo_awal'] = $getsaldoawal->debit - $getsaldoawal->kredit;
                         $arr[$val->id]['debit_awal'] = $getsaldoawal->debit;
                         $arr[$val->id]['kredit_awal'] = $getsaldoawal->kredit;
+                        $arr[$val->id]['kode_akun'] = $val->kode;
+                        $arr[$val->id]['nama_akun'] = $val->nama;
                         $arr[$val->id]['akun'] = $val->kode . ' - ' . $val->nama;
                         $arr[$val->id]['akun_id'] = $val->id;
                         $arr[$val->id]['klasifikasi'] = $val->klasifikasi;
@@ -198,6 +200,8 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                 $arr[0]['saldo_awal'] = 0;
                 $arr[0]['debit_awal'] = 0;
                 $arr[0]['kredit_awal'] = 0;
+                $arr[0]['kode_akun'] = $vals->kode;
+                $arr[0]['nama_akun'] = $vals->nama;
                 $arr[0]['akun'] = $vals->kode . ' - ' . $vals->nama;
                 $arr[0]['klasifikasi'] = $vals->klasifikasi;
                 if(isset($getsaldoawal->id)){
@@ -253,6 +257,9 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
             }
         }
         if (isset($params['export']) && $params['export'] == 1) {
+
+            // print_die($arr);
+            
             $view = twigViewPath();
             $content = $view->fetch('laporan/bukuBesar.html', [
                 "data" => $data,
