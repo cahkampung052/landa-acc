@@ -137,7 +137,7 @@ app.controller('saldoawalCtrl', function ($scope, Data, $rootScope, $uibModal, U
      * export format
      */
     $scope.export = function () {
-        window.location = 'api/acc/m_akun/exportSaldoAwal';
+        window.location = 'api/acc/m_akun/exportSaldoAwal?m_akun_group_id=' + $scope.form.m_akun_group_id.id;
     };
 
     /**

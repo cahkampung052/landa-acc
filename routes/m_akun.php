@@ -160,11 +160,28 @@ $app->get('/acc/m_akun/exportSaldoAwal', function ($request, $response) {
     /*
      * ambil tanggal setting
      */
+    $params = $request->getParams();
     $db = $this->db;
     $tanggalsetting = $db->select("*")->from("acc_m_setting")->find();
     $tanggalsetting = date("Y-m-d", strtotime($tanggalsetting->tanggal . ' -1 day'));
     $lokasi = $db->select("*")->from("acc_m_lokasi")->orderBy("kode")->findAll();
-    $akun = $db->select("*")->from("acc_m_akun")->where("is_deleted", "=", 0)->orderBy("kode")->findAll();
+
+    $db->select("*")
+            ->from("acc_m_akun")
+            ->where("is_deleted", "=", 0)
+            ->orderBy("kode");
+
+    if (!empty($params['m_akun_group_id'])) {
+        $db->where("m_akun_group_id", "=", $params['m_akun_group_id']);
+    }
+
+    //16-10-2020
+    if (isset($_SESSION['user']['lokasi_id']) && !empty($_SESSION['user']['lokasi_id'])) {
+        $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
+    }
+
+    $akun = $db->findAll();
+
     $path = 'acc/landaacc/file/format_saldo_awal.xls';
     $objReader = PHPExcel_IOFactory::createReader('Excel5');
     $objPHPExcel = $objReader->load($path);
@@ -179,7 +196,8 @@ $app->get('/acc/m_akun/exportSaldoAwal', function ($request, $response) {
     $objPHPExcel->getActiveSheet()->setCellValue('H' . 4, $tanggalsetting);
     $rows = 6;
     foreach ($akun as $key => $val) {
-        $spasi = ($val->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $val->level - 1);
+//        $spasi = ($val->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $val->level - 1);
+        $spasi = '';
         $val->nama_lengkap = $spasi . $val->kode . ' - ' . $val->nama;
         $objPHPExcel->getActiveSheet()->setCellValue('G' . $rows, $val->id);
         $objPHPExcel->getActiveSheet()->setCellValue('H' . $rows, $val->nama_lengkap);
@@ -404,11 +422,15 @@ $app->post('/acc/m_akun/save', function ($request, $response) {
         /**
          * Cek kode
          */
-        $cekKode = $sql->select("kode, nama")
+        $sql->select("kode, nama")
                 ->from("acc_m_akun")
                 ->where("kode", "=", $data['kode'])
-                ->andWhere("id", "!=", $id)
-                ->find();
+                ->andWhere("id", "!=", $id);
+
+        if (!empty($data['m_lokasi_id'])) {
+            $sql->where("m_lokasi_id", "=", $data['m_lokasi_id']);
+        }
+        $cekKode = $sql->find();
         if (isset($cekKode->kode)) {
             return unprocessResponse($response, ["kode sudah digunakan untuk akun '" . $cekKode->nama . "'"]);
         }
