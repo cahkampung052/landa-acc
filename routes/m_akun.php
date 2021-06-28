@@ -1311,7 +1311,11 @@ $app->get('/acc/m_akun/akunDetail', function ($request, $response) {
         $db->where("acc_m_akun.m_lokasi_id", "=", $_SESSION['user']['lokasi_id']);
     }
 
-    if (!empty($params['m_akun_group_id'])) {
+    if (isset($_SESSION['user']['proyek']['akun_group_id']) && !empty($_SESSION['user']['proyek']['akun_group_id'])) {
+        $db->where("acc_m_akun.m_akun_group_id", "=", $_SESSION['user']['proyek']['akun_group_id']);
+    }
+
+    if (isset($params['m_akun_group_id']) && !empty($params['m_akun_group_id'])) {
         $db->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
     }
 
