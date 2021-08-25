@@ -1,6 +1,7 @@
 <?php
 
-function validasi($data, $custom = array()) {
+function validasi($data, $custom = array())
+{
     $validasi = array(
         'm_lokasi_asal_id' => 'required',
         'm_lokasi_tujuan_id' => 'required',
@@ -29,13 +30,13 @@ $app->get('/acc/t_transfer/kode/{kode}', function ($request, $response) {
 $app->get('/acc/t_transfer/akunKas', function ($request, $response) {
     $db = $this->db;
     $models = $db->select("*")
-            ->from("acc_m_akun")
-            ->where("tipe", "=", "Cash & Bank")
-            ->where("is_tipe", "=", 0)
-            ->where("is_deleted", "=", 0)
-            ->findAll();
+        ->from("acc_m_akun")
+        ->where("tipe", "=", "Cash & Bank")
+        ->where("is_tipe", "=", 0)
+        ->where("is_deleted", "=", 0)
+        ->findAll();
     return successResponse($response, [
-        'list' => $models
+        'list' => $models,
     ]);
 });
 $app->get('/acc/t_transfer/index', function ($request, $response) {
@@ -58,16 +59,16 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
                 group1.nama as groupAsal,
                 " . $tableuser . ".nama as namaUser
             ")
-            ->from("acc_transfer")
-            ->join("join", $tableuser, $tableuser . ".id = acc_transfer.created_by")
-            ->join("join", "acc_m_akun akun1", "acc_transfer.m_akun_asal_id = akun1.id")
-            ->join("join", "acc_m_akun akun2", "acc_transfer.m_akun_tujuan_id = akun2.id")
-            ->join("join", "acc_m_lokasi lok1", "acc_transfer.m_lokasi_asal_id = lok1.id")
-            ->join("join", "acc_m_lokasi lok2", "acc_transfer.m_lokasi_tujuan_id = lok2.id")
-            ->join("left join", "acc_m_akun_group group1", "acc_transfer.m_akun_group_asal_id = group1.id")
-            ->join("left join", "acc_m_akun_group group2", "acc_transfer.m_akun_group_tujuan_id = group2.id")
-            ->orderBy('acc_transfer.tanggal DESC')
-            ->orderBy('acc_transfer.created_at DESC');
+        ->from("acc_transfer")
+        ->join("join", $tableuser, $tableuser . ".id = acc_transfer.created_by")
+        ->join("join", "acc_m_akun akun1", "acc_transfer.m_akun_asal_id = akun1.id")
+        ->join("join", "acc_m_akun akun2", "acc_transfer.m_akun_tujuan_id = akun2.id")
+        ->join("join", "acc_m_lokasi lok1", "acc_transfer.m_lokasi_asal_id = lok1.id")
+        ->join("join", "acc_m_lokasi lok2", "acc_transfer.m_lokasi_tujuan_id = lok2.id")
+        ->join("left join", "acc_m_akun_group group1", "acc_transfer.m_akun_group_asal_id = group1.id")
+        ->join("left join", "acc_m_akun_group group2", "acc_transfer.m_akun_group_tujuan_id = group2.id")
+        ->orderBy('acc_transfer.tanggal DESC')
+        ->orderBy('acc_transfer.created_at DESC');
     if (isset($params['filter'])) {
         $filter = (array) json_decode($params['filter']);
         foreach ($filter as $key => $val) {
@@ -86,6 +87,21 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
     if (isset($params['offset']) && !empty($params['offset'])) {
         $db->offset($params['offset']);
     }
+
+    // dari promis
+    $arr_lokasi = [];
+    if (!empty($_SESSION['user']['perusahaan']['lokasi_id'])) {
+        $arr_lokasi[] = $_SESSION['user']['perusahaan']['lokasi_id'];
+    }
+    if (!empty($_SESSION['user']['proyek']['lokasi_id'])) {
+        $arr_lokasi[] = $_SESSION['user']['proyek']['lokasi_id'];
+    }
+
+    if (!empty($arr_lokasi)) {
+        $arr_lokasi = implode(", ", $arr_lokasi);
+        $db->customWhere("(acc_transfer.m_lokasi_asal_id IN($arr_lokasi) OR acc_transfer.m_lokasi_tujuan_id IN($arr_lokasi))", "AND");
+    }
+
     $models = $db->findAll();
     $totalItem = $db->count();
     foreach ($models as $key => $val) {
@@ -111,7 +127,7 @@ $app->get('/acc/t_transfer/index', function ($request, $response) {
         'list' => $models,
         'totalItems' => $totalItem,
         'base_url' => str_replace('api/', '', config('SITE_URL')),
-        'field' => $testing
+        'field' => $testing,
     ]);
 });
 $app->post('/acc/t_transfer/save', function ($request, $response) {
@@ -159,7 +175,7 @@ $app->post('/acc/t_transfer/save', function ($request, $response) {
             }
 
 //            print_r($insert);
-//            die;
+            //            die;
 
             $model = $sql->update("acc_transfer", $insert, ["id" => $data['form']['id']]);
         } else {
