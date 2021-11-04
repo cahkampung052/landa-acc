@@ -298,7 +298,7 @@ function getLabaRugiNominal($tglStart = null, $tglEnd = null, $lokasi = null) {
     $sql->select("sum(acc_trans_detail.debit) as debit, sum(acc_trans_detail.kredit) as kredit, acc_m_akun.saldo_normal, acc_m_akun.tipe")
             ->from("acc_trans_detail")
             ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-            ->customWhere("acc_m_akun.tipe IN ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
+            ->customWhere("acc_m_akun.tipe IN ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA', 'BIAYA')")
             ->groupBy("acc_m_akun.tipe")
             ->andWhere("is_tipe", "=", 0)
             // ->andWhere("is_deleted", "=", 0)
@@ -394,7 +394,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $group
         ")
             ->from("acc_trans_detail")
             ->leftJoin("acc_m_akun", "acc_m_akun.id = acc_trans_detail.m_akun_id")
-            ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
+            ->customWhere("acc_m_akun.tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA', 'BIAYA')")
             ->customWhere("acc_trans_detail.m_lokasi_id IN($lokasiId)", "AND")
             ->groupBy("acc_m_akun.id")
             ->orderBy("acc_m_akun.is_tipe ASC, parent_id DESC, acc_m_akun.level DESC");
@@ -436,7 +436,7 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $group
      */
     $sql->select("id, nama, kode, tipe, level, is_tipe, parent_id")
             ->from("acc_m_akun")
-            ->customWhere("tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA')")
+            ->customWhere("tipe in ('PENDAPATAN', 'PENDAPATAN DILUAR USAHA', 'BEBAN', 'BEBAN DILUAR USAHA', 'BIAYA')")
             ->orderBy("acc_m_akun.kode");
 
     if (!empty($group)) {
@@ -453,6 +453,9 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $group
      */
     $testing = 0;
     foreach ($arrModel as $key => $value) {
+        if($value->tipe == 'BIAYA') {
+            $value->tipe = 'BEBAN';
+        }
         $total = (isset($arrTrans[$value->id]) ? intval($arrTrans[$value->id]) : 0);
         $tipe = str_replace(" ", "_", $value->tipe);
         $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
