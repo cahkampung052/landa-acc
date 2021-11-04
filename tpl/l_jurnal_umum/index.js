@@ -27,6 +27,18 @@ app.controller('l_jurnalumumCtrl', function ($scope, Data, $rootScope, $uibModal
         }
     });
     /**
+     * Ambil list Grup
+     */
+    $scope.listAkunGrup = [{'id': 0, 'nama': 'SEMUA GRUP AKUN'}];
+    Data.get('acc/l_jurnal_umum/getAkunGrup').then(function (response) {
+        angular.forEach(response.data, function (value, key) {
+            $scope.listAkunGrup.push(value);
+        });
+        if ($scope.listAkunGrup.length > 0) {
+            $scope.form.m_akun_group_id = $scope.listAkunGrup[0];
+        }
+    });
+    /**
      * Ambil laporan dari server
      */
     $scope.view = function (is_export, is_print) {
@@ -37,6 +49,7 @@ app.controller('l_jurnalumumCtrl', function ($scope, Data, $rootScope, $uibModal
             print: is_print,
             m_transaksi_id: $scope.form.m_transaksi_id.id,
             m_lokasi_id: $scope.form.m_lokasi_id.id,
+            m_akun_group_id: $scope.form.m_akun_group_id.id,
             nama_lokasi: $scope.form.m_lokasi_id.nama,
             startDate: moment($scope.form.tanggal.startDate).format('YYYY-MM-DD'),
             endDate: moment($scope.form.tanggal.endDate).format('YYYY-MM-DD'),

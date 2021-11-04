@@ -10,7 +10,7 @@
                         <div class="col-md-12">
                             <form name="landaform" novalidate="">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="input-group">
                                             <input ng-change="clearData()" class="form-control form-control-sm" date-range-picker="" options="dateRangeOptions" ng-model="form.tanggal" placeholder="Periode" type="text"/>
                                             <div class="input-group-prepend">
@@ -20,7 +20,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_transaksi_id" theme="bootstrap" ng-disabled="is_view">
                                                 <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.nama}}</ui-select-match>
@@ -28,7 +28,7 @@
                                             </ui-select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_lokasi_id" theme="bootstrap" ng-disabled="is_view">
                                                 <ui-select-match placeholder="Pilih Lokasi">{{ $select.selected.kode + " - " + $select.selected.nama}}</ui-select-match>
@@ -36,14 +36,24 @@
                                             </ui-select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <ui-select class="ui-select-sm ui-select-container" ng-model="form.m_akun_group_id" theme="bootstrap" ng-disabled="is_view">
+                                                <ui-select-match placeholder="Pilih Grup Akun">{{ $select.selected.nama}}</ui-select-match>
+                                                <ui-select-choices position="down" repeat="val in listAkunGrup | filter : $select.search">{{ val.nama}}</ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <select class="form-control form-control-sm" ng-model="form.status">
                                             <option value="">Semua</option>
                                             <option value="pending">Pending</option>
                                             <option value="posting">Posting</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <button class="btn btn-primary btn-sm" ng-click="view(0, 0)">
                                                 <i class="fa fa-search"></i>

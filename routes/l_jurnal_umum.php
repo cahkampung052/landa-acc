@@ -18,6 +18,14 @@ $app->get('/acc/l_jurnal_umum/getTransaksi', function ($request, $response) {
     }
     return successResponse($response, $arr);
 });
+$app->get('/acc/l_jurnal_umum/getAkunGrup', function ($request, $response) {
+    $params = $request->getParams();
+    $db = $this->db;
+
+    $models = $db->findAll("select * from acc_m_akun_group");
+
+    return successResponse($response, $models);
+});
 $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
 
     $subDomain = str_replace('api/', '', site_url());
@@ -51,12 +59,12 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
     $sql = $this->db;
 
     if (empty($params['status']) || (!empty($params['status']) && $params['status'] == 'posting')) {
-        $sql->select("acc_trans_detail.id, acc_trans_detail.kode, 
-                acc_trans_detail.debit, 
-                acc_trans_detail.kredit, 
-                acc_trans_detail.keterangan, 
-                acc_trans_detail.tanggal, 
-                acc_m_akun.kode as kodeAkun, 
+        $sql->select("acc_trans_detail.id, acc_trans_detail.kode,
+                acc_trans_detail.debit,
+                acc_trans_detail.kredit,
+                acc_trans_detail.keterangan,
+                acc_trans_detail.tanggal,
+                acc_m_akun.kode as kodeAkun,
                 acc_m_akun.nama as namaAkun,
                 acc_m_lokasi.kode as kodeLokasi,
                 acc_m_lokasi.nama as namaLokasi,
@@ -74,6 +82,11 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
                 ->andWhere('date(acc_trans_detail.tanggal)', '>=', $tanggal_start)
                 ->andWhere('date(acc_trans_detail.tanggal)', '<=', $tanggal_end)
                 ->orderBy("acc_trans_detail.tanggal ASC, acc_trans_detail.kode ASC, acc_trans_detail.id ASC");
+
+        if (isset($params['m_akun_group_id']) && !empty($params['m_akun_group_id']) && $params['m_akun_group_id'] !== 0) {
+            $sql->customWhere('acc_m_akun.m_akun_group_id = "' . $params['m_akun_group_id'] . '"', 'AND');
+        }
+
         $gettransdetail = $sql->findAll();
         foreach ($gettransdetail as $keys => $vals) {
 
@@ -87,7 +100,7 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
             }
 
             if ($vals->debit == 0 && $vals->kredit == 0) {
-                
+
             } else {
                 $arr[$keys] = (array) $vals;
                 $data['total_debit'] += $vals->debit;
@@ -112,6 +125,10 @@ $app->get('/acc/l_jurnal_umum/laporan', function ($request, $response) {
 
         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
             $sql->customWhere("acc_jurnal_det.m_lokasi_id IN ($lokasiId)", "AND");
+        }
+        
+        if (isset($params['m_akun_group_id']) && !empty($params['m_akun_group_id']) && $params['m_akun_group_id'] !== 0) {
+            $sql->customWhere('acc_m_akun.m_akun_group_id = "' . $params['m_akun_group_id'] . '"', 'AND');
         }
 
         $sql->orderBy("acc_jurnal.tanggal ASC, acc_jurnal.no_transaksi ASC");
