@@ -240,6 +240,34 @@
                                         <b ng-if="t == 0">-</b>
                                     </td>
                                 </tr>
+
+                                <tr ng-repeat="vals in detail.BIAYA.detail" ng-if="SembunyikanSub == 1 && vals.is_tipe == 1">
+                                    <td align="left" style="vertical-align: top">
+                                        <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top" ng-repeat="n in vals.nominal_perbulan">
+                                        <span ng-if="n != 0">{{ n | number }}</span>
+                                        <span ng-if="n == 0">-</span>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="vals in detail.BIAYA.detail" ng-if="SembunyikanSub == 0">
+                                    <td align="left" style="vertical-align: top">
+                                        <div ng-bind-html="vals.nama" style="float:left"></div>&nbsp;<span class="" ng-click="viewBukuBesar(vals)"><i class="fa fa-external-link"></i></span>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top" ng-repeat="n in vals.nominal_perbulan">
+                                        <span ng-if="vals.is_tipe == 0 && n != 0">{{ n | number }}</span>
+                                        <span ng-if="vals.is_tipe == 0 && n == 0">-</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="text-right" style="vertical-align: top">
+                                        <b>TOTAL BIAYA</b>
+                                    </td>
+                                    <td align="right" class="text-right" style="vertical-align: top" ng-repeat="t in detail.BIAYA.total_perbulan">
+                                        <b ng-if="t != 0">{{ t | number }}</b>
+                                        <b ng-if="t == 0">-</b>
+                                    </td>
+                                </tr>
                             </tbody>
                             <tbody>
                                 <tr>

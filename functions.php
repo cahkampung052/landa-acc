@@ -446,16 +446,13 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $group
     $model = $sql->findAll();
     $listAkun = buildTreeAkun($model, 0);
     $arrModel = flatten($listAkun);
-    $grandTotal = ['PENDAPATAN' => 0, 'BEBAN' => 0, 'PENDAPATAN DILUAR USAHA' => 0, 'BEBAN DILUAR USAHA' => 0];
-    $arr = ['PENDAPATAN' => ['detail' => []], 'BEBAN' => ['detail' => []], 'PENDAPATAN_DILUAR_USAHA' => ['detail' => []], 'BEBAN_DILUAR_USAHA' => ['detail' => []]];
+    $grandTotal = ['PENDAPATAN' => 0, 'BEBAN' => 0, 'PENDAPATAN DILUAR USAHA' => 0, 'BEBAN DILUAR USAHA' => 0, 'BIAYA' => 0];
+    $arr = ['PENDAPATAN' => ['detail' => []], 'BEBAN' => ['detail' => []], 'PENDAPATAN_DILUAR_USAHA' => ['detail' => []], 'BEBAN_DILUAR_USAHA' => ['detail' => []], 'BIAYA' => ['detail' => []]];
     /*
      * tanya adi ya, buat apa
      */
     $testing = 0;
     foreach ($arrModel as $key => $value) {
-        if($value->tipe == 'BIAYA') {
-            $value->tipe = 'BEBAN';
-        }
         $total = (isset($arrTrans[$value->id]) ? intval($arrTrans[$value->id]) : 0);
         $tipe = str_replace(" ", "_", $value->tipe);
         $spasi = ($value->level == 1) ? '' : str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;", $value->level - 1);
@@ -476,10 +473,11 @@ function getLabaRugi($tanggal_start, $tanggal_end = null, $lokasi = null, $group
     ksort($arr['BEBAN']['detail']);
     ksort($arr['PENDAPATAN_DILUAR_USAHA']['detail']);
     ksort($arr['BEBAN_DILUAR_USAHA']['detail']);
+    ksort($arr['BIAYA']['detail']);
     if ($array) {
         return ["data" => $arr, "total" => $grandTotal];
     } else {
-        return $grandTotal['PENDAPATAN'] + $grandTotal['PENDAPATAN DILUAR USAHA'] - $grandTotal['BEBAN'] - $grandTotal['BEBAN DILUAR USAHA'];
+        return $grandTotal['PENDAPATAN'] + $grandTotal['PENDAPATAN DILUAR USAHA'] - $grandTotal['BEBAN'] - $grandTotal['BEBAN DILUAR USAHA'] - $grandTotal['BIAYA'];
     }
 }
 

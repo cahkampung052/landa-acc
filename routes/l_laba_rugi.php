@@ -41,13 +41,14 @@ $app->get('/acc/l_laba_rugi/laporan', function ($request, $response) {
     $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
     $pendapatanLuarUsaha = isset($labarugi['total']['PENDAPATAN DILUAR USAHA']) ? $labarugi['total']['PENDAPATAN DILUAR USAHA'] : 0;
     $bebanLuarUsaha = isset($labarugi['total']['BEBAN DILUAR USAHA']) ? $labarugi['total']['BEBAN DILUAR USAHA'] : 0;
-    $data['total'] = $pendapatan + $pendapatanLuarUsaha - $beban - $bebanLuarUsaha;
+    $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
+    $data['total'] = $pendapatan + $pendapatanLuarUsaha - $beban - $bebanLuarUsaha - $biaya;
     $data['total_operasional'] = $pendapatan - $beban;
     $data['lr_usaha'] = $pendapatan - $beban;
     $data['is_detail'] = $params['is_detail'];
 
     $data['total_pendapatan'] = $pendapatan + $pendapatanLuarUsaha;
-    $data['total_beban'] = $beban + $bebanLuarUsaha;
+    $data['total_beban'] = $beban + $bebanLuarUsaha + $biaya;
 
     foreach ($arr as $key => $value) {
         foreach ($value['detail'] as $keys => $values) {
@@ -177,7 +178,8 @@ $app->get('/acc/l_laba_rugi/laporan_periode', function ($request, $response) {
         $beban = isset($labarugi['total']['BEBAN']) ? $labarugi['total']['BEBAN'] : 0;
         $pendapatanLuarUsaha = isset($labarugi['total']['PENDAPATAN DILUAR USAHA']) ? $labarugi['total']['PENDAPATAN DILUAR USAHA'] : 0;
         $bebanLuarUsaha = isset($labarugi['total']['BEBAN DILUAR USAHA']) ? $labarugi['total']['BEBAN DILUAR USAHA'] : 0;
-        $data['total'][$v['number']] = $pendapatan + $pendapatanLuarUsaha - $beban - $bebanLuarUsaha;
+        $biaya = isset($labarugi['total']['BIAYA']) ? $labarugi['total']['BIAYA'] : 0;
+        $data['total'][$v['number']] = $pendapatan + $pendapatanLuarUsaha - $beban - $bebanLuarUsaha - $biaya;
         $data['total_operasional'][$v['number']] = $pendapatan - $beban;
         $data['lr_usaha'][$v['number']] = $pendapatan - $beban;
 
