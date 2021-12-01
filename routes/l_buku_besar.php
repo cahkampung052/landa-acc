@@ -40,7 +40,7 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
         }
         /*
          * jika lokasi tidak punya child
-         */ else {
+         */else {
             $lokasiId = $params['m_lokasi_id'];
         }
     }
@@ -52,23 +52,21 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
          * Ambil data akun
          */
         $sql->select("acc_m_akun.*, klasifikasi.nama as klasifikasi")
-                ->from("acc_m_akun")
-                ->leftJoin("acc_m_akun as klasifikasi", "klasifikasi.id = acc_m_akun.parent_id")
-                ->andWhere("acc_m_akun.is_deleted", "=", 0)
-                ->orderBy("acc_m_akun.kode ASC");
-        
-        if(!empty($params['m_akun_group_id'])){
+            ->from("acc_m_akun")
+            ->leftJoin("acc_m_akun as klasifikasi", "klasifikasi.id = acc_m_akun.parent_id")
+            ->andWhere("acc_m_akun.is_deleted", "=", 0)
+            ->orderBy("acc_m_akun.kode ASC");
+
+        if (!empty($params['m_akun_group_id'])) {
             $sql->where("acc_m_akun.m_akun_group_id", "=", $params['m_akun_group_id']);
         }
-        
+
         if (isset($params['m_akun_id']) && !empty($params['m_akun_id'])) {
             $getakun = $sql->customWhere("acc_m_akun.id = '" . $params['m_akun_id'] . "'", "AND")->findAll();
         } else {
             $getakun = $sql->where("acc_m_akun.is_tipe", "=", 1)->findAll();
         }
-        
-        
-        
+
         /**
          * Ambil akun laba rugi
          */
@@ -90,13 +88,13 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                 if (!empty($childId)) {
                     $saldo_sekarang = $total_debit = $total_kredit = 0;
                     $getchild = $sql->select("acc_m_akun.*, klasifikasi.nama as klasifikasi")
-                            ->from("acc_m_akun")
-                            ->leftJoin("acc_m_akun as klasifikasi", "klasifikasi.id = acc_m_akun.parent_id")
-                            ->customWhere("acc_m_akun.id in (" . implode(",", $childId) . ")")
-                            ->andWhere("acc_m_akun.is_deleted", "=", 0)
-                            ->andWhere("acc_m_akun.is_tipe", "=", 0)
-                            ->orderBy("acc_m_akun.kode ASC")
-                            ->findAll();
+                        ->from("acc_m_akun")
+                        ->leftJoin("acc_m_akun as klasifikasi", "klasifikasi.id = acc_m_akun.parent_id")
+                        ->customWhere("acc_m_akun.id in (" . implode(",", $childId) . ")")
+                        ->andWhere("acc_m_akun.is_deleted", "=", 0)
+                        ->andWhere("acc_m_akun.is_tipe", "=", 0)
+                        ->orderBy("acc_m_akun.kode ASC")
+                        ->findAll();
                     foreach ($getchild as $key => $val) {
                         /**
                          * Ambil Saldo awal akun
@@ -115,12 +113,12 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                         $arr[$val->id]['akun'] = $val->kode . ' - ' . $val->nama;
                         $arr[$val->id]['akun_id'] = $val->id;
                         $arr[$val->id]['klasifikasi'] = $val->klasifikasi;
-                        if(isset($getsaldoawal->id)){
+                        if (isset($getsaldoawal->id)) {
                             if ($vals->id == $akunLabaRugi) {
                                 $arr[$val->id]['saldo_awal'] = $totalLabaRugi;
                                 $arr[$val->id]['debit_awal'] = ($totalLabaRugi >= 0) ? $totalLabaRugi : 0;
                                 $arr[$val->id]['kredit_awal'] = ($totalLabaRugi < 0) ? $totalLabaRugi : 0;
-                            }else{
+                            } else {
                                 $arr[$val->id]['saldo_awal'] = $getsaldoawal->debit - $getsaldoawal->kredit;
                                 $arr[$val->id]['debit_awal'] = $getsaldoawal->debit;
                                 $arr[$val->id]['kredit_awal'] = $getsaldoawal->kredit;
@@ -141,8 +139,10 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                         /**
                          * Ambil detail transaksi
                          */
-                        $gettransdetail = $sql->select("*")
-                                ->from("acc_trans_detail");
+                        $gettransdetail = $sql->select("acc_trans_detail.*, "
+                        . "acc_m_kontak.nama as nama_kontak")
+                            ->from("acc_trans_detail")
+                            ->leftJoin("acc_m_kontak", "acc_m_kontak.id = acc_trans_detail.m_kontak_id");
                         if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
                             $sql->customWhere("m_lokasi_id in (" . $lokasiId . ")");
                         }
@@ -161,6 +161,7 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                             $saldo_sekarang += $val2->debit - $val2->kredit;
                             $arr[$val->id]['detail'][$index2 + 1]['tanggal'] = $val2->tanggal;
                             $arr[$val->id]['detail'][$index2 + 1]['kode'] = $val2->kode;
+                            $arr[$val->id]['detail'][$index2 + 1]['nama_kontak'] = $val2->nama_kontak;
                             $arr[$val->id]['detail'][$index2 + 1]['keterangan'] = $val2->keterangan;
                             $arr[$val->id]['detail'][$index2 + 1]['debit'] = $val2->debit;
                             $arr[$val->id]['detail'][$index2 + 1]['kredit'] = $val2->kredit;
@@ -177,9 +178,9 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                      * Hapus akun tidak ada transaksi
                      */
                     foreach ($arr as $key => $value) {
-                        if($value['total_saldo'] > 0 || $value['total_saldo'] < 0){
+                        if ($value['total_saldo'] > 0 || $value['total_saldo'] < 0) {
 
-                        }else{
+                        } else {
                             unset($arr[$key]);
                         }
                     }
@@ -204,12 +205,12 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                 $arr[0]['nama_akun'] = $vals->nama;
                 $arr[0]['akun'] = $vals->kode . ' - ' . $vals->nama;
                 $arr[0]['klasifikasi'] = $vals->klasifikasi;
-                if(isset($getsaldoawal->id)){
+                if (isset($getsaldoawal->id)) {
                     if ($vals->id == $akunLabaRugi) {
                         $arr[0]['saldo_awal'] = $totalLabaRugi;
                         $arr[0]['debit_awal'] = ($totalLabaRugi >= 0) ? $totalLabaRugi : 0;
                         $arr[0]['kredit_awal'] = ($totalLabaRugi < 0) ? $totalLabaRugi : 0;
-                    }else{
+                    } else {
                         $arr[0]['saldo_awal'] = $getsaldoawal->debit - $getsaldoawal->kredit;
                         $arr[0]['debit_awal'] = $getsaldoawal->debit;
                         $arr[0]['kredit_awal'] = $getsaldoawal->kredit;
@@ -230,8 +231,10 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                 /**
                  * Ambil detail transaksi
                  */
-                $sql->select("*")
-                    ->from("acc_trans_detail");
+                $sql->select("acc_trans_detail.*, "
+                    . "acc_m_kontak.nama as nama_kontak")
+                    ->from("acc_trans_detail")
+                    ->leftJoin("acc_m_kontak", "acc_m_kontak.id = acc_trans_detail.m_kontak_id");
                 if (isset($params['m_lokasi_id']) && !empty($params['m_lokasi_id'])) {
                     $sql->customWhere("m_lokasi_id in (" . $lokasiId . ")");
                 }
@@ -244,6 +247,7 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
                     $saldo_sekarang += $val2->debit - $val2->kredit;
                     $arr[0]['detail'][$key2 + 1]['tanggal'] = $val2->tanggal;
                     $arr[0]['detail'][$key2 + 1]['kode'] = $val2->kode;
+                    $arr[0]['detail'][$key2 + 1]['nama_kontak'] = $val2->nama_kontak;
                     $arr[0]['detail'][$key2 + 1]['keterangan'] = $val2->keterangan;
                     $arr[0]['detail'][$key2 + 1]['debit'] = $val2->debit;
                     $arr[0]['detail'][$key2 + 1]['kredit'] = $val2->kredit;
@@ -259,7 +263,7 @@ $app->get('/acc/l_buku_besar/laporan', function ($request, $response) {
         if (isset($params['export']) && $params['export'] == 1) {
 
             // print_die($arr);
-            
+
             $view = twigViewPath();
             $content = $view->fetch('laporan/bukuBesar.html', [
                 "data" => $data,

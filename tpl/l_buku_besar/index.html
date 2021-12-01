@@ -108,8 +108,11 @@
                                     <th width="80" class="align-center">
                                         <b>TANGGAL</b>
                                     </th>
-                                    <th width="80" class="align-center">
+                                    <th width="200" class="align-center">
                                         <b>REFF</b>
+                                    </th>
+                                    <th width="200" class="align-center">
+                                        <b>KONTAK</b>
                                     </th>
                                     <th class="align-center">
                                         <b>KETERANGAN</b>
@@ -130,12 +133,14 @@
                                     <td colspan="3">Saldo Awal</td>
                                     <td align="right" class="text-right">{{ }}</td>
                                     <td align="right" class="text-right">{{ }}</td>
+                                    <td align="right" class="text-right">{{ }}</td>
                                     <td align="right" class="text-right" ng-if="val.saldo_awal < 0">{{ '(' + ((val.saldo_awal * -1) | number) + ')'}}</td>
                                     <td align="right" class="text-right" ng-if="val.saldo_awal >= 0">{{ val.saldo_awal | number }}</td>
                                 </tr>
                                 <tr ng-repeat="valdetail in val.detail">
                                     <td align="center" class="text-center" style="vertical-align: top">{{ valdetail.tanggal|date }}</td>
                                     <td align="center" style="vertical-align: top">{{ valdetail.kode}}</td>
+                                    <td align="left" style="vertical-align: top">{{ valdetail.nama_kontak}}</td>
                                     <td style="vertical-align: top" ng-bind-html="valdetail.keterangan"></td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ valdetail.debit | number }}</td>
                                     <td align="right" class="text-right" style="vertical-align: top">{{ (valdetail.kredit | number)}}</td>
@@ -147,7 +152,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="3">
+                                    <td colspan="4">
                                         <b>Saldo Akhir</b>
                                     </td>
                                     <td align="right" class="text-right">

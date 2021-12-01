@@ -56,6 +56,7 @@
                         <thead>
                             <tr>
                                 <th class="align-left">No Transaksi</th>
+                                <th class="align-left">Kontak</th>
                                 <th class="align-left">Lokasi</th>
                                 <th class="align-left">Tanggal</th>
                                 <th class="align-left">Total</th>
@@ -68,6 +69,7 @@
                         <tbody ng-show="!isLoading">
                             <tr ng-repeat="row in displayed" ng-dblclick="view(row)">
                                 <td class="align-left">{{ row.no_transaksi }}</td>
+                                <td class="align-left">{{ row.nm_kontak }}</td>
                                 <td class="align-left">{{ row.namaLokasi }}</td>
                                 <td class="align-left">{{ row.tanggal_formated }}</td>
                                 <td class="align-right">{{ (row.total_debit) | number }}</td>

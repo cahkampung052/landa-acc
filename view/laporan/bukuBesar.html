@@ -39,8 +39,11 @@
                         <th style="width: 100px">
                             <b>TANGGAL</b>
                         </th>
-                        <th style="width: 100px">
+                        <th style="width: 150px">
                             <b>REFF</b>
+                        </th>
+                        <th style="width: 150px">
+                            <b>KONTAK</b>
                         </th>
                         <th>
                             <b>URAIAN</b>
@@ -61,6 +64,7 @@
                         <td colspan="5">Saldo Awal</td>
                         <td align="right" class="text-right"></td>
                         <td align="right" class="text-right"></td>
+                        <td align="right" class="text-right"></td>
                         <td align="right" class="text-right">
                             {%if val.saldo_awal < 0%}
                             <span>Rp{{ '(' ~ ((val.saldo_awal * -1) | number_format(0, ',', '.')) ~ ')' }}</span>
@@ -75,6 +79,7 @@
                         <td align="center" style="vertical-align: top">{{ val.nama_akun }}</td>
                         <td align="center" class="text-center" style="vertical-align: top">{{ valdetail.tanggal|date('d-m-Y') }}</td>
                         <td align="center" style="vertical-align: top">{{ valdetail.kode }}</td>
+                        <td align="center" style="vertical-align: top">{{ valdetail.nama_kontak }}</td>
                         <td style="vertical-align: top">{{ valdetail.keterangan }}</td>
                         <td align="right" class="text-right" style="vertical-align: top">Rp{{ valdetail.debit | number_format(0, ',', '.') }}</td>
                         <td align="right" class="text-right" style="vertical-align: top">Rp{{ valdetail.kredit | number_format(0, ',', '.') }}</td>
@@ -90,7 +95,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5">
+                        <td colspan="6">
                             <b>Saldo Akhir</b>
                         </td>
                         <td align="right" class="text-right">
